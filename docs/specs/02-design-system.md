@@ -5,8 +5,15 @@ Fuente: moodboard de marca — *Elegancia · Calma · Equilibrio · Feminidad*.
 ## Paleta de colores
 
 Definida en [src/constants/colors.js](../../src/constants/colors.js) como el objeto `C`.
-**Toda la UI debe consumir estos valores desde `C`, no hardcodear hex nuevos** salvo casos
-puntuales (overlays con alpha, gradientes) donde ya se deriva de estos mismos colores.
+**En JSX/inline styles, toda la UI debe consumir estos valores desde `C`, no hardcodear hex
+nuevos** salvo casos puntuales (overlays con alpha, gradientes) donde ya se deriva de estos
+mismos colores.
+
+**Excepción inevitable — `global.css`:** CSS no puede importar el objeto `C` (es JS), así que
+[global.css](../../src/styles/global.css) repite los mismos valores hex a mano (ej. `#f9f4f2`
+en `body`, `#1e2d42` en `.cta-btn`, `#e8d4d8` en `.svc-card`, etc.). Esto es esperado, no un
+error — pero significa que **si cambia un color en `colors.js`, hay que actualizar a mano las
+apariciones equivalentes en `global.css`** para que no se desincronicen.
 
 | Token | Hex | Uso |
 |---|---|---|
