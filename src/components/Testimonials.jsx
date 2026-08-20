@@ -66,6 +66,7 @@ export default function Testimonials({ r }) {
 
               {bilingual && (
                 <button
+                  type="button"
                   onClick={() => setExpanded((e) => !e)}
                   style={{
                     background: 'none', border: 'none', padding: 0, marginBottom: 28,
@@ -100,8 +101,14 @@ export default function Testimonials({ r }) {
                     onClick={() => setLang((l) => (l === 'en' ? 'es' : 'en'))}
                     role="switch"
                     aria-checked={isEs}
+                    aria-label="Toggle testimonial language between English and Spanish"
                     tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLang((l) => (l === 'en' ? 'es' : 'en')) } }}
+                    onKeyDown={(e) => {
+                      if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) {
+                        e.preventDefault()
+                        setLang((l) => (l === 'en' ? 'es' : 'en'))
+                      }
+                    }}
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: 10, cursor: 'pointer',
                       userSelect: 'none',
