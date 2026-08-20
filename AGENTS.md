@@ -53,9 +53,11 @@ Antes de abrir cualquier PR, seguir sin saltarse pasos:
 - **No introduzcas librerías/frameworks nuevos** (router, state management, CSS framework,
   TypeScript, etc.) sin dejarlo explícito en el spec correspondiente — hoy el stack es
   intencionalmente mínimo (ver [01-tech-stack.md](docs/specs/01-tech-stack.md)).
-- **Todo el copy va en `src/constants/data.jsx`**, los colores en `src/constants/colors.js` —
-  no hardcodear contenido nuevo directo en componentes ni colores nuevos fuera de la paleta
-  (ver [03-content-model.md](docs/specs/03-content-model.md) y
+- **El contenido en forma de lista (servicios, pasos, valores, testimonios, stats) va en
+  `src/constants/data.jsx`**, los colores en `src/constants/colors.js`. Headlines, CTA, nav y
+  footer todavía están hardcodeados inline por componente — ver el detalle exacto y qué
+  archivo tocar en [03-content-model.md](docs/specs/03-content-model.md). No hardcodear
+  colores nuevos fuera de la paleta (ver
   [02-design-system.md](docs/specs/02-design-system.md)).
 - **Mucho del contenido actual es placeholder** (testimonios ficticios, foto de Cami, fotos de
   galería) — no lo trates como dato real al construir sobre él.

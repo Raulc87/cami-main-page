@@ -49,14 +49,21 @@ Después de crear el PR, se solicita revisión automática de GitHub Copilot cod
 **balanced** (ni el más superficial ni el más exhaustivo — balance entre ruido y cobertura).
 
 ```bash
-gh pr edit <PR_NUMBER> --add-reviewer Copilot
+gh pr edit <PR_NUMBER> --add-reviewer @copilot
 ```
+
+El identificador correcto es `@copilot` (soportado desde GitHub CLI 2.88.0) — `Copilot` o
+`copilot-pull-request-reviewer[bot]` fallan porque `gh` no los resuelve como usuario vía
+GraphQL, aunque ese mismo reviewer sí es asignable a mano desde "Request review" en la UI de
+GitHub. Si `gh pr edit --add-reviewer @copilot` falla igual (versión vieja de `gh`, o la app
+de Copilot code review no está instalada/habilitada en el repo), pedir la review manualmente
+desde la UI y avisar al usuario.
 
 El modo de verbosidad de Copilot code review (`balanced`) se configura a nivel de
 repositorio/organización en GitHub (Settings → Code review → Copilot), no vía `gh` por PR. Si
 el repo todavía no tiene ese modo configurado, es un paso manual de configuración de GitHub
-que hay que hacer una vez desde la UI — avisar al usuario si `gh pr edit --add-reviewer
-Copilot` falla o si no hay certeza de que el modo esté en `balanced`.
+que hay que hacer una vez desde la UI — avisar al usuario si no hay certeza de que el modo
+esté en `balanced`.
 
 ## 4. Esperar comentarios
 

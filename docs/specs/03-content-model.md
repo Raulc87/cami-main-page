@@ -2,9 +2,27 @@
 
 ## Regla general
 
-**Todo el copy editable vive en [src/constants/data.jsx](../../src/constants/data.jsx).**
-Para cambiar textos, servicios, testimonios, stats o valores, se edita ese archivo — no hay
-que tocar componentes salvo que cambie la *estructura* de la sección.
+**El contenido repetido/estructurado (listas) vive en
+[src/constants/data.jsx](../../src/constants/data.jsx).** Servicios, pasos del proceso,
+valores, testimonios y stats se editan ahí — no hay que tocar componentes para cambiar esos
+textos.
+
+**Lo que NO está centralizado todavía:** headlines, subtítulos, labels de sección, copy de
+botones/CTA y texto de nav/footer siguen **hardcodeados inline** en cada componente. Para
+cambiar ese texto hay que editar el componente directamente, por ejemplo:
+
+- Headline y sub del hero, badge, tagline en español → [Hero.jsx](../../src/components/Hero.jsx)
+- Copy del CTA final, email de contacto → [CTA.jsx](../../src/components/CTA.jsx)
+- Wordmark, badge de disponibilidad → [Nav.jsx](../../src/components/Nav.jsx)
+- Wordmark, brand words, URL → [Footer.jsx](../../src/components/Footer.jsx)
+- Kickers/headings de cada sección (ej. "Moments", "Cami in Action") → dentro del componente
+  de esa sección ([Gallery.jsx](../../src/components/Gallery.jsx),
+  [Services.jsx](../../src/components/Services.jsx),
+  [Process.jsx](../../src/components/Process.jsx),
+  [Values.jsx](../../src/components/Values.jsx),
+  [Testimonials.jsx](../../src/components/Testimonials.jsx))
+
+Si una tarea futura migra este copy a `data.jsx`, actualizar esta sección para reflejarlo.
 
 Los colores de marca viven aparte, en
 [src/constants/colors.js](../../src/constants/colors.js) (ver
@@ -51,9 +69,13 @@ ej. `500+` / `Lives Transformed`.
 
 ### `GALLERY_SLOTS` (array, 5 items)
 
-Usado por [Gallery.jsx](../../src/components/Gallery.jsx). `{ label, style, tall? }` — `style`
-es un string CSS crudo (gradiente placeholder); `tall: true` en el primer slot le da
-`grid-row: 1 / 3`. Pendiente de reemplazar por fotos reales.
+**⚠ Actualmente no se usa.** [Gallery.jsx](../../src/components/Gallery.jsx) define su propio
+array local `SLOTS` (con forma distinta: `{ label, bg, tall }`, `bg` construido con los
+tokens de `C` en vez de un string CSS crudo) en vez de importar `GALLERY_SLOTS` de aquí.
+Editar `GALLERY_SLOTS` en `data.jsx` **no tiene ningún efecto** en lo que se renderiza — es
+código muerto. Si se quiere que la galería sea editable desde `data.jsx` como el resto de las
+secciones, hay que migrar `Gallery.jsx` para consumir este export (o eliminar el export si se
+decide que no vale la pena). Tratar como deuda técnica pendiente, no como algo ya conectado.
 
 ## Cuando agregues contenido nuevo
 
