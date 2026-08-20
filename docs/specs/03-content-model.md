@@ -59,8 +59,21 @@ inglés: `{ es, en, icon }` — ej. `Confianza` / `Trust`.
 ### `TESTIMONIALS` (array, 4 items)
 
 Usado por [Testimonials.jsx](../../src/components/Testimonials.jsx). `{ quote, name, role,
-featured? }` — el primero (`featured: true`) se muestra destacado/más grande. **Contenido
-ficticio actualmente**, ver [00-vision.md](00-vision.md).
+featured?, image?, quoteEs?, quoteLong?, quoteLongEs? }` — el primero (`featured: true`) se
+muestra destacado/más grande.
+
+- `image` (opcional): ruta a una foto real en `/images/` (ver
+  [04-architecture.md](04-architecture.md)). Si no está presente, se muestra un avatar
+  placeholder con gradiente (igual que hoy).
+- `quoteEs`, `quoteLong`, `quoteLongEs` (opcionales, van juntos): solo cuando el testimonio
+  tiene copy bilingüe real. `quote`/`quoteEs` son la versión corta (inglés/español); `quoteLong`/
+  `quoteLongEs` son la versión larga que se muestra al hacer click en el link "see more" del
+  testimonio destacado. Si un testimonio no trae `quoteEs`, no se le renderiza el toggle de
+  idioma ni el link "see more" — sigue mostrando solo `quote`, igual que los demás.
+
+**El primer testimonio (Ana Lu) es contenido real**, con foto y copy bilingüe (extraído/
+traducido de un documento aportado por el cliente). **Los otros 3 siguen siendo ficticios**,
+ver [00-vision.md](00-vision.md).
 
 ### `STATS` (array, 4 items)
 
@@ -70,8 +83,10 @@ ej. `500+` / `Lives Transformed`.
 ### `GALLERY_SLOTS` (array, 5 items)
 
 **⚠ Actualmente no se usa.** [Gallery.jsx](../../src/components/Gallery.jsx) define su propio
-array local `SLOTS` (con forma distinta: `{ label, bg, tall }`, `bg` construido con los
-tokens de `C` en vez de un string CSS crudo) en vez de importar `GALLERY_SLOTS` de aquí.
+array local `SLOTS` (con forma distinta: `{ label, bg, tall, image? }`, `bg` construido con
+los tokens de `C` en vez de un string CSS crudo; `image` es opcional — ruta a una foto real en
+`/images/`, mismo nombre de campo que `TESTIMONIALS.image`) en vez de importar `GALLERY_SLOTS`
+de aquí.
 Editar `GALLERY_SLOTS` en `data.jsx` **no tiene ningún efecto** en lo que se renderiza — es
 código muerto. Si se quiere que la galería sea editable desde `data.jsx` como el resto de las
 secciones, hay que migrar `Gallery.jsx` para consumir este export (o eliminar el export si se

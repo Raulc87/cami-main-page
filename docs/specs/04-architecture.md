@@ -3,6 +3,8 @@
 ## Estructura de carpetas
 
 ```
+public/
+  images/         # fotos reales (hero, galería, testimonios) — servidas como /images/archivo.jpg
 src/
   components/     # un componente por sección de la página
   constants/      # data.jsx (copy) y colors.js (paleta) — ver 02 y 03
