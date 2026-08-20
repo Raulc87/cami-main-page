@@ -1,21 +1,24 @@
+import { useState } from 'react'
 import { C } from '../constants/colors'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Gallery — image placeholders
 // To replace a slot with a real photo:
 //   1. Put the image in /public/images/
-//   2. Replace the placeholder <div> with <img src="/images/your-photo.jpg" ... />
+//   2. Add an `image: '/images/your-photo.jpg'` field to that slot below
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SLOTS = [
   { label: 'On Stage',          bg: `linear-gradient(155deg, ${C.navyLight} 0%, ${C.navy} 100%)`,   tall: true  },
   { label: 'Workshop',          bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.rose} 100%)`,   tall: false },
-  { label: '1-on-1 Session',    bg: `linear-gradient(145deg, ${C.cream} 0%, ${C.roseLight} 100%)`,  tall: false },
+  { label: '1-on-1 Session',    bg: `linear-gradient(145deg, ${C.cream} 0%, ${C.roseLight} 100%)`,  tall: false, image: '/images/one-on-one-session.jpg' },
   { label: 'Community',         bg: `linear-gradient(145deg, ${C.navyLight} 0%, ${C.navyMid} 100%)`,tall: false },
   { label: 'Behind the Scenes', bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.navyLight} 100%)`,tall:false},
 ]
 
 export default function Gallery({ r }) {
+  const [failedImages, setFailedImages] = useState(() => new Set())
+
   return (
     <section className="section-pad" style={{ padding: '80px 56px', background: C.bg, position: 'relative', zIndex: 1 }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -36,7 +39,7 @@ export default function Gallery({ r }) {
             </h2>
           </div>
           <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.textMuted, paddingBottom: 4 }}>
-            Photos coming soon
+            More photos coming soon
           </span>
         </div>
 
@@ -56,11 +59,21 @@ export default function Gallery({ r }) {
                 ...(slot.tall ? { gridRow: '1 / 3' } : {}),
               }}
             >
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(255,255,255,0.30)', letterSpacing: '0.10em' }}>
-                  [ {slot.label} ]
-                </span>
-              </div>
+              {slot.image && !failedImages.has(slot.image) ? (
+                <img
+                  src={slot.image}
+                  alt={slot.label}
+                  loading="lazy"
+                  onError={() => setFailedImages((prev) => new Set(prev).add(slot.image))}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(255,255,255,0.30)', letterSpacing: '0.10em' }}>
+                    [ {slot.label} ]
+                  </span>
+                </div>
+              )}
             </div>
           ))}
         </div>

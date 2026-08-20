@@ -22,3 +22,4 @@ importando estas mismas filas.
 | ID | Título | Estado | Rama | Fecha | Notas |
 |----|--------|--------|------|-------|-------|
 | CMP-001 | Fundación de Spec Driven Development (specs + AGENTS.md + este ticket log) | review | `CMP-001-sdd-foundation` | 2026-08-20 | Crea `docs/specs/`, `docs/process/` (pr-precheck, pr-workflow), `AGENTS.md` y este archivo. |
+| CMP-002 | Fotos reales (Hero/Gallery) + primer testimonio real con toggle de idioma | review | `claude/cmp-testimonios-images-lang-toggle-4dca1a` | 2026-08-20 | Reemplaza 2 placeholders de foto, agrega testimonio real de Ana Lu con toggle Spanish/English y link see more/see less. Rama no sigue el patrón `CMP-XXX-slug` porque la asigna el harness del agente (worktree); ver PR. |

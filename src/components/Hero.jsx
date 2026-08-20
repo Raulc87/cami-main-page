@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import { C } from '../constants/colors'
 import { STATS } from '../constants/data'
 
 export default function Hero({ r }) {
+  const [heroImgError, setHeroImgError] = useState(false)
+
   return (
     <section
       className="section-pad"
@@ -79,12 +82,16 @@ export default function Hero({ r }) {
                 width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.06)',
               }}
             />
-            {/* Replace this div with an <img> when Cami's photo is ready */}
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.12em' }}>
-                [ Photo of Cami ]
-              </span>
-            </div>
+            {!heroImgError && (
+              <img
+                src="/images/cami-hero.jpg"
+                alt="Cami Hernandez"
+                width={1200}
+                height={799}
+                onError={() => setHeroImgError(true)}
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            )}
             <div
               style={{
                 position: 'absolute', bottom: 20, left: 20, right: 20,
