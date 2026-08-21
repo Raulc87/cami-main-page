@@ -42,6 +42,8 @@ No usamos un sistema externo (Jira/Linear) todavía — el acrónimo del proyect
 
 Antes de abrir cualquier PR, seguir sin saltarse pasos:
 
+0. [docs/process/model-cost-policy.md](docs/process/model-cost-policy.md) — qué modelo usar para
+   cada tipo de trabajo (y cómo debe declararlo un plan).
 1. [docs/process/pr-precheck.md](docs/process/pr-precheck.md) — checklist de auto-revisión
    (specs actualizados, build limpio, `/code-review` corrido).
 2. [docs/process/pr-workflow.md](docs/process/pr-workflow.md) — cómo crear el PR con `gh`
@@ -66,6 +68,14 @@ Antes de abrir cualquier PR, seguir sin saltarse pasos:
 - **El roadmap ([05-roadmap.md](docs/specs/05-roadmap.md)) no está construido** — es contexto
   de dirección, no una lista de tareas listas para implementar directo. Cada ítem necesita su
   propio ticket y, si aplica, su propio spec antes de codear.
+- **Elige el modelo según la tarea, no por default.** Planificación/arquitectura → Opus;
+  implementación y debug → Sonnet; edits acotados, copy y exploración → Haiku. **Si estás
+  planificando un ticket, el plan debe decir con qué modelo se ejecuta cada paso** y
+  recomendarle al usuario el cambio (`/model ...`) cuando convenga — un agente no puede cambiar
+  el modelo de su propia sesión, pero sí delegar pasos mecánicos a subagentes más baratos. El
+  criterio completo y las prácticas de higiene de contexto están en
+  [docs/process/model-cost-policy.md](docs/process/model-cost-policy.md) — léelo al arrancar un
+  ticket, no hace falta en cada mensaje.
 - **Prioriza costo cero / free tier** al elegir herramientas para features nuevas (analytics,
   email marketing, DB) — es un proyecto personal sin presupuesto de licencias.
 - Desarrollo local: `npm run dev` (puerto 5173). Build: `npm run build` → `dist/` (deploy
