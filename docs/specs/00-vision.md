@@ -21,8 +21,13 @@ Objetivo actual del sitio:
 ## Audiencia
 
 Hombres y mujeres 25+ que buscan transformación personal ("done playing small" — copy actual
-del hero). Bilingüe: la interfaz está en inglés, con acentos en español (`Disciplina hoy,
-libertad mañana.`, nombres de valores en `es`/`en`).
+del hero). Bilingüe: la interfaz completa cambia entre inglés y español con un toggle global en
+el `Nav` (ver [04-architecture.md](04-architecture.md) y
+[03-content-model.md](03-content-model.md)), con default según `navigator.language` del
+visitante. Además hay acentos en español que son fijos por diseño y **no** cambian con el
+toggle — flourishes de marca, no copy funcional (`Disciplina hoy, libertad mañana.`, la quote
+sobre la foto del hero, los nombres de valores mostrados en `es`/`en` simultáneo, las brand
+words del footer).
 
 ## Hacia dónde va (no implementado aún)
 

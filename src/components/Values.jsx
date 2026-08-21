@@ -1,7 +1,12 @@
 import { C } from '../constants/colors'
 import { VALUES } from '../constants/data'
+import { UI_TEXT } from '../constants/i18n'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Values({ r }) {
+  const { lang } = useLanguage()
+  const t = UI_TEXT.values
+
   return (
     <section
       className="section-pad"
@@ -19,9 +24,9 @@ export default function Values({ r }) {
         {/* Heading */}
         <div {...r('val-hd')} style={{ textAlign: 'center', marginBottom: 44 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 12 }}>
-            What Drives Everything
+            {t.kicker[lang]}
           </div>
-          <h2 style={{ fontWeight: 900, fontSize: 32, letterSpacing: '-0.025em', color: C.white }}>Core Values</h2>
+          <h2 style={{ fontWeight: 900, fontSize: 32, letterSpacing: '-0.025em', color: C.white }}>{t.heading[lang]}</h2>
         </div>
 
         {/* Chips */}

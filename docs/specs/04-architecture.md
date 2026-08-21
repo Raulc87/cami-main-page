@@ -7,7 +7,8 @@ public/
   images/         # fotos reales (hero, galería, testimonios) — servidas como /images/archivo.jpg
 src/
   components/     # un componente por sección de la página
-  constants/      # data.jsx (copy) y colors.js (paleta) — ver 02 y 03
+  constants/      # data.jsx (copy de listas), i18n.js (UI_TEXT) y colors.js (paleta) — ver 02 y 03
+  context/        # LanguageContext.jsx — estado global de idioma (ver abajo)
   hooks/          # useReveal.js — scroll-reveal
   styles/         # global.css — reset, fonts, animaciones, hover, responsive
   App.jsx         # composición de la página
@@ -31,6 +32,30 @@ src/
 
 Cada componente es dueño de su propia sección: importa lo que necesita de `constants/` y no
 recibe props de contenido desde `App.jsx` (solo recibe `r`).
+
+## Idioma global (`LanguageContext`)
+
+[src/context/LanguageContext.jsx](../../src/context/LanguageContext.jsx) expone un
+`LanguageProvider` (React Context, sin librería externa — ver
+[01-tech-stack.md](01-tech-stack.md)) que envuelve `<App />` en
+[main.jsx](../../src/main.jsx). Cualquier componente lee el idioma actual con el hook
+`useLanguage()`:
+
+```js
+const { lang, setLang, toggleLang } = useLanguage()   // lang: 'en' | 'es'
+```
+
+- **Default**: si hay un valor guardado en `localStorage` (`cmp-lang`) se usa ese; si no,
+  `navigator.language` — arranca en `'es'` si empieza con `es`, si no en `'en'`.
+- **Persistencia**: cada cambio de `lang` se guarda en `localStorage` y se refleja en
+  `document.documentElement.lang`.
+- **Toggle**: vive en [Nav.jsx](../../src/components/Nav.jsx), junto al CTA "Book Cami" — es el
+  único punto de control del idioma en toda la página (reemplaza el switch que en CMP-002 vivía
+  solo dentro de `Testimonials.jsx` para un testimonio).
+- Los componentes traducibles combinan `lang` con `UI_TEXT` de
+  [constants/i18n.js](../../src/constants/i18n.js) (copy de UI) o con los campos `*Es` de
+  `constants/data.jsx` (contenido de listas) — ver [03-content-model.md](03-content-model.md).
+- Patrón hermano de `useReveal`: hook simple, sin dependencias externas, sin routing.
 
 ## Patrón de scroll-reveal (`useReveal`)
 

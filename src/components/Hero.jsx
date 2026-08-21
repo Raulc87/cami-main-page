@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { C } from '../constants/colors'
 import { STATS } from '../constants/data'
+import { UI_TEXT } from '../constants/i18n'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Hero({ r }) {
   const [heroImgError, setHeroImgError] = useState(false)
+  const { lang } = useLanguage()
+  const t = UI_TEXT.hero
 
   return (
     <section
@@ -34,34 +38,32 @@ export default function Hero({ r }) {
           >
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.rose }} />
             <span style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.navyLight, fontWeight: 700 }}>
-              Speaker · Life Coach · Spiritual Guide
+              {t.badge[lang]}
             </span>
           </div>
 
           {/* Headline */}
           <h1 {...r('hero-h1a', 60)} className="hero-h1" style={{ fontWeight: 900, fontSize: 50, lineHeight: 1.06, letterSpacing: '-0.035em', color: C.navy, marginBottom: 4 }}>
-            Transform Your Beliefs.
+            {t.h1a[lang]}
           </h1>
           <h1 {...r('hero-h1b', 110)} style={{ fontWeight: 900, fontSize: 50, lineHeight: 1.06, letterSpacing: '-0.035em', marginBottom: 28, color: C.navy }}>
             <span
               className="hero-h1-em"
               style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, fontSize: 60, color: C.rose }}
             >
-              Live
+              {t.h1bEm[lang]}
             </span>{' '}
-            Your Truth.
+            {t.h1bRest[lang]}
           </h1>
 
           {/* Sub */}
           <p {...r('hero-sub', 150)} style={{ fontSize: 16, lineHeight: 1.75, color: C.navyLight, maxWidth: 500, marginBottom: 36 }}>
-            For men and women 25 and up who are done playing small. Through speaking, coaching,
-            and spiritual guidance — Cami meets you where you are and walks with you into who you
-            are becoming.
+            {t.sub[lang]}
           </p>
 
           {/* CTA row */}
           <div {...r('hero-cta', 190)} style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>
-            <a href="#contact" className="cta-btn">Work with Cami</a>
+            <a href="#contact" className="cta-btn">{t.cta[lang]}</a>
             <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: C.rose }}>
               Disciplina hoy, libertad mañana.
             </span>
@@ -120,7 +122,7 @@ export default function Hero({ r }) {
         {STATS.map((s, i) => (
           <div key={i} style={{ background: C.bg, padding: '28px 20px', textAlign: 'center' }}>
             <div style={{ fontWeight: 900, fontSize: 34, color: C.navy, letterSpacing: '-0.03em' }}>{s.num}</div>
-            <div style={{ fontSize: 11, letterSpacing: '0.13em', textTransform: 'uppercase', color: C.navyLight, marginTop: 5 }}>{s.label}</div>
+            <div style={{ fontSize: 11, letterSpacing: '0.13em', textTransform: 'uppercase', color: C.navyLight, marginTop: 5 }}>{lang === 'es' ? s.labelEs || s.label : s.label}</div>
           </div>
         ))}
       </div>

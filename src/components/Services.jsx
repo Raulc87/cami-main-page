@@ -1,19 +1,25 @@
 import { C } from '../constants/colors'
 import { SERVICES } from '../constants/data'
+import { UI_TEXT } from '../constants/i18n'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Services({ r }) {
+  const { lang } = useLanguage()
+  const isEs = lang === 'es'
+  const t = UI_TEXT.services
+
   return (
     <section className="section-pad" style={{ padding: '80px 56px', background: C.white, position: 'relative', zIndex: 1 }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Heading */}
         <div {...r('svc-hd')} style={{ marginBottom: 52 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 12 }}>
-            How I Can Help
+            {t.kicker[lang]}
           </div>
           <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy }}>
-            Three Paths to{' '}
+            {t.headingPre[lang]}{' '}
             <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.rose }}>
-              Transformation
+              {t.headingEm[lang]}
             </span>
           </h2>
         </div>
@@ -35,11 +41,11 @@ export default function Services({ r }) {
               </div>
 
               <div style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 10 }}>
-                {s.label}
+                {isEs ? s.labelEs || s.label : s.label}
               </div>
-              <h3 style={{ fontWeight: 700, fontSize: 19, color: C.navy, marginBottom: 12 }}>{s.title}</h3>
-              <p style={{ fontSize: 14, lineHeight: 1.75, color: C.navyLight, marginBottom: 20 }}>{s.desc}</p>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.textMuted }}>{s.note}</div>
+              <h3 style={{ fontWeight: 700, fontSize: 19, color: C.navy, marginBottom: 12 }}>{isEs ? s.titleEs || s.title : s.title}</h3>
+              <p style={{ fontSize: 14, lineHeight: 1.75, color: C.navyLight, marginBottom: 20 }}>{isEs ? s.descEs || s.desc : s.desc}</p>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.textMuted }}>{isEs ? s.noteEs || s.note : s.note}</div>
             </div>
           ))}
         </div>
