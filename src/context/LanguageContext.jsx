@@ -18,10 +18,17 @@ function detectInitialLang() {
     : 'en'
 }
 
+// Computed once at module load (before React renders) so <html lang> matches the initial
+// language from the very first paint — index.html hardcodes lang="es" as a static fallback.
+const initialLang = detectInitialLang()
+if (typeof document !== 'undefined') {
+  document.documentElement.lang = initialLang
+}
+
 const LanguageContext = createContext(null)
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState(detectInitialLang)
+  const [lang, setLang] = useState(initialLang)
 
   useEffect(() => {
     try {

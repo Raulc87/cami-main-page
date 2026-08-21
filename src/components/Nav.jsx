@@ -80,13 +80,13 @@ export default function Nav() {
             userSelect: 'none',
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? 'rgba(15,25,40,0.32)' : C.rose }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.navyLight : C.rose }}>
             EN
           </span>
           <span
             style={{
               position: 'relative', width: 36, height: 20, borderRadius: 100,
-              background: 'rgba(15,25,40,0.08)', border: `1px solid ${C.rose}`,
+              background: 'rgba(30,45,66,0.08)', border: `1px solid ${C.rose}`,
               flexShrink: 0,
             }}
           >
@@ -97,7 +97,7 @@ export default function Nav() {
               }}
             />
           </span>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.rose : 'rgba(15,25,40,0.32)' }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.rose : C.navyLight }}>
             ES
           </span>
         </div>
