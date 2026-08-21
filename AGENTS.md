@@ -70,9 +70,11 @@ Antes de abrir cualquier PR, seguir sin saltarse pasos:
   propio ticket y, si aplica, su propio spec antes de codear.
 - **Elige el modelo según la tarea, no por default.** `.claude/settings.json` fija Sonnet como
   default del proyecto (el caballo de batalla: implementar, debuggear, revisar). Planificación/
-  arquitectura → Opus; edits acotados, copy y exploración → Haiku vía los subagentes en
-  `.claude/agents/` (`mechanical-check`, `repo-explorer`). **Si estás planificando un ticket, el
-  plan debe decir con qué modelo se ejecuta cada paso** y recomendarle al usuario el cambio
+  arquitectura → Opus; edits acotados y copy → Haiku; chequeos mecánicos (build, `git status`,
+  links) y exploración de solo lectura → los subagentes en `.claude/agents/` (`mechanical-check`
+  y `repo-explorer` respectivamente — ninguno de los dos edita). **Si estás planificando un
+  ticket, el plan debe decir con qué modelo se ejecuta cada paso** y recomendarle al usuario el
+  cambio
   (`/model ...`) cuando convenga — un agente no puede cambiar el modelo de su propia sesión,
   pero sí delegar pasos mecánicos a subagentes más baratos. El criterio completo y las prácticas
   de higiene de contexto están en
