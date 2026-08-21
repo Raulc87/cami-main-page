@@ -143,7 +143,7 @@ lo decida a propósito.
   del roadmap sin spec todavía — ver §2. El agente no puede cambiar su propia sesión; tiene que
   pedirlo (`/model opus`) como dice §3.
 - **Override personal:** si querés arrancar siempre en otro modelo, usá
-  `.claude/settings.local.json` (ignorado por git vía `*.local` en `.gitignore`) en vez de tocar
+  `.claude/settings.local.json` (ignorado explícitamente en `.gitignore`) en vez de tocar
   el `settings.json` versionado — la precedencia es `user < project < local`.
 - **Subagentes baratos ya definidos** en `.claude/agents/`, para que la delegación de §3 sea un
   mecanismo real y no solo una intención:
