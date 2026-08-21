@@ -42,3 +42,6 @@ inventar esa arquitectura de antemano en specs que no la necesitan.
 - Git, rama principal `main`.
 - Convención de ramas y tickets: `CMP-XXX-slug` — ver [AGENTS.md](../../AGENTS.md) y
   [TICKETS.md](../../TICKETS.md).
+- `.claude/settings.json` está versionado con `"model": "sonnet"` como default del proyecto, más
+  subagentes baratos en `.claude/agents/` para chequeos mecánicos y exploración — ver
+  [model-cost-policy.md §8](../process/model-cost-policy.md#8-config-versionada-claudesettingsjson).
