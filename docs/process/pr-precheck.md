@@ -12,6 +12,9 @@ Copilot o al usuario, no después.
       archivos sueltos de prueba).
 - [ ] `git status` revisado — nada inesperado quedó sin trackear ni se agregó sin querer con un
       `git add` amplio.
+- [ ] Si hubo un plan, la recomendación de modelo por paso se siguió — o se anota en el PR por
+      qué se ejecutó todo en otro modelo. Ver
+      [model-cost-policy.md](model-cost-policy.md).
 
 ## 2. Specs actualizados
 
@@ -51,6 +54,9 @@ Un spec desactualizado es un bug tan real como uno de código — no lo dejes pa
       default; usar `high` si el cambio toca algo sensible — formularios, datos de leads,
       integraciones externas cuando existan). Resolver o justificar cada finding antes de
       continuar.
+- [ ] El **modelo** con el que se corre `/code-review` acompaña al nivel: solo docs/copy → Haiku
+      (o dejarlo a Copilot); UI acotada → Sonnet; formularios, datos de leads o integraciones
+      externas → Opus. Tabla completa en [model-cost-policy.md](model-cost-policy.md) §5.
 - [ ] Si `/code-review` marca algo que se decide **no** resolver, dejar la justificación en la
       descripción del PR (sección "Riesgos" — ver
       [pr-workflow.md](pr-workflow.md)), no en silencio.
