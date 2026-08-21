@@ -36,11 +36,11 @@ export default function CTA({ r }) {
         <p style={{ fontSize: 16, lineHeight: 1.75, color: C.navyLight, marginBottom: 44 }}>
           {t.body[lang]}
         </p>
-        <a href="mailto:contact@camihernandez.com" className="cta-btn">
+        <a href="mailto:camila@lifetoolscr.com" className="cta-btn">
           {t.link[lang]}
         </a>
         <div style={{ marginTop: 20, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: C.textMuted }}>
-          contact@camihernandez.com
+          camila@lifetoolscr.com
         </div>
       </div>
     </section>
