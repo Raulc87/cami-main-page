@@ -17,7 +17,7 @@ export default function Testimonials({ r }) {
   const shortQuote = isEs ? featured?.quoteEs || featured?.quote : featured?.quote
   const longQuote = isEs ? featured?.quoteLongEs || featured?.quoteLong : featured?.quoteLong
   const featuredQuote = expanded ? longQuote || shortQuote : shortQuote
-  const hasLongQuote = Boolean(featured?.quoteLong || featured?.quoteLongEs)
+  const hasLongQuote = Boolean(longQuote)
   const seeMoreLabel = expanded ? t.seeLess[lang] : t.seeMore[lang]
 
   return (

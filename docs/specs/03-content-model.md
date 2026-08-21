@@ -82,10 +82,11 @@ toggle global, ver [04-architecture.md](04-architecture.md)); `name`/`role` no s
   [04-architecture.md](04-architecture.md)). Si no está presente, se muestra un avatar
   placeholder con gradiente (igual que hoy).
 - `quoteLong`/`quoteLongEs` (opcionales, solo en el testimonio destacado): versión larga que se
-  muestra al hacer click en el link "see more"/"ver más". El botón/link "see more" solo se
-  renderiza si el testimonio destacado trae `quoteLong` y/o `quoteLongEs` — si no trae ninguno
-  de los dos, no aparece ningún control de expandir (no hay fallback a un botón que no haga
-  nada).
+  muestra al hacer click en el link "see more"/"ver más". En español, si falta `quoteLongEs`
+  cae de vuelta a `quoteLong` (inglés) en vez de no mostrar nada; en inglés no hay ese fallback
+  cruzado (no tendría sentido mostrar texto en español bajo un link en inglés). El botón/link
+  solo se renderiza cuando hay una versión larga disponible para el idioma activo (considerando
+  ese fallback) — nunca se muestra un control que no cambie nada al hacer click.
 
 **El primer testimonio (Ana Lu) es contenido real**, con foto y copy bilingüe (extraído/
 traducido de un documento aportado por el cliente). **Los otros 3 siguen siendo ficticios**

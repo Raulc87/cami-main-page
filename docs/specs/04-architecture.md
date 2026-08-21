@@ -18,7 +18,8 @@ src/
 ## Composición de la página
 
 [App.jsx](../../src/App.jsx) renderiza las secciones en este orden fijo (todas reciben la prop
-`r` del hook `useReveal`, excepto `Nav` y `Footer` que son estáticas):
+`r` del hook `useReveal`, excepto `Nav` y `Footer`, que no la reciben porque no tienen
+animación de scroll-reveal — `Nav` sí es dinámico vía `LanguageContext`, ver abajo):
 
 1. `Nav` — logo, badge "Available for 2026", CTA "Book Cami".
 2. `Hero` — headline, sub, CTA, imagen placeholder, barra de stats.
