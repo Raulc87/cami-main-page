@@ -22,16 +22,17 @@ siempre, sin importar el toggle (ver [00-vision.md](00-vision.md)). Siguen **har
 inline** en su componente. Para cambiar ese texto hay que editar el componente directamente, por
 ejemplo:
 
-- Headline y sub del hero, badge, tagline en español → [Hero.jsx](../../src/components/Hero.jsx)
-- Copy del CTA final, email de contacto → [CTA.jsx](../../src/components/CTA.jsx)
-- Wordmark, badge de disponibilidad → [Nav.jsx](../../src/components/Nav.jsx)
-- Wordmark, brand words, URL → [Footer.jsx](../../src/components/Footer.jsx)
-- Kickers/headings de cada sección (ej. "Moments", "Cami in Action") → dentro del componente
-  de esa sección ([Gallery.jsx](../../src/components/Gallery.jsx),
-  [Services.jsx](../../src/components/Services.jsx),
-  [Process.jsx](../../src/components/Process.jsx),
-  [Values.jsx](../../src/components/Values.jsx),
-  [Testimonials.jsx](../../src/components/Testimonials.jsx))
+- Wordmark "Cami Hernandez" → [Nav.jsx](../../src/components/Nav.jsx) y
+  [Footer.jsx](../../src/components/Footer.jsx) (mismo texto en ambos, hardcodeado por
+  separado en cada uno — no se traduce, es el nombre de la marca).
+- Tagline en español fijo del hero ("Disciplina hoy, libertad mañana.") y la quote sobre la
+  foto ("Tu mejor versión empieza aquí.") → [Hero.jsx](../../src/components/Hero.jsx).
+- Email de contacto → [CTA.jsx](../../src/components/CTA.jsx).
+- Brand words (`WORDS`) y URL → [Footer.jsx](../../src/components/Footer.jsx).
+
+Todo lo demás que antes estaba en esta lista (headline/sub del hero, badges, copy de CTA,
+kickers/headings de cada sección) **ya no está hardcodeado inline** — se movió a `UI_TEXT` en
+[src/constants/i18n.js](../../src/constants/i18n.js), ver arriba.
 
 Si una tarea futura migra este copy a `data.jsx`, actualizar esta sección para reflejarlo.
 
@@ -81,8 +82,10 @@ toggle global, ver [04-architecture.md](04-architecture.md)); `name`/`role` no s
   [04-architecture.md](04-architecture.md)). Si no está presente, se muestra un avatar
   placeholder con gradiente (igual que hoy).
 - `quoteLong`/`quoteLongEs` (opcionales, solo en el testimonio destacado): versión larga que se
-  muestra al hacer click en el link "see more"/"ver más". Si un item no trae `quoteLong`, el
-  botón "see more" cae de vuelta a `quote`/`quoteEs`.
+  muestra al hacer click en el link "see more"/"ver más". El botón/link "see more" solo se
+  renderiza si el testimonio destacado trae `quoteLong` y/o `quoteLongEs` — si no trae ninguno
+  de los dos, no aparece ningún control de expandir (no hay fallback a un botón que no haga
+  nada).
 
 **El primer testimonio (Ana Lu) es contenido real**, con foto y copy bilingüe (extraído/
 traducido de un documento aportado por el cliente). **Los otros 3 siguen siendo ficticios**

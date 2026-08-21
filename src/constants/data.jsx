@@ -73,7 +73,7 @@ export const STEPS = [
     title: 'Thrive',
     titleEs: 'Florece',
     desc: 'You step forward clear, grounded, and powerfully aligned with who you are becoming.',
-    descEs: 'Avanzas con claridad, presencia y poderosamente alineado con quien te estás convirtiendo.',
+    descEs: 'Avanzas con claridad, presencia y una alineación poderosa con quien te estás convirtiendo.',
   },
 ]
 
