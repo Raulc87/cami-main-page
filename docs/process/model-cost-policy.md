@@ -88,7 +88,7 @@ Todo agente que planifique un ticket **debe pronunciarse sobre el modelo**. No d
 Elegir bien el modelo ayuda, pero **el contexto inflado cuesta más**: cada turno reenvía todo el
 historial, así que un contexto sucio se paga en cada mensaje, no una sola vez.
 
-- **Una sesión por ticket.** No arrastrar el contexto de `CMP-003` dentro de `CMP-004`.
+- **Una sesión por ticket.** No arrastrar el contexto de un ticket dentro del siguiente.
 - **Lee el spec que aplica, no los seis.** La tabla de [AGENTS.md](../../AGENTS.md) existe
   justamente para usarla como índice en vez de leer `docs/specs/` completo.
 - **Planifica en Opus, ejecuta en Sonnet.** El razonamiento caro se paga una vez, no en cada edit.
