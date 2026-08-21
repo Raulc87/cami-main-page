@@ -101,10 +101,10 @@ labelEs }` — ej. `500+` / `Lives Transformed` / `Vidas Transformadas`. `num` n
 ### `GALLERY_SLOTS` (array, 5 items)
 
 **⚠ Actualmente no se usa.** [Gallery.jsx](../../src/components/Gallery.jsx) define su propio
-array local `SLOTS` (con forma distinta: `{ label, bg, tall, image? }`, `bg` construido con
-los tokens de `C` en vez de un string CSS crudo; `image` es opcional — ruta a una foto real en
-`/images/`, mismo nombre de campo que `TESTIMONIALS.image`) en vez de importar `GALLERY_SLOTS`
-de aquí.
+array local `SLOTS` (con forma distinta: `{ label, labelEs, bg, tall, image? }` — `labelEs` es
+el texto en español que muestra el toggle de idioma global; `bg` construido con los tokens de
+`C` en vez de un string CSS crudo; `image` es opcional — ruta a una foto real en `/images/`,
+mismo nombre de campo que `TESTIMONIALS.image`) en vez de importar `GALLERY_SLOTS` de aquí.
 Editar `GALLERY_SLOTS` en `data.jsx` **no tiene ningún efecto** en lo que se renderiza — es
 código muerto. Si se quiere que la galería sea editable desde `data.jsx` como el resto de las
 secciones, hay que migrar `Gallery.jsx` para consumir este export (o eliminar el export si se
