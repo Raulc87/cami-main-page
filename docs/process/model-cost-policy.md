@@ -147,8 +147,11 @@ lo decida a propósito.
   el `settings.json` versionado — la precedencia es `user < project < local`.
 - **Subagentes baratos ya definidos** en `.claude/agents/`, para que la delegación de §3 sea un
   mecanismo real y no solo una intención:
-  - `mechanical-check` (Haiku): build, `git status`, verificación de links — el precheck de
-    [pr-precheck.md](pr-precheck.md) §3 y §1 debería delegarse acá.
+  - `mechanical-check` (Haiku): corre `npm run build`, muestra `git status --short` y verifica
+    links — cubre solo esas tres cosas de [pr-precheck.md](pr-precheck.md) §1 y §3. El resto de
+    esas secciones (alcance de un solo ticket, archivos de scratch, prueba en browser, console
+    warnings, dependencias nuevas) necesita juicio y sigue siendo responsabilidad de quien
+    ejecuta el ticket, no de este subagente.
   - `repo-explorer` (Haiku): preguntas de "¿dónde vive X?" — lectura, no escritura.
 
   Lanzarlos no requiere que el usuario cambie nada; el ahorro es automático en cuanto un paso del
