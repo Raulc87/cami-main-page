@@ -7,20 +7,32 @@
 valores, testimonios y stats se editan ahí — no hay que tocar componentes para cambiar esos
 textos.
 
-**Lo que NO está centralizado todavía:** headlines, subtítulos, labels de sección, copy de
-botones/CTA y texto de nav/footer siguen **hardcodeados inline** en cada componente. Para
-cambiar ese texto hay que editar el componente directamente, por ejemplo:
+**El copy de UI traducible (headlines, kickers, CTA, badges, labels de nav) vive en
+[src/constants/i18n.js](../../src/constants/i18n.js)**, como `UI_TEXT` — un objeto anidado por
+sección con pares `{ en, es }` (ej. `UI_TEXT.hero.h1a.en` / `.es`). Este archivo es la fuente de
+verdad para todo el copy que cambia con el toggle de idioma global (ver
+[04-architecture.md](04-architecture.md) — `LanguageContext` / `useLanguage()`). Los
+componentes leen `lang` de `useLanguage()` y seleccionan `UI_TEXT.<seccion>.<key>[lang]`.
 
-- Headline y sub del hero, badge, tagline en español → [Hero.jsx](../../src/components/Hero.jsx)
-- Copy del CTA final, email de contacto → [CTA.jsx](../../src/components/CTA.jsx)
-- Wordmark, badge de disponibilidad → [Nav.jsx](../../src/components/Nav.jsx)
-- Wordmark, brand words, URL → [Footer.jsx](../../src/components/Footer.jsx)
-- Kickers/headings de cada sección (ej. "Moments", "Cami in Action") → dentro del componente
-  de esa sección ([Gallery.jsx](../../src/components/Gallery.jsx),
-  [Services.jsx](../../src/components/Services.jsx),
-  [Process.jsx](../../src/components/Process.jsx),
-  [Values.jsx](../../src/components/Values.jsx),
-  [Testimonials.jsx](../../src/components/Testimonials.jsx))
+**Lo que sigue sin centralizar (y no es candidato a `i18n.js`):** texto que **no** cambia con el
+idioma — nombres propios (wordmark "Cami Hernandez"), el email de contacto, y los **acentos de
+marca en español fijos** (la tagline del Hero "Disciplina hoy, libertad mañana.", la quote sobre
+la foto del hero, las `WORDS` del Footer) — estos son flourishes intencionales en español
+siempre, sin importar el toggle (ver [00-vision.md](00-vision.md)). Siguen **hardcodeados
+inline** en su componente. Para cambiar ese texto hay que editar el componente directamente, por
+ejemplo:
+
+- Wordmark "Cami Hernandez" → [Nav.jsx](../../src/components/Nav.jsx) y
+  [Footer.jsx](../../src/components/Footer.jsx) (mismo texto en ambos, hardcodeado por
+  separado en cada uno — no se traduce, es el nombre de la marca).
+- Tagline en español fijo del hero ("Disciplina hoy, libertad mañana.") y la quote sobre la
+  foto ("Tu mejor versión empieza aquí.") → [Hero.jsx](../../src/components/Hero.jsx).
+- Email de contacto → [CTA.jsx](../../src/components/CTA.jsx).
+- Brand words (`WORDS`) y URL → [Footer.jsx](../../src/components/Footer.jsx).
+
+Todo lo demás que antes estaba en esta lista (headline/sub del hero, badges, copy de CTA,
+kickers/headings de cada sección) **ya no está hardcodeado inline** — se movió a `UI_TEXT` en
+[src/constants/i18n.js](../../src/constants/i18n.js), ver arriba.
 
 Si una tarea futura migra este copy a `data.jsx`, actualizar esta sección para reflejarlo.
 
@@ -38,18 +50,21 @@ no en `data.jsx`.
 Usado por [Services.jsx](../../src/components/Services.jsx).
 
 ```js
-{ label, title, desc, note, icon }
+{ label, labelEs, title, titleEs, desc, descEs, note, noteEs, icon }
 ```
 - `label`: kicker en mayúsculas (ej. `MOTIVATIONAL SPEAKING`).
 - `icon`: JSX de un `<svg>` inline (no archivos de imagen separados).
 - `note`: estado de disponibilidad — actualmente 1 dice `Booking available`, 2 dicen
   `Catalog coming soon` (relevante para [05-roadmap.md](05-roadmap.md), catálogo de productos).
+- Cada campo tiene su par `*Es` (`labelEs`, `titleEs`, `descEs`, `noteEs`) para el toggle de
+  idioma global.
 
 ### `STEPS` (array, 3 items)
 
 Usado por [Process.jsx](../../src/components/Process.jsx). Proceso de 3 pasos:
-`Discover → Transform → Thrive`. `{ num, title, desc, featured? }` — `featured: true` en el
-paso del medio (Transform) le da estilo destacado.
+`Discover → Transform → Thrive`. `{ num, title, titleEs, desc, descEs, featured? }` —
+`featured: true` en el paso del medio (Transform) le da estilo destacado. `num` (`'01'`, `'02'`,
+`'03'`) no se traduce.
 
 ### `VALUES` (array, 4 items)
 
@@ -58,35 +73,38 @@ inglés: `{ es, en, icon }` — ej. `Confianza` / `Trust`.
 
 ### `TESTIMONIALS` (array, 4 items)
 
-Usado por [Testimonials.jsx](../../src/components/Testimonials.jsx). `{ quote, name, role,
-featured?, image?, quoteEs?, quoteLong?, quoteLongEs? }` — el primero (`featured: true`) se
-muestra destacado/más grande.
+Usado por [Testimonials.jsx](../../src/components/Testimonials.jsx). `{ quote, quoteEs, name,
+role, featured?, image?, quoteLong?, quoteLongEs? }` — el primero (`featured: true`) se
+muestra destacado/más grande. Los 4 items tienen `quote`/`quoteEs` (idioma controlado por el
+toggle global, ver [04-architecture.md](04-architecture.md)); `name`/`role` no se traducen.
 
 - `image` (opcional): ruta a una foto real en `/images/` (ver
   [04-architecture.md](04-architecture.md)). Si no está presente, se muestra un avatar
   placeholder con gradiente (igual que hoy).
-- `quoteEs`, `quoteLong`, `quoteLongEs` (opcionales, van juntos): solo cuando el testimonio
-  tiene copy bilingüe real. `quote`/`quoteEs` son la versión corta (inglés/español); `quoteLong`/
-  `quoteLongEs` son la versión larga que se muestra al hacer click en el link "see more" del
-  testimonio destacado. Si un testimonio no trae `quoteEs`, no se le renderiza el toggle de
-  idioma ni el link "see more" — sigue mostrando solo `quote`, igual que los demás.
+- `quoteLong`/`quoteLongEs` (opcionales, solo en el testimonio destacado): versión larga que se
+  muestra al hacer click en el link "see more"/"ver más". En español, si falta `quoteLongEs`
+  cae de vuelta a `quoteLong` (inglés) en vez de no mostrar nada; en inglés no hay ese fallback
+  cruzado (no tendría sentido mostrar texto en español bajo un link en inglés). El botón/link
+  solo se renderiza cuando hay una versión larga disponible para el idioma activo (considerando
+  ese fallback) — nunca se muestra un control que no cambie nada al hacer click.
 
 **El primer testimonio (Ana Lu) es contenido real**, con foto y copy bilingüe (extraído/
-traducido de un documento aportado por el cliente). **Los otros 3 siguen siendo ficticios**,
-ver [00-vision.md](00-vision.md).
+traducido de un documento aportado por el cliente). **Los otros 3 siguen siendo ficticios**
+(ver [00-vision.md](00-vision.md)) pero también tienen `quoteEs` para que la sección respete el
+toggle de idioma sin excepciones.
 
 ### `STATS` (array, 4 items)
 
-Usado por [Hero.jsx](../../src/components/Hero.jsx) en la barra de stats. `{ num, label }` —
-ej. `500+` / `Lives Transformed`.
+Usado por [Hero.jsx](../../src/components/Hero.jsx) en la barra de stats. `{ num, label,
+labelEs }` — ej. `500+` / `Lives Transformed` / `Vidas Transformadas`. `num` no se traduce.
 
 ### `GALLERY_SLOTS` (array, 5 items)
 
 **⚠ Actualmente no se usa.** [Gallery.jsx](../../src/components/Gallery.jsx) define su propio
-array local `SLOTS` (con forma distinta: `{ label, bg, tall, image? }`, `bg` construido con
-los tokens de `C` en vez de un string CSS crudo; `image` es opcional — ruta a una foto real en
-`/images/`, mismo nombre de campo que `TESTIMONIALS.image`) en vez de importar `GALLERY_SLOTS`
-de aquí.
+array local `SLOTS` (con forma distinta: `{ label, labelEs, bg, tall, image? }` — `labelEs` es
+el texto en español que muestra el toggle de idioma global; `bg` construido con los tokens de
+`C` en vez de un string CSS crudo; `image` es opcional — ruta a una foto real en `/images/`,
+mismo nombre de campo que `TESTIMONIALS.image`) en vez de importar `GALLERY_SLOTS` de aquí.
 Editar `GALLERY_SLOTS` en `data.jsx` **no tiene ningún efecto** en lo que se renderiza — es
 código muerto. Si se quiere que la galería sea editable desde `data.jsx` como el resto de las
 secciones, hay que migrar `Gallery.jsx` para consumir este export (o eliminar el export si se

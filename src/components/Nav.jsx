@@ -1,6 +1,12 @@
 import { C } from '../constants/colors'
+import { UI_TEXT } from '../constants/i18n'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Nav() {
+  const { lang, toggleLang } = useLanguage()
+  const isEs = lang === 'es'
+  const t = UI_TEXT.nav
+
   return (
     <nav
       className="nav-pad"
@@ -9,6 +15,8 @@ export default function Nav() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 16,
         position: 'relative',
         zIndex: 10,
       }}
@@ -49,14 +57,55 @@ export default function Nav() {
             fontWeight: 700,
           }}
         >
-          Available for 2026
+          {t.badge[lang]}
         </span>
       </div>
 
-      {/* CTA */}
-      <a href="#contact" className="cta-btn cta-btn-sm">
-        Book Cami
-      </a>
+      {/* Language toggle + CTA */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+        <div
+          onClick={toggleLang}
+          role="switch"
+          aria-checked={isEs}
+          aria-label={t.langToggleLabel[lang]}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) {
+              e.preventDefault()
+              toggleLang()
+            }
+          }}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer',
+            userSelect: 'none',
+          }}
+        >
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.navyLight : C.navy }}>
+            EN
+          </span>
+          <span
+            style={{
+              position: 'relative', width: 36, height: 20, borderRadius: 100,
+              background: 'rgba(30,45,66,0.08)', border: `1px solid ${C.rose}`,
+              flexShrink: 0,
+            }}
+          >
+            <span
+              style={{
+                position: 'absolute', top: 1.5, left: isEs ? 17 : 1.5, width: 15, height: 15,
+                borderRadius: '50%', background: C.rose, transition: 'left 0.18s ease',
+              }}
+            />
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.navy : C.navyLight }}>
+            ES
+          </span>
+        </div>
+
+        <a href="#contact" className="cta-btn cta-btn-sm">
+          {t.cta[lang]}
+        </a>
+      </div>
     </nav>
   )
 }

@@ -5,9 +5,13 @@
 export const SERVICES = [
   {
     label: 'MOTIVATIONAL SPEAKING',
+    labelEs: 'CONFERENCIAS MOTIVACIONALES',
     title: 'Words That Break Walls',
+    titleEs: 'Palabras Que Rompen Muros',
     desc: 'Powerful keynotes and group experiences that dismantle limiting beliefs and ignite lasting transformation — for companies, conferences, and communities ready to level up.',
+    descEs: 'Conferencias magistrales y experiencias grupales que desmantelan creencias limitantes y encienden una transformación duradera — para empresas, congresos y comunidades listas para dar el siguiente paso.',
     note: 'Booking available',
+    noteEs: 'Reservas disponibles',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -16,9 +20,13 @@ export const SERVICES = [
   },
   {
     label: 'LIFESTYLE COACHING',
+    labelEs: 'COACHING DE ESTILO DE VIDA',
     title: 'Design Your Ideal Life',
+    titleEs: 'Diseña Tu Vida Ideal',
     desc: 'One-on-one sessions to help you clarify your values, break self-sabotage patterns, and build the daily disciplines that make your dream life inevitable.',
+    descEs: 'Sesiones individuales para ayudarte a clarificar tus valores, romper patrones de autosabotaje y construir las disciplinas diarias que hacen inevitable la vida que sueñas.',
     note: 'Catalog coming soon',
+    noteEs: 'Catálogo próximamente',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
@@ -28,9 +36,13 @@ export const SERVICES = [
   },
   {
     label: 'SPIRITUAL COACHING',
+    labelEs: 'COACHING ESPIRITUAL',
     title: 'Return to Your Inner Self',
+    titleEs: 'Regresa a Tu Ser Interior',
     desc: 'Deep, heart-centered guidance that reconnects you with your intuition, dissolves inner conflict, and opens the door to the version of you that already knows the way.',
+    descEs: 'Guía profunda y centrada en el corazón que te reconecta con tu intuición, disuelve el conflicto interno y abre la puerta a la versión de ti que ya conoce el camino.',
     note: 'Catalog coming soon',
+    noteEs: 'Catálogo próximamente',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2a10 10 0 0 1 0 20M12 2a10 10 0 0 0 0 20M2 12h20" />
@@ -44,18 +56,24 @@ export const STEPS = [
   {
     num: '01',
     title: 'Discover',
+    titleEs: 'Descubre',
     desc: 'We uncover the beliefs and stories that have quietly been running your life — and name them.',
+    descEs: 'Descubrimos las creencias e historias que han estado dirigiendo tu vida en silencio — y les ponemos nombre.',
   },
   {
     num: '02',
     title: 'Transform',
+    titleEs: 'Transforma',
     desc: 'Through powerful tools and deep presence, we rewrite the narrative and install new patterns.',
+    descEs: 'A través de herramientas poderosas y presencia profunda, reescribimos la narrativa e instalamos nuevos patrones.',
     featured: true,
   },
   {
     num: '03',
     title: 'Thrive',
+    titleEs: 'Florece',
     desc: 'You step forward clear, grounded, and powerfully aligned with who you are becoming.',
+    descEs: 'Avanzas con claridad, presencia y una alineación poderosa con quien te estás convirtiendo.',
   },
 ]
 
@@ -119,28 +137,34 @@ export const TESTIMONIALS = [
   {
     quote:
       'Her speaking presence is magnetic. Our entire team left the workshop with a completely different energy — real results, real transformation.',
+    quoteEs:
+      'Su presencia al hablar es magnética. Todo nuestro equipo salió del taller con una energía completamente distinta — resultados reales, transformación real.',
     name: 'Diego R.',
     role: 'CEO, Startforward',
   },
   {
     quote:
       'The spiritual coaching sessions gave me tools I use every single day. Cami meets you exactly where you are.',
+    quoteEs:
+      'Las sesiones de coaching espiritual me dieron herramientas que uso todos los días. Cami te encuentra exactamente donde estás.',
     name: 'Valentina P.',
     role: 'Creative Director',
   },
   {
     quote:
       "I was skeptical at first, but Cami's approach is unlike anything I had experienced. Practical, warm, and deeply effective.",
+    quoteEs:
+      'Al principio fui escéptico, pero el enfoque de Cami es distinto a todo lo que había experimentado. Práctico, cálido y profundamente efectivo.',
     name: 'Andrés C.',
     role: 'Marketing Executive',
   },
 ]
 
 export const STATS = [
-  { num: '500+', label: 'Lives Transformed' },
-  { num: '50+',  label: 'Speaking Events'   },
-  { num: '12+',  label: 'Years of Practice' },
-  { num: '3',    label: 'Pillars of Change' },
+  { num: '500+', label: 'Lives Transformed', labelEs: 'Vidas Transformadas' },
+  { num: '50+',  label: 'Speaking Events',   labelEs: 'Eventos de Conferencias' },
+  { num: '12+',  label: 'Years of Practice', labelEs: 'Años de Experiencia' },
+  { num: '3',    label: 'Pillars of Change', labelEs: 'Pilares de Cambio' },
 ]
 
 export const GALLERY_SLOTS = [

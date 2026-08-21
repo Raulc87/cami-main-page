@@ -1,6 +1,11 @@
 import { C } from '../constants/colors'
+import { UI_TEXT } from '../constants/i18n'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function CTA({ r }) {
+  const { lang } = useLanguage()
+  const t = UI_TEXT.cta
+
   return (
     <section
       id="contact"
@@ -18,22 +23,21 @@ export default function CTA({ r }) {
 
       <div {...r('cta-sec')} style={{ maxWidth: 640, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 20 }}>
-          Ready to Begin?
+          {t.kicker[lang]}
         </div>
         <h2
           style={{ fontWeight: 900, fontSize: 44, letterSpacing: '-0.035em', color: C.navy, marginBottom: 20, lineHeight: 1.08 }}
         >
-          Your next chapter{' '}
+          {t.headingPre[lang]}{' '}
           <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, fontSize: 52, color: C.rose }}>
-            starts here.
+            {t.headingEm[lang]}
           </span>
         </h2>
         <p style={{ fontSize: 16, lineHeight: 1.75, color: C.navyLight, marginBottom: 44 }}>
-          Whether you want Cami on your stage, in your corner as a coach, or guiding you through
-          your spiritual growth — the first step is a conversation.
+          {t.body[lang]}
         </p>
         <a href="mailto:contact@camihernandez.com" className="cta-btn">
-          Connect with Cami
+          {t.link[lang]}
         </a>
         <div style={{ marginTop: 20, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: C.textMuted }}>
           contact@camihernandez.com

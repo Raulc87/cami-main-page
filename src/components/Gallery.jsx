@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { C } from '../constants/colors'
+import { UI_TEXT } from '../constants/i18n'
+import { useLanguage } from '../context/LanguageContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Gallery — image placeholders
@@ -9,15 +11,18 @@ import { C } from '../constants/colors'
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SLOTS = [
-  { label: 'On Stage',          bg: `linear-gradient(155deg, ${C.navyLight} 0%, ${C.navy} 100%)`,   tall: true  },
-  { label: 'Workshop',          bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.rose} 100%)`,   tall: false },
-  { label: '1-on-1 Session',    bg: `linear-gradient(145deg, ${C.cream} 0%, ${C.roseLight} 100%)`,  tall: false, image: '/images/one-on-one-session.jpg' },
-  { label: 'Community',         bg: `linear-gradient(145deg, ${C.navyLight} 0%, ${C.navyMid} 100%)`,tall: false },
-  { label: 'Behind the Scenes', bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.navyLight} 100%)`,tall:false},
+  { label: 'On Stage',          labelEs: 'En el Escenario',    bg: `linear-gradient(155deg, ${C.navyLight} 0%, ${C.navy} 100%)`,   tall: true  },
+  { label: 'Workshop',          labelEs: 'Taller',             bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.rose} 100%)`,   tall: false },
+  { label: '1-on-1 Session',    labelEs: 'Sesión Individual',  bg: `linear-gradient(145deg, ${C.cream} 0%, ${C.roseLight} 100%)`,  tall: false, image: '/images/one-on-one-session.jpg' },
+  { label: 'Community',         labelEs: 'Comunidad',          bg: `linear-gradient(145deg, ${C.navyLight} 0%, ${C.navyMid} 100%)`,tall: false },
+  { label: 'Behind the Scenes', labelEs: 'Detrás de Cámaras',  bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.navyLight} 100%)`,tall:false},
 ]
 
 export default function Gallery({ r }) {
   const [failedImages, setFailedImages] = useState(() => new Set())
+  const { lang } = useLanguage()
+  const isEs = lang === 'es'
+  const t = UI_TEXT.gallery
 
   return (
     <section className="section-pad" style={{ padding: '80px 56px', background: C.bg, position: 'relative', zIndex: 1 }}>
@@ -29,17 +34,17 @@ export default function Gallery({ r }) {
         >
           <div>
             <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 10 }}>
-              Moments
+              {t.kicker[lang]}
             </div>
             <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy }}>
-              Cami in{' '}
+              {t.headingPre[lang]}{' '}
               <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.rose }}>
-                Action
+                {t.headingEm[lang]}
               </span>
             </h2>
           </div>
           <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.textMuted, paddingBottom: 4 }}>
-            More photos coming soon
+            {t.empty[lang]}
           </span>
         </div>
 
@@ -62,7 +67,7 @@ export default function Gallery({ r }) {
               {slot.image && !failedImages.has(slot.image) ? (
                 <img
                   src={slot.image}
-                  alt={slot.label}
+                  alt={isEs ? slot.labelEs || slot.label : slot.label}
                   loading="lazy"
                   onError={() => setFailedImages((prev) => new Set(prev).add(slot.image))}
                   style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
@@ -70,7 +75,7 @@ export default function Gallery({ r }) {
               ) : (
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(255,255,255,0.30)', letterSpacing: '0.10em' }}>
-                    [ {slot.label} ]
+                    [ {isEs ? slot.labelEs || slot.label : slot.label} ]
                   </span>
                 </div>
               )}
