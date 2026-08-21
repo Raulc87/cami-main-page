@@ -54,11 +54,13 @@ Antes de abrir cualquier PR, seguir sin saltarse pasos:
   TypeScript, etc.) sin dejarlo explícito en el spec correspondiente — hoy el stack es
   intencionalmente mínimo (ver [01-tech-stack.md](docs/specs/01-tech-stack.md)).
 - **El contenido en forma de lista (servicios, pasos, valores, testimonios, stats) va en
-  `src/constants/data.jsx`**, los colores en `src/constants/colors.js`. Headlines, CTA, nav y
-  footer todavía están hardcodeados inline por componente — ver el detalle exacto y qué
-  archivo tocar en [03-content-model.md](docs/specs/03-content-model.md). No hardcodear
-  colores nuevos fuera de la paleta (ver
-  [02-design-system.md](docs/specs/02-design-system.md)).
+  `src/constants/data.jsx`**, los colores en `src/constants/colors.js`. El copy de UI
+  traducible (headlines, kickers, CTA, badges, nav) vive centralizado en `UI_TEXT`
+  (`src/constants/i18n.js`) — cambia con el toggle de idioma global. Solo texto que no se
+  traduce (wordmark, email de contacto, brand words/URL del footer, acentos de marca en
+  español fijos) sigue hardcodeado inline por componente — ver el detalle exacto y qué archivo
+  tocar en [03-content-model.md](docs/specs/03-content-model.md). No hardcodear colores nuevos
+  fuera de la paleta (ver [02-design-system.md](docs/specs/02-design-system.md)).
 - **Mucho del contenido actual es placeholder** (testimonios ficticios, foto de Cami, fotos de
   galería) — no lo trates como dato real al construir sobre él.
 - **El roadmap ([05-roadmap.md](docs/specs/05-roadmap.md)) no está construido** — es contexto

@@ -80,7 +80,7 @@ export default function Nav() {
             userSelect: 'none',
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.navyLight : C.rose }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.navyLight : C.navy }}>
             EN
           </span>
           <span
@@ -97,7 +97,7 @@ export default function Nav() {
               }}
             />
           </span>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.rose : C.navyLight }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', color: isEs ? C.navy : C.navyLight }}>
             ES
           </span>
         </div>

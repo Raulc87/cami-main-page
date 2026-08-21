@@ -1,6 +1,8 @@
 // ── UI copy translations (EN/ES) ────────────────────────────────────────────
-// Source of truth for the translatable headline/CTA/nav/footer/kicker copy
-// driven by the global language toggle (see src/context/LanguageContext.jsx).
+// Source of truth for the translatable headline/CTA/nav/kicker copy driven by
+// the global language toggle (see src/context/LanguageContext.jsx). Footer
+// has no entries here — its visible copy (wordmark, brand words, URL) is
+// never translated, see the note below.
 // List content (services, steps, testimonials, stats) keeps its own `*Es`
 // fields in src/constants/data.jsx instead of living here — see
 // docs/specs/03-content-model.md.
