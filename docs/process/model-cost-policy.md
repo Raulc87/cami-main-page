@@ -131,3 +131,25 @@ Cuando pase, dilo explícitamente y pide el cambio de modelo — no sigas empuja
 
 Si el usuario pide explícitamente un modelo, **gana el usuario**. Este documento es el default
 razonable, no una restricción.
+
+## 8. Config versionada: `.claude/settings.json`
+
+Este repo versiona `.claude/settings.json` con `"model": "sonnet"` como default del proyecto —
+no Opus. Es la aplicación literal de §1-§2: la mayoría del trabajo real (implementar, debuggear,
+revisar) es tarea de Sonnet, y un default caro se paga en cada sesión que arranca sin que nadie
+lo decida a propósito.
+
+- **Cuándo pedir el cambio a Opus:** al planificar un ticket que toca specs, o al diseñar algo
+  del roadmap sin spec todavía — ver §2. El agente no puede cambiar su propia sesión; tiene que
+  pedirlo (`/model opus`) como dice §3.
+- **Override personal:** si querés arrancar siempre en otro modelo, usá
+  `.claude/settings.local.json` (ignorado por git vía `*.local` en `.gitignore`) en vez de tocar
+  el `settings.json` versionado — la precedencia es `user < project < local`.
+- **Subagentes baratos ya definidos** en `.claude/agents/`, para que la delegación de §3 sea un
+  mecanismo real y no solo una intención:
+  - `mechanical-check` (Haiku): build, `git status`, verificación de links — el precheck de
+    [pr-precheck.md](pr-precheck.md) §3 y §1 debería delegarse acá.
+  - `repo-explorer` (Haiku): preguntas de "¿dónde vive X?" — lectura, no escritura.
+
+  Lanzarlos no requiere que el usuario cambie nada; el ahorro es automático en cuanto un paso del
+  plan es mecánico o de solo lectura.
