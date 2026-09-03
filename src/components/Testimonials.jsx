@@ -7,18 +7,59 @@ import { useLanguage } from '../context/LanguageContext'
 const featured = TESTIMONIALS.find((t) => t.featured)
 const grid = TESTIMONIALS.filter((t) => !t.featured)
 
+// Given a testimonial and the active language, resolves the short quote,
+// the long quote (if any), and which one to display for the current
+// expand state. Falls back to the English long quote when a Spanish long
+// quote is missing, and to the short quote when there's no long quote at
+// all — the see more/less control only renders when `hasLong` is true.
+function resolveQuote(item, isEs, expanded) {
+  const short = isEs ? item?.quoteEs || item?.quote : item?.quote
+  const long = isEs ? item?.quoteLongEs || item?.quoteLong : item?.quoteLong
+  return { text: expanded && long ? long : short, hasLong: Boolean(long) }
+}
+
+// Shared see more/see less link for a testimonial's long-quote toggle.
+// `size` distinguishes the larger featured-card treatment from the
+// smaller grid-card one.
+function SeeMoreButton({ expanded, onClick, lang, size = 'grid' }) {
+  const t = UI_TEXT.testimonials
+  const isFeatured = size === 'featured'
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={expanded}
+      style={{
+        background: 'none', border: 'none', padding: 0,
+        marginBottom: isFeatured ? 28 : 18,
+        fontSize: isFeatured ? 12 : 11,
+        fontWeight: 700, letterSpacing: '0.04em', color: C.rose,
+        cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3,
+      }}
+    >
+      {expanded ? t.seeLess[lang] : t.seeMore[lang]}
+    </button>
+  )
+}
+
 export default function Testimonials({ r }) {
-  const [expanded, setExpanded] = useState(false)
+  const [expandedFeatured, setExpandedFeatured] = useState(false)
+  const [expandedGrid, setExpandedGrid] = useState(() => new Set())
   const [failedImages, setFailedImages] = useState(() => new Set())
   const { lang } = useLanguage()
   const isEs = lang === 'es'
   const t = UI_TEXT.testimonials
 
-  const shortQuote = isEs ? featured?.quoteEs || featured?.quote : featured?.quote
-  const longQuote = isEs ? featured?.quoteLongEs || featured?.quoteLong : featured?.quoteLong
-  const featuredQuote = expanded ? longQuote || shortQuote : shortQuote
-  const hasLongQuote = Boolean(longQuote)
-  const seeMoreLabel = expanded ? t.seeLess[lang] : t.seeMore[lang]
+  const { text: featuredQuote, hasLong: featuredHasLong } = resolveQuote(featured, isEs, expandedFeatured)
+
+  const toggleGridExpanded = (i) => {
+    setExpandedGrid((prev) => {
+      const next = new Set(prev)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
+  }
 
   return (
     <section className="section-pad" style={{ padding: '80px 56px', background: C.bg, position: 'relative', zIndex: 1 }}>
@@ -63,18 +104,13 @@ export default function Testimonials({ r }) {
                 "{featuredQuote}"
               </p>
 
-              {hasLongQuote && (
-                <button
-                  type="button"
-                  onClick={() => setExpanded((e) => !e)}
-                  style={{
-                    background: 'none', border: 'none', padding: 0, marginBottom: 28,
-                    fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', color: C.rose,
-                    cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3,
-                  }}
-                >
-                  {seeMoreLabel}
-                </button>
+              {featuredHasLong && (
+                <SeeMoreButton
+                  expanded={expandedFeatured}
+                  onClick={() => setExpandedFeatured((e) => !e)}
+                  lang={lang}
+                  size="featured"
+                />
               )}
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -90,7 +126,9 @@ export default function Testimonials({ r }) {
                 )}
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, color: C.white }}>{featured.name}</div>
-                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>{featured.role}</div>
+                  {featured.role && (
+                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>{featured.role}</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -98,30 +136,46 @@ export default function Testimonials({ r }) {
         )}
 
         {/* Grid */}
-        <div className="tests-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18 }}>
-          {grid.map((item, i) => (
-            <div key={i} {...r(`test-${i}`, i * 80)} className="test-small">
-              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 15, lineHeight: 1.75, color: C.navyLight, marginBottom: 22 }}>
-                "{isEs ? item.quoteEs || item.quote : item.quote}"
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                {item.image && !failedImages.has(item.image) ? (
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    onError={() => setFailedImages((prev) => new Set(prev).add(item.image))}
-                    style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}
+        <div className="tests-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18, alignItems: 'start' }}>
+          {grid.map((item, i) => {
+            const isExpanded = expandedGrid.has(i)
+            const { text: itemQuote, hasLong: itemHasLong } = resolveQuote(item, isEs, isExpanded)
+            return (
+              <div key={i} {...r(`test-${i}`, i * 80)} className="test-small">
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 15, lineHeight: 1.75, color: C.navyLight, marginBottom: itemHasLong ? 10 : 22, whiteSpace: 'pre-line' }}>
+                  "{itemQuote}"
+                </p>
+
+                {itemHasLong && (
+                  <SeeMoreButton
+                    expanded={isExpanded}
+                    onClick={() => toggleGridExpanded(i)}
+                    lang={lang}
                   />
-                ) : (
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${C.roseLight}, ${C.navyLight})` }} />
                 )}
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: C.navy }}>{item.name}</div>
-                  <div style={{ fontSize: 11, color: C.textMuted, marginTop: 2 }}>{item.role}</div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  {item.image && !failedImages.has(item.image) ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      loading="lazy"
+                      onError={() => setFailedImages((prev) => new Set(prev).add(item.image))}
+                      style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${C.roseLight}, ${C.navyLight})` }} />
+                  )}
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: C.navy }}>{item.name}</div>
+                    {item.role && (
+                      <div style={{ fontSize: 11, color: C.textMuted, marginTop: 2 }}>{item.role}</div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

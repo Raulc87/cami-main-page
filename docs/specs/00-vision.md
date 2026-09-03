@@ -37,13 +37,14 @@ catálogo de servicios y marketing dirigido. El detalle completo de eso vive en
 
 ## Estado del contenido (importante para cualquier agente)
 
-Gran parte del copy e imágenes son **placeholder**, marcado explícitamente en el código:
+Parte del copy e imágenes sigue siendo **placeholder**, marcado explícitamente en el código:
 
-- Foto de Cami en el Hero: `<div>` con texto `[ Photo of Cami ]` en vez de una imagen real
-  ([Hero.jsx](../../src/components/Hero.jsx)).
-- Testimonios en [data.jsx](../../src/constants/data.jsx) son ficticios (Sofia M., Diego R.,
-  Valentina P., Andrés C.).
-- Gallery son gradientes de color con labels (`On Stage`, `Workshop`, etc.), no fotos reales.
+- Foto de Cami en el Hero y el slot "1-on-1 Session" de Gallery ya son fotos reales
+  ([Hero.jsx](../../src/components/Hero.jsx), [Gallery.jsx](../../src/components/Gallery.jsx));
+  los otros 4 slots de Gallery siguen siendo gradientes de color con labels (`On Stage`,
+  `Workshop`, `Community`, `Behind the Scenes`), no fotos reales.
+- Los 4 testimonios en [data.jsx](../../src/constants/data.jsx) (Ana Lu, Melissa, Rocío,
+  Stefanny) ya son contenido real, con foto — ver [03-content-model.md](03-content-model.md).
 - Dos de los tres servicios dicen `note: 'Catalog coming soon'`.
 
-No asumas que estos datos son reales al construir features nuevas sobre ellos.
+No asumas que el resto de estos datos son reales al construir features nuevas sobre ellos.
