@@ -74,24 +74,32 @@ inglés: `{ es, en, icon }` — ej. `Confianza` / `Trust`.
 ### `TESTIMONIALS` (array, 4 items)
 
 Usado por [Testimonials.jsx](../../src/components/Testimonials.jsx). `{ quote, quoteEs, name,
-role, featured?, image?, quoteLong?, quoteLongEs? }` — el primero (`featured: true`) se
-muestra destacado/más grande. Los 4 items tienen `quote`/`quoteEs` (idioma controlado por el
-toggle global, ver [04-architecture.md](04-architecture.md)); `name`/`role` no se traducen.
+role?, featured?, image?, quoteLong?, quoteLongEs? }` — el primero (`featured: true`) se
+muestra destacado/más grande, los otros 3 en el grid de 3 columnas. Los 4 items tienen
+`quote`/`quoteEs` (idioma controlado por el toggle global, ver
+[04-architecture.md](04-architecture.md)); `name` no se traduce. `role` es opcional — si no
+está presente (algunos testimonios reales no traen rol/título), no se renderiza esa línea en
+vez de dejar un hueco vacío.
 
 - `image` (opcional): ruta a una foto real en `/images/` (ver
   [04-architecture.md](04-architecture.md)). Si no está presente, se muestra un avatar
-  placeholder con gradiente (igual que hoy).
-- `quoteLong`/`quoteLongEs` (opcionales, solo en el testimonio destacado): versión larga que se
-  muestra al hacer click en el link "see more"/"ver más". En español, si falta `quoteLongEs`
-  cae de vuelta a `quoteLong` (inglés) en vez de no mostrar nada; en inglés no hay ese fallback
-  cruzado (no tendría sentido mostrar texto en español bajo un link en inglés). El botón/link
-  solo se renderiza cuando hay una versión larga disponible para el idioma activo (considerando
-  ese fallback) — nunca se muestra un control que no cambie nada al hacer click.
+  placeholder con gradiente (igual que hoy). Aplica tanto al testimonio destacado como a los
+  del grid.
+- `quoteLong`/`quoteLongEs` (opcionales, en **cualquier** testimonio, destacado o del grid):
+  versión larga que se muestra al hacer click en el link "see more"/"ver más" — cada
+  testimonio del grid tiene su propio estado de expandido, independiente del resto. En
+  español, si falta `quoteLongEs` cae de vuelta a `quoteLong` (inglés) en vez de no mostrar
+  nada; en inglés no hay ese fallback cruzado (no tendría sentido mostrar texto en español bajo
+  un link en inglés). El botón/link solo se renderiza cuando hay una versión larga disponible
+  para el idioma activo (considerando ese fallback) — nunca se muestra un control que no
+  cambie nada al hacer click. La lógica de resolución vive en el helper `resolveQuote(item,
+  isEs, expanded)` dentro de `Testimonials.jsx`, compartido entre el destacado y el grid.
 
-**El primer testimonio (Ana Lu) es contenido real**, con foto y copy bilingüe (extraído/
-traducido de un documento aportado por el cliente). **Los otros 3 siguen siendo ficticios**
-(ver [00-vision.md](00-vision.md)) pero también tienen `quoteEs` para que la sección respete el
-toggle de idioma sin excepciones.
+**Los 4 testimonios son contenido real** (Ana Lu, Melissa, Rocío, Stefanny), con foto y copy
+bilingüe extraído/traducido de documentos aportados por el cliente — ya no queda ningún
+testimonio ficticio (ver [00-vision.md](00-vision.md), que documentaba el estado anterior).
+Solo Ana Lu (destacado) y Stefanny tienen `quoteLong`/`quoteLongEs`; Melissa y Rocío solo
+tienen la versión corta porque el testimonio original no traía una versión larga separada.
 
 ### `STATS` (array, 4 items)
 

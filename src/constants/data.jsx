@@ -136,27 +136,31 @@ export const TESTIMONIALS = [
   },
   {
     quote:
-      'Her speaking presence is magnetic. Our entire team left the workshop with a completely different energy — real results, real transformation.',
+      "Working with Cami was an experience that truly marked a before and after in my life. She helped me enormously to identify beliefs, gaps, and patterns that went back to my childhood and that, without my realizing it, were limiting the way I moved forward — and even the way I thought.\n\nCami knew how to confront me with my reality from a place of love and empathy, and her experience guided me wonderfully. Through her neuro-linguistic programming techniques, she managed to touch very deep chords in me and lead me to conclusions that today let me see many things from a different perspective.\n\nIt was a process that helped me unlock fears, insecurities, and many barriers I had built myself. I am deeply grateful to have crossed paths with her and for everything she helped me discover about myself.",
     quoteEs:
-      'Su presencia al hablar es magnética. Todo nuestro equipo salió del taller con una energía completamente distinta — resultados reales, transformación real.',
-    name: 'Diego R.',
-    role: 'CEO, Startforward',
+      'Trabajar con Cami fue una experiencia que realmente marcó un antes y un después en mi vida. Me ayudó muchísimo a identificar creencias, carencias y patrones que venían desde mi infancia y que, sin darme cuenta, estaban limitando mi manera de avanzar y hasta de pensar.\n\nCami supo confrontarme con mi realidad desde el amor, la empatía y su experiencia me guió de forma maravillosa. Con sus técnicas de programación neurolingüística logró tocar fibras muy profundas en mí y llevarme a conclusiones que hoy me permiten ver muchas cosas desde una perspectiva diferente.\n\nFue un proceso que me ayudó a desbloquear miedos, inseguridades y muchas barreras que yo misma había construido. Estoy profundamente agradecida por haber coincidido con ella y por todo lo que me ayudó a descubrir de mí misma.',
+    name: 'Melissa',
+    image: '/images/melissa.jpg',
   },
   {
     quote:
-      'The spiritual coaching sessions gave me tools I use every single day. Cami meets you exactly where you are.',
+      "My process with Camila was really lovely. She has a fascinating approach, because she brings together knowledge from different personal-development practices that I personally didn't know about. Something I loved is that she combines self-reflection practices with a method that helped me define goals aligned with what truly matters to me, instead of following other people's expectations. It was also very valuable to me that her guidance came from her own story too — a non-linear path of searching, reinvention, and self-discovery, which lets her accompany others from a genuine, deeply human place.",
     quoteEs:
-      'Las sesiones de coaching espiritual me dieron herramientas que uso todos los días. Cami te encuentra exactamente donde estás.',
-    name: 'Valentina P.',
-    role: 'Creative Director',
+      'Mi proceso con Camila fue muy bonito. Ella tiene un enfoque muy interesante, porque integra conocimientos de distintas prácticas de desarrollo personal, que yo en lo personal no conocía. Algo que me encantó es que combina prácticas de autorreflexión con un método que me ayudó a definir metas alineadas con lo que verdaderamente me importa, en lugar de seguir expectativas ajenas. Además, para mí fue muy valioso que su acompañamiento partiera también de su propia historia: un camino no lineal de búsqueda, reinvención y autoconocimiento, que le permite acompañar a otros desde un lugar genuino y profundamente humano.',
+    name: 'Rocío',
+    image: '/images/rocio.jpg',
   },
   {
     quote:
-      "I was skeptical at first, but Cami's approach is unlike anything I had experienced. Practical, warm, and deeply effective.",
+      'Starting this process with Cami was a before and after in my life.\n\nI arrived from a place of a lot of complaining, disconnected from self-love, with a lot still to heal inside. Little by little I began recognizing my own worth and remembering the strength that had always been in me.',
     quoteEs:
-      'Al principio fui escéptico, pero el enfoque de Cami es distinto a todo lo que había experimentado. Práctico, cálido y profundamente efectivo.',
-    name: 'Andrés C.',
-    role: 'Marketing Executive',
+      'Empezar este proceso con Cami fue un antes y un después en mi vida.\n\nLlegué desde un lugar de mucha queja, desconectada de mi amor propio y con bastante por sanar por dentro. Poco a poco fui reconociendo mi propio valor y recordando la fuerza que siempre estuvo en mí.',
+    quoteLong:
+      "Starting this process with Cami was a before and after in my life.\n\nI arrived from a place of a lot of complaining, disconnected from self-love, with a lot still to heal inside. Little by little I began recognizing my own worth and remembering the strength that had always been in me.\n\nThe program didn't just give me back that confidence — it opened the door to a spiritual path I didn't know I was looking for. The tools I learned are still part of my everyday life. They taught me to be grateful for absolutely everything, the good and the not-so-good, and to look at life with more light.\n\nThe most striking part was realizing, afterward, how much it had prepared me. I went in without knowing what was coming. When my mom passed away, the self-love work and the strength I had already built let me be there for her passing with a maturity, a peace, and a compassion I never thought I'd have. The guidance I received was an anticipated blessing that held me up exactly when I needed it most.\n\nI live deeply grateful for this space and for the truly real transformation it brought to my life.",
+    quoteLongEs:
+      'Empezar este proceso con Cami fue un antes y un después en mi vida.\n\nLlegué desde un lugar de mucha queja, desconectada de mi amor propio y con bastante por sanar por dentro. Poco a poco fui reconociendo mi propio valor y recordando la fuerza que siempre estuvo en mí.\n\nEl programa no solo me devolvió esa confianza: me abrió las puertas a un camino espiritual que no sabía que estaba buscando. Las herramientas que aprendí siguen siendo parte de mi día a día. Me enseñaron a agradecer absolutamente todo, lo bueno y lo que no lo fue tanto, y a mirar la vida con más luz.\n\nLo más impactante fue darme cuenta, después, de cómo me había preparado. Yo entré sin saber lo que venía. Cuando mi mamá falleció, el trabajo de amor propio y la fortaleza que ya había construido me permitieron acompañar su partida desde una madurez, una paz y una compasión que jamás pensé que tendría. La guía que recibí fue una bendición anticipada que me sostuvo justo cuando más la necesitaba.\n\nVivo profundamente agradecida por este espacio y por la transformación tan real que trajo a mi vida.',
+    name: 'Stefanny',
+    image: '/images/stefanny.jpg',
   },
 ]
 
