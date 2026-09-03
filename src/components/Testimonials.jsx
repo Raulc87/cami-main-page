@@ -28,6 +28,7 @@ function SeeMoreButton({ expanded, onClick, lang, size = 'grid' }) {
     <button
       type="button"
       onClick={onClick}
+      aria-expanded={expanded}
       style={{
         background: 'none', border: 'none', padding: 0,
         marginBottom: isFeatured ? 28 : 18,
