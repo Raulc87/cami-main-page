@@ -164,10 +164,10 @@ export const TESTIMONIALS = [
 ]
 
 export const STATS = [
-  { num: '500+', label: 'Lives Transformed', labelEs: 'Vidas Transformadas' },
-  { num: '50+',  label: 'Speaking Events',   labelEs: 'Eventos de Conferencias' },
-  { num: '12+',  label: 'Years of Practice', labelEs: 'Años de Experiencia' },
-  { num: '3',    label: 'Pillars of Change', labelEs: 'Pilares de Cambio' },
+  { num: '100', label: 'Lives Transformed', labelEs: 'Vidas Transformadas' },
+  { num: '25',  label: 'Speaking Events',   labelEs: 'Eventos de Conferencias' },
+  { num: '6+',  label: 'Years of Practice', labelEs: 'Años de Experiencia' },
+  { num: '4',   label: 'Pillars of Change', labelEs: 'Pilares de Cambio' },
 ]
 
 export const GALLERY_SLOTS = [
