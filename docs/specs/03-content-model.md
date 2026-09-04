@@ -104,7 +104,7 @@ tienen la versión corta porque el testimonio original no traía una versión la
 ### `STATS` (array, 4 items)
 
 Usado por [Hero.jsx](../../src/components/Hero.jsx) en la barra de stats. `{ num, label,
-labelEs }` — ej. `500+` / `Lives Transformed` / `Vidas Transformadas`. `num` no se traduce.
+labelEs }` — ej. `100` / `Lives Transformed` / `Vidas Transformadas`. `num` no se traduce.
 
 ### `GALLERY_SLOTS` (array, 5 items)
 
