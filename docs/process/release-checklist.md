@@ -13,6 +13,11 @@ No hay CI/CD — todo el proceso es manual. Este documento existe para que cualq
   dominio registrado — hay que tener un plan de hosting contratado y el dominio apuntando a
   ese hosting). Verificar en el panel de GoDaddy → "Mis productos": debe aparecer un producto
   de **Web Hosting** (o similar) asociado al dominio, no solo el dominio en sí.
+  - **Ojo con "Websites + Marketing" (Airo)**: GoDaddy suele dar de entrada un sitio gratis
+    hecho con su constructor visual ("Airo") en el mismo dominio. Ese producto **no tiene
+    cPanel/File Manager** y no acepta subir un build propio — no sirve para este proyecto. Si
+    es lo único que aparece en la cuenta, hay que contratar **Web Hosting** (el plan con
+    cPanel) por separado; no confundir uno con el otro.
 - `gh` (GitHub CLI) instalado y autenticado (`gh auth login`) en la máquina desde la que se
   hace el release.
 - `npm install` corrido al menos una vez (`node_modules/` presente).
@@ -50,13 +55,22 @@ Shared hosting de GoDaddy, sin FTP/SSH configurado — se sube desde el navegado
    ```bash
    cd dist && zip -r ../release.zip . && cd ..
    ```
-2. Entrar al panel de GoDaddy → producto de hosting de `camihernandez.com` → **cPanel** (o
-   "Administrar" → File Manager, según el plan).
+2. Entrar al panel de GoDaddy → **"Mis productos"** → el producto de **Web Hosting** de
+   `camihernandez.com` → **"Administrar"** → botón **"cPanel Admin"**.
+   - Justo después de contratar el hosting, GoDaddy puede mostrar un asistente de
+     **"Set up your migration"** pidiendo la URL de un sitio existente para migrarlo. No
+     aplica acá (no hay nada que migrar) — no lo completes, entra directo a "Mis productos"
+     → el hosting → cPanel Admin en otra pestaña en su lugar.
+   - Si acabas de comprar el hosting, cPanel puede tardar unos minutos en aprovisionar del
+     todo — si File Manager carga en blanco o queda sin responder, prueba refresco duro
+     (`Cmd+Shift+R`), una ventana de incógnito, o reintenta en 15-20 minutos.
 3. Abrir **File Manager** → navegar a `public_html/`.
-4. Si ya hay un release previo ahí, hacer respaldo antes de sobrescribir: seleccionar todo,
-   comprimir a un `.zip` de backup (ej. `backup-pre-v1.0.0.zip`) y dejarlo fuera de
-   `public_html/` (ej. en la carpeta home) o descargarlo. **Nunca reemplazar sin respaldo un
-   sitio que ya está en producción.**
+4. Una cuenta de hosting recién creada trae archivos placeholder de GoDaddy por defecto
+   (`404.shtml`, `home.html`, `layout-styles.css`) — no son contenido real, se pueden borrar
+   sin respaldo. Si en cambio ya hay un release previo real ahí, sí hacer respaldo antes de
+   sobrescribir: seleccionar todo, comprimir a un `.zip` de backup (ej.
+   `backup-pre-v1.0.0.zip`) y dejarlo fuera de `public_html/` (ej. en la carpeta home) o
+   descargarlo. **Nunca reemplazar sin respaldo un sitio que ya está en producción.**
 5. Subir `release.zip` a `public_html/` (botón **Upload**).
 6. Una vez subido, click derecho sobre `release.zip` → **Extract**, extrayendo directo dentro
    de `public_html/`.
@@ -113,3 +127,9 @@ Si algo sale mal después de extraer en `public_html/`:
 
 Repetir desde el paso 2 (bump de versión). El paso 1 (pre-requisitos) y buena parte del paso 4
 (acceso al panel) ya quedan resueltos después del primer release.
+
+## 9. Historial
+
+- **`v1.0.0`** — 2026-09-04. Primer release productivo, siguiendo exactamente este proceso
+  (incluyendo las trampas de Airo y el asistente de migración documentadas arriba). Ver
+  [release en GitHub](https://github.com/Raulc87/cami-main-page/releases/tag/v1.0.0).
