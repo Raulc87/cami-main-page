@@ -11,11 +11,11 @@ import { useLanguage } from '../context/LanguageContext'
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SLOTS = [
-  { label: 'On Stage',          labelEs: 'En el Escenario',    bg: `linear-gradient(155deg, ${C.navyLight} 0%, ${C.navy} 100%)`,   tall: true,  image: '/images/on-stage.jpg' },
-  { label: 'Workshop',          labelEs: 'Taller',             bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.rose} 100%)`,   tall: false, image: '/images/workshop.jpg' },
-  { label: '1-on-1 Session',    labelEs: 'Sesión Individual',  bg: `linear-gradient(145deg, ${C.cream} 0%, ${C.roseLight} 100%)`,  tall: false, image: '/images/one-on-one-session.jpg' },
-  { label: 'Community',         labelEs: 'Comunidad',          bg: `linear-gradient(145deg, ${C.navyLight} 0%, ${C.navyMid} 100%)`,tall: false, image: '/images/community.jpg' },
-  { label: 'Behind the Scenes', labelEs: 'Detrás de Cámaras',  bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.navyLight} 100%)`,tall:false,  image: '/images/behind-the-scenes.jpg' },
+  { label: 'On Stage',          labelEs: 'En el Escenario',   bg: `linear-gradient(155deg, ${C.navyLight} 0%, ${C.navy} 100%)`,      tall: true,  image: '/images/on-stage.jpg' },
+  { label: 'Workshop',          labelEs: 'Taller',            bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.rose} 100%)`,      tall: false, image: '/images/workshop.jpg' },
+  { label: '1-on-1 Session',    labelEs: 'Sesión Individual', bg: `linear-gradient(145deg, ${C.cream} 0%, ${C.roseLight} 100%)`,     tall: false, image: '/images/one-on-one-session.jpg' },
+  { label: 'Community',         labelEs: 'Comunidad',         bg: `linear-gradient(145deg, ${C.navyLight} 0%, ${C.navyMid} 100%)`,   tall: false, image: '/images/community.jpg' },
+  { label: 'Behind the Scenes', labelEs: 'Detrás de Cámaras', bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.navyLight} 100%)`, tall: false, image: '/images/behind-the-scenes.jpg' },
 ]
 
 export default function Gallery({ r }) {
