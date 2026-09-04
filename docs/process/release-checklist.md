@@ -21,6 +21,8 @@ No hay CI/CD — todo el proceso es manual. Este documento existe para que cualq
 - `gh` (GitHub CLI) instalado y autenticado (`gh auth login`) en la máquina desde la que se
   hace el release.
 - `npm install` corrido al menos una vez (`node_modules/` presente).
+- `zip` disponible en la línea de comandos (viene preinstalado en macOS/la mayoría de Linux) —
+  se usa en la sección 4 para armar el paquete que se sube a GoDaddy.
 
 ## 2. Versionado
 
@@ -95,15 +97,19 @@ repo — seguir la guía específica del proveedor de hosting elegido).
 
 ## 6. Tag + GitHub Release
 
-Con el sitio ya verificado en producción:
+Con el sitio ya verificado en producción, sustituye `VERSION` por el tag real (ej. `v1.0.1`)
+antes de correr esto — los comandos de abajo son una plantilla, no copiar/pegar literal salvo
+para el primer release (`v1.0.0`):
 
 ```bash
-git tag -a v1.0.0 -m "v1.0.0 — primer release productivo"
-git push origin v1.0.0
+VERSION="v1.0.1"  # <- cambiar en cada release
 
-gh release create v1.0.0 \
-  --title "v1.0.0 — Primer release" \
-  --notes "Primer release productivo de camihernandez.com. Ver TICKETS.md para el detalle de tickets incluidos."
+git tag -a "$VERSION" -m "$VERSION"
+git push origin "$VERSION"
+
+gh release create "$VERSION" \
+  --title "$VERSION" \
+  --notes "Ver TICKETS.md para el detalle de tickets incluidos desde el release anterior."
 ```
 
 - El tag se crea sobre el commit de `main` que corresponde exactamente a lo que está subido en
@@ -118,7 +124,8 @@ gh release create v1.0.0 \
 Si algo sale mal después de extraer en `public_html/`:
 
 1. Borrar el contenido nuevo de `public_html/`.
-2. Volver a subir y extraer el `.zip` de respaldo del paso 4.4.
+2. Volver a subir y extraer el `.zip` de respaldo del punto 4 de la sección "Subida a
+   GoDaddy" de arriba.
 3. Si el release ya se había tageado en GitHub, no se borra el tag/release — se documenta como
    conocido y se corrige con un release siguiente (`v1.0.1`), salvo que el tag apunte a un
    commit roto que nunca debió publicarse.
