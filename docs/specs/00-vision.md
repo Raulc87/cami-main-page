@@ -39,10 +39,10 @@ catálogo de servicios y marketing dirigido. El detalle completo de eso vive en
 
 Parte del copy e imágenes sigue siendo **placeholder**, marcado explícitamente en el código:
 
-- Foto de Cami en el Hero y el slot "1-on-1 Session" de Gallery ya son fotos reales
-  ([Hero.jsx](../../src/components/Hero.jsx), [Gallery.jsx](../../src/components/Gallery.jsx));
-  los otros 4 slots de Gallery siguen siendo gradientes de color con labels (`On Stage`,
-  `Workshop`, `Community`, `Behind the Scenes`), no fotos reales.
+- Foto de Cami en el Hero y los 5 slots de Gallery (`On Stage`, `Workshop`, `1-on-1 Session`,
+  `Community`, `Behind the Scenes`) ya son fotos reales
+  ([Hero.jsx](../../src/components/Hero.jsx), [Gallery.jsx](../../src/components/Gallery.jsx)) —
+  ya no queda ningún slot en gradiente placeholder.
 - Los 4 testimonios en [data.jsx](../../src/constants/data.jsx) (Ana Lu, Melissa, Rocío,
   Stefanny) ya son contenido real, con foto — ver [03-content-model.md](03-content-model.md).
 - Dos de los tres servicios dicen `note: 'Catalog coming soon'`.

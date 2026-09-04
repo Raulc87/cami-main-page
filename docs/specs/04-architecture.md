@@ -24,7 +24,7 @@ animación de scroll-reveal — `Nav` sí es dinámico vía `LanguageContext`, v
 1. `Nav` — logo, badge "Available for 2026", CTA "Book Cami".
 2. `Hero` — headline, sub, CTA, imagen placeholder, barra de stats.
 3. `Services` — 3 cards de servicios (`SERVICES`).
-4. `Gallery` — grid de 5 slots con gradientes placeholder.
+4. `Gallery` — grid de 5 slots con fotos reales.
 5. `Process` — 3 pasos (`STEPS`).
 6. `Values` — 4 chips de valores (`VALUES`).
 7. `Testimonials` — 4 testimonios (`TESTIMONIALS`).
