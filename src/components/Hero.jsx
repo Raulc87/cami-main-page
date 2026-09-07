@@ -8,6 +8,7 @@ export default function Hero({ r }) {
   const [heroImgError, setHeroImgError] = useState(false)
   const { lang } = useLanguage()
   const t = UI_TEXT.hero
+  const heroImgReveal = r('hero-img', 80)
 
   return (
     <section
@@ -71,7 +72,11 @@ export default function Hero({ r }) {
         </div>
 
         {/* ── Hero image ── */}
-        <div {...r('hero-img', 80)} className="hero-img-wrap" style={{ flex: '0 0 360px', maxWidth: '100%' }}>
+        <div
+          {...heroImgReveal}
+          className="hero-img-wrap"
+          style={{ ...heroImgReveal.style, flex: '0 0 360px', maxWidth: '100%' }}
+        >
           <div
             className="hero-img-frame"
             style={{
