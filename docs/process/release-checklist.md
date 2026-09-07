@@ -97,8 +97,8 @@ repo — seguir la guía específica del proveedor de hosting elegido).
 
 ## 6. Tag + GitHub Release
 
-Con el sitio ya verificado en producción, sustituye `VERSION` por el tag real (ej. `v1.0.1`)
-antes de correr esto — los comandos de abajo son una plantilla, no copiar/pegar literal salvo
+Con el sitio ya verificado en producción, cambia el valor de `VERSION` al tag real (ej. `v1.0.1`)
+antes de correr esto — los comandos de abajo son una plantilla; no copiar/pegar literal salvo
 para el primer release (`v1.0.0`):
 
 ```bash
