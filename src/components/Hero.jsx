@@ -71,8 +71,9 @@ export default function Hero({ r }) {
         </div>
 
         {/* ── Hero image ── */}
-        <div {...r('hero-img', 80)} style={{ flex: '0 0 360px', maxWidth: '100%' }}>
+        <div {...r('hero-img', 80)} className="hero-img-wrap" style={{ flex: '0 0 360px', maxWidth: '100%' }}>
           <div
+            className="hero-img-frame"
             style={{
               height: 460, borderRadius: 20, overflow: 'hidden', position: 'relative',
               background: `linear-gradient(155deg, ${C.roseLight} 0%, ${C.navyLight} 55%, ${C.navy} 100%)`,
