@@ -73,3 +73,13 @@ Definidos en `global.css` (`@media`):
 - `max-width: 640px` — mobile: stacks verticales, grids a 1–2 columnas, tipografía reducida,
   padding de secciones reducido. Ver clases `.hero-flex`, `.stats-grid`, `.svc-grid`,
   `.steps-flex`, `.vals-flex`, `.tests-grid`, `.gallery-grid`, `.section-pad`, `.nav-pad`.
+
+**Cuidado con imágenes `position: absolute` dentro de contenedores sin tamaño propio:** tanto
+la imagen del Hero (`hero-img-wrap` → `hero-img-frame`) como cada celda de `.gallery-grid`
+posicionan su `<img>` con `position: absolute; inset: 0`, así que no aportan ancho/alto
+intrínseco a su contenedor. En desktop el tamaño lo da el layout padre (`flex-basis` en fila
+para el Hero, `grid-template-rows` fijo para la Gallery), pero al cambiar ese layout en
+`max-width: 640px` (columna / `auto`) el contenedor puede colapsar a 0 y la imagen desaparece
+aunque cargue bien. Por eso `.hero-img-wrap`/`.hero-img-frame` y `.gallery-grid` fijan un
+ancho/alto explícito también dentro del breakpoint mobile — cualquier sección nueva que use este
+mismo patrón (imagen absoluta de fondo) necesita el mismo tipo de override en mobile.
