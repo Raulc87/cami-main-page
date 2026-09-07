@@ -140,3 +140,6 @@ Repetir desde el paso 2 (bump de versión). El paso 1 (pre-requisitos) y buena p
 - **`v1.0.0`** — 2026-09-04. Primer release productivo, siguiendo exactamente este proceso
   (incluyendo las trampas de Airo y el asistente de migración documentadas arriba). Ver
   [release en GitHub](https://github.com/Raulc87/cami-main-page/releases/tag/v1.0.0).
+- **`v1.0.1`** — 2026-09-07. Bugfix de mobile: CMP-013 (Hero y Gallery invisibles en <640px).
+  Como ya había un release real en `public_html/`, este ciclo sí incluyó el respaldo del paso 4
+  antes de sobrescribir. Ver [release en GitHub](https://github.com/Raulc87/cami-main-page/releases/tag/v1.0.1).
