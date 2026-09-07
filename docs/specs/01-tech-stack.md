@@ -36,6 +36,8 @@ inventar esa arquitectura de antemano en specs que no la necesitan.
 - No hay CI/CD todavía — deploy manual.
 - Cuando exista backend en Node.js, este modelo de hosting (shared hosting estático) puede no
   alcanzar — es una decisión pendiente, no asumir que GoDaddy shared hosting sirve para eso.
+- Proceso completo de release (versionado, subida a `public_html/`, tag + GitHub Release):
+  ver [release-checklist.md](../process/release-checklist.md).
 
 ## Convenciones de repo
 
