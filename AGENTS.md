@@ -177,8 +177,10 @@ an approver.
 
 - **Who it is.** In a new project created from the SDD Starter Kit, the session that ran
   `/project-kickoff` stays on as the coordinator. This repo is brownfield: it was adopted into
-  the kit by CMP-014, with no kickoff. Here the owner starts a dedicated coordinator session on
-  `main` after the adoption PR is merged. It skips discovery and builds its picture from
+  the kit by CMP-014, with no kickoff; CMP-014 covered the Discovery and Specs stages (specs
+  reconstructed from the code and approved by the owner). Here the owner starts a dedicated
+  coordinator session on `main` after the adoption PR is merged. It does not repeat discovery:
+  it builds its picture from
   [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md), [TICKETS.md](TICKETS.md),
   [USER_STORIES.md](docs/specs/USER_STORIES.md) and the active sprint plan.
 - **It may:** draft sprint plans and agent prompts (from
