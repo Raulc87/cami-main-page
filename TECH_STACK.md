@@ -1,7 +1,8 @@
 # TECH_STACK
 
 ## Metadata
-- Version: 1.0 (homologated from `docs/specs/01-tech-stack.md` in CMP-014)
+- Version: 1.1 (homologated from `docs/specs/01-tech-stack.md` in CMP-014; §9 reviewer setup
+  updated in CMP-016, 2026-10-18)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
 - Owner: Raul Casanas
 
@@ -77,8 +78,11 @@ npm run preview   # serves dist/ locally
   until a test runner is adopted (that adoption requires an ADR).
 
 ## 9. CI/CD
-- None. Code review: GitHub Copilot code review (review-only agent) + `/code-review` before
-  opening a PR (see [pr-workflow.md](docs/process/pr-workflow.md)).
+- No CI. Code review: a dedicated Claude Code review-only session (owner decision
+  2026-10-18, CMP-016), plus GitHub Copilot code review and Codex as automated reviewers on
+  every PR, plus `/code-review` before opening a PR (see
+  [pr-workflow.md](docs/process/pr-workflow.md) and
+  [AGENTS.md → Review-only agent](AGENTS.md#review-only-agent)).
 
 ## 10. Hosting / Deployment
 - `npm run build` generates `dist/`; its contents are uploaded manually to `public_html/`.

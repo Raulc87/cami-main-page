@@ -2,7 +2,9 @@
 
 ## Project
 - Name: cami-main-page — personal brand website for Cami Hernandez
+- Project key: CMP (tickets, branches, PR titles; see [AGENTS.md](AGENTS.md#tickets-and-branches))
 - Repository: https://github.com/Raulc87/cami-main-page
+- Starter Kit: https://github.com/Raulc87/sdd_starter_kit (AGENTS.md last aligned in CMP-016)
 - Status: Live at `camihernandez.com` (v1.0.1); documentation homologated to the SDD starter
   kit in CMP-014
 - Product owner / final reviewer: Raul Casanas
@@ -17,44 +19,53 @@
   (includes the content model, §9)
 - UX/UI direction: [docs/ux/UX_UI_DIRECTION.md](docs/ux/UX_UI_DIRECTION.md)
 - Tech stack: [TECH_STACK.md](TECH_STACK.md)
-- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-006
+- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-007
 - Implementation plan: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
   (baseline + traceability)
 - Active sprint plan: [docs/sprints/SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md)
-- Work log: [TICKETS.md](TICKETS.md)
+- Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
+  [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
+  ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
+- Readiness checklist:
+  [docs/checklists/SPRINT_READINESS_CHECKLIST.md](docs/checklists/SPRINT_READINESS_CHECKLIST.md)
+- Content (visitor-facing copy): `src/constants/i18n.js` (`UI_TEXT`) and
+  `src/constants/data.jsx` (ARCHITECTURE_SPEC §9); no `CONTENT.md`
+- Runbooks: release and deployment —
+  [release-checklist.md](docs/process/release-checklist.md); local development —
+  [README.md](README.md)
 - Process: [docs/process/](docs/process/) — pr-precheck, pr-workflow, model-cost-policy,
   release-checklist
+- Branching and release model:
+  [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) (Proposed)
 - Templates: [docs/templates/](docs/templates/)
 
-### Former spec names (before CMP-014)
-Old PRs and ticket notes reference these files, which no longer exist:
-
-| Old file | Now |
-|---|---|
-| `docs/specs/00-vision.md` | `docs/specs/PROJECT_SPEC.md` |
-| `docs/specs/01-tech-stack.md` | `TECH_STACK.md` |
-| `docs/specs/02-design-system.md` | `docs/ux/UX_UI_DIRECTION.md` |
-| `docs/specs/03-content-model.md` | `docs/specs/ARCHITECTURE_SPEC.md` §9 |
-| `docs/specs/04-architecture.md` | `docs/specs/ARCHITECTURE_SPEC.md` |
-| `docs/specs/05-roadmap.md` | `docs/specs/USER_STORIES.md` (US-010..US-016) |
+Former spec file names (before CMP-014) are mapped in
+[ADR-006 → Implementation Impact](docs/decisions/ADR-006-adopt-sdd-starter-kit.md#implementation-impact);
+they are not active paths.
 
 ## Current sprint
 - Sprint: 01
 - Goal: approve the SDD baseline (CMP-014) and refine at least one backlog story to `Ready`
 - Start: 2026-10-19
 - End: 2026-10-27
+- Agent prompts: [docs/sprints/SPRINT_01_AGENT_PROMPTS.md](docs/sprints/SPRINT_01_AGENT_PROMPTS.md)
 - Deliverable: CMP-014 merged with approved specs (merged 2026-10-18; approvals recorded in
   CMP-015); one story `Ready` for Sprint 02
-- Status: Planned
+- Status: Active (agent sessions launched 2026-10-18 on the owner's go-ahead)
 
 ## Agent allocation
-- Implementation Agent 1: CMP-015 (Claude Code); CMP-014 done (PR #14 merged)
+- Implementation Agent 1: CMP-017 — Sprint 01 browser verification of US-001..US-009
+  (Claude Code session, Sonnet; prompts in
+  [SPRINT_01_AGENT_PROMPTS.md](docs/sprints/SPRINT_01_AGENT_PROMPTS.md))
 - Implementation Agent 2: unassigned
 - Implementation Agent 3: unassigned
-- Review-only Agent: GitHub Copilot code review
-- Coordinator: none yet — CMP-014 is merged; the owner starts one on `main` once CMP-015
-  merges, so it starts from the approved specs
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session))
+- Review-only Agent: dedicated Claude Code reviewer session (Opus); Copilot and Codex run as
+  automated reviewers on every PR
+- Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
+  itself and delegates any code to an implementation agent
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-016
+- Conflict resolution: the owner together with the agent that owns the conflicting file
+  ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
 ## Important constraints
 - Zero additional licensing cost — free tier first for any new tool (hosting and ad spend
