@@ -47,8 +47,10 @@ Review-only agent: GitHub Copilot code review, requested per
 You are working on Raulc87/cami-main-page. Sprint <NN> is ACTIVE (go-ahead given by the
 human owner).
 
-Before writing code, read in this order: AGENTS.md, CLAUDE.md, PROJECT_CONTEXT.md and every
-document it lists, then docs/sprints/SPRINT_<NN>_PLAN.md.
+Before writing code, read AGENTS.md, CLAUDE.md and PROJECT_CONTEXT.md, then only the documents
+AGENTS.md → "Before implementing" lists that apply to your ticket (its stories, its
+FEATURE_SPEC if any, the relevant ADRs and the specs your change touches) — not every document
+in the map — then docs/sprints/SPRINT_<NN>_PLAN.md.
 
 Rules:
 - AGENTS.md is authoritative. Do not invent requirements, copy, numbers or names. If an
