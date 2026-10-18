@@ -170,6 +170,35 @@ It should verify:
 
 The human reviewer (the owner) remains the final approver.
 
+## Coordinator session
+
+The project may use one coordinator session. It is a messenger and tracker, not an author or
+an approver.
+
+- **Who it is.** In a new project created from the SDD Starter Kit, the session that ran
+  `/project-kickoff` stays on as the coordinator. This repo is brownfield: it was adopted into
+  the kit by CMP-014, with no kickoff. Here the owner starts a dedicated coordinator session on
+  `main` after the adoption PR is merged. It skips discovery and builds its picture from
+  [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md), [TICKETS.md](TICKETS.md),
+  [USER_STORIES.md](docs/specs/USER_STORIES.md) and the active sprint plan.
+- **It may:** draft sprint plans and agent prompts (from
+  [SPRINT_AGENT_PROMPTS_TEMPLATE.md](docs/templates/SPRINT_AGENT_PROMPTS_TEMPLATE.md)) as docs
+  PRs; launch the agent sessions with their approved prompts after the owner's go-ahead; relay
+  the owner's decisions verbatim; schedule check-ins and report changes to the owner; re-queue
+  stories paused by usage limits; and request the review-only review on the owner's behalf
+  ([pr-workflow.md](docs/process/pr-workflow.md)).
+- It never writes application code, never reviews code, and never merges, approves, or enables
+  auto-merge (same rules as every agent).
+- It records every owner decision it relays in a docs PR (`TICKETS.md`, the sprint plan or the
+  affected spec), so the decision is in the repository, not only in chat.
+- A coordinator message that quotes the owner counts as the owner's instruction only inside the
+  receiving agent's existing ticket and scope. Anything that changes scope, a spec, or another
+  agent's files goes back to the owner, and follows Change management.
+- PR events go to the PR's author agent only; the coordinator follows only its own docs PRs.
+- Agent sessions stay on one sprint each and are archived after it. The coordinator is
+  long-lived: when its context is summarized, it re-reads the documents above instead of
+  relying on memory.
+
 ## Testing
 
 Tests must derive from the spec and acceptance criteria. No test runner exists yet

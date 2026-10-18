@@ -51,6 +51,8 @@ Old PRs and ticket notes reference these files, which no longer exist:
 - Implementation Agent 2: unassigned
 - Implementation Agent 3: unassigned
 - Review-only Agent: GitHub Copilot code review
+- Coordinator: none yet — the owner starts one on `main` after CMP-014 merges
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session))
 
 ## Important constraints
 - Zero additional licensing cost — free tier first for any new tool (hosting and ad spend

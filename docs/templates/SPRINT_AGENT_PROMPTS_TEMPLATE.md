@@ -1,0 +1,97 @@
+# SPRINT <NN> — Agent Kickoff Prompts
+
+Copy to `docs/sprints/SPRINT_<NN>_AGENT_PROMPTS.md` for each sprint that uses parallel agent
+sessions. Adapted from the SDD Starter Kit template for this repo.
+
+One Claude Code session per agent, each on `Raulc87/cami-main-page`. Start them only after the
+sprint plan is merged and the owner gives the go-ahead. The coordinator session
+([AGENTS.md](../../AGENTS.md#coordinator-session)) may launch them for the owner: one new
+session per agent, tagged `cmp-sprint-<nn>` and `cmp-agent-<n>`. Each agent session stays on
+this sprint only and is archived after it.
+
+## Models
+
+Per [model-cost-policy.md](../process/model-cost-policy.md).
+
+| Agent | Model | Why |
+|---|---|---|
+| Agent 1 — <workstream> | | |
+| Agent 2 — <workstream> | | |
+| Agent 3 — <workstream> | | |
+
+Review-only agent: GitHub Copilot code review, requested per
+[pr-workflow.md](../process/pr-workflow.md) (no session prompt needed).
+
+## Launch order
+
+1. <Foundation work first (shared files: `global.css`, `i18n.js`, `data.jsx`).>
+2. <Agents that depend on it, once it is merged.>
+
+## Coordination
+
+- The **coordinator** works within [AGENTS.md → Coordinator session](../../AGENTS.md#coordinator-session):
+  it relays the owner's decisions verbatim and records them in docs PRs. A coordinator message
+  quoting the owner counts as the owner's instruction only inside the receiving agent's existing
+  ticket and scope; anything that changes scope, a spec, or another agent's files goes back to
+  the owner.
+- **PR events:** each agent subscribes only to its own PRs. The coordinator subscribes only to
+  its own docs PRs.
+- **Usage limits:** an agent that hits a limit says which stories are paused; the coordinator
+  re-sends the queue when the limit resets.
+
+---
+
+## Common rules (paste at the top of every implementation prompt)
+
+```
+You are working on Raulc87/cami-main-page. Sprint <NN> is ACTIVE (go-ahead given by the
+human owner).
+
+Before writing code, read in this order: AGENTS.md, CLAUDE.md, PROJECT_CONTEXT.md and every
+document it lists, then docs/sprints/SPRINT_<NN>_PLAN.md.
+
+Rules:
+- AGENTS.md is authoritative. Do not invent requirements, copy, numbers or names. If an
+  ambiguity materially changes behavior, scope, data handling or architecture, stop and ask.
+- Visitor-facing text comes from the owner or the approved spec; placeholder content stays
+  marked as such (PROJECT_SPEC BR-002). Both languages (EN/ES) are updated together.
+- Edit only the files your ticket owns (ownership map in the sprint plan). `global.css`,
+  `i18n.js`, `data.jsx` and `TICKETS.md` are shared: change them only as the plan says.
+- One CMP-XXX ticket per branch (`CMP-XXX-short-slug`), one PR per branch, base main.
+  PR title "CMP-XXX: ...". Follow docs/process/pr-precheck.md and pr-workflow.md.
+- Run `npm run build` and the manual browser check of your acceptance criteria before every
+  push. Check `git status`; never commit temporary files or secrets.
+- Subscribe to your own PRs' events and fix review findings on them.
+- If you hit a usage limit, list the stories you have not started so the coordinator can
+  re-queue them. Never skip a story silently.
+- Never merge, approve, or enable auto-merge on any PR, and never push to main. Only the
+  human owner merges, after approving. When a PR is ready, say so and stop.
+- After opening each PR, report the link, what is done, and what is next.
+```
+
+---
+
+## Agent 1 — <workstream>
+
+```
+[Paste the Common rules block here]
+
+You are Implementation Agent 1: <workstream>. Tickets/stories: <list>.
+Order of work:
+1. <branch> — <story>: <what, which ACs, how to verify>.
+2. ...
+```
+
+## Agent 2 — <workstream>
+
+```
+[Paste the Common rules block here]
+...
+```
+
+## Agent 3 — <workstream>
+
+```
+[Paste the Common rules block here]
+...
+```
