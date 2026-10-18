@@ -1,93 +1,212 @@
-# AGENTS.md — Entry point para agentes e IAs
+# AGENTS.md
 
-Este archivo es el punto de entrada obligatorio para cualquier hilo de agente (o persona) que
-empiece a trabajar en este repo. Léelo primero. Después, lee el/los spec(s) relevantes en
-`docs/specs/` **antes** de tocar código — este proyecto usa Spec Driven Development: los specs
-son la fuente de verdad sobre decisiones ya tomadas, no el código en sí.
+Mandatory entry point for any agent (or person) working in this repo. Read it first, then use
+[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) as the map of the active documentation.
 
-## Qué es este proyecto
+## Purpose
 
-Sitio web de marca personal para **Cami Hernandez** (motivational speaker, lifestyle coach,
-spiritual coach). Hoy es un one-pager estático en React + Vite, sin backend. Va a evolucionar
-hacia captura de leads, catálogo de servicios y marketing dirigido — ver el roadmap.
-Detalle completo: [docs/specs/00-vision.md](docs/specs/00-vision.md).
+This repository follows Spec-Driven Development (SDD), homologated to the owner's SDD starter
+kit (see [ADR-006](docs/decisions/ADR-006-adopt-sdd-starter-kit.md)).
 
-## Specs — léelos antes de implementar
+The goal is not to write code as quickly as possible. The goal is to deliver software that
+conforms to approved specifications and acceptance criteria.
 
-| Spec | Cuándo consultarlo |
-|---|---|
-| [00-vision.md](docs/specs/00-vision.md) | Para qué existe el sitio, audiencia, qué contenido es placeholder |
-| [01-tech-stack.md](docs/specs/01-tech-stack.md) | Stack, scripts, deploy (GoDaddy shared hosting), qué NO hay todavía (backend, tests, CI) |
-| [02-design-system.md](docs/specs/02-design-system.md) | Paleta de colores, tipografía, patrones visuales, breakpoints |
-| [03-content-model.md](docs/specs/03-content-model.md) | En qué archivo va cada tipo de copy/contenido |
-| [04-architecture.md](docs/specs/04-architecture.md) | Estructura de carpetas, composición de `App.jsx`, patrón del hook `useReveal` |
-| [05-roadmap.md](docs/specs/05-roadmap.md) | Features futuras (catálogo, cuestionarios, integraciones, analytics, DB de leads, email marketing, ads) — **backlog, no implementado** |
+## What this project is
 
-Si tu tarea cambia algo que un spec describe (paleta, estructura de carpetas, modelo de
-contenido, stack), **actualiza el spec en la misma rama/PR** que el código. Un spec
-desactualizado es peor que no tener spec.
+Personal brand website for **Cami Hernandez** (motivational speaker, lifestyle coach,
+spiritual coach). Today it is a static bilingual one-pager in React + Vite with no backend,
+live at `camihernandez.com`. It will evolve toward lead capture, a service catalog and
+targeted marketing — see the backlog in [USER_STORIES.md](docs/specs/USER_STORIES.md). Full
+detail: [PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md).
 
-## Cómo trabajamos: tickets y ramas
+## Mandatory workflow
 
-No usamos un sistema externo (Jira/Linear) todavía — el acrónimo del proyecto es **CMP**.
+Requirement -> Discovery -> Specs -> User Stories -> Architecture/UX/Stack -> Plan -> Sprint -> Implementation -> Review -> Verification
 
-- Cada unidad de trabajo es un ticket `CMP-XXX` registrado en [TICKETS.md](TICKETS.md), que es
-  la fuente de verdad para la numeración secuencial.
-- Rama: `CMP-XXX-slug-corto` (ej. `CMP-001-sdd-foundation`).
-- Antes de empezar, revisa `TICKETS.md`, toma el siguiente número libre, y agrega la fila ahí
-  mismo al arrancar el trabajo.
-- Detalle completo del flujo: ver el encabezado de [TICKETS.md](TICKETS.md).
+Do not skip required stages. The project is classified **Simple** (see
+[TECH_STACK.md §1](TECH_STACK.md#1-complexity-assessment)); re-assess when a backlog story
+introduces a backend.
 
-## Cómo abrimos un PR
+## Source-of-truth priority
 
-Antes de abrir cualquier PR, seguir sin saltarse pasos:
+When sources conflict, use this order:
 
-0. [docs/process/model-cost-policy.md](docs/process/model-cost-policy.md) — qué modelo usar para
-   cada tipo de trabajo (y cómo debe declararlo un plan).
-1. [docs/process/pr-precheck.md](docs/process/pr-precheck.md) — checklist de auto-revisión
-   (specs actualizados, build limpio, `/code-review` corrido).
-2. [docs/process/pr-workflow.md](docs/process/pr-workflow.md) — cómo crear el PR con `gh`
-   (título con el ID del ticket, body con las 4 secciones obligatorias), cómo se pide revisión
-   de Copilot, y el criterio de merge (0 comentarios de línea sin resolver, ≤ 3 suprimidos).
+1. Approved specification
+2. Approved ADR
+3. Approved implementation plan
+4. Sprint plan
+5. User story and acceptance criteria
+6. Existing code
+7. Informal comments or assumptions
 
-## Reglas rápidas para cualquier agente
+If code conflicts with an approved spec, the spec wins unless the spec is explicitly changed.
 
-- **No introduzcas librerías/frameworks nuevos** (router, state management, CSS framework,
-  TypeScript, etc.) sin dejarlo explícito en el spec correspondiente — hoy el stack es
-  intencionalmente mínimo (ver [01-tech-stack.md](docs/specs/01-tech-stack.md)).
-- **El contenido en forma de lista (servicios, pasos, valores, testimonios, stats) va en
-  `src/constants/data.jsx`**, los colores en `src/constants/colors.js`. El copy de UI
-  traducible (headlines, kickers, CTA, badges, nav) vive centralizado en `UI_TEXT`
-  (`src/constants/i18n.js`) — cambia con el toggle de idioma global. Solo texto que no se
-  traduce (wordmark, email de contacto, brand words/URL del footer, acentos de marca en
-  español fijos) sigue hardcodeado inline por componente — ver el detalle exacto y qué archivo
-  tocar en [03-content-model.md](docs/specs/03-content-model.md). No hardcodear colores nuevos
-  fuera de la paleta (ver [02-design-system.md](docs/specs/02-design-system.md)).
-- **Mucho del contenido actual es placeholder** (testimonios ficticios, foto de Cami, fotos de
-  galería) — no lo trates como dato real al construir sobre él.
-- **El roadmap ([05-roadmap.md](docs/specs/05-roadmap.md)) no está construido** — es contexto
-  de dirección, no una lista de tareas listas para implementar directo. Cada ítem necesita su
-  propio ticket y, si aplica, su propio spec antes de codear.
-- **Elige el modelo según la tarea, no por default.** `.claude/settings.json` fija Sonnet como
-  default del proyecto (el caballo de batalla: implementar, debuggear, revisar). Planificación/
-  arquitectura → Opus; edits acotados y copy → Haiku; chequeos mecánicos (build, `git status`)
-  y exploración de solo lectura → los subagentes en `.claude/agents/` (`mechanical-check` y
-  `repo-explorer` respectivamente). `repo-explorer` no tiene tools de escritura — no editar es
-  una garantía técnica. `mechanical-check` sí tiene `Bash` (lo necesita para correr el build) —
-  ahí "no editar" es una instrucción de su prompt, no algo que el tool le impida hacer. **Si
-  estás planificando un ticket, el plan debe decir con qué modelo se ejecuta cada paso** y
-  recomendarle al usuario el cambio
-  (`/model ...`) cuando convenga — un agente no puede cambiar el modelo de su propia sesión,
-  pero sí delegar pasos mecánicos a subagentes más baratos. El criterio completo y las prácticas
-  de higiene de contexto están en
-  [docs/process/model-cost-policy.md](docs/process/model-cost-policy.md) — léelo al arrancar un
-  ticket, no hace falta en cada mensaje.
-- **Prioriza costo cero / free tier** al elegir herramientas para features nuevas (analytics,
-  email marketing, DB) — es un proyecto personal sin presupuesto de licencias.
-- Desarrollo local: `npm run dev` (puerto 5173). Build: `npm run build` → `dist/` (deploy
-  manual a GoDaddy `public_html/`, ver [01-tech-stack.md](docs/specs/01-tech-stack.md)).
+## Before implementing
 
-## Sobre este propio AGENTS.md
+Read:
 
-Si algo aquí queda desactualizado (nueva convención de tickets, specs nuevos agregados,
-reglas que ya no aplican), corrígelo como parte del ticket que lo hizo obsoleto.
+- [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)
+- [PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md)
+- the relevant FEATURE_SPEC (when one exists)
+- [USER_STORIES.md](docs/specs/USER_STORIES.md)
+- [TECH_STACK.md](TECH_STACK.md)
+- relevant ADRs in [docs/decisions/](docs/decisions/)
+- [IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md) (or the story's own plan)
+- the active sprint plan in [docs/sprints/](docs/sprints/)
+- the specs your change touches: [ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC.md),
+  [UX_UI_DIRECTION.md](docs/ux/UX_UI_DIRECTION.md)
+
+Do not invent business requirements.
+
+If ambiguity materially changes behavior, scope, security, cost, data handling, or
+architecture, stop and request clarification.
+
+Small implementation details may be decided autonomously when they do not alter the approved
+behavior.
+
+## Project rules
+
+- **No new libraries/frameworks** (router, state management, CSS framework, TypeScript, test
+  runner, etc.) without updating [TECH_STACK.md](TECH_STACK.md) and recording an ADR — the
+  stack is intentionally minimal ([ADR-001](docs/decisions/ADR-001-minimal-static-react-stack.md)).
+- **List content (services, steps, values, testimonials, stats) goes in
+  `src/constants/data.jsx`**, colors in `src/constants/colors.js`. Translatable UI copy
+  (headlines, kickers, CTA, badges, nav) lives in `UI_TEXT` (`src/constants/i18n.js`) and
+  changes with the global language toggle. Only non-translatable text (wordmark, contact
+  email, footer brand words/URL, fixed Spanish brand accents) stays hardcoded inline per
+  component — exact detail in
+  [ARCHITECTURE_SPEC.md §9](docs/specs/ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model).
+  Do not hardcode colors outside the palette ([UX_UI_DIRECTION.md](docs/ux/UX_UI_DIRECTION.md)).
+- **Placeholder content must never be treated as real data** (PROJECT_SPEC BR-002).
+- **Backlog stories (`Proposed`) are not built** — they are direction, not tasks ready to
+  implement. Each needs refinement to `Ready`, a ticket and, if it changes architecture, a
+  FEATURE_SPEC (from [docs/templates/](docs/templates/)) before coding.
+- **Zero cost / free tier first** for any new tool (analytics, email marketing, DB).
+- Local development: `npm run dev` (port 5173). Build: `npm run build` → `dist/` (manual
+  deploy to GoDaddy `public_html/`, see [release-checklist.md](docs/process/release-checklist.md)).
+
+## Tickets and branches
+
+No external tracker yet ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md)) — the project
+acronym is **CMP**.
+
+- Every unit of work is a `CMP-XXX` ticket in [TICKETS.md](TICKETS.md) (source of truth for
+  sequential numbering). A ticket implements one or more user stories, or is process /
+  tech-debt work.
+- Branch: `CMP-XXX-short-slug` (e.g. `CMP-001-sdd-foundation`).
+- Before starting, check `TICKETS.md`, take the next free number, and add the row in the
+  first commit of the branch. Detail in the header of [TICKETS.md](TICKETS.md).
+
+## Model choice
+
+Pick the model by task, not by default. `.claude/settings.json` sets Sonnet as the project
+default (implementing, debugging, reviewing). Planning/architecture → Opus; scoped edits and
+copy → Haiku; mechanical checks (build, `git status`, link checks) and read-only exploration
+→ the subagents in `.claude/agents/` (`mechanical-check` and `repo-explorer`). `repo-explorer`
+has no write tools — not editing is a technical guarantee. `mechanical-check` does have `Bash`
+(it needs it for the build) — there "do not edit" is a prompt instruction, not something the
+tool prevents. **A plan must state which model runs each step** and recommend `/model ...`
+switches to the user when useful — an agent cannot change its own session's model, but it can
+delegate mechanical steps to cheaper subagents. Full criteria and context-hygiene practices:
+[model-cost-policy.md](docs/process/model-cost-policy.md) — read it when starting a ticket.
+
+## Scrum
+
+- Sprints of **7 business days** (Saturdays and Sundays excluded), planned in
+  [docs/sprints/](docs/sprints/) from
+  [SPRINT_PLAN_TEMPLATE.md](docs/templates/SPRINT_PLAN_TEMPLATE.md).
+- Every sprint must end with a demonstrable deliverable.
+- Agents start implementation only after the sprint plan is approved by the owner.
+
+## Parallel agent rules
+
+- Maximum recommended implementation agents in parallel: 3.
+- Agents must not knowingly modify the same responsibility without an explicit integration
+  plan. In this repo `global.css`, `i18n.js`, `data.jsx` and `TICKETS.md` are shared files.
+- Shared interfaces/contracts must be defined before parallel implementation.
+- Each agent owns only its assigned scope.
+- Integration must be verified after merging parallel work.
+- A change is not complete merely because its own tests pass; it must not break already
+  accepted functionality.
+
+## Pull requests
+
+Each implementation agent should:
+
+1. Work on an isolated branch.
+2. Reference the related user stories and acceptance criteria.
+3. Keep the PR focused.
+4. Include verification evidence.
+5. Call out risks, assumptions, and unresolved items.
+6. Avoid unrelated refactors.
+
+Before opening any PR, follow without skipping steps:
+
+0. [model-cost-policy.md](docs/process/model-cost-policy.md) — which model for which work.
+1. [pr-precheck.md](docs/process/pr-precheck.md) — self-review checklist (specs updated,
+   clean build, `/code-review` run).
+2. [pr-workflow.md](docs/process/pr-workflow.md) — creating the PR with `gh` (title with the
+   ticket ID, mandatory body sections), requesting Copilot review, and the merge criteria
+   (0 unresolved line comments, ≤ 3 dismissed).
+
+## Review-only agent
+
+GitHub Copilot code review acts as the review-only agent (plus `/code-review` before opening
+a PR). It may inspect PRs but must not implement features.
+
+It should verify:
+
+- spec compliance
+- acceptance criteria
+- code quality
+- regressions
+- security concerns
+- stack compliance
+- tests
+- integration risks
+
+The human reviewer (the owner) remains the final approver.
+
+## Testing
+
+Tests must derive from the spec and acceptance criteria. No test runner exists yet
+([TECH_STACK.md §8](TECH_STACK.md#8-testing)) — verify manually in the dev server and record
+the evidence in the PR.
+
+At minimum, verify:
+
+- happy path
+- validation/error path
+- critical integration behavior
+- regression risk for touched areas (including the 640px mobile breakpoint and both
+  languages)
+
+## Definition of Done
+
+Work is done only when:
+
+- implementation matches approved specs
+- acceptance criteria pass
+- tests pass (today: `npm run build` + manual verification)
+- integration remains healthy
+- documentation is updated if needed
+- review-only agent has completed review when configured
+- final human reviewer approves
+
+## Change management
+
+If implementation reveals a requirement change:
+
+1. Update the spec first.
+2. Update user stories/acceptance criteria if required.
+3. Update plan/sprint scope if required.
+4. Then update code.
+
+Never silently change product behavior in code. If your change alters something a spec
+describes (palette, folder structure, content model, stack), **update the spec in the same
+branch/PR** as the code. An outdated spec is worse than no spec.
+
+## About this AGENTS.md
+
+If something here becomes outdated (new ticket convention, new specs, rules that no longer
+apply), fix it as part of the ticket that made it obsolete.

@@ -1,161 +1,161 @@
-# Política de modelos y ahorro de tokens
+# Model and token-saving policy
 
-Este documento define **con qué modelo se corre cada tipo de trabajo en este repo** y qué
-prácticas seguir para que el desarrollo asistido no cueste más de lo que vale. Aplica a agentes
-y a humanos que dirigen agentes.
+This document defines **which model runs each type of work in this repo** and which practices to
+follow so AI-assisted development doesn't cost more than it's worth. It applies to agents and to
+humans who direct agents.
 
-Es el equivalente, para el costo del desarrollo, de la regla que [AGENTS.md](../../AGENTS.md) ya
-tiene para el producto ("prioriza costo cero / free tier"): este es un proyecto personal sin
-presupuesto, y mandar todo al modelo más caro es el desperdicio más grande y más fácil de evitar.
+It is the development-cost counterpart of the rule [AGENTS.md](../../AGENTS.md) already has for
+the product ("prioritize zero cost / free tier"): this is a personal project with no budget, and
+sending everything to the most expensive model is the biggest and easiest waste to avoid.
 
-**El criterio no es la dificultad percibida de la tarea, sino el costo de equivocarse.** Un
-cambio de una línea en un spec que otros hilos van a tratar como fuente de verdad merece más
-modelo que un refactor de 200 líneas en un componente aislado.
+**The criterion is not the perceived difficulty of the task, but the cost of being wrong.** A
+one-line change in a spec that other threads will treat as the source of truth deserves more model
+than a 200-line refactor in an isolated component.
 
-## 1. Los tres modelos
+## 1. The three models
 
-| Modelo | ID | Input $/MTok | Output $/MTok | Para qué |
+| Model | ID | Input $/MTok | Output $/MTok | Use for |
 |---|---|---|---|---|
-| Claude Opus | `claude-opus-5` | $5.00 | $25.00 | Razonamiento profundo antes de actuar: planificar, diseñar, decidir |
-| Claude Sonnet | `claude-sonnet-5` | $3.00 | $15.00 | El caballo de batalla: implementar, debuggear, revisar |
-| Claude Haiku | `claude-haiku-4-5` | $1.00 | $5.00 | Lo rápido y acotado: edits puntuales, lectura, chequeos mecánicos |
+| Claude Opus | `claude-opus-5` | $5.00 | $25.00 | Deep reasoning before acting: planning, designing, deciding |
+| Claude Sonnet | `claude-sonnet-5` | $3.00 | $15.00 | The workhorse: implementing, debugging, reviewing |
+| Claude Haiku | `claude-haiku-4-5` | $1.00 | $5.00 | Fast and narrow: targeted edits, reading, mechanical checks |
 
-**Precios verificados: 2026-08-21.** Son **referencia, no contrato** — el catálogo y los precios
-cambian. Si esta tabla tiene más de unos meses, verifícala antes de apoyar una decisión en las
-cifras exactas; la relación entre modelos (Haiku ≈ 5x más barato que Opus, Sonnet ≈ 1.7x más
-barato que Opus) es más estable que los números absolutos.
+**Prices verified: 2026-08-21.** They are a **reference, not a contract** — the catalog and
+prices change. If this table is more than a few months old, verify it before basing a decision on
+the exact figures; the relationship between models (Haiku ≈ 5x cheaper than Opus, Sonnet ≈ 1.7x
+cheaper than Opus) is more stable than the absolute numbers.
 
-Ojo con esa relación: la brecha real entre Opus y Sonnet es **menor** de lo que suele asumirse.
-Por eso el criterio para escalar a Opus se apoya en el riesgo del error, no en la idea de que
-Sonnet sea "varias veces" más barato.
+Mind that relationship: the real gap between Opus and Sonnet is **smaller** than is usually
+assumed. That's why the criterion for escalating to Opus rests on the risk of the error, not on the
+idea that Sonnet is "several times" cheaper.
 
-## 2. Tarea → modelo, en este repo
+## 2. Task → model, in this repo
 
-| Tarea | Modelo | Por qué |
+| Task | Model | Why |
 |---|---|---|
-| Planificar un ticket nuevo, sobre todo si toca un spec | Opus | Decidir qué spec cambia y cómo es una decisión cara de revertir |
-| Diseñar algo del [roadmap](../specs/05-roadmap.md) (backend, leads, integraciones) | Opus | No hay spec todavía: se está creando la fuente de verdad |
-| Refactor que cruza `src/components/`, `src/constants/` y specs | Opus | Muchas interdependencias, más specs que sincronizar |
-| Implementar una feature ya especificada | Sonnet | El spec ya resolvió las decisiones difíciles |
-| Debug de comportamiento en el browser | Sonnet | Necesita contexto, no planificación |
-| Agregar copy a `UI_TEXT` (`src/constants/i18n.js`) o a `src/constants/data.jsx` | Haiku | Archivo conocido, patrón establecido — ver [03-content-model.md](../specs/03-content-model.md) |
-| Ajustes de estilo dentro de la paleta de `src/constants/colors.js` | Haiku | Bien definido por [02-design-system.md](../specs/02-design-system.md) |
-| Preguntas de exploración ("¿dónde vive X?", "¿qué componente usa Y?") | Haiku | Lectura, no escritura |
-| Correr el build, revisar `git status`, verificar links | Haiku | Chequeo mecánico |
-| `/code-review` antes del PR | Depende | Ver §5 |
+| Plan a new ticket, especially if it touches a spec | Opus | Deciding which spec changes and how is expensive to reverse |
+| Design something from the backlog ([user stories](../specs/USER_STORIES.md) US-010..US-016: backend, leads, integrations) | Opus | There is no feature spec yet: the source of truth is being created |
+| Refactor that crosses `src/components/`, `src/constants/` and specs | Opus | Many interdependencies, more specs to keep in sync |
+| Implement an already-specified feature | Sonnet | The spec already settled the hard decisions |
+| Debug browser behavior | Sonnet | Needs context, not planning |
+| Add copy to `UI_TEXT` (`src/constants/i18n.js`) or to `src/constants/data.jsx` | Haiku | Known file, established pattern — see the [content model](../specs/ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model) |
+| Style tweaks within the `src/constants/colors.js` palette | Haiku | Well defined by [UX_UI_DIRECTION.md](../ux/UX_UI_DIRECTION.md) |
+| Exploration questions ("where does X live?", "which component uses Y?") | Haiku | Reading, not writing |
+| Run the build, check `git status`, verify links | Haiku | Mechanical check |
+| `/code-review` before the PR | Depends | See §5 |
 
-## 3. Si estás planificando un ticket
+## 3. If you are planning a ticket
 
-Todo agente que planifique un ticket **debe pronunciarse sobre el modelo**. No dejarlo implícito.
+Every agent that plans a ticket **must state a position on the model**. Don't leave it implicit.
 
-1. **Declara el modelo de la planificación misma**, en la primera línea del plan:
-   `Modelo de planificación: Opus — se está decidiendo qué specs cambian.` Si el ticket es
-   trivial, decirlo también: `Modelo de planificación: Haiku — un archivo, patrón conocido.`
+1. **Declare the model for the planning itself**, on the first line of the plan:
+   `Planning model: Opus — deciding which specs change.` If the ticket is trivial, say so too:
+   `Planning model: Haiku — one file, known pattern.`
 
-2. **Anota el modelo por paso.** Un ticket casi nunca es homogéneo. El plan lleva una columna
-   `Modelo` en la lista de pasos:
+2. **Annotate the model per step.** A ticket is almost never homogeneous. The plan carries a
+   `Model` column in the step list:
 
-   | # | Paso | Modelo | Por qué |
+   | # | Step | Model | Why |
    |---|---|---|---|
-   | 1 | Registrar `CMP-XXX` en [TICKETS.md](../../TICKETS.md) | Haiku | Una fila en una tabla, formato conocido |
-   | 2 | Escribir el spec nuevo | Opus | Está definiendo criterio que otros van a seguir |
-   | 3 | Enganchar los links en `AGENTS.md` | Sonnet | Edits chicos en el entry point que todos leen |
-   | 4 | Verificar links y correr el precheck | Haiku | Chequeo mecánico |
+   | 1 | Register `CMP-XXX` in [TICKETS.md](../../TICKETS.md) | Haiku | One table row, known format |
+   | 2 | Write the new spec | Opus | Defining criteria that others will follow |
+   | 3 | Hook the links into `AGENTS.md` | Sonnet | Small edits in the entry point everyone reads |
+   | 4 | Verify links and run the precheck | Haiku | Mechanical check |
 
-3. **Ordena los pasos para que un solo cambio de modelo alcance:** lo caro al principio, lo
-   barato después. Un plan que alterna Opus → Haiku → Opus → Haiku está mal ordenado.
+3. **Order the steps so a single model switch is enough:** expensive first, cheap after. A plan
+   that alternates Opus → Haiku → Opus → Haiku is badly ordered.
 
-4. **Cierra el plan con un veredicto explícito, y dilo en prosa al usuario**, no solo dentro del
-   archivo del plan:
-   - Si un solo modelo alcanza: *"Recomendación: corre todo el ticket en Sonnet."*
-   - Si es heterogéneo: *"Planifiqué en Opus. Para ejecutar, cambia a Sonnet con `/model sonnet`;
-     los pasos 1 y 4 los delego a subagentes en Haiku."*
+4. **Close the plan with an explicit verdict, and say it in prose to the user**, not only inside
+   the plan file:
+   - If one model is enough: *"Recommendation: run the whole ticket on Sonnet."*
+   - If it's heterogeneous: *"I planned on Opus. To execute, switch to Sonnet with `/model sonnet`;
+     I'm delegating steps 1 and 4 to Haiku subagents."*
 
-### Qué puede y qué no puede hacer el agente
+### What the agent can and cannot do
 
-- **No puede cambiar el modelo de su propia sesión.** `/model` es una acción del usuario. Un
-  agente que anuncia "cambio a Sonnet" y sigue corriendo en Opus está informando mal — tiene que
-  **pedir** el cambio, no simularlo.
-- **Sí puede delegar a un modelo más barato** lanzando subagentes con override de modelo. Ahí el
-  ahorro es real y automático, sin que el usuario toque nada. Regla práctica: si un paso es
-  mecánico y bien definido (buscar dónde vive algo, leer y resumir, aplicar un patrón ya conocido
-  en varios archivos), va a un subagente en Haiku o Sonnet en vez de gastarse en el modelo caro
-  de la sesión principal.
-- **Sí puede reordenar el trabajo** para agrupar lo caro y minimizar los cambios de modelo.
+- **It cannot change its own session's model.** `/model` is a user action. An agent that announces
+  "switching to Sonnet" and keeps running on Opus is misreporting — it has to **request** the
+  switch, not simulate it.
+- **It can delegate to a cheaper model** by launching subagents with a model override. There the
+  savings are real and automatic, with no user action. Rule of thumb: if a step is mechanical and
+  well defined (finding where something lives, reading and summarizing, applying a known pattern
+  across several files), it goes to a Haiku or Sonnet subagent instead of being spent on the
+  expensive model of the main session.
+- **It can reorder the work** to group the expensive parts and minimize model switches.
 
-## 4. Higiene de contexto — donde está el ahorro grande
+## 4. Context hygiene — where the big savings are
 
-Elegir bien el modelo ayuda, pero **el contexto inflado cuesta más**: cada turno reenvía todo el
-historial, así que un contexto sucio se paga en cada mensaje, no una sola vez.
+Choosing the right model helps, but **bloated context costs more**: every turn resends the entire
+history, so dirty context is paid for on every message, not once.
 
-- **Una sesión por ticket.** No arrastrar el contexto de un ticket dentro del siguiente.
-- **Lee el spec que aplica, no los seis.** La tabla de [AGENTS.md](../../AGENTS.md) existe
-  justamente para usarla como índice en vez de leer `docs/specs/` completo.
-- **Planifica en Opus, ejecuta en Sonnet.** El razonamiento caro se paga una vez, no en cada edit.
-- **Usa subagentes para búsquedas amplias.** Un subagente devuelve la conclusión sin volcar cada
-  archivo que leyó en el contexto principal.
-- **Lee rangos, no archivos enteros**, cuando ya sabes qué parte importa.
-- **Sesión nueva (o compactar) cuando el trabajo pasa a otra fase.** El contexto de la fase
-  anterior ya no aporta y se sigue pagando.
-- **No le pidas a un modelo caro que corra el build o lea `git status`.** Eso es trabajo de Haiku.
+- **One session per ticket.** Don't carry one ticket's context into the next.
+- **Read the spec that applies, not all of them.** The table in [AGENTS.md](../../AGENTS.md)
+  exists precisely to be used as an index instead of reading all of `docs/specs/`.
+- **Plan on Opus, execute on Sonnet.** The expensive reasoning is paid once, not on every edit.
+- **Use subagents for broad searches.** A subagent returns the conclusion without dumping every
+  file it read into the main context.
+- **Read ranges, not whole files**, when you already know which part matters.
+- **New session (or compact) when the work moves to another phase.** The previous phase's context
+  no longer contributes and keeps being paid for.
+- **Don't ask an expensive model to run the build or read `git status`.** That's Haiku's job.
 
-## 5. Ganchos con el flujo de PR
+## 5. Hooks into the PR workflow
 
-- **Copilot antes que un modelo caro.** La review automática de Copilot ya está en el flujo
-  ([pr-workflow.md](pr-workflow.md) §3) y no consume tokens del proyecto. No corras una segunda
-  pasada en Opus "por si acaso" si Copilot ya cubrió el diff.
-- **Nivel y modelo de `/code-review`** según el riesgo del cambio — se suma a lo que
-  [pr-precheck.md](pr-precheck.md) §5 ya dice sobre `medium` vs `high`:
+- **Copilot before an expensive model.** Copilot's automatic review is already in the workflow
+  ([pr-workflow.md](pr-workflow.md) §3) and doesn't consume project tokens. Don't run a second
+  pass on Opus "just in case" if Copilot already covered the diff.
+- **`/code-review` level and model** according to the risk of the change — this adds to what
+  [pr-precheck.md](pr-precheck.md) §5 already says about `medium` vs `high`:
 
-  | Tipo de cambio | Modelo | Nivel |
+  | Type of change | Model | Level |
   |---|---|---|
-  | Solo documentación o copy | Haiku, o dejarlo directamente a Copilot | `low` |
-  | UI/componentes acotado | Sonnet | `medium` (el default) |
-  | Formularios, datos de leads, integraciones externas | Opus | `high` |
+  | Documentation or copy only | Haiku, or leave it directly to Copilot | `low` |
+  | Narrow UI/components | Sonnet | `medium` (the default) |
+  | Forms, lead data, external integrations | Opus | `high` |
 
-- **Responder comentarios de Copilot** es trabajo de Sonnet — o de Haiku si el comentario es de
-  formato o naming. Escala a Opus solo si el comentario cuestiona una decisión de diseño.
+- **Answering Copilot comments** is Sonnet work — or Haiku if the comment is about formatting or
+  naming. Escalate to Opus only if the comment questions a design decision.
 
-## 6. Cuándo escalar a mitad de tarea
+## 6. When to escalate mid-task
 
-Escalar es más barato que arreglar el desastre de un modelo que se quedó corto. Señales claras
-de que hay que subir de tier:
+Escalating is cheaper than cleaning up the mess of a model that fell short. Clear signs it's time
+to go up a tier:
 
-- Dos intentos fallidos seguidos con el mismo enfoque.
-- Aparecen dependencias entre archivos que el plan no anticipó.
-- Hay que modificar un spec que no estaba en el alcance del ticket.
+- Two failed attempts in a row with the same approach.
+- Dependencies between files appear that the plan didn't anticipate.
+- A spec outside the ticket's scope has to be modified.
 
-Cuando pase, dilo explícitamente y pide el cambio de modelo — no sigas empujando en silencio.
+When that happens, say so explicitly and request the model switch — don't keep pushing silently.
 
-## 7. Cuándo esta política no aplica
+## 7. When this policy doesn't apply
 
-Si el usuario pide explícitamente un modelo, **gana el usuario**. Este documento es el default
-razonable, no una restricción.
+If the user explicitly asks for a model, **the user wins**. This document is the reasonable
+default, not a restriction.
 
-## 8. Config versionada: `.claude/settings.json`
+## 8. Versioned config (`.claude/settings.json`)
 
-Este repo versiona `.claude/settings.json` con `"model": "sonnet"` como default del proyecto —
-no Opus. Es la aplicación literal de §1-§2: la mayoría del trabajo real (implementar, debuggear,
-revisar) es tarea de Sonnet, y un default caro se paga en cada sesión que arranca sin que nadie
-lo decida a propósito.
+This repo versions `.claude/settings.json` with `"model": "sonnet"` as the project default — not
+Opus. It's the literal application of §1-§2: most real work (implementing, debugging, reviewing)
+is Sonnet's job, and an expensive default is paid for in every session that starts without anyone
+deciding it on purpose.
 
-- **Cuándo pedir el cambio a Opus:** al planificar un ticket que toca specs, o al diseñar algo
-  del roadmap sin spec todavía — ver §2. El agente no puede cambiar su propia sesión; tiene que
-  pedirlo (`/model opus`) como dice §3.
-- **Override personal:** si querés arrancar siempre en otro modelo, usá
-  `.claude/settings.local.json` (ignorado explícitamente en `.gitignore`) en vez de tocar
-  el `settings.json` versionado — la precedencia es `user < project < local`.
-- **Subagentes baratos ya definidos** en `.claude/agents/`, para que la delegación de §3 sea un
-  mecanismo real y no solo una intención:
-  - `mechanical-check` (Haiku): corre `npm run build` ([pr-precheck.md](pr-precheck.md) §3,
-    ítem 1) y muestra `git status --short` ([pr-precheck.md](pr-precheck.md) §1, ítem 3) — dos
-    de los ítems del checklist. También verifica que los links markdown entre specs/docs no
-    estén rotos, un chequeo adicional que **no** forma parte de ese checklist. El resto de
-    [pr-precheck.md](pr-precheck.md) §1 (alcance de un solo ticket, archivos de scratch, si se
-    siguió la recomendación de modelo por paso) y §3 (prueba en browser, console warnings,
-    dependencias nuevas) necesita juicio y sigue siendo responsabilidad de quien ejecuta el
-    ticket, no de este subagente.
-  - `repo-explorer` (Haiku): preguntas de "¿dónde vive X?" — lectura, no escritura.
+- **When to ask for the switch to Opus:** when planning a ticket that touches specs, or when
+  designing something from the backlog that has no spec yet — see §2. The agent can't change its
+  own session; it has to ask for it (`/model opus`) as §3 says.
+- **Personal override:** if you want to always start on a different model, use
+  `.claude/settings.local.json` (explicitly ignored in `.gitignore`) instead of touching the
+  versioned `settings.json` — precedence is `user < project < local`.
+- **Cheap subagents already defined** in `.claude/agents/`, so the delegation in §3 is a real
+  mechanism and not just an intention:
+  - `mechanical-check` (Haiku): runs `npm run build` ([pr-precheck.md](pr-precheck.md) §3,
+    item 1) and shows `git status --short` ([pr-precheck.md](pr-precheck.md) §1, item 3) — two of
+    the checklist items. It also verifies that markdown links between specs/docs aren't broken, an
+    extra check that is **not** part of that checklist. The rest of
+    [pr-precheck.md](pr-precheck.md) §1 (single-ticket scope, scratch files, whether the
+    per-step model recommendation was followed) and §3 (browser test, console warnings, new
+    dependencies) needs judgment and remains the responsibility of whoever executes the ticket,
+    not of this subagent.
+  - `repo-explorer` (Haiku): "where does X live?" questions — reading, not writing.
 
-  Lanzarlos no requiere que el usuario cambie nada; el ahorro es automático en cuanto un paso del
-  plan es mecánico o de solo lectura.
+  Launching them doesn't require the user to change anything; the savings are automatic as soon as
+  a plan step is mechanical or read-only.

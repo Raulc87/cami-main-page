@@ -5,7 +5,7 @@
 // never translated, see the note below.
 // List content (services, steps, testimonials, stats) keeps its own `*Es`
 // fields in src/constants/data.jsx instead of living here — see
-// docs/specs/03-content-model.md.
+// docs/specs/ARCHITECTURE_SPEC.md (§9).
 //
 // Intentionally NOT here: the fixed Spanish "brand accent" strings (Hero
 // taglines, Footer WORDS, the VALUES es/en pairs) — those are permanent
