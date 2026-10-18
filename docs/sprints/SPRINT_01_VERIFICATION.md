@@ -16,7 +16,7 @@ story status; the coordinator does that after the owner approves this evidence.
   `getComputedStyle`, `document.documentElement.lang`, `localStorage`) and the screenshot shows the section.
   Scroll-reveal animations were waited out before each screenshot.
 - No console errors or warnings in any run (1280, 900, 375).
-- Screenshots: JPEG, viewport, quality 62, in [`evidence/sprint-01/`](evidence/sprint-01/) (total ≈ 4.4 MB).
+- Screenshots: JPEG, viewport, quality 62, in [`evidence/sprint-01/`](evidence/sprint-01/) (total ≈ 4.5 MB).
   Names: `<story>-<ac>-<width>-<lang>.jpg`. A suffix `b` (e.g. `AC2b`) is a second state of the same AC.
 - Result `Not applicable` = the AC itself restricts the viewport (US-008) or is checked at 1280px only
   (US-002 AC2 hover, per ticket instructions).
@@ -213,6 +213,8 @@ Classification and the proposed fix ticket are in the PR → Risks. Detail: the 
 | AC1 | 900px | ES | Not applicable | AC applies to viewports ≤ 640px; this run is 900px | — |
 | AC1 | 375px | EN | Pass | hero flex-direction column, services 1 col, steps column, testimonials 1 col; hero photo 320x300, gallery 163x140 163x140 163x140 163x140 163x140, testimonial photos 46x46 36x36 36x36 36x36; horizontal overflow 0px | [US-008-AC1-375-en.jpg](evidence/sprint-01/US-008-AC1-375-en.jpg), [US-008-AC1b-375-en.jpg](evidence/sprint-01/US-008-AC1b-375-en.jpg) |
 | AC1 | 375px | ES | Pass | hero flex-direction column, services 1 col, steps column, testimonials 1 col; hero photo 320x300, gallery 163x140 163x140 163x140 163x140 163x140, testimonial photos 46x46 36x36 36x36 36x36; horizontal overflow 0px | [US-008-AC1-375-es.jpg](evidence/sprint-01/US-008-AC1-375-es.jpg), [US-008-AC1b-375-es.jpg](evidence/sprint-01/US-008-AC1b-375-es.jpg) |
+| AC1 (extra) | 640px | EN | Pass | Breakpoint boundary (media query is `max-width: 640px`): hero flex-direction column, services 1 col, steps column, testimonials 1 col; hero photo 320x300, gallery 295x140 295x140 295x140 295x140 295x140, testimonial photos 46x46 36x36 36x36 36x36; all images loaded; horizontal overflow 0px | [US-008-AC1-640-en.jpg](evidence/sprint-01/US-008-AC1-640-en.jpg), [US-008-AC1b-640-en.jpg](evidence/sprint-01/US-008-AC1b-640-en.jpg) |
+| AC1 (extra) | 640px | ES | Pass | Breakpoint boundary (media query is `max-width: 640px`): hero flex-direction column, services 1 col, steps column, testimonials 1 col; hero photo 320x300, gallery 295x140 295x140 295x140 295x140 295x140, testimonial photos 46x46 36x36 36x36 36x36; all images loaded; horizontal overflow 0px | [US-008-AC1-640-es.jpg](evidence/sprint-01/US-008-AC1-640-es.jpg), [US-008-AC1b-640-es.jpg](evidence/sprint-01/US-008-AC1b-640-es.jpg) |
 | AC2 | 1280px | EN | Not applicable | AC applies to 641–900px viewports; this run is 1280px | — |
 | AC2 | 1280px | ES | Not applicable | AC applies to 641–900px viewports; this run is 1280px | — |
 | AC2 | 900px | EN | Pass | services grid has 2 columns at 900px | [US-008-AC2-900-en.jpg](evidence/sprint-01/US-008-AC2-900-en.jpg) |
