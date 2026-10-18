@@ -1,6 +1,6 @@
 # ADR-007 — Branching and release model
 
-- Status: Proposed (CMP-016; accepted when the owner approves PR #16)
+- Status: Accepted (owner approved and merged PR #16, 2026-10-18; status recorded in CMP-018)
 - Date: 2026-10-18
 - Decision owner: Raul Casanas
 - Related specs: [AGENTS.md](../../AGENTS.md) (tickets and branches, merging),

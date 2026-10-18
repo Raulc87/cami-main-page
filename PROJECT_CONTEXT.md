@@ -36,7 +36,7 @@
 - Process: [docs/process/](docs/process/) — pr-precheck, pr-workflow, model-cost-policy,
   release-checklist
 - Branching and release model:
-  [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) (Proposed)
+  [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) (Accepted)
 - Templates: [docs/templates/](docs/templates/)
 
 Former spec file names (before CMP-014) are mapped in
