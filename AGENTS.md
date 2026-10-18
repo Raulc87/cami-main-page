@@ -125,7 +125,10 @@ acronym is **CMP**.
   tech-debt work.
 - Branch: `CMP-XXX-short-slug` (e.g. `CMP-001-sdd-foundation`).
 - Before starting, check `TICKETS.md`, take the next free number, and add the row in the
-  first commit of the branch. Detail in the header of [TICKETS.md](TICKETS.md).
+  first commit of the branch. **Exception:** a ticket planned in a sprint already has a `todo`
+  row (added by the sprint plan PR, see [Sprint readiness](#sprint-readiness)); take that
+  number and update the row instead of adding one. Detail in the header of
+  [TICKETS.md](TICKETS.md).
 
 ## Model choice
 
@@ -164,7 +167,8 @@ delegate mechanical steps to cheaper subagents. Full criteria and context-hygien
   Here that means a `CMP-XXX` number: the sprint plan PR adds one `todo` row per planned
   ticket to [TICKETS.md](TICKETS.md), which allocates the numbers (a recorded row is not a
   "reserved" number). The implementing agent then updates that row instead of adding one.
-- Applies from Sprint 02 on; Sprint 01 was planned before the checklist existed.
+- The readiness checklist applies from Sprint 02 on; Sprint 01 was planned before it existed.
+  The ticket-number rule above applies from now on (CMP-017's row was added in CMP-016).
 
 ## Parallel agent rules
 
