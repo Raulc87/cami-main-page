@@ -11,9 +11,9 @@ Run [pr-precheck.md](pr-precheck.md) in full. No PR is opened without having pas
 ## 1. Commit and push
 
 - The branch must already exist as `CMP-XXX-slug` (see [TICKETS.md](../../TICKETS.md)).
-- Commit messages: imperative, short, in Spanish or English (consistent with the rest of the repo),
-  with no need for a Conventional Commits-style prefix unless the team later adopts it as its own
-  spec.
+- Commit messages: imperative, short, in Spanish or English (consistent with the rest of the
+  repo). Starting the subject with the ticket ID (`CMP-XXX: ...`) is recommended but not
+  required (AGENTS.md → Differences from the Starter Kit).
 - Push with `git push -u origin CMP-XXX-slug`.
 
 ## 2. Create the PR with `gh`
@@ -71,15 +71,20 @@ level in GitHub (Settings → Code review → Copilot), not via `gh` per PR. If 
 that mode configured yet, it's a one-time manual GitHub configuration step to do from the UI —
 tell the user if there's no certainty that the mode is set to `balanced`.
 
-In the starter kit's terms, GitHub Copilot code review acts as the **"review-only agent"**: it
-reviews, it never implements. The human owner is the final approver of every PR.
+Copilot is an **automated reviewer**. The **review-only agent** is a dedicated Claude Code
+session that reviews when the owner or the coordinator asks
+([AGENTS.md → Review-only agent](../../AGENTS.md#review-only-agent)). The human owner is the
+final approver of every PR.
 
-## 4. Wait for comments
+## 4. Handle review comments
 
-The agent **does not proactively poll the PR in a loop** — the user says when there are Copilot (or
-other) comments ready to review. When that happens:
+The author agent subscribes to its own PR's events (comments, reviews) and acts when they
+arrive; it does not poll the PR in a loop. Comments come from the automated reviewers (Copilot,
+Codex — [AGENTS.md → Automated PR reviewers](../../AGENTS.md#automated-pr-reviewers)), from the
+review-only agent's COMMENT review (requested by the owner or the coordinator), and from the
+owner. For each one:
 
-1. Read each line comment.
+1. Read each line comment and each review finding.
 2. Decide: fix it, or justify why it doesn't apply?
 3. Adjust the code if appropriate, make an additional commit on the same branch.
 4. Reply to/resolve the corresponding comment thread on GitHub.
@@ -88,7 +93,11 @@ other) comments ready to review. When that happens:
 
 A PR is ready to merge only if:
 
-- **Zero unresolved line comments** on the PR (whether from Copilot or a human).
+- **Zero unresolved line comments** on the PR (whether from Copilot, Codex, the review-only
+  agent or a human).
+- **The latest review-only agent review reads "Ready for human approval"**, or every finding
+  in it (they are in the review body, not in line threads) has a visible reply from the author:
+  fixed (with the commit) or why no change is needed.
 - **Suppressed/dismissed (`dismissed`) comments are ≤ 3.**
 - If the PR is where specs or ADRs get approved: their `Status` fields are set (`Approved` /
   `Accepted`, plus PROJECT_SPEC §17 sign-off) **after** the owner approves the PR and before

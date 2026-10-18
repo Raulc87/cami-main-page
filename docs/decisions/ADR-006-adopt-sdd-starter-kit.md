@@ -57,15 +57,23 @@ back to the starter kit.
 ### Negative / Trade-offs
 - Sprints of 7 business days for a mostly solo project; sprint goals must stay small.
 - Historical references to `docs/specs/0X-*.md` in old PRs/TICKETS notes point to files that
-  no longer exist (mapping recorded in [PROJECT_CONTEXT.md](../../PROJECT_CONTEXT.md)).
+  no longer exist (mapping recorded under Implementation Impact below).
 
 ## Architecture Impact
 - None to the code.
 
 ## Implementation Impact
-- File mapping: `00-vision` → `PROJECT_SPEC`; `01-tech-stack` → `TECH_STACK.md`;
-  `02-design-system` → `docs/ux/UX_UI_DIRECTION.md`; `03-content-model` + `04-architecture`
-  → `ARCHITECTURE_SPEC`; `05-roadmap` → `USER_STORIES` (US-010..US-016).
+- File mapping (old PRs and ticket notes reference these files, which no longer exist;
+  moved here from PROJECT_CONTEXT.md in CMP-016 so it only lists active paths):
+
+| Old file | Now |
+|---|---|
+| `docs/specs/00-vision.md` | `docs/specs/PROJECT_SPEC.md` |
+| `docs/specs/01-tech-stack.md` | `TECH_STACK.md` |
+| `docs/specs/02-design-system.md` | `docs/ux/UX_UI_DIRECTION.md` |
+| `docs/specs/03-content-model.md` | `docs/specs/ARCHITECTURE_SPEC.md` §9 |
+| `docs/specs/04-architecture.md` | `docs/specs/ARCHITECTURE_SPEC.md` |
+| `docs/specs/05-roadmap.md` | `docs/specs/USER_STORIES.md` (US-010..US-016) |
 
 ## Validation
 - `mechanical-check` link check passes; Sprint 01 runs with the new artifacts.
