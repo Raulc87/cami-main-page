@@ -16,10 +16,10 @@ story status; the coordinator does that after the owner approves this evidence.
   `getComputedStyle`, `document.documentElement.lang`, `localStorage`) and the screenshot shows the section.
   Scroll-reveal animations were waited out before each screenshot.
 - No console errors or warnings in any run (1280, 900, 375).
-- Screenshots: JPEG, viewport, quality 62, in [`evidence/sprint-01/`](evidence/sprint-01/) (total ≈ 4.5 MB).
+- Screenshots: JPEG, viewport, quality 62, in [`evidence/sprint-01/`](evidence/sprint-01/) (114 files, total ≈ 4.45 MB).
   Names: `<story>-<ac>-<width>-<lang>.jpg`. A suffix `b` (e.g. `AC2b`) is a second state of the same AC.
 - Result `Not applicable` = the AC itself restricts the viewport (US-008) or is checked at 1280px only
-  (US-002 AC2 hover, per ticket instructions).
+  (US-002 AC2 hover, per ticket instructions; these rows were not tested, and the cause of the defect is width-independent).
 - Rows marked with `—` in width/language are file or network checks that do not depend on either. Rows
   labelled "extra" are additional checks beyond the AC × width × language grid.
 - Limits: headless Chromium has no mail client (US-007 AC1 verifies the `mailto:` href, not the handoff); the
@@ -28,7 +28,7 @@ story status; the coordinator does that after the owner approves this evidence.
 
 ## Summary
 
-Rows: 129 — Pass 115, Fail 2, Not applicable 12.
+Rows: 134 — Pass 120, Fail 2, Not applicable 12.
 
 | Story | Result | Notes |
 |---|---|---|
@@ -38,9 +38,9 @@ Rows: 129 — Pass 115, Fail 2, Not applicable 12.
 | US-004 — Process and values | Pass | Pass 12, Fail 0, N/A 0 |
 | US-005 — Real client testimonials | Pass | Pass 18, Fail 0, N/A 0 |
 | US-006 — Global English/Spanish toggle | Pass | Pass 30, Fail 0, N/A 0 |
-| US-007 — Booking contact by email | Pass | Pass 12, Fail 0, N/A 0 |
-| US-008 — Mobile-friendly layout | Pass | Pass 4, Fail 0, N/A 8 |
-| US-009 — Site live on the production domain | Pass | Pass 2, Fail 0, N/A 0 |
+| US-007 — Booking contact by email | Pass, with one open manual check (see below) | Pass 12, Fail 0, N/A 0 |
+| US-008 — Mobile-friendly layout | Pass | Pass 9, Fail 0, N/A 8 |
+| US-009 — Site live on the production domain | Pass, with open manual checks (see below) | Pass 2, Fail 0, N/A 0 |
 
 ### Fails
 
@@ -49,7 +49,17 @@ Rows: 129 — Pass 115, Fail 2, Not applicable 12.
 | US-002 AC2 | 1280px / EN | Defect | Hover shift is not applied: the card stays at x=56 (computed `transform: matrix(1,0,0,1,0,0)`) while border colour and shadow do change. |
 | US-002 AC2 | 1280px / ES | Defect | Hover shift is not applied: the card stays at x=56 (computed `transform: matrix(1,0,0,1,0,0)`) while border colour and shadow do change. |
 
-Classification and the proposed fix ticket are in the PR → Risks. Detail: the scroll-reveal hook (`src/hooks/useReveal.js`) writes an inline `transform: translateY(0)` on every revealed card (`Services.jsx` spreads `r()` onto `.svc-card`), and an inline style beats the `.svc-card:hover { transform: translateX(5px) }` rule in `global.css`.
+The defect does not depend on width: the inline transform is applied at every width, so hover is also broken at 900px with a pointer (those rows were not tested because of the ticket's 1280px scope). Classification and the proposed fix ticket are in the PR → Risks. Detail: the scroll-reveal hook (`src/hooks/useReveal.js`) writes an inline `transform: translateY(0)` on every revealed card (`Services.jsx` spreads `r()` onto `.svc-card`), and an inline style beats the `.svc-card:hover { transform: translateX(5px) }` rule in `global.css`.
+
+### Open manual checks (for the owner)
+
+Rows below are marked Pass for the part a headless browser can verify; the remainder needs a person. Moving US-007 and US-009 to `Done` is therefore the owner's explicit decision, not a by-product of the Pass count.
+
+| Story / AC | What was verified | Still open |
+|---|---|---|
+| US-007 AC1 | `href="mailto:camila@lifetoolscr.com"` on the booking button and the address shown as text under it | One click on the live CTA to confirm the mail client opens addressed to that address |
+| US-009 AC2 | `title`, `description` and `og:*` tags in the live HTML and in the build | One link-preview debugger run (e.g. Facebook Sharing Debugger or LinkedIn Post Inspector) on `https://camihernandez.com/` |
+| US-009 AC1 | Outcome only: live site serves the same bundle hashes as the build, tags and Releases `v1.0.0` and `v1.0.1` exist | The checklist itself was not re-run (needs GoDaddy access); optional |
 
 ## Results per story
 
@@ -88,10 +98,10 @@ Classification and the proposed fix ticket are in the PR → Risks. Detail: the 
 | AC1 | 375px | ES | Pass | 3 cards: Palabras Que Rompen Muros / Diseña Tu Vida Ideal / Regresa a Tu Ser Interior; each has icon, kicker, title, description, note | [US-002-AC1-375-es.jpg](evidence/sprint-01/US-002-AC1-375-es.jpg) |
 | AC2 | 1280px | EN | Fail | card 1 on hover: shift 0.0px (expected ~5px right; before x=56.0, after x=56.0, transform "matrix(1, 0, 0, 1, 0, 0)"), left border rgb(232, 212, 216) -> rgb(44, 62, 90) (changed: true), shadow none -> present | [US-002-AC2-1280-en.jpg](evidence/sprint-01/US-002-AC2-1280-en.jpg) |
 | AC2 | 1280px | ES | Fail | card 1 on hover: shift 0.0px (expected ~5px right; before x=56.0, after x=56.0, transform "matrix(1, 0, 0, 1, 0, 0)"), left border rgb(232, 212, 216) -> rgb(44, 62, 90) (changed: true), shadow none -> present | [US-002-AC2-1280-es.jpg](evidence/sprint-01/US-002-AC2-1280-es.jpg) |
-| AC2 | 900px | EN | Not applicable | Hover AC checked at 1280px only (per ticket instructions) | — |
-| AC2 | 900px | ES | Not applicable | Hover AC checked at 1280px only (per ticket instructions) | — |
-| AC2 | 375px | EN | Not applicable | Hover AC checked at 1280px only (per ticket instructions) | — |
-| AC2 | 375px | ES | Not applicable | Hover AC checked at 1280px only (per ticket instructions) | — |
+| AC2 | 900px | EN | Not applicable | Not tested at this width (ticket scope: hover checked at 1280px only). The defect is likely present here too: the inline reveal transform is applied at every width | — |
+| AC2 | 900px | ES | Not applicable | Not tested at this width (ticket scope: hover checked at 1280px only). The defect is likely present here too: the inline reveal transform is applied at every width | — |
+| AC2 | 375px | EN | Not applicable | Not tested at this width (ticket scope: hover checked at 1280px only). The defect is likely present here too: the inline reveal transform is applied at every width | — |
+| AC2 | 375px | ES | Not applicable | Not tested at this width (ticket scope: hover checked at 1280px only). The defect is likely present here too: the inline reveal transform is applied at every width | — |
 
 ### US-003 — Photo gallery
 
@@ -215,6 +225,9 @@ Classification and the proposed fix ticket are in the PR → Risks. Detail: the 
 | AC1 | 375px | ES | Pass | hero flex-direction column, services 1 col, steps column, testimonials 1 col; hero photo 320x300, gallery 163x140 163x140 163x140 163x140 163x140, testimonial photos 46x46 36x36 36x36 36x36; horizontal overflow 0px | [US-008-AC1-375-es.jpg](evidence/sprint-01/US-008-AC1-375-es.jpg), [US-008-AC1b-375-es.jpg](evidence/sprint-01/US-008-AC1b-375-es.jpg) |
 | AC1 (extra) | 640px | EN | Pass | Breakpoint boundary (media query is `max-width: 640px`): hero flex-direction column, services 1 col, steps column, testimonials 1 col; hero photo 320x300, gallery 295x140 295x140 295x140 295x140 295x140, testimonial photos 46x46 36x36 36x36 36x36; all images loaded; horizontal overflow 0px | [US-008-AC1-640-en.jpg](evidence/sprint-01/US-008-AC1-640-en.jpg), [US-008-AC1b-640-en.jpg](evidence/sprint-01/US-008-AC1b-640-en.jpg) |
 | AC1 (extra) | 640px | ES | Pass | Breakpoint boundary (media query is `max-width: 640px`): hero flex-direction column, services 1 col, steps column, testimonials 1 col; hero photo 320x300, gallery 295x140 295x140 295x140 295x140 295x140, testimonial photos 46x46 36x36 36x36 36x36; all images loaded; horizontal overflow 0px | [US-008-AC1-640-es.jpg](evidence/sprint-01/US-008-AC1-640-es.jpg), [US-008-AC1b-640-es.jpg](evidence/sprint-01/US-008-AC1b-640-es.jpg) |
+| AC2 (extra) | 641px | EN | Pass | Boundary check, services grid columns: 2 (lower edge of the 641–900px range). | — |
+| AC2 (extra) | 901px | EN | Pass | Boundary check just outside the range: 3 columns, so the 2-column layout stops at 900px. | — |
+| AC2 (extra) | 640px | EN | Pass | Boundary check just outside the range: 1 column (mobile rule). | — |
 | AC2 | 1280px | EN | Not applicable | AC applies to 641–900px viewports; this run is 1280px | — |
 | AC2 | 1280px | ES | Not applicable | AC applies to 641–900px viewports; this run is 1280px | — |
 | AC2 | 900px | EN | Pass | services grid has 2 columns at 900px | [US-008-AC2-900-en.jpg](evidence/sprint-01/US-008-AC2-900-en.jpg) |
