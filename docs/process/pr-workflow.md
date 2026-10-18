@@ -1,91 +1,104 @@
-# Flujo de creación de PRs
+# PR creation workflow
 
-Este documento define cómo se crea, revisa y mergea un PR en este repo. Aplica a agentes y a
-humanos por igual — el objetivo es que cualquier hilo que retome el trabajo pueda abrir un PR
-consistente sin tener que preguntar cómo se hace.
+This document defines how a PR is created, reviewed, and merged in this repo. It applies to agents
+and humans alike — the goal is that any thread picking up the work can open a consistent PR
+without having to ask how it's done.
 
-## 0. Antes de abrir el PR
+## 0. Before opening the PR
 
-Correr completo [pr-precheck.md](pr-precheck.md). No se abre PR sin haberlo pasado.
+Run [pr-precheck.md](pr-precheck.md) in full. No PR is opened without having passed it.
 
-## 1. Commit y push
+## 1. Commit and push
 
-- Rama ya debe existir como `CMP-XXX-slug` (ver [TICKETS.md](../../TICKETS.md)).
-- Mensajes de commit: imperativo, corto, en español o inglés (consistente con el resto del
-  repo), sin necesidad de prefijo tipo Conventional Commits salvo que el equipo lo adopte más
-  adelante como spec propio.
-- Push con `git push -u origin CMP-XXX-slug`.
+- The branch must already exist as `CMP-XXX-slug` (see [TICKETS.md](../../TICKETS.md)).
+- Commit messages: imperative, short, in Spanish or English (consistent with the rest of the repo),
+  with no need for a Conventional Commits-style prefix unless the team later adopts it as its own
+  spec.
+- Push with `git push -u origin CMP-XXX-slug`.
 
-## 2. Crear el PR con `gh`
+## 2. Create the PR with `gh`
 
 ```bash
-gh pr create --title "CMP-XXX: <resumen corto>" --body "$(cat <<'EOF'
-## Resumen
-<Qué se hizo y por qué, 2-4 líneas. No repitas el diff, explica el "por qué".>
+gh pr create --title "CMP-XXX: <short summary>" --body "$(cat <<'EOF'
+## Summary
+<What was done and why, 2-4 lines. Don't repeat the diff, explain the "why".>
 
-## Archivos
-<Lista de archivos creados/modificados con una frase de qué cambió en cada uno.>
+## User stories & acceptance criteria
+<List the US-XXX ids (from docs/specs/USER_STORIES.md) and which acceptance criteria this PR
+satisfies. If there is no story, write "N/A — process/docs only" with a reason.>
 
-## Test
-<Cómo se validó (npm run build, prueba manual en browser, N/A si no aplica y por qué).>
+## Files
+<List of files created/modified with one sentence on what changed in each.>
 
-## Riesgos
-<Qué podría romperse, qué queda pendiente, findings de /code-review que se decidió no
-resolver y por qué. "Ninguno identificado" si de verdad no hay.>
+## Verification
+<Evidence the change works: npm run build output, browser check (golden path + edge cases),
+screenshots for UI changes. State explicitly if something could not be verified and why.>
+
+## Risks
+<What could break, what remains pending, /code-review findings you decided not to resolve and
+why. "None identified" if there truly are none.>
 EOF
 )"
 ```
 
-**El título siempre debe empezar con el ID del ticket** (`CMP-XXX:`) — es lo que permite
-cruzar PRs con [TICKETS.md](../../TICKETS.md) sin un tracker externo.
+**The title must always start with the ticket ID** (`CMP-XXX:`) — that's what lets PRs be
+cross-referenced with [TICKETS.md](../../TICKETS.md) without an external tracker.
 
-Las 4 secciones del body (`Resumen`, `Archivos`, `Test`, `Riesgos`) son obligatorias en ese
-orden. Si `Test` no aplica (ej. cambio de solo documentación), decirlo explícitamente en vez
-de omitir la sección.
+The 5 body sections (`Summary`, `User stories & acceptance criteria`, `Files`, `Verification`,
+`Risks`) are mandatory, in that order. If one doesn't apply (e.g. a documentation-only change has
+no UI to verify, or no user story), say so explicitly instead of omitting the section.
+`Verification` replaces the former "Test" section: it asks for evidence (build output, browser
+check, screenshots), not just a statement that it was tested.
 
-## 3. Pedir revisión de Copilot (modo balanced)
+## 3. Request Copilot review (balanced mode)
 
-Después de crear el PR, se solicita revisión automática de GitHub Copilot code review en modo
-**balanced** (ni el más superficial ni el más exhaustivo — balance entre ruido y cobertura).
+After creating the PR, request an automatic GitHub Copilot code review in **balanced** mode
+(neither the most superficial nor the most exhaustive — a balance between noise and coverage).
 
 ```bash
 gh pr edit <PR_NUMBER> --add-reviewer @copilot
 ```
 
-El identificador correcto es `@copilot` (soportado desde GitHub CLI 2.88.0) — `Copilot` o
-`copilot-pull-request-reviewer[bot]` fallan porque `gh` no los resuelve como usuario vía
-GraphQL, aunque ese mismo reviewer sí es asignable a mano desde "Request review" en la UI de
-GitHub. Si `gh pr edit --add-reviewer @copilot` falla igual (versión vieja de `gh`, o la app
-de Copilot code review no está instalada/habilitada en el repo), pedir la review manualmente
-desde la UI y avisar al usuario.
+The correct identifier is `@copilot` (supported since GitHub CLI 2.88.0) — `Copilot` or
+`copilot-pull-request-reviewer[bot]` fail because `gh` doesn't resolve them as a user via
+GraphQL, even though that same reviewer can be assigned by hand from "Request review" in the
+GitHub UI. If `gh pr edit --add-reviewer @copilot` fails anyway (old `gh` version, or the Copilot
+code review app isn't installed/enabled on the repo), request the review manually from the UI and
+tell the user.
 
-El modo de verbosidad de Copilot code review (`balanced`) se configura a nivel de
-repositorio/organización en GitHub (Settings → Code review → Copilot), no vía `gh` por PR. Si
-el repo todavía no tiene ese modo configurado, es un paso manual de configuración de GitHub
-que hay que hacer una vez desde la UI — avisar al usuario si no hay certeza de que el modo
-esté en `balanced`.
+Copilot code review's verbosity mode (`balanced`) is configured at the repository/organization
+level in GitHub (Settings → Code review → Copilot), not via `gh` per PR. If the repo doesn't have
+that mode configured yet, it's a one-time manual GitHub configuration step to do from the UI —
+tell the user if there's no certainty that the mode is set to `balanced`.
 
-## 4. Esperar comentarios
+In the starter kit's terms, GitHub Copilot code review acts as the **"review-only agent"**: it
+reviews, it never implements. The human owner is the final approver of every PR.
 
-El agente **no revisa el PR proactivamente en loop** — el usuario avisa cuando hay comentarios
-de Copilot (u otros) listos para revisar. Cuando eso pase:
+## 4. Wait for comments
 
-1. Leer cada comentario de línea.
-2. Decidir: ¿se corrige, o se justifica por qué no aplica?
-3. Ajustar el código si corresponde, hacer commit adicional en la misma rama.
-4. Responder/resolver el hilo de comentario correspondiente en GitHub.
+The agent **does not proactively poll the PR in a loop** — the user says when there are Copilot (or
+other) comments ready to review. When that happens:
 
-## 5. Criterio de merge
+1. Read each line comment.
+2. Decide: fix it, or justify why it doesn't apply?
+3. Adjust the code if appropriate, make an additional commit on the same branch.
+4. Reply to/resolve the corresponding comment thread on GitHub.
 
-Un PR está listo para mergear solo si:
+## 5. Merge criteria
 
-- **Cero comentarios de línea sin resolver** en el PR (ya sea de Copilot o de un humano).
-- **Los comentarios suprimidos/descartados (`dismissed`) son ≤ 3.**
+A PR is ready to merge only if:
 
-Cuando se cumple esa condición, antes de recomendar el merge se debe **enumerar cada
-comentario suprimido** con una explicación corta de por qué se descartó y si de verdad no
-necesita resolverse o si quedó como deuda técnica consciente (en ese caso, considerar abrir un
-ticket nuevo en [TICKETS.md](../../TICKETS.md) en vez de perder el hallazgo).
+- **Zero unresolved line comments** on the PR (whether from Copilot or a human).
+- **Suppressed/dismissed (`dismissed`) comments are ≤ 3.**
+- If the PR is where specs or ADRs get approved: their `Status` fields are set (`Approved` /
+  `Accepted`, plus PROJECT_SPEC §17 sign-off) **after** the owner approves the PR and before
+  merging. This is a merge gate, not a precheck item — the approval only exists once the PR
+  has been reviewed.
 
-Si hay más de 3 comentarios suprimidos, o queda algún comentario de línea sin resolver, el PR
-**no** está listo — hay que resolver o justificar más antes de mergear.
+When that condition is met, before recommending the merge you must **list every dismissed
+comment** with a short explanation of why it was dismissed and whether it truly doesn't need
+resolving or was left as conscious technical debt (in which case, consider opening a new ticket in
+[TICKETS.md](../../TICKETS.md) instead of losing the finding).
+
+If there are more than 3 dismissed comments, or any line comment remains unresolved, the PR is
+**not** ready — resolve or justify more before merging.

@@ -1,67 +1,71 @@
 # PR Precheck
 
-Checklist que cualquier agente (o persona) debe correr **antes de abrir un PR**, sin
-excepción. El objetivo es que los problemas obvios se atrapen antes de pedirle revisión a
-Copilot o al usuario, no después.
+Checklist that any agent (or person) must run **before opening a PR**, no exceptions. The goal is
+to catch the obvious problems before asking Copilot or the user for review, not after.
 
-## 1. Alcance
+## 1. Scope
 
-- [ ] El diff corresponde a **un solo ticket** (`CMP-XXX`). Si aparece trabajo de otro ticket
-      mezclado, sepáralo.
-- [ ] No hay archivos de scratch, debug, o temporales colados (`*.log`, prints de debug,
-      archivos sueltos de prueba).
-- [ ] `git status` revisado — nada inesperado quedó sin trackear ni se agregó sin querer con un
-      `git add` amplio.
-- [ ] Si hubo un plan, la recomendación de modelo por paso se siguió — o se anota en el PR por
-      qué se ejecutó todo en otro modelo. Ver
-      [model-cost-policy.md](model-cost-policy.md).
+- [ ] The diff corresponds to **a single ticket** (`CMP-XXX`). If work from another ticket is
+      mixed in, split it out.
+- [ ] No scratch, debug, or temporary files slipped in (`*.log`, debug prints, loose test files).
+- [ ] `git status` reviewed — nothing unexpected left untracked or added by accident with a broad
+      `git add`.
+- [ ] If there was a plan, the per-step model recommendation was followed — or the PR notes why
+      everything ran on a different model. See [model-cost-policy.md](model-cost-policy.md).
 
-## 2. Specs actualizados
+## 2. Specs and docs updated
 
-- [ ] Si el cambio toca paleta, tipografía o patrones visuales →
-      [docs/specs/02-design-system.md](../specs/02-design-system.md) actualizado.
-- [ ] Si el cambio toca estructura de contenido/copy →
-      [docs/specs/03-content-model.md](../specs/03-content-model.md) actualizado.
-- [ ] Si el cambio toca estructura de componentes, carpetas o el stack →
-      [docs/specs/04-architecture.md](../specs/04-architecture.md) o
-      [docs/specs/01-tech-stack.md](../specs/01-tech-stack.md) actualizado.
-- [ ] Si el cambio construye algo descrito en el roadmap →
-      [docs/specs/05-roadmap.md](../specs/05-roadmap.md) refleja que ese ítem ya no es backlog.
-- [ ] La fila del ticket en [TICKETS.md](../../TICKETS.md) tiene el estado correcto.
+- [ ] If the change touches goals, requirements, or business rules →
+      [docs/specs/PROJECT_SPEC.md](../specs/PROJECT_SPEC.md) updated.
+- [ ] If the change touches palette, typography, visual patterns, or breakpoints →
+      [docs/ux/UX_UI_DIRECTION.md](../ux/UX_UI_DIRECTION.md) updated.
+- [ ] If the change touches folders, components, or the content/copy model →
+      [docs/specs/ARCHITECTURE_SPEC.md](../specs/ARCHITECTURE_SPEC.md) updated.
+- [ ] If the change touches the stack or dependencies → [TECH_STACK.md](../../TECH_STACK.md)
+      updated.
+- [ ] Story status and acceptance criteria in
+      [docs/specs/USER_STORIES.md](../specs/USER_STORIES.md) updated (this includes backlog items
+      US-010..US-016 that the change builds — they are no longer `Proposed`).
+- [ ] If the change makes a decision worth recording → a new ADR in
+      [docs/decisions/](../decisions/).
+- [ ] If the active sprint or the doc map changed → [PROJECT_CONTEXT.md](../../PROJECT_CONTEXT.md)
+      updated.
+- [ ] If the ticket belongs to the active sprint → its status in the sprint plan in
+      [docs/sprints/](../sprints/) is updated.
+- [ ] The ticket's row in [TICKETS.md](../../TICKETS.md) has the correct status.
 
-Un spec desactualizado es un bug tan real como uno de código — no lo dejes para "después".
+An outdated spec is as real a bug as a code one — don't leave it for "later".
 
-## 3. Build y correctitud
+## 3. Build and correctness
 
-- [ ] `npm run build` corre sin errores.
-- [ ] Si el cambio es de UI: se probó en el browser (dev server), no solo se asumió que
-      compila. Revisar el golden path y, si aplica, algún edge case obvio (mobile breakpoint,
-      estado vacío, etc.).
-- [ ] Sin console errors/warnings nuevos en el navegador.
-- [ ] No se introdujeron dependencias/librerías nuevas sin que quede documentado en
-      [docs/specs/01-tech-stack.md](../specs/01-tech-stack.md) (ver regla en
+- [ ] `npm run build` runs without errors.
+- [ ] If the change is UI: it was tested in the browser (dev server), not just assumed to compile.
+      Check the golden path and, if applicable, any obvious edge case (mobile breakpoint, empty
+      state, etc.).
+- [ ] No new console errors/warnings in the browser.
+- [ ] No new dependencies/libraries were introduced without documenting them in
+      [TECH_STACK.md](../../TECH_STACK.md) (see the rule in [AGENTS.md](../../AGENTS.md)).
+- [ ] Acceptance criteria of the referenced user stories were verified (Definition of Done in
       [AGENTS.md](../../AGENTS.md)).
 
-## 4. Seguridad / higiene
+## 4. Security / hygiene
 
-- [ ] Nada de secretos, tokens o credenciales en el diff (revisar contenido real de cualquier
-      archivo nuevo, no solo el nombre).
-- [ ] Sin `console.log` de debug olvidados, sin código comentado "por si acaso".
+- [ ] No secrets, tokens, or credentials in the diff (check the actual contents of any new file,
+      not just its name).
+- [ ] No forgotten debug `console.log`s, no code commented out "just in case".
 
-## 5. Auto-revisión de código
+## 5. Code self-review
 
-- [ ] Correr **`/code-review`** sobre el diff antes de abrir el PR (nivel `medium` como
-      default; usar `high` si el cambio toca algo sensible — formularios, datos de leads,
-      integraciones externas cuando existan). Resolver o justificar cada finding antes de
-      continuar.
-- [ ] El **modelo** con el que se corre `/code-review` acompaña al nivel: solo docs/copy → Haiku
-      (o dejarlo a Copilot); UI acotada → Sonnet; formularios, datos de leads o integraciones
-      externas → Opus. Tabla completa en [model-cost-policy.md](model-cost-policy.md) §5.
-- [ ] Si `/code-review` marca algo que se decide **no** resolver, dejar la justificación en la
-      descripción del PR (sección "Riesgos" — ver
-      [pr-workflow.md](pr-workflow.md)), no en silencio.
+- [ ] Run **`/code-review`** on the diff before opening the PR (`medium` level as the default; use
+      `high` if the change touches something sensitive — forms, lead data, external integrations
+      once they exist). Resolve or justify every finding before continuing.
+- [ ] The **model** used to run `/code-review` goes with the level: docs/copy only → Haiku (or
+      leave it to Copilot); narrow UI → Sonnet; forms, lead data, or external integrations → Opus.
+      Full table in [model-cost-policy.md](model-cost-policy.md) §5.
+- [ ] If `/code-review` flags something you decide **not** to resolve, leave the justification in
+      the PR description ("Risks" section — see [pr-workflow.md](pr-workflow.md)), not in silence.
 
-## 6. Listo para abrir el PR
+## 6. Ready to open the PR
 
-Solo cuando todo lo anterior está en verde, se sigue el flujo de
-[pr-workflow.md](pr-workflow.md) para crear el PR.
+Only when everything above is green, follow the [pr-workflow.md](pr-workflow.md) flow to create
+the PR.

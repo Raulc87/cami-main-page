@@ -1,39 +1,39 @@
 # Release Checklist
 
-Cómo se hace un release de **cami-main-page**: build de producción, subida a GoDaddy shared
-hosting (`public_html/` de `camihernandez.com`), y el tag + GitHub Release correspondiente.
-Ver [01-tech-stack.md](../specs/01-tech-stack.md) para el resto del stack/hosting.
+How to do a release of **cami-main-page**: production build, upload to GoDaddy shared hosting
+(`public_html/` of `camihernandez.com`), and the corresponding tag + GitHub Release.
+See [TECH_STACK.md](../../TECH_STACK.md) for the rest of the stack/hosting.
 
-No hay CI/CD — todo el proceso es manual. Este documento existe para que cualquier persona
-(o agente) pueda repetirlo sin tener que redescubrir los pasos cada vez.
+There is no CI/CD — the whole process is manual. This document exists so anyone (or any agent) can
+repeat it without having to rediscover the steps every time.
 
-## 1. Pre-requisitos (una sola vez)
+## 1. Prerequisites (one time only)
 
-- Acceso a GoDaddy con **hosting activo** para `camihernandez.com` (no alcanza con tener el
-  dominio registrado — hay que tener un plan de hosting contratado y el dominio apuntando a
-  ese hosting). Verificar en el panel de GoDaddy → "Mis productos": debe aparecer un producto
-  de **Web Hosting** (o similar) asociado al dominio, no solo el dominio en sí.
-  - **Ojo con "Websites + Marketing" (Airo)**: GoDaddy suele dar de entrada un sitio gratis
-    hecho con su constructor visual ("Airo") en el mismo dominio. Ese producto **no tiene
-    cPanel/File Manager** y no acepta subir un build propio — no sirve para este proyecto. Si
-    es lo único que aparece en la cuenta, hay que contratar **Web Hosting** (el plan con
-    cPanel) por separado; no confundir uno con el otro.
-- `gh` (GitHub CLI) instalado y autenticado (`gh auth login`) en la máquina desde la que se
-  hace el release.
-- `npm install` corrido al menos una vez (`node_modules/` presente).
-- `zip` disponible en la línea de comandos (viene preinstalado en macOS/la mayoría de Linux) —
-  se usa en la sección 4 para armar el paquete que se sube a GoDaddy.
+- Access to GoDaddy with **active hosting** for `camihernandez.com` (having the domain registered
+  is not enough — you need a hosting plan purchased and the domain pointing to that hosting).
+  Verify in the GoDaddy panel → "My Products": a **Web Hosting** product (or similar) associated
+  with the domain must appear, not just the domain itself.
+  - **Beware of "Websites + Marketing" (Airo)**: GoDaddy often gives a free site built with its
+    visual builder ("Airo") on the same domain upfront. That product **has no cPanel/File
+    Manager** and doesn't accept uploading your own build — it's no use for this project. If it's
+    the only thing in the account, you have to buy **Web Hosting** (the plan with cPanel)
+    separately; don't confuse one with the other.
+- `gh` (GitHub CLI) installed and authenticated (`gh auth login`) on the machine the release is
+  done from.
+- `npm install` run at least once (`node_modules/` present).
+- `zip` available on the command line (preinstalled on macOS/most Linux) — used in section 4 to
+  build the package uploaded to GoDaddy.
 
-## 2. Versionado
+## 2. Versioning
 
-Se usa [SemVer](https://semver.org/) simple: `vMAJOR.MINOR.PATCH`.
+Simple [SemVer](https://semver.org/) is used: `vMAJOR.MINOR.PATCH`.
 
-- El primer release productivo del sitio es **`v1.0.0`**.
-- Releases posteriores: `PATCH` para copy/fixes chicos, `MINOR` para secciones/features nuevas
-  visibles, `MAJOR` reservado para rediseños grandes o cambios de arquitectura (ej. cuando
-  entre el backend del [roadmap](../specs/05-roadmap.md)).
-- La versión se refleja en `version` de [package.json](../../package.json) — actualizarla en el
-  mismo commit que dispara el release.
+- The site's first production release is **`v1.0.0`**.
+- Later releases: `PATCH` for copy/small fixes, `MINOR` for new visible sections/features, `MAJOR`
+  reserved for big redesigns or architecture changes (e.g. when the backend from the
+  [backlog user stories](../specs/USER_STORIES.md) lands).
+- The version is reflected in `version` in [package.json](../../package.json) — update it in the
+  same commit that triggers the release.
 
 ## 3. Build
 
@@ -41,105 +41,104 @@ Se usa [SemVer](https://semver.org/) simple: `vMAJOR.MINOR.PATCH`.
 npm run build
 ```
 
-Genera `dist/`. Antes de subir:
+Generates `dist/`. Before uploading:
 
-- [ ] El build corrió sin errores ni warnings nuevos.
-- [ ] `npm run preview` sirve `dist/` localmente y se probó el golden path en el browser.
-- [ ] No quedó ningún placeholder obvio que debiera ser contenido real y no lo es (ver
-      [00-vision.md](../specs/00-vision.md) sobre qué contenido sigue siendo placeholder a
-      propósito).
+- [ ] The build ran without errors or new warnings.
+- [ ] `npm run preview` serves `dist/` locally and the golden path was tested in the browser.
+- [ ] No obvious placeholder is left that should be real content and isn't (see
+      [PROJECT_SPEC.md](../specs/PROJECT_SPEC.md) on which content remains placeholder on
+      purpose).
 
-## 4. Subida a GoDaddy (cPanel File Manager)
+## 4. Upload to GoDaddy (cPanel File Manager)
 
-Shared hosting de GoDaddy, sin FTP/SSH configurado — se sube desde el navegador.
+GoDaddy shared hosting, with no FTP/SSH configured — upload from the browser.
 
-1. Comprimir el **contenido** de `dist/` (no la carpeta `dist/` en sí) en un `.zip`:
+1. Compress the **contents** of `dist/` (not the `dist/` folder itself) into a `.zip`:
    ```bash
    cd dist && zip -r ../release.zip . && cd ..
    ```
-2. Entrar al panel de GoDaddy → **"Mis productos"** → el producto de **Web Hosting** de
-   `camihernandez.com` → **"Administrar"** → botón **"cPanel Admin"**.
-   - Justo después de contratar el hosting, GoDaddy puede mostrar un asistente de
-     **"Set up your migration"** pidiendo la URL de un sitio existente para migrarlo. No
-     aplica acá (no hay nada que migrar) — no lo completes, entra directo a "Mis productos"
-     → el hosting → cPanel Admin en otra pestaña en su lugar.
-   - Si acabas de comprar el hosting, cPanel puede tardar unos minutos en aprovisionar del
-     todo — si File Manager carga en blanco o queda sin responder, prueba refresco duro
-     (`Cmd+Shift+R`), una ventana de incógnito, o reintenta en 15-20 minutos.
-3. Abrir **File Manager** → navegar a `public_html/`.
-4. Una cuenta de hosting recién creada trae archivos placeholder de GoDaddy por defecto
-   (`404.shtml`, `home.html`, `layout-styles.css`) — no son contenido real, se pueden borrar
-   sin respaldo. Si en cambio ya hay un release previo real ahí, sí hacer respaldo antes de
-   sobrescribir: seleccionar todo, comprimir a un `.zip` de backup (ej.
-   `backup-pre-v1.0.0.zip`) y dejarlo fuera de `public_html/` (ej. en la carpeta home) o
-   descargarlo. **Nunca reemplazar sin respaldo un sitio que ya está en producción.**
-5. Subir `release.zip` a `public_html/` (botón **Upload**).
-6. Una vez subido, click derecho sobre `release.zip` → **Extract**, extrayendo directo dentro
-   de `public_html/`.
-7. Borrar `release.zip` de `public_html/` después de extraer (no debe quedar servido
-   públicamente).
-8. Confirmar que `public_html/index.html` existe y es el `index.html` nuevo (fecha de
-   modificación reciente).
+2. Go to the GoDaddy panel → **"My Products"** → the **Web Hosting** product for
+   `camihernandez.com` → **"Manage"** → **"cPanel Admin"** button.
+   - Right after purchasing the hosting, GoDaddy may show a **"Set up your migration"** wizard
+     asking for the URL of an existing site to migrate. It doesn't apply here (there's nothing to
+     migrate) — don't complete it; go straight to "My Products" → the hosting → cPanel Admin in
+     another tab instead.
+   - If you just bought the hosting, cPanel may take a few minutes to fully provision — if File
+     Manager loads blank or hangs, try a hard refresh (`Cmd+Shift+R`), an incognito window, or
+     retry in 15-20 minutes.
+3. Open **File Manager** → navigate to `public_html/`.
+4. A freshly created hosting account comes with default GoDaddy placeholder files (`404.shtml`,
+   `home.html`, `layout-styles.css`) — they are not real content and can be deleted without a
+   backup. If instead there is already a real previous release there, do make a backup before
+   overwriting: select everything, compress into a backup `.zip` (e.g. `backup-pre-v1.0.0.zip`)
+   and leave it outside `public_html/` (e.g. in the home folder) or download it. **Never replace a
+   site that's already in production without a backup.**
+5. Upload `release.zip` to `public_html/` (**Upload** button).
+6. Once uploaded, right-click `release.zip` → **Extract**, extracting directly inside
+   `public_html/`.
+7. Delete `release.zip` from `public_html/` after extracting (it must not remain publicly served).
+8. Confirm that `public_html/index.html` exists and is the new `index.html` (recent modification
+   date).
 
-## 5. Dominio → hosting
+## 5. Domain → hosting
 
-Si el dominio y el hosting están contratados en la misma cuenta de GoDaddy, GoDaddy suele
-apuntar el DNS automáticamente al conectar ambos productos — verificar en el panel que el
-dominio esté **"conectado"** al hosting antes de asumir que ya funciona. Si el hosting está en
-otro proveedor, hay que apuntar los nameservers o el registro A/CNAME de `camihernandez.com`
-hacia ese proveedor desde el panel de DNS de GoDaddy (paso manual fuera del alcance de este
-repo — seguir la guía específica del proveedor de hosting elegido).
+If the domain and the hosting are purchased in the same GoDaddy account, GoDaddy usually points
+the DNS automatically when connecting both products — verify in the panel that the domain is
+**"connected"** to the hosting before assuming it already works. If the hosting is with another
+provider, you have to point the nameservers or the A/CNAME record of `camihernandez.com` to that
+provider from GoDaddy's DNS panel (a manual step outside the scope of this repo — follow the
+specific guide of the chosen hosting provider).
 
-- [ ] `https://camihernandez.com` carga el sitio (no la página placeholder de GoDaddy).
-- [ ] `https://www.camihernandez.com` también resuelve (redirect o mismo contenido), si aplica.
-- [ ] HTTPS activo (candado en el browser) — GoDaddy shared hosting suele traer SSL gratis
-      (AutoSSL/Let's Encrypt) pero puede tardar unos minutos en activarse tras el primer deploy.
+- [ ] `https://camihernandez.com` loads the site (not the GoDaddy placeholder page).
+- [ ] `https://www.camihernandez.com` also resolves (redirect or same content), if applicable.
+- [ ] HTTPS active (padlock in the browser) — GoDaddy shared hosting usually includes free SSL
+      (AutoSSL/Let's Encrypt) but it may take a few minutes to activate after the first deploy.
 
 ## 6. Tag + GitHub Release
 
-Con el sitio ya verificado en producción, cambia el valor de `VERSION` al tag real (ej. `v1.0.1`)
-antes de correr esto — los comandos de abajo son una plantilla; no copiar/pegar literal salvo
-para el primer release (`v1.0.0`):
+With the site already verified in production, change the `VERSION` value to the real tag (e.g.
+`v1.0.1`) before running this — the commands below are a template; don't copy/paste literally
+except for the first release (`v1.0.0`):
 
 ```bash
-VERSION="v1.0.1"  # <- cambiar en cada release
+VERSION="v1.0.1"  # <- change on every release
 
 git tag -a "$VERSION" -m "$VERSION"
 git push origin "$VERSION"
 
 gh release create "$VERSION" \
   --title "$VERSION" \
-  --notes "Ver TICKETS.md para el detalle de tickets incluidos desde el release anterior."
+  --notes "See TICKETS.md for the details of the tickets included since the previous release."
 ```
 
-- El tag se crea sobre el commit de `main` que corresponde exactamente a lo que está subido en
-  `public_html/` — si hubo cambios sin commitear entre el build y el deploy, commitearlos
-  primero.
-- Las notas del release pueden generarse listando los tickets `done`/`review` en
-  [TICKETS.md](../../TICKETS.md) incluidos desde el release anterior (o todos, si es el
-  primero).
+- The tag is created on the `main` commit that corresponds exactly to what is uploaded in
+  `public_html/` — if there were uncommitted changes between the build and the deploy, commit them
+  first.
+- The release notes can be generated by listing the `done`/`review` tickets in
+  [TICKETS.md](../../TICKETS.md) included since the previous release (or all of them, if it's the
+  first).
 
 ## 7. Rollback
 
-Si algo sale mal después de extraer en `public_html/`:
+If something goes wrong after extracting into `public_html/`:
 
-1. Borrar el contenido nuevo de `public_html/`.
-2. Volver a subir y extraer el `.zip` de respaldo del punto 4 de la sección "Subida a
-   GoDaddy" de arriba.
-3. Si el release ya se había tageado en GitHub, no se borra el tag/release — se documenta como
-   conocido y se corrige con un release siguiente (`v1.0.1`), salvo que el tag apunte a un
-   commit roto que nunca debió publicarse.
+1. Delete the new content of `public_html/`.
+2. Re-upload and extract the backup `.zip` from step 4 of the "Upload to GoDaddy" section above.
+3. If the release had already been tagged on GitHub, don't delete the tag/release — document it as
+   known and fix it with a following release (`v1.0.1`), unless the tag points to a broken commit
+   that should never have been published.
 
-## 8. Releases futuros
+## 8. Future releases
 
-Repetir desde el paso 2 (bump de versión). El paso 1 (pre-requisitos) y buena parte del paso 4
-(acceso al panel) ya quedan resueltos después del primer release.
+Repeat from step 2 (version bump). Step 1 (prerequisites) and a good part of step 4 (panel access)
+are already resolved after the first release.
 
-## 9. Historial
+## 9. History
 
-- **`v1.0.0`** — 2026-09-04. Primer release productivo, siguiendo exactamente este proceso
-  (incluyendo las trampas de Airo y el asistente de migración documentadas arriba). Ver
-  [release en GitHub](https://github.com/Raulc87/cami-main-page/releases/tag/v1.0.0).
-- **`v1.0.1`** — 2026-09-07. Bugfix de mobile: CMP-013 (Hero y Gallery invisibles en <640px).
-  Como ya había un release real en `public_html/`, este ciclo sí incluyó el respaldo del paso 4
-  antes de sobrescribir. Ver [release en GitHub](https://github.com/Raulc87/cami-main-page/releases/tag/v1.0.1).
+- **`v1.0.0`** — 2026-09-04. First production release, following exactly this process (including
+  the Airo pitfalls and the migration wizard documented above). See the
+  [release on GitHub](https://github.com/Raulc87/cami-main-page/releases/tag/v1.0.0).
+- **`v1.0.1`** — 2026-09-07. Mobile bugfix: CMP-013 (Hero and Gallery invisible at <640px). Since
+  there was already a real release in `public_html/`, this cycle did include the step 4 backup
+  before overwriting. See the
+  [release on GitHub](https://github.com/Raulc87/cami-main-page/releases/tag/v1.0.1).

@@ -1,36 +1,45 @@
 # Tickets — CMP
 
-Registro secuencial de trabajo del proyecto **cami-main-page**. Todavía no usamos un sistema
-externo (Jira, Linear, etc.) — este archivo es la **fuente de verdad** para la numeración de
-tickets mientras el proyecto sea de un solo desarrollador. Cuando el costo se justifique
-(más gente, necesidad de reportes/automatización), se puede migrar a Linear (tiene free tier)
-importando estas mismas filas.
+Sequential work log for the **cami-main-page** project. We don't use an external system (Jira,
+Linear, etc.) yet — this file is the **source of truth** for ticket numbering while the project
+has a single developer. When the cost is justified (more people, need for reporting/automation),
+it can be migrated to Linear (it has a free tier) by importing these same rows.
 
-## Cómo usar esto
+## How this fits the process
 
-1. Antes de empezar algo nuevo, revisa la tabla de abajo y toma el siguiente número disponible
-   (el más alto + 1). No reutilices ni "reserves" números.
-2. Crea la rama como `CMP-XXX-slug-corto` (inglés o español, lo que describa mejor el trabajo).
-3. Agrega la fila a la tabla en el mismo commit donde arrancas el trabajo, para minimizar
-   colisiones si en algún momento hay más de un hilo/agente trabajando en paralelo.
-4. Actualiza el estado a medida que avanzas. Cuando el PR se mergea, estado = `done`.
+- A ticket `CMP-XXX` is the **unit of work**: one branch + one PR.
+- A ticket implements one or more **user stories** from
+  [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md) (listed in the `Stories` column), or is
+  process/tech-debt work with no story (`—`).
+- Tickets are selected into **sprints** in [docs/sprints/](docs/sprints/).
 
-**Estados:** `todo` · `in-progress` · `review` · `done` · `dropped`
+## How to use this
+
+1. Before starting something new, check the table below and take the next available number (the
+   highest + 1). Don't reuse or "reserve" numbers.
+2. Create the branch as `CMP-XXX-short-slug` (English or Spanish, whichever best describes the
+   work).
+3. Add the row to the table in the same commit where you start the work, to minimize collisions if
+   at some point more than one thread/agent works in parallel.
+4. Update the status as you go. When the PR is merged, status = `done`.
+
+**States:** `todo` · `in-progress` · `review` · `done` · `dropped`
 
 ## Tickets
 
-| ID | Título | Estado | Rama | Fecha | Notas |
-|----|--------|--------|------|-------|-------|
-| CMP-001 | Fundación de Spec Driven Development (specs + AGENTS.md + este ticket log) | done | `CMP-001-sdd-foundation` | 2026-08-20 | Crea `docs/specs/`, `docs/process/` (pr-precheck, pr-workflow), `AGENTS.md` y este archivo. |
-| CMP-002 | Fotos reales (Hero/Gallery) + primer testimonio real con toggle de idioma | done | `claude/cmp-testimonios-images-lang-toggle-4dca1a` | 2026-08-20 | Reemplaza 2 placeholders de foto, agrega testimonio real de Ana Lu con toggle Spanish/English y link see more/see less. Rama no sigue el patrón `CMP-XXX-slug` porque la asigna el harness del agente (worktree); ver PR. |
-| CMP-003 | Toggle de idioma global en el banner (reemplaza el toggle por testimonio de CMP-002) | done | `claude/cmp-global-language-banner-5da139` | 2026-08-20 | Mueve el switch EN/ES de `Testimonials.jsx` al `Nav`; agrega `LanguageContext` + `useLanguage()`, `constants/i18n.js` (`UI_TEXT`) y traducciones para toda la página. Rama asignada por el harness del agente (worktree); ver PR. |
-| CMP-004 | README del repo | done | `CMP-004-readme` | 2026-08-21 | Crea `README.md` en la raíz: qué es el proyecto, cómo correrlo localmente, scripts, deploy, y puntero a `AGENTS.md`/`docs/specs/` como fuente de verdad. |
-| CMP-005 | Política de modelos y ahorro de tokens en desarrollo | done | `CMP-004-model-cost-policy` | 2026-08-21 | Crea `docs/process/model-cost-policy.md`; engancha la elección de modelo en `AGENTS.md` y `pr-precheck.md`. Solo documentación. La rama dice `CMP-004` porque se creó antes de que PR #4 mergeara y tomara ese número; se renumeró a CMP-005 al resolver la colisión, y la rama se dejó igual para no romper el PR ya abierto. |
-| CMP-006 | Actualiza el email de contacto del CTA a camila@lifetoolscr.com | done | `CMP-006-cta-email-update` | 2026-08-21 | Cambia el `mailto:` del botón y el texto debajo de él en `CTA.jsx` (los dos únicos lugares con el email de contacto — `Footer.jsx` no tiene email). No requiere cambios de spec: `03-content-model.md` ya apunta el email de contacto a `CTA.jsx`. |
-| CMP-007 | Versiona `.claude/settings.json` con Sonnet como default del proyecto | done | `claude/settings-sonnet-default-e1fb14` | 2026-08-21 | Crea `.claude/settings.json` (model: sonnet) y subagentes baratos en `.claude/agents/` para delegar chequeos mecánicos y exploración a Haiku; agrega `.claude/worktrees/` a `.gitignore`; documenta en `model-cost-policy.md`. Rama asignada por el harness del agente (worktree), no sigue el patrón `CMP-XXX-slug`. |
-| CMP-008 | 3 testimonios reales (Melissa, Rocío, Stefanny) con foto, reemplazan a los últimos 3 ficticios | done | `CMP-008-testimonios-melissa-rocio-stefanny` | 2026-09-03 | Reemplaza Diego R./Valentina P./Andrés C. — ya no queda ningún testimonio ficticio. Extiende el mecanismo see more/see less (antes exclusivo del destacado) a cualquier testimonio del grid con `quoteLong`; Stefanny lo usa. |
-| CMP-009 | Nombre completo de Ana Lucía en su testimonio, sin título | done | `CMP-009-ana-lucia-nombre-completo` | 2026-09-03 | Cambia `name: 'Ana Lu'` → `'Ana Lucía'` y quita `role: 'Photographer & Entrepreneur'` en `TESTIMONIALS[0]` (data.jsx). Solo copy, sin cambios de spec. |
-| CMP-010 | Fotos reales para los 4 slots restantes de Gallery (On Stage, Workshop, Community, Behind the Scenes) | done | `CMP-010-galeria-fotos-reales` | 2026-09-04 | Agrega `on-stage.jpg`, `workshop.jpg`, `community.jpg`, `behind-the-scenes.jpg` a `public/images/` (convertidas de PNG a JPEG, redimensionadas) y las engancha en `SLOTS` de `Gallery.jsx`. Ya no queda ningún slot en gradiente placeholder. |
-| CMP-011 | Números reales en la barra de stats del Hero | done | `CMP-011-stats-numeros-reales` | 2026-09-04 | Cambia `STATS` en `data.jsx`: Vidas Transformadas 500+→100, Eventos de Conferencias 50+→25, Años de Experiencia 12+→6+, Pilares de Cambio 3→4. Solo copy, actualiza el ejemplo en `03-content-model.md`. |
-| CMP-012 | Proceso de primer release (deploy a GoDaddy + GitHub Release) | done | `CMP-012-primer-release-godaddy-github` | 2026-09-04 | Documenta `docs/process/release-checklist.md` (versionado, build, subida manual a GoDaddy `public_html/` vía cPanel File Manager, tag + `gh release create`), incluyendo las trampas reales encontradas (producto Airo vs Web Hosting, asistente de migración, archivos placeholder por defecto). Bump `package.json` a `1.0.0`. Ejecuta el primer release real: `camihernandez.com` ya sirve el sitio en GoDaddy Web Hosting, tag/release `v1.0.0` publicado en GitHub. |
-| CMP-013 | Repara Hero y Gallery en mobile (imágenes invisibles en <640px) | done | `CMP-012-fix-mobile-hero-gallery` | 2026-09-07 | El wrapper de la imagen del Hero y las celdas de `.gallery-grid` dependían de que el layout padre (flex-row / grid con filas fijas) les diera tamaño; al cambiar a columna/auto en el breakpoint de 640px, colapsaban a ~0 porque su único contenido era `position: absolute`. Fix: `hero-img-wrap`/`hero-img-frame` con ancho/alto explícitos en mobile, y `.gallery-grid` con `grid-template-rows` fijo en vez de `auto`. Actualiza `02-design-system.md`. La rama dice `CMP-012` porque se creó antes de que PR #12 (`CMP-012-primer-release-godaddy-github`) apareciera reflejado en `TICKETS.md` de `main` y tomara ese número; se renumeró a CMP-013 al resolver la colisión, y la rama se dejó igual para no romper el PR ya abierto (#13). |
+| ID | Title | Stories | Status | Branch | Date | Notes |
+|----|-------|---------|--------|--------|------|-------|
+| CMP-001 | Spec Driven Development foundation (specs + AGENTS.md + this ticket log) | — | done | `CMP-001-sdd-foundation` | 2026-08-20 | Creates `docs/specs/`, `docs/process/` (pr-precheck, pr-workflow), `AGENTS.md` and this file. |
+| CMP-002 | Real photos (Hero/Gallery) + first real testimonial with language toggle | US-003, US-005 | done | `claude/cmp-testimonios-images-lang-toggle-4dca1a` | 2026-08-20 | Replaces 2 photo placeholders, adds Ana Lu's real testimonial with a Spanish/English toggle and a see more/see less link. Branch doesn't follow the `CMP-XXX-slug` pattern because the agent harness (worktree) assigns it; see PR. |
+| CMP-003 | Global language toggle in the banner (replaces the per-testimonial toggle from CMP-002) | US-006 | done | `claude/cmp-global-language-banner-5da139` | 2026-08-20 | Moves the EN/ES switch from `Testimonials.jsx` to the `Nav`; adds `LanguageContext` + `useLanguage()`, `constants/i18n.js` (`UI_TEXT`) and translations for the whole page. Branch assigned by the agent harness (worktree); see PR. |
+| CMP-004 | Repo README | — | done | `CMP-004-readme` | 2026-08-21 | Creates `README.md` at the root: what the project is, how to run it locally, scripts, deploy, and a pointer to `AGENTS.md`/`docs/specs/` as the source of truth. |
+| CMP-005 | Model and token-saving policy for development | — | done | `CMP-004-model-cost-policy` | 2026-08-21 | Creates `docs/process/model-cost-policy.md`; hooks model choice into `AGENTS.md` and `pr-precheck.md`. Documentation only. The branch says `CMP-004` because it was created before PR #4 merged and took that number; it was renumbered to CMP-005 when resolving the collision, and the branch was left as is so as not to break the already-open PR. |
+| CMP-006 | Update the CTA contact email to camila@lifetoolscr.com | US-007 | done | `CMP-006-cta-email-update` | 2026-08-21 | Changes the button's `mailto:` and the text below it in `CTA.jsx` (the only two places with the contact email — `Footer.jsx` has no email). No spec changes needed: `03-content-model.md` already points the contact email to `CTA.jsx`. |
+| CMP-007 | Version `.claude/settings.json` with Sonnet as the project default | — | done | `claude/settings-sonnet-default-e1fb14` | 2026-08-21 | Creates `.claude/settings.json` (model: sonnet) and cheap subagents in `.claude/agents/` to delegate mechanical checks and exploration to Haiku; adds `.claude/worktrees/` to `.gitignore`; documents it in `model-cost-policy.md`. Branch assigned by the agent harness (worktree), doesn't follow the `CMP-XXX-slug` pattern. |
+| CMP-008 | 3 real testimonials (Melissa, Rocío, Stefanny) with photo, replacing the last 3 fictitious ones | US-005 | done | `CMP-008-testimonios-melissa-rocio-stefanny` | 2026-09-03 | Replaces Diego R./Valentina P./Andrés C. — no fictitious testimonial remains. Extends the see more/see less mechanism (previously exclusive to the featured one) to any grid testimonial with `quoteLong`; Stefanny uses it. |
+| CMP-009 | Ana Lucía's full name in her testimonial, no title | US-005 | done | `CMP-009-ana-lucia-nombre-completo` | 2026-09-03 | Changes `name: 'Ana Lu'` → `'Ana Lucía'` and removes `role: 'Photographer & Entrepreneur'` in `TESTIMONIALS[0]` (data.jsx). Copy only, no spec changes. |
+| CMP-010 | Real photos for the 4 remaining Gallery slots (On Stage, Workshop, Community, Behind the Scenes) | US-003 | done | `CMP-010-galeria-fotos-reales` | 2026-09-04 | Adds `on-stage.jpg`, `workshop.jpg`, `community.jpg`, `behind-the-scenes.jpg` to `public/images/` (converted from PNG to JPEG, resized) and hooks them into `SLOTS` in `Gallery.jsx`. No slot is left as a placeholder gradient. |
+| CMP-011 | Real numbers in the Hero stats bar | US-001 | done | `CMP-011-stats-numeros-reales` | 2026-09-04 | Changes `STATS` in `data.jsx`: Lives Transformed 500+→100, Conference Events 50+→25, Years of Experience 12+→6+, Pillars of Change 3→4. Copy only, updates the example in `03-content-model.md`. |
+| CMP-012 | First release process (deploy to GoDaddy + GitHub Release) | US-009 | done | `CMP-012-primer-release-godaddy-github` | 2026-09-04 | Documents `docs/process/release-checklist.md` (versioning, build, manual upload to GoDaddy `public_html/` via cPanel File Manager, tag + `gh release create`), including the real pitfalls found (Airo product vs Web Hosting, migration wizard, default placeholder files). Bumps `package.json` to `1.0.0`. Runs the first real release: `camihernandez.com` now serves the site on GoDaddy Web Hosting, tag/release `v1.0.0` published on GitHub. |
+| CMP-013 | Fix Hero and Gallery on mobile (invisible images at <640px) | US-008 | done | `CMP-012-fix-mobile-hero-gallery` | 2026-09-07 | The Hero image wrapper and the `.gallery-grid` cells depended on the parent layout (flex-row / grid with fixed rows) to give them size; when switching to column/auto at the 640px breakpoint, they collapsed to ~0 because their only content was `position: absolute`. Fix: `hero-img-wrap`/`hero-img-frame` with explicit width/height on mobile, and `.gallery-grid` with a fixed `grid-template-rows` instead of `auto`. Updates `02-design-system.md`. The branch says `CMP-012` because it was created before PR #12 (`CMP-012-primer-release-godaddy-github`) showed up in `main`'s `TICKETS.md` and took that number; it was renumbered to CMP-013 when resolving the collision, and the branch was left as is so as not to break the already-open PR (#13). |
+| CMP-014 | Homologate the repo to the SDD starter kit (English docs, kit file structure, user stories, ADRs, Scrum sprints) | — | review | `CMP-014-sdd-starter-kit-homologation` | 2026-10-17 | Renames/restructures specs to the kit layout (PROJECT_SPEC, USER_STORIES, ARCHITECTURE_SPEC, UX_UI_DIRECTION, TECH_STACK), adds CLAUDE.md, PROJECT_CONTEXT.md, retroactive ADR-001..ADR-006, IMPLEMENTATION_PLAN, SPRINT_01_PLAN, kit templates and the Coordinator session rules (brownfield); translates all docs to English. |
