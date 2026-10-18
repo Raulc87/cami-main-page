@@ -32,7 +32,9 @@ to catch the obvious problems before asking Copilot or the user for review, not 
       updated.
 - [ ] If the ticket belongs to the active sprint → its status in the sprint plan in
       [docs/sprints/](../sprints/) is updated.
-- [ ] The ticket's row in [TICKETS.md](../../TICKETS.md) has the correct status.
+- [ ] The ticket's row in [TICKETS.md](../../TICKETS.md) has the correct status (`done` in the
+      last commit before reporting the PR ready, and every spec/ADR this PR approves already
+      reads `Approved`/`Accepted` on merge — [pr-workflow.md §5](pr-workflow.md#5-merge-criteria)).
 
 An outdated spec is as real a bug as a code one — don't leave it for "later".
 

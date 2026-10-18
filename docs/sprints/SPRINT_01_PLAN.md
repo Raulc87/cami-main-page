@@ -54,7 +54,8 @@ Maximum implementation agents in parallel: 3.
 
 ## Merge / Integration Order
 1. CMP-014 (merged), CMP-015 (merged).
-2. CMP-016 — coordinator docs PR #16 (AGENTS.md alignment, reviewer/agent setup, ADR-007).
+2. CMP-016 — coordinator docs PR #16 (AGENTS.md alignment, reviewer/agent setup, ADR-007);
+   merged 2026-10-18. CMP-018 records its post-merge Status bookkeeping.
 3. CMP-017 — Agent 1 verification evidence (docs only); independent of CMP-016 except
    `TICKETS.md`: after CMP-016 merges, Agent 1 merges `main` in and keeps exactly one CMP-017
    row (its own, with its current status).
@@ -122,3 +123,8 @@ The human reviewer is the final approver.
   session as well as agents sessions". The coordinator launched the review-only session and
   Agent 1 (CMP-017) from [SPRINT_01_AGENT_PROMPTS.md](SPRINT_01_AGENT_PROMPTS.md); Agents 2
   and 3 were not opened (no Sprint 01 workstream for them).
+- Unplanned work (coordinator, 2026-10-18): CMP-018 sets ADR-007 to Accepted and CMP-016 to
+  `done` after PR #16 merged before the pr-workflow §5 Status step ran.
+  Owner decision (2026-10-18): "Yes do the missing step to avoid skipping." CMP-018 also
+  removes the post-approval step: final statuses (ticket `done`, specs/ADRs approved on merge)
+  are recorded in the PR before it is reported ready, and the reviewer checks them.

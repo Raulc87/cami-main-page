@@ -99,12 +99,18 @@ A PR is ready to merge only if:
   in it (they are in the review body, not in line threads) has a visible reply from the author:
   fixed (with the commit) or why no change is needed.
 - **Suppressed/dismissed (`dismissed`) comments are ≤ 3.**
-- If the PR is where specs or ADRs get approved: their `Status` fields are set (`Approved` /
-  `Accepted`, plus PROJECT_SPEC §17 sign-off) **after** the owner approves the PR and before
-  merging. This is a merge gate, not a precheck item — the approval only exists once the PR
-  has been reviewed.
+- **Final statuses are already in the PR (no step after approval).** Before reporting the PR
+  ready, the author records in the PR itself every status that becomes true when it merges:
+  - each spec or ADR the PR asks the owner to approve: `Status: Approved` / `Accepted`, worded
+    "on merge of PR #N" (plus the PROJECT_SPEC §17 sign-off when the PR approves the spec);
+  - the ticket's own row in [TICKETS.md](../../TICKETS.md): `done`.
 
-When that condition is met, before recommending the merge you must **list every dismissed
+  Merging the PR **is** the owner's approval, so nothing is left to do after it; if the owner
+  does not merge, these statuses never reach `main`. The PR body lists them under Risks as
+  "Statuses recorded on merge" so the owner sees what merging approves. (Before CMP-018 the
+  rule was a commit after approval and before merge; it was missed for CMP-014 and CMP-016.)
+
+When those conditions are met, before recommending the merge you must **list every dismissed
 comment** with a short explanation of why it was dismissed and whether it truly doesn't need
 resolving or was left as conscious technical debt (in which case, consider opening a new ticket in
 [TICKETS.md](../../TICKETS.md) instead of losing the finding).

@@ -125,6 +125,9 @@ For each PR:
   fidelity (ARCHITECTURE_SPEC §9, both languages), file ownership, naming (CMP-XXX branch and
   title, pr-workflow body sections), spec/doc consistency and broken links, security,
   regressions and integration risk.
+- Before "Ready for human approval": every status that becomes true on merge is already in the
+  PR (ticket row `done`, each spec/ADR it approves `Approved`/`Accepted` on merge, pr-workflow
+  §5). If one is missing, that is a should-fix finding.
 - Triage every automated-reviewer comment (Codex, Copilot), including collapsed or "previously
   missed" sections: valid / obsolete / invalid, with evidence. Do your own full review
   regardless; never depend on an automated reviewer's coverage.
