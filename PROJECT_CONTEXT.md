@@ -53,7 +53,8 @@ Old PRs and ticket notes reference these files, which no longer exist:
 - Review-only Agent: GitHub Copilot code review
 
 ## Important constraints
-- Zero / free-tier cost for every tool.
+- Zero additional licensing cost — free tier first for any new tool (hosting and ad spend
+  excepted, see PROJECT_SPEC NFR-003).
 - Static GoDaddy shared hosting, manual deploy; no backend yet.
 - Minimal stack — no new library without TECH_STACK update + ADR.
 - Bilingual EN/ES; fixed Spanish brand accents never translate.

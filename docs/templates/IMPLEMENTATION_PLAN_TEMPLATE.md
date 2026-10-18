@@ -38,9 +38,14 @@ Project Requirement -> User Story -> Acceptance Criterion -> Implementation Step
 -
 
 ## 11. Implementation Steps
-1.
-2.
-3.
+Planning model: <model> — <why> (see
+[model-cost-policy.md](../process/model-cost-policy.md)).
+
+| # | Step | Model | Why |
+|---|---|---|---|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
 
 ## 12. Parallelization Plan
 Identify workstreams, contracts, dependencies, and merge order.

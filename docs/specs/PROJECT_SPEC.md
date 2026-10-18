@@ -73,7 +73,10 @@ a service catalog and targeted marketing (see the backlog stories US-010..US-016
   available for the current site (see [ADR-002](../decisions/ADR-002-godaddy-static-hosting.md)).
 - NFR-002: The layout is responsive: desktop, a tablet breakpoint at 900px and a mobile
   breakpoint at 640px; all images stay visible on mobile.
-- NFR-003: Zero or free-tier cost for every tool and service.
+- NFR-003: Zero additional licensing cost — free tier first for any newly selected tool or
+  service. The existing paid GoDaddy hosting
+  ([ADR-002](../decisions/ADR-002-godaddy-static-hosting.md)) is a pre-existing cost, and
+  advertising spend (e.g. US-016) is a product-owner budget decision outside this requirement.
 - NFR-004: Minimal stack — no new library or framework without updating
   [TECH_STACK.md](../../TECH_STACK.md) and recording an ADR.
 - NFR-005: `npm run build` must succeed with no errors before any deploy.
@@ -131,7 +134,10 @@ a service catalog and targeted marketing (see the backlog stories US-010..US-016
 ## 14. Success Criteria
 - The site is live at `camihernandez.com` and serves all sections in both languages. (Met at
   v1.0.0.)
-- All content is real — no placeholder photos or fictional testimonials. (Met as of CMP-010.)
+- Photos, testimonials and stats are real — no placeholder photos or fictional testimonials.
+  (Met as of CMP-011 for the hero photo, all 5 gallery photos, all 4 testimonials and the
+  stats.) Other copy (services, process, values) is not certified as verified data; see
+  [ARCHITECTURE_SPEC — Content state](ARCHITECTURE_SPEC.md#content-state) and BR-002.
 - Booking requests arrive through the contact email.
 - Future: measurable leads captured and visitor demographics available (US-012, US-014).
 

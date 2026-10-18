@@ -6,7 +6,8 @@ This file is the product backlog source (no Jira/Linear yet — see
 
 - **US-001..US-009** were reconstructed retroactively in CMP-014 from the features already
   shipped in v1.0.x. Their acceptance criteria were reconstructed from the code and still
-  need a browser check (Sprint 01 verification) before they count as a verified baseline. Story
+  need a browser check (Sprint 01 verification) before they count as a verified baseline, so
+  they stay in `Review` until that check passes and only then move to `Done`. Story
   points are not estimated retroactively.
 - **US-010..US-016** come from the former roadmap (`05-roadmap.md`). They are `Proposed`:
   direction, not ready for implementation. Before a sprint can select one, it must be refined
@@ -45,12 +46,12 @@ So that ...
 
 ---
 
-## Shipped (Done)
+## Shipped (Review — pending Sprint 01 verification)
 
 ### US-001 — Brand hero with credibility stats
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [PROJECT_SPEC](PROJECT_SPEC.md), [ARCHITECTURE_SPEC §22](ARCHITECTURE_SPEC.md#22-feature-to-component-impact)
 - Related Requirements: FR-001, FR-002, BR-001
 - Tickets: CMP-011
@@ -83,7 +84,7 @@ So that I trust her enough to keep reading
 ### US-002 — Service pillars overview
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-003
 - Tickets: (initial build, before CMP-001)
@@ -113,7 +114,7 @@ So that I know what I can book
 ### US-003 — Photo gallery
 - Priority: High
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [UX_UI_DIRECTION §7](../ux/UX_UI_DIRECTION.md#7-imagery)
 - Related Requirements: FR-004, BR-002, NFR-006
 - Tickets: CMP-002, CMP-010
@@ -129,7 +130,9 @@ So that I can picture her at my event
 1. Given the gallery section
    When it renders
    Then it shows 5 real photos (On Stage, Workshop, 1-on-1 Session, Community, Behind the
-   Scenes) with labels in the active language, and no gradient placeholder slot remains.
+   Scenes), each with an accessible image label (`alt` text) in the active language, and no
+   gradient placeholder slot remains. The label is shown visibly only if a photo fails to
+   load.
 
 **Jira**
 - Jira Key: TBD
@@ -137,7 +140,7 @@ So that I can picture her at my event
 ### US-004 — Process and values
 - Priority: Medium
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-005, FR-006, BR-001
 - Tickets: (initial build, before CMP-001)
@@ -164,7 +167,7 @@ So that I know whether her approach fits me
 ### US-005 — Real client testimonials
 - Priority: High
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-007, BR-003
 - Tickets: CMP-002, CMP-008, CMP-009
@@ -195,7 +198,7 @@ So that I trust the results she promises
 ### US-006 — Global English/Spanish toggle
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [ARCHITECTURE_SPEC §7](ARCHITECTURE_SPEC.md#global-language-languagecontext), [ADR-004](../decisions/ADR-004-i18n-native-context.md)
 - Related Requirements: FR-009, BR-001, BR-005
 - Tickets: CMP-003
@@ -228,7 +231,7 @@ So that I understand everything without effort
 ### US-007 — Booking contact by email
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-008, BR-004
 - Tickets: CMP-006
@@ -255,7 +258,7 @@ So that I can book her
 ### US-008 — Mobile-friendly layout
 - Priority: High
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [UX_UI_DIRECTION §8](../ux/UX_UI_DIRECTION.md#8-responsive-behavior)
 - Related Requirements: NFR-002
 - Tickets: CMP-013
@@ -282,7 +285,7 @@ So that I get the same experience as on desktop
 ### US-009 — Site live on the production domain
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Done
+- Status: Review
 - Related Spec: [TECH_STACK §10](../../TECH_STACK.md#10-hosting--deployment), [ADR-002](../decisions/ADR-002-godaddy-static-hosting.md)
 - Related Requirements: NFR-001, NFR-005, FR-010
 - Tickets: CMP-012

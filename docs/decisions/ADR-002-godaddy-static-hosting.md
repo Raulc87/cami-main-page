@@ -53,7 +53,9 @@ cPanel File Manager, tag + `gh release create`).
 - No server runtime available (PROJECT_SPEC NFR-001).
 
 ## Implementation Impact
-- `npm run build` is the only gate before deploy.
+- No CI: the gates before deploy are a successful `npm run build` plus the manual
+  verification in [release-checklist.md §3](../process/release-checklist.md#3-build)
+  (`npm run preview`, golden path in the browser, placeholder check). Both are required.
 
 ## Validation
 - `camihernandez.com` serves the latest tagged release.

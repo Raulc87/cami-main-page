@@ -4,7 +4,7 @@
 - Version: 1.0 — baseline (as-built v1.0.1), created in CMP-014
 - Status: Review — pending approval by the product owner
 - Related specs: [PROJECT_SPEC](../specs/PROJECT_SPEC.md), [ARCHITECTURE_SPEC](../specs/ARCHITECTURE_SPEC.md), [UX_UI_DIRECTION](../ux/UX_UI_DIRECTION.md), [TECH_STACK](../../TECH_STACK.md)
-- Related user stories: US-001..US-009 (Done); US-010..US-016 (Proposed, not planned here)
+- Related user stories: US-001..US-009 (Review — shipped, pending Sprint 01 verification); US-010..US-016 (Proposed, not planned here)
 
 ## 1. Purpose
 Record how the shipped site (v1.0.1) implements the approved requirements, so new work starts
@@ -81,7 +81,10 @@ Each AC in §3 is checked in the dev server (`npm run dev`) and, for releases, i
 - None.
 
 ## 17. Rollback
-- Re-upload the previous release's `dist/` (GitHub Release tag) to `public_html/`.
+- Restore the cPanel backup `.zip` taken before the upload (see
+  [release-checklist.md §7](../process/release-checklist.md#7-rollback)). If no backup exists,
+  check out the previous release tag, run `npm run build` and upload that `dist/` — `dist/` is
+  not committed and GitHub Releases carry no build artifact.
 
 ## 18. Risks
 - See PROJECT_SPEC §13 and ARCHITECTURE_SPEC §20.
