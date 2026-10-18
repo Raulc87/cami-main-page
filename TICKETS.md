@@ -23,7 +23,9 @@ it can be migrated to Linear (it has a free tier) by importing these same rows.
    collisions if at some point more than one thread/agent works in parallel. Tickets planned
    in a sprint get their row (`todo`) in the sprint plan PR instead (AGENTS.md → Sprint
    readiness).
-4. Update the status as you go. When the PR is merged, status = `done`.
+4. Update the status as you go. In the last commit before reporting the PR ready, set it to
+   `done`: it reaches `main` only when the PR merges
+   ([pr-workflow.md §5](docs/process/pr-workflow.md#5-merge-criteria)).
 
 **States:** `todo` · `in-progress` · `review` · `done` · `dropped`
 
@@ -48,4 +50,4 @@ it can be migrated to Linear (it has a free tier) by importing these same rows.
 | CMP-015 | Record CMP-014 spec/ADR approval (Status fields, PROJECT_SPEC §17 sign-off) and close CMP-014 | — | done | `cmp-014-sdd-starter-kit-homologation-p5fgc2` | 2026-10-18 | Post-merge bookkeeping from the pr-workflow merge gate, missed before #14 merged. Branch name is the agent session's assigned branch, not the CMP-XXX convention. |
 | CMP-016 | Align AGENTS.md with the current SDD Starter Kit (document map, sprint readiness, merging/approval, reviewer independence, automated reviewers) | — | done | `cmp-014-sdd-starter-kit-homologation-rqviz9` | 2026-10-18 | Coordinator docs PR. Adds `docs/checklists/SPRINT_READINESS_CHECKLIST.md` (from the kit), Entry Gates / ownership map / conflict rule to the sprint plan template, a "Differences from the Starter Kit" section, ADR-007 (branching and release model, Proposed; Accepted in CMP-018), the integration-contract template, the Sprint 01 agent prompts and the Claude review-only session; records the owner decision that the coordinator authors docs PRs and delegates code. Marks CMP-015 `done`. Branch is the coordinator session's assigned branch, not the CMP-XXX convention. |
 | CMP-017 | Sprint 01 browser verification of US-001..US-009 (desktop, 900px, 375px, EN/ES) with evidence | US-001..US-009 | todo | `CMP-017-sprint-01-browser-verification` | 2026-10-18 | Planned in Sprint 01 (row added by the coordinator in CMP-016 per AGENTS.md → Sprint readiness); Agent 1 updates this row. Docs and evidence only; defects found become separate tickets. |
-| CMP-018 | Record CMP-016 post-merge bookkeeping (ADR-007 Accepted, CMP-016 done) | — | review | `cmp-014-sdd-starter-kit-homologation-rqviz9` | 2026-10-18 | PR #16 merged before the pr-workflow §5 Status step ran (same gap CMP-015 closed for CMP-014). Branch is the coordinator session's assigned branch, not the CMP-XXX convention. |
+| CMP-018 | Record CMP-016 post-merge bookkeeping (ADR-007 Accepted, CMP-016 done) and remove the post-approval status step | — | done | `cmp-014-sdd-starter-kit-homologation-rqviz9` | 2026-10-18 | PR #16 merged before the pr-workflow §5 Status step ran (same gap CMP-015 closed for CMP-014). Branch is the coordinator session's assigned branch, not the CMP-XXX convention. |

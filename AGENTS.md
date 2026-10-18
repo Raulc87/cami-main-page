@@ -223,9 +223,10 @@ This applies to every agent (implementation, review-only and coordinator). Agent
 Agents may keep their **own** PR branch up to date (for example, merge `main` into it and
 resolve conflicts in files they own), then report to the owner that the PR is ready per the
 merge criteria in [pr-workflow.md §5](docs/process/pr-workflow.md#5-merge-criteria). When a PR
-is ready, the agent says so and stops; merging is the owner's decision. The `Status`
-bookkeeping commit that pr-workflow §5 requires after the owner approves is allowed — it is
-not a merge.
+is ready, the agent says so and stops; merging is the owner's decision. Before reporting it
+ready, the agent records in the PR the statuses that become true on merge (approved specs and
+ADRs, its own ticket `done`), so there is no step left between approval and merge
+([pr-workflow.md §5](docs/process/pr-workflow.md#5-merge-criteria)).
 
 Agents act through the owner's GitHub account, so GitHub cannot tell them apart from the
 owner: this rule must also be stated in every agent prompt. Recommended: protect `main` in

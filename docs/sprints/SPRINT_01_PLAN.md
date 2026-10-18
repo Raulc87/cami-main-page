@@ -125,3 +125,6 @@ The human reviewer is the final approver.
   and 3 were not opened (no Sprint 01 workstream for them).
 - Unplanned work (coordinator, 2026-10-18): CMP-018 sets ADR-007 to Accepted and CMP-016 to
   `done` after PR #16 merged before the pr-workflow §5 Status step ran.
+  Owner decision (2026-10-18): "Yes do the missing step to avoid skipping." CMP-018 also
+  removes the post-approval step: final statuses (ticket `done`, specs/ADRs approved on merge)
+  are recorded in the PR before it is reported ready, and the reviewer checks them.
