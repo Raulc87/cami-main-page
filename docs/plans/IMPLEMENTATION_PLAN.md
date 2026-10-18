@@ -24,7 +24,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation �
 | FR-001, BR-001 | US-001 | AC1, AC3 | `Hero.jsx`, `UI_TEXT.hero` | Browser: hero renders, tagline in Spanish in both languages |
 | FR-002 | US-001 | AC2 | `STATS` in `data.jsx`, `Hero.jsx` | Browser: 4 stats, labels follow toggle |
 | FR-003 | US-002 | AC1, AC2 | `Services.jsx`, `SERVICES`, `.svc-card` | Browser: 3 cards, hover effect |
-| FR-004 | US-003 | AC1 | `Gallery.jsx` `SLOTS`, `public/images/` | Browser: 5 photos load |
+| FR-004, NFR-006 | US-003 | AC1, AC2 | `Gallery.jsx` `SLOTS`, `public/images/` | Browser: 5 photos load; `file public/images/*.jpg` |
 | FR-005, FR-006 | US-004 | AC1, AC2 | `Process.jsx`, `Values.jsx`, `STEPS`, `VALUES` | Browser |
 | FR-007, BR-003 | US-005 | AC1–AC3 | `Testimonials.jsx` (`resolveQuote`), `TESTIMONIALS` | Browser: see more/less per card, both languages |
 | FR-009, BR-005 | US-006 | AC1–AC4 | `LanguageContext.jsx`, `Nav.jsx`, `i18n.js` | Browser: toggle, reload persists, `<html lang>` |

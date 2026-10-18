@@ -135,6 +135,10 @@ So that I can picture her at my event
    Scenes), each with an accessible image label (`alt` text) in the active language, and no
    gradient placeholder slot remains. The label is shown visibly only if a photo fails to
    load.
+2. Given the gallery photos in `public/images/`
+   When their files are inspected (e.g. `file public/images/*.jpg`)
+   Then each is a JPEG resized for the web, no larger than 1200px on its longest side (the
+   size the shipped photos were resized to) — NFR-006.
 
 **Jira**
 - Jira Key: TBD
@@ -157,7 +161,8 @@ So that I know whether her approach fits me
 
 1. Given the process section
    When it renders
-   Then it shows 3 steps Discover → Transform → Thrive, with Transform highlighted.
+   Then it shows 3 steps with the middle step highlighted: Discover → Transform → Thrive in
+   English, Descubre → Transforma → Florece in Spanish.
 2. Given the values section
    When it renders
    Then it shows 4 value chips, each with its Spanish and English name shown together,
@@ -275,8 +280,8 @@ So that I get the same experience as on desktop
 
 1. Given a viewport ≤ 640px wide
    When the page renders
-   Then sections stack vertically, and the hero photo and all 5 gallery photos are visible
-   (non-zero size).
+   Then sections stack vertically, and the hero photo, all 5 gallery photos and all 4
+   testimonial photos are visible (non-zero size).
 2. Given a viewport between 641px and 900px wide
    When the services section renders
    Then the grid uses 2 columns.

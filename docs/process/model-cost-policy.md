@@ -89,8 +89,10 @@ Choosing the right model helps, but **bloated context costs more**: every turn r
 history, so dirty context is paid for on every message, not once.
 
 - **One session per ticket.** Don't carry one ticket's context into the next.
-- **Read the spec that applies, not all of them.** The table in [AGENTS.md](../../AGENTS.md)
-  exists precisely to be used as an index instead of reading all of `docs/specs/`.
+- **Read the spec that applies, not all of them.** The doc map in
+  [PROJECT_CONTEXT.md](../../PROJECT_CONTEXT.md) ("Active documentation") is the index: open
+  only the documents your change touches, per [AGENTS.md](../../AGENTS.md) → Before
+  implementing, instead of reading all of `docs/specs/`.
 - **Plan on Opus, execute on Sonnet.** The expensive reasoning is paid once, not on every edit.
 - **Use subagents for broad searches.** A subagent returns the conclusion without dumping every
   file it read into the main context.

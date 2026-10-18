@@ -32,9 +32,6 @@ to catch the obvious problems before asking Copilot or the user for review, not 
       updated.
 - [ ] If the ticket belongs to the active sprint → its status in the sprint plan in
       [docs/sprints/](../sprints/) is updated.
-- [ ] If the PR is where specs or ADRs get approved → their `Status` fields are set
-      (`Approved` / `Accepted`, plus PROJECT_SPEC §17 sign-off) once the owner approves, before
-      merging.
 - [ ] The ticket's row in [TICKETS.md](../../TICKETS.md) has the correct status.
 
 An outdated spec is as real a bug as a code one — don't leave it for "later".

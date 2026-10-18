@@ -90,6 +90,10 @@ A PR is ready to merge only if:
 
 - **Zero unresolved line comments** on the PR (whether from Copilot or a human).
 - **Suppressed/dismissed (`dismissed`) comments are ≤ 3.**
+- If the PR is where specs or ADRs get approved: their `Status` fields are set (`Approved` /
+  `Accepted`, plus PROJECT_SPEC §17 sign-off) **after** the owner approves the PR and before
+  merging. This is a merge gate, not a precheck item — the approval only exists once the PR
+  has been reviewed.
 
 When that condition is met, before recommending the merge you must **list every dismissed
 comment** with a short explanation of why it was dismissed and whether it truly doesn't need
