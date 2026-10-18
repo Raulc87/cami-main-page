@@ -54,7 +54,7 @@ their paths. This repo's locations (where they differ from the Starter Kit, see
 | User stories | `docs/specs/USER_STORIES.md` | Always |
 | Feature specs | `docs/specs/FEATURE_SPEC_<topic>.md` | When a story changes architecture |
 | Architecture spec | `docs/specs/ARCHITECTURE_SPEC.md` (includes the content model, §9) | Always |
-| Integration contracts | `docs/specs/<NAME>_CONTRACT.md` | Whenever two workstreams share an interface |
+| Integration contracts | `docs/specs/<NAME>_CONTRACT.md` (from `docs/templates/INTEGRATION_CONTRACT_TEMPLATE.md`) | Whenever two workstreams share an interface |
 | UX/UI direction | `docs/ux/UX_UI_DIRECTION.md` | Always |
 | Content (copy) | `src/constants/i18n.js` (`UI_TEXT`) and `src/constants/data.jsx`, per ARCHITECTURE_SPEC §9 — no `CONTENT.md` | Always |
 | Tech stack | `TECH_STACK.md` | Always |
@@ -64,6 +64,7 @@ their paths. This repo's locations (where they differ from the Starter Kit, see
 | Agent prompts | `docs/sprints/SPRINT_<NN>_AGENT_PROMPTS.md` | Sprints that use agent sessions |
 | Readiness checklist | `docs/checklists/SPRINT_READINESS_CHECKLIST.md` | Before every sprint |
 | Release / deployment runbook | `docs/process/release-checklist.md` | Always (the site is live) |
+| Branching and release ADR | `docs/decisions/ADR-007-branching-and-release-model.md` | Always (the site is live) |
 | Local development | `README.md` | Always |
 | Templates | `docs/templates/*_TEMPLATE.md` | — |
 
@@ -129,7 +130,8 @@ acronym is **CMP**.
 ## Model choice
 
 Pick the model by task, not by default. `.claude/settings.json` sets Sonnet as the project
-default (implementing, debugging, reviewing). Planning/architecture → Opus; scoped edits and
+default (implementing, debugging, answering review comments); the review-only agent runs on
+Opus in its own session. Planning/architecture → Opus; scoped edits and
 copy → Haiku; mechanical checks (build, `git status`, link checks) and read-only exploration
 → the subagents in `.claude/agents/` (`mechanical-check` and `repo-explorer`). `repo-explorer`
 has no write tools — not editing is a technical guarantee. `mechanical-check` does have `Bash`
@@ -317,7 +319,7 @@ independent reviewer:
 - Its comments are never an approval and do not replace the review-only agent or the owner.
 - The review-only agent may triage its findings (valid, obsolete, invalid) in its own review,
   but under reviewer independence it never fixes them.
-- Resolving threads: per [pr-workflow.md §4](docs/process/pr-workflow.md#4-wait-for-comments)
+- Resolving threads: per [pr-workflow.md §4](docs/process/pr-workflow.md#4-handle-review-comments)
   the author replies to and resolves each thread it addressed (the merge criteria count
   unresolved threads). The owner may resolve any thread themselves.
 
@@ -376,11 +378,20 @@ This file follows the [SDD Starter Kit](https://github.com/Raulc87/sdd_starter_k
   `src/constants/i18n.js` and `src/constants/data.jsx` (ARCHITECTURE_SPEC §9).
 - **Runbooks.** `docs/process/release-checklist.md` is the release and deployment runbook
   (manual GoDaddy deploy, [ADR-002](docs/decisions/ADR-002-godaddy-static-hosting.md));
-  `README.md` covers local development. No `docs/runbooks/` and no separate branching ADR:
-  `main` is the only long-lived branch.
+  `README.md` covers local development. No `docs/runbooks/`. The branching and release model
+  is [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md).
 - **PR body.** No `.github/pull_request_template.md`; the five mandatory sections in
   [pr-workflow.md §2](docs/process/pr-workflow.md#2-create-the-pr-with-gh) apply. Ownership
   (owned paths, changes outside scope) goes under `Files` when a sprint has an ownership map.
+- **Commit messages.** The kit requires a `<KEY>-NNN: ` subject prefix; here it is
+  recommended (`CMP-XXX: ...`) but not required
+  ([pr-workflow.md §1](docs/process/pr-workflow.md#1-commit-and-push)).
+- **Agent reading scope.** The kit's agent prompts read every document `PROJECT_CONTEXT.md`
+  lists; here agents read only the documents that apply to their ticket (Before
+  implementing), to save context ([model-cost-policy.md](docs/process/model-cost-policy.md)).
+  The review-only agent still reads them all.
+- **Docs-PR author.** In the kit the human owner authors docs PRs; here the coordinator does
+  (owner decision 2026-10-18, [Coordinator session](#coordinator-session)).
 - **Thread resolution.** The author resolves the threads it addressed (pr-workflow §4); the kit
   default leaves that to the owner.
 - **No CI yet**, so the kit's "`main` is never red" stacked-PR rule has nothing to enforce;

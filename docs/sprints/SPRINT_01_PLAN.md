@@ -3,7 +3,8 @@
 ## Metadata
 - Sprint: 01
 - Status: Active (owner go-ahead 2026-10-18)
-- Start: 2026-10-19 (Monday)
+- Start: 2026-10-19 (Monday); agent sessions launched early, 2026-10-18, on the owner's
+  go-ahead (see Sprint Review Notes)
 - End: 2026-10-27 (Tuesday)
 - Duration: 7 business days
 - Saturdays and Sundays excluded
@@ -52,8 +53,28 @@ Maximum implementation agents in parallel: 3.
 - Not applicable (no parallel code work this sprint).
 
 ## Merge / Integration Order
-1. CMP-014 (merged).
-2. Refinement PR for the selected story (if docs change).
+1. CMP-014 (merged), CMP-015 (merged).
+2. CMP-016 — coordinator docs PR #16 (AGENTS.md alignment, reviewer/agent setup, ADR-007).
+3. CMP-017 — Agent 1 verification evidence (docs only); independent of CMP-016 except the
+   shared `TICKETS.md` row (merge `main` in and keep both rows).
+4. Coordinator docs PR: AC wording fixes from CMP-017 and Review → Done flips, after the owner
+   approves the evidence.
+5. Refinement PR for the selected story.
+
+## File Ownership Map
+Agents edit only files they own; changes elsewhere are requested from the owner.
+
+| Path | Owner |
+|---|---|
+| `docs/sprints/SPRINT_01_VERIFICATION.md`, `docs/sprints/evidence/sprint-01/**` | Agent 1 (CMP-017) |
+| `TICKETS.md` — CMP-017 row | Agent 1 |
+| `TICKETS.md` — all other rows, `docs/specs/USER_STORIES.md`, `docs/sprints/**` (except Agent 1's files), `AGENTS.md`, `PROJECT_CONTEXT.md`, `docs/process/**`, `docs/templates/**`, `docs/decisions/**` | Coordinator (docs PRs) |
+| `src/**`, `public/**` | Nobody this sprint — any change needs a new CMP ticket approved by the owner |
+
+## Conflict Resolution
+- Merge conflicts are resolved when found, by the human owner together with the agent that owns
+  the conflicting file.
+- An agent must not rewrite another agent's files to resolve a conflict.
 
 ## Review-only Agent
 Dedicated Claude Code reviewer session (Opus), triggered by the owner or the coordinator; prompt

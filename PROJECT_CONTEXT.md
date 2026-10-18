@@ -19,7 +19,7 @@
   (includes the content model, §9)
 - UX/UI direction: [docs/ux/UX_UI_DIRECTION.md](docs/ux/UX_UI_DIRECTION.md)
 - Tech stack: [TECH_STACK.md](TECH_STACK.md)
-- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-006
+- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-007
 - Implementation plan: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
   (baseline + traceability)
 - Active sprint plan: [docs/sprints/SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md)
@@ -35,6 +35,8 @@
   [README.md](README.md)
 - Process: [docs/process/](docs/process/) — pr-precheck, pr-workflow, model-cost-policy,
   release-checklist
+- Branching and release model:
+  [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) (Proposed)
 - Templates: [docs/templates/](docs/templates/)
 
 Former spec file names (before CMP-014) are mapped in
@@ -62,6 +64,8 @@ they are not active paths.
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
   ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-016
+- Conflict resolution: the owner together with the agent that owns the conflicting file
+  ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
 ## Important constraints
 - Zero additional licensing cost — free tier first for any new tool (hosting and ad spend

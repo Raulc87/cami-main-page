@@ -43,6 +43,7 @@ idea that Sonnet is "several times" cheaper.
 | Exploration questions ("where does X live?", "which component uses Y?") | Haiku | Reading, not writing |
 | Run the build, check `git status`, verify links | Haiku | Mechanical check |
 | `/code-review` before the PR | Depends | See §5 |
+| Review-only agent (dedicated reviewer session, [AGENTS.md](../../AGENTS.md#review-only-agent)) | Opus | Finding spec deviations is where a stronger model pays off; reviews are read-heavy with short output |
 
 ## 3. If you are planning a ticket
 
@@ -103,9 +104,12 @@ history, so dirty context is paid for on every message, not once.
 
 ## 5. Hooks into the PR workflow
 
-- **Copilot before an expensive model.** Copilot's automatic review is already in the workflow
-  ([pr-workflow.md](pr-workflow.md) §3) and doesn't consume project tokens. Don't run a second
-  pass on Opus "just in case" if Copilot already covered the diff.
+- **Automated reviewers before an extra Opus pass by the author.** Copilot and Codex review
+  every PR automatically ([pr-workflow.md](pr-workflow.md) §3) and don't consume project
+  tokens. The *author* doesn't run an extra Opus `/code-review` "just in case" when they
+  already covered the diff. This does not apply to the review-only agent: it always does its
+  own full review, independent of automated reviewers' coverage
+  ([AGENTS.md → Review-only agent](../../AGENTS.md#review-only-agent)).
 - **`/code-review` level and model** according to the risk of the change — this adds to what
   [pr-precheck.md](pr-precheck.md) §5 already says about `medium` vs `high`:
 
@@ -115,7 +119,7 @@ history, so dirty context is paid for on every message, not once.
   | Narrow UI/components | Sonnet | `medium` (the default) |
   | Forms, lead data, external integrations | Opus | `high` |
 
-- **Answering Copilot comments** is Sonnet work — or Haiku if the comment is about formatting or
+- **Answering Copilot/Codex/reviewer comments** is Sonnet work — or Haiku if the comment is about formatting or
   naming. Escalate to Opus only if the comment questions a design decision.
 
 ## 6. When to escalate mid-task
