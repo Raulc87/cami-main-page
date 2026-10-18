@@ -62,7 +62,8 @@ Rules:
   PR title "CMP-XXX: ...". Follow docs/process/pr-precheck.md and pr-workflow.md.
 - Run `npm run build` and the manual browser check of your acceptance criteria before every
   push. Check `git status`; never commit temporary files or secrets.
-- Subscribe to your own PRs' events and fix review findings on them.
+- Subscribe to your own PRs' events and handle every review finding on them: fix it, or
+  reply why no change is needed (AGENTS.md → Automated PR reviewers).
 - If you hit a usage limit, list the stories you have not started so the coordinator can
   re-queue them. Never skip a story silently.
 - Never merge, approve, or enable auto-merge on any PR, and never push to main. Only the
@@ -86,8 +87,9 @@ Done (SPRINT_01_PLAN → Verification).
 Order of work:
 1. Branch CMP-017-sprint-01-browser-verification from main; add the CMP-017 row to TICKETS.md
    in the first commit (stories US-001..US-009, status in-progress). [Updated 2026-10-18,
-   CMP-016: PR #16 also adds a CMP-017 `todo` row. When main carries it, merge main in and
-   keep exactly one CMP-017 row — yours, with your current status.]
+   CMP-016: PR #16 adds a CMP-017 `todo` row. If main already has it when you start, update
+   that row to in-progress instead of adding one. If you added your own row first, merge main
+   in once PR #16 lands and keep exactly one CMP-017 row — yours, with your current status.]
 2. Run `npm run build`, then the dev server (`npm run dev`). With Playwright (Chromium is
    pre-installed; never run `playwright install`), check every acceptance criterion of
    US-001..US-009 in docs/specs/USER_STORIES.md at 1280px, 900px and 375px wide, in English

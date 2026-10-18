@@ -104,10 +104,11 @@ history, so dirty context is paid for on every message, not once.
 
 ## 5. Hooks into the PR workflow
 
-- **Automated reviewers before an extra Opus pass by the author.** Copilot and Codex review
-  every PR automatically ([pr-workflow.md](pr-workflow.md) §3) and don't consume project
-  tokens. The *author* doesn't run an extra Opus `/code-review` "just in case" when they
-  already covered the diff. This does not apply to the review-only agent: it always does its
+- **Automated reviewers before an extra Opus pass by the author.** Codex reviews every PR
+  automatically when it opens; Copilot reviews once it is requested
+  ([pr-workflow.md](pr-workflow.md) §3). Neither consumes project tokens. Once their reviews
+  have landed on the diff, the *author* doesn't run an extra Opus `/code-review` "just in
+  case". This does not apply to the review-only agent: it always does its
   own full review, independent of automated reviewers' coverage
   ([AGENTS.md → Review-only agent](../../AGENTS.md#review-only-agent)).
 - **`/code-review` level and model** according to the risk of the change — this adds to what
@@ -120,8 +121,7 @@ history, so dirty context is paid for on every message, not once.
   | Forms, lead data, external integrations | Opus | `high` |
 
 - **Answering Copilot/Codex/reviewer comments** is Sonnet work — or Haiku if the comment is
-  about formatting or
-  naming. Escalate to Opus only if the comment questions a design decision.
+  about formatting or naming. Escalate to Opus only if the comment questions a design decision.
 
 ## 6. When to escalate mid-task
 

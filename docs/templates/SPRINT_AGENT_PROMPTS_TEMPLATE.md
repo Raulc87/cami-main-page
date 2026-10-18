@@ -64,7 +64,8 @@ Rules:
   PR title "CMP-XXX: ...". Follow docs/process/pr-precheck.md and pr-workflow.md.
 - Run `npm run build` and the manual browser check of your acceptance criteria before every
   push. Check `git status`; never commit temporary files or secrets.
-- Subscribe to your own PRs' events and fix review findings on them.
+- Subscribe to your own PRs' events and handle every review finding on them: fix it, or
+  reply why no change is needed (AGENTS.md → Automated PR reviewers).
 - If you hit a usage limit, list the stories you have not started so the coordinator can
   re-queue them. Never skip a story silently.
 - Never merge, approve, or enable auto-merge on any PR, and never push to main. Only the

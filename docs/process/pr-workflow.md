@@ -95,6 +95,9 @@ A PR is ready to merge only if:
 
 - **Zero unresolved line comments** on the PR (whether from Copilot, Codex, the review-only
   agent or a human).
+- **The latest review-only agent review reads "Ready for human approval"**, or every finding
+  in it (they are in the review body, not in line threads) has a visible reply from the author:
+  fixed (with the commit) or why no change is needed.
 - **Suppressed/dismissed (`dismissed`) comments are ≤ 3.**
 - If the PR is where specs or ADRs get approved: their `Status` fields are set (`Approved` /
   `Accepted`, plus PROJECT_SPEC §17 sign-off) **after** the owner approves the PR and before

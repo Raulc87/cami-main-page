@@ -98,8 +98,11 @@ The human reviewer is the final approver.
 ## Verification
 - `mechanical-check` subagent: `npm run build` passes and every markdown link resolves.
 - Browser check of the retroactive acceptance criteria US-001..US-009 (desktop, 900px, 375px,
-  both languages); fix any AC that doesn't match the rendered page, then move each verified
-  story from `Review` to `Done`.
+  both languages), CMP-017. Each failure is classified: **AC wording** (the page is right, the
+  AC text is wrong) → the coordinator fixes the AC in a docs PR; **defect** (the page breaks
+  the AC) → the AC stays as is, a separate fix ticket is proposed to the owner, and the story
+  stays in `Review` until the fix ships. Only stories whose ACs all pass move from `Review` to
+  `Done`, after the owner approves the evidence.
 - Owner reads PROJECT_CONTEXT.md and confirms the documentation map is complete.
 
 ## Risks
