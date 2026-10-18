@@ -53,6 +53,6 @@ and links to every spec, the user stories, the ADRs in `docs/decisions/`, the sp
 `docs/sprints/`, and the ticket/PR workflow in `docs/process/`. [CLAUDE.md](CLAUDE.md) and
 [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) give the quick project context and doc map.
 
-Work is tracked as `CMP-XXX` tickets in [TICKETS.md](TICKETS.md), each implementing one or more
-user stories from [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md); there's no external
-tracker yet.
+Work is tracked as `CMP-XXX` tickets in [TICKETS.md](TICKETS.md). Product tickets implement one or
+more user stories from [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md); process/tech-debt
+tickets may have none. There's no external tracker yet.

@@ -33,7 +33,10 @@ Project Requirement → User Story → Acceptance Criterion → Implementation �
 | NFR-001, NFR-005, FR-010 | US-009 | AC1, AC2 | `index.html` meta, release checklist | `npm run build`; production check |
 
 ## 4. Current State
-v1.0.1 live at `camihernandez.com`. All content real except two `Catalog coming soon` notes.
+v1.0.1 live at `camihernandez.com`. Verified real content: hero photo, all 5 gallery photos,
+all 4 testimonials and the stats. Services, process and values copy is not certified (two
+services still say `Catalog coming soon`); see
+[ARCHITECTURE_SPEC — Content state](../specs/ARCHITECTURE_SPEC.md#content-state).
 
 ## 5. Target State
 Unchanged code. Documentation homologated to the SDD starter kit (CMP-014).

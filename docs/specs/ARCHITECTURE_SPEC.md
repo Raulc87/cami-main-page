@@ -259,7 +259,9 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
   [release-checklist.md](../process/release-checklist.md).
 
 ## 14. Configuration and Secrets
-- None. Only `.claude/settings.json` (agent model default) is versioned config.
+- No runtime environment configuration and no secrets.
+- Versioned config: `vite.config.js` (build-time: React plugin, production `outDir`) and
+  `.claude/settings.json` (agent model default).
 
 ## 15. Observability
 - None (backlog US-014).

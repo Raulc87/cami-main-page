@@ -2,7 +2,8 @@
 
 This file is the product backlog source (no Jira/Linear yet — see
 [ADR-005](../decisions/ADR-005-in-repo-tracking.md)). Work units are `CMP-XXX` tickets in
-[TICKETS.md](../../TICKETS.md); each ticket implements one or more stories from here.
+[TICKETS.md](../../TICKETS.md); a product ticket implements one or more stories from here,
+while process/tech-debt tickets may have no story (`—` in TICKETS.md).
 
 - **US-001..US-009** were reconstructed retroactively in CMP-014 from the features already
   shipped in v1.0.x. Their acceptance criteria were reconstructed from the code and still
@@ -73,7 +74,8 @@ So that I trust her enough to keep reading
    4 Pillars of Change) with labels in the active language.
 3. Given any language is active
    When I read the hero tagline and photo quote
-   Then they are always in Spanish ("Disciplina hoy, libertad mañana.").
+   Then they are always in Spanish: the tagline reads "Disciplina hoy, libertad mañana." and
+   the photo quote reads "Tu mejor versión empieza aquí."
 
 **Dependencies**
 - US-006 (translated labels)
