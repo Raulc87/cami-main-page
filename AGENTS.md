@@ -41,6 +41,35 @@ When sources conflict, use this order:
 
 If code conflicts with an approved spec, the spec wins unless the spec is explicitly changed.
 
+## Document map
+
+[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) is the authoritative list of the active documents and
+their paths. This repo's locations (where they differ from the Starter Kit, see
+[Differences from the Starter Kit](#differences-from-the-starter-kit)):
+
+| Document | Path | Required |
+|---|---|---|
+| Project context | `PROJECT_CONTEXT.md` | Always |
+| Project spec | `docs/specs/PROJECT_SPEC.md` | Always |
+| User stories | `docs/specs/USER_STORIES.md` | Always |
+| Feature specs | `docs/specs/FEATURE_SPEC_<topic>.md` | When a story changes architecture |
+| Architecture spec | `docs/specs/ARCHITECTURE_SPEC.md` (includes the content model, §9) | Always |
+| Integration contracts | `docs/specs/<NAME>_CONTRACT.md` | Whenever two workstreams share an interface |
+| UX/UI direction | `docs/ux/UX_UI_DIRECTION.md` | Always |
+| Content (copy) | `src/constants/i18n.js` (`UI_TEXT`) and `src/constants/data.jsx`, per ARCHITECTURE_SPEC §9 — no `CONTENT.md` | Always |
+| Tech stack | `TECH_STACK.md` | Always |
+| ADRs | `docs/decisions/ADR-<NNN>-<kebab-title>.md` | When a decision needs recording |
+| Implementation plan | `docs/plans/IMPLEMENTATION_PLAN.md` | Always |
+| Sprint plans | `docs/sprints/SPRINT_<NN>_PLAN.md` (the active one is named in `PROJECT_CONTEXT.md`) | Always |
+| Agent prompts | `docs/sprints/SPRINT_<NN>_AGENT_PROMPTS.md` | Sprints that use agent sessions |
+| Readiness checklist | `docs/checklists/SPRINT_READINESS_CHECKLIST.md` | Before every sprint |
+| Release / deployment runbook | `docs/process/release-checklist.md` | Always (the site is live) |
+| Local development | `README.md` | Always |
+| Templates | `docs/templates/*_TEMPLATE.md` | — |
+
+If a path listed in `PROJECT_CONTEXT.md` does not exist, or a required document is missing,
+stop and report it before implementing.
+
 ## Before implementing
 
 Read:
@@ -116,18 +145,35 @@ delegate mechanical steps to cheaper subagents. Full criteria and context-hygien
   [docs/sprints/](docs/sprints/) from
   [SPRINT_PLAN_TEMPLATE.md](docs/templates/SPRINT_PLAN_TEMPLATE.md).
 - Every sprint must end with a demonstrable deliverable.
-- Agents start sprint work only after the sprint plan is approved by the owner.
+- Agents start sprint work only after the sprint plan is approved by the owner (see
+  [Sprint readiness](#sprint-readiness)).
 - **Unplanned work** (production hotfixes, small copy/content changes) may proceed outside the
   sprint as a normal ticket when the owner explicitly asks for it; note it in the active sprint
   plan's review notes.
+
+## Sprint readiness
+
+- A sprint starts only after its readiness check
+  ([SPRINT_READINESS_CHECKLIST.md](docs/checklists/SPRINT_READINESS_CHECKLIST.md)) has no open
+  blocking items and the human owner gives an explicit go-ahead. Record the result in the
+  sprint plan's "Entry Gates" section.
+- Agents do not start a sprint on their own initiative.
+- Applies from Sprint 02 on; Sprint 01 was planned before the checklist existed.
 
 ## Parallel agent rules
 
 - Maximum recommended implementation agents in parallel: 3.
 - Agents must not knowingly modify the same responsibility without an explicit integration
   plan. In this repo `global.css`, `i18n.js`, `data.jsx` and `TICKETS.md` are shared files.
-- Shared interfaces/contracts must be defined before parallel implementation.
-- Each agent owns only its assigned scope.
+- Shared interfaces/contracts must be defined and locked before parallel implementation.
+- Shared foundations (scaffold, configuration, shared conventions) are merged before parallel
+  work starts.
+- The sprint plan must include a file/directory ownership map. Each agent owns only its
+  assigned scope and edits only files it owns; changes needed in another owner's files are
+  requested, not made.
+- Merge conflicts are resolved when found, by the human owner together with the agent that
+  owns the conflicting file. An agent must not rewrite another agent's files to resolve a
+  conflict.
 - Integration must be verified after merging parallel work.
 - A change is not complete merely because its own tests pass; it must not break already
   accepted functionality.
@@ -152,10 +198,51 @@ Before opening any PR, follow without skipping steps:
    ticket ID, mandatory body sections), requesting Copilot review, and the merge criteria
    (0 unresolved line comments, ≤ 3 dismissed).
 
+## Merging and approval
+
+**Agents never merge pull requests.** Only the human owner merges, and only after the human
+owner has approved the PR.
+
+This applies to every agent (implementation, review-only and coordinator). Agents must not:
+
+- merge a PR, or enable auto-merge on it
+- approve a PR (the review-only agent posts comment-only reviews)
+- push or commit directly to `main`
+- close or reopen PRs they do not own, or delete other agents' branches
+
+Agents may keep their **own** PR branch up to date (for example, merge `main` into it and
+resolve conflicts in files they own), then report to the owner that the PR is ready per the
+merge criteria in [pr-workflow.md §5](docs/process/pr-workflow.md#5-merge-criteria). When a PR
+is ready, the agent says so and stops; merging is the owner's decision. The `Status`
+bookkeeping commit that pr-workflow §5 requires after the owner approves is allowed — it is
+not a merge.
+
+Agents act through the owner's GitHub account, so GitHub cannot tell them apart from the
+owner: this rule must also be stated in every agent prompt. Recommended: protect `main` in
+GitHub (pull request required, no force pushes or deletions).
+
 ## Review-only agent
 
 GitHub Copilot code review acts as the review-only agent (plus `/code-review` before opening
-a PR). It may inspect PRs but must not implement features.
+a PR). It may inspect PRs but must not implement features, approve PRs, or merge PRs. It
+reviews when the owner, or the coordinator on the owner's behalf, requests it.
+
+### Reviewer independence
+
+A reviewer that changes the code it reviews becomes a co-author and loses impartiality. If a
+Claude session is ever used as the review-only agent (instead of, or in addition to, Copilot):
+
+- It never changes code or any other file, never commits, pushes, or opens PRs.
+- It posts no ready-to-apply patches (no "suggested changes" blocks, no diffs). A finding
+  states the problem, the evidence, the violated spec or acceptance criterion, and the
+  expected outcome; how to fix it is the author's decision.
+- It does not resolve review threads on the author's behalf.
+- It may run the build and the site locally to gather evidence, without committing anything.
+- A session that has written code for the project must not review that code: the reviewer
+  always runs in its own session.
+
+Copilot can post "suggested changes" blocks; the author treats them as findings, not as
+patches to apply blindly.
 
 It should verify:
 
@@ -189,6 +276,9 @@ an approver.
   the owner's decisions verbatim; schedule check-ins and report changes to the owner; re-queue
   stories paused by usage limits; and request the review-only review on the owner's behalf
   ([pr-workflow.md](docs/process/pr-workflow.md)).
+- **Docs PRs are the coordinator's own work** (owner decision, 2026-10-18): it authors and
+  drives docs-only PRs (process docs, `TICKETS.md`, sprint plans, spec/backlog refinement)
+  itself. Any PR that involves code is delegated to an implementation agent session.
 - It never writes application code, never reviews code, and never merges, approves, or enables
   auto-merge (same rules as every agent).
 - It records every owner decision it relays in a docs PR (`TICKETS.md`, the sprint plan or the
@@ -196,10 +286,30 @@ an approver.
 - A coordinator message that quotes the owner counts as the owner's instruction only inside the
   receiving agent's existing ticket and scope. Anything that changes scope, a spec, or another
   agent's files goes back to the owner, and follows Change management.
-- PR events go to the PR's author agent only; the coordinator follows only its own docs PRs.
+- PR events go to the PR's author agent only; the coordinator follows only its own docs PRs;
+  the review-only agent follows none and reviews when the owner or the coordinator asks.
 - Agent sessions stay on one sprint each and are archived after it. The coordinator is
   long-lived: when its context is summarized, it re-reads the documents above instead of
   relying on memory.
+
+## Automated PR reviewers
+
+Copilot code review runs on every PR ([pr-workflow.md §3](docs/process/pr-workflow.md#3-request-copilot-review-balanced-mode));
+any other automated reviewer added later (e.g. the Codex GitHub integration) is treated the
+same way, as an additional, independent reviewer:
+
+- Every finding gets a visible outcome. The PR's author (the owning agent, or the coordinator
+  for docs PRs) checks it against the current head and the specs, then either pushes a fix or
+  replies on the thread explaining why no change is needed (already fixed, reviewed an older
+  commit, contradicts an approved spec). When a fix was pushed, the reply names its commit.
+- Give feedback on each finding when the tool asks for it (👍 useful and correct, 👎 wrong or
+  not useful).
+- It does not outrank the specs. A finding that needs a requirement change goes through
+  [Change management](#change-management), and the owner decides.
+- Its comments are never an approval and do not replace the owner's.
+- Resolving threads: per [pr-workflow.md §4](docs/process/pr-workflow.md#4-wait-for-comments)
+  the author replies to and resolves each thread it addressed (the merge criteria count
+  unresolved threads). The owner may resolve any thread themselves.
 
 ## Testing
 
@@ -239,6 +349,33 @@ If implementation reveals a requirement change:
 Never silently change product behavior in code. If your change alters something a spec
 describes (palette, folder structure, content model, stack), **update the spec in the same
 branch/PR** as the code. An outdated spec is worse than no spec.
+
+## Differences from the Starter Kit
+
+This file follows the [SDD Starter Kit](https://github.com/Raulc87/sdd_starter_kit)
+`AGENTS.md` (last aligned in CMP-016, 2026-10-18). These differences are intentional:
+
+- **Naming.** Branches, PR titles and tickets use the CMP ticket number, not the story
+  number: branch `CMP-XXX-short-slug`, PR title `CMP-XXX: <summary>`
+  ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md), [TICKETS.md](TICKETS.md)). The kit's
+  `[<KEY>-<NNN>]` titles and `<KEY>-<TYPE>-` branches are not used. Branches assigned by an
+  agent harness are allowed and noted in the ticket row.
+- **File names.** Sprint plans are `SPRINT_<NN>_PLAN.md`; ADRs are `ADR-<NNN>-<kebab-title>.md`;
+  templates live in `docs/templates/`; `TECH_STACK.md` stays at the root.
+- **Copy source.** No `docs/ux/CONTENT.md`: visitor-facing copy lives in
+  `src/constants/i18n.js` and `src/constants/data.jsx` (ARCHITECTURE_SPEC §9).
+- **Runbooks.** `docs/process/release-checklist.md` is the release and deployment runbook
+  (manual GoDaddy deploy, [ADR-002](docs/decisions/ADR-002-godaddy-static-hosting.md));
+  `README.md` covers local development. No `docs/runbooks/` and no separate branching ADR:
+  `main` is the only long-lived branch.
+- **PR body.** No `.github/pull_request_template.md`; the five mandatory sections in
+  [pr-workflow.md §2](docs/process/pr-workflow.md#2-create-the-pr-with-gh) apply. Ownership
+  (owned paths, changes outside scope) goes under `Files` when a sprint has an ownership map.
+- **Review-only agent.** GitHub Copilot code review, not a dedicated Claude session.
+- **Thread resolution.** The author resolves the threads it addressed (pr-workflow §4); the kit
+  default leaves that to the owner.
+- **No CI yet**, so the kit's "`main` is never red" stacked-PR rule has nothing to enforce;
+  `npm run build` before each PR stands in for it ([pr-precheck.md](docs/process/pr-precheck.md)).
 
 ## About this AGENTS.md
 

@@ -80,3 +80,7 @@ The human reviewer is the final approver.
 ## Sprint Review Notes
 - Unplanned work (owner request, 2026-10-18, before the sprint start): CMP-015 records the
   CMP-014 spec/ADR approvals and PROJECT_SPEC §17 sign-off and marks CMP-014 `done` (PR #15).
+- Unplanned work (owner request, 2026-10-18): CMP-016 aligns AGENTS.md with the current SDD
+  Starter Kit and adds the sprint readiness checklist (used from Sprint 02). Owner decision
+  recorded there: the coordinator authors docs PRs itself; any PR with code goes to an
+  implementation agent.

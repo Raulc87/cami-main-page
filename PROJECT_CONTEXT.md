@@ -2,7 +2,9 @@
 
 ## Project
 - Name: cami-main-page — personal brand website for Cami Hernandez
+- Project key: CMP (tickets, branches, PR titles; see [AGENTS.md](AGENTS.md#tickets-and-branches))
 - Repository: https://github.com/Raulc87/cami-main-page
+- Starter Kit: https://github.com/Raulc87/sdd_starter_kit (AGENTS.md last aligned in CMP-016)
 - Status: Live at `camihernandez.com` (v1.0.1); documentation homologated to the SDD starter
   kit in CMP-014
 - Product owner / final reviewer: Raul Casanas
@@ -21,7 +23,16 @@
 - Implementation plan: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
   (baseline + traceability)
 - Active sprint plan: [docs/sprints/SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md)
-- Work log: [TICKETS.md](TICKETS.md)
+- Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
+  [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
+  ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
+- Readiness checklist:
+  [docs/checklists/SPRINT_READINESS_CHECKLIST.md](docs/checklists/SPRINT_READINESS_CHECKLIST.md)
+- Content (visitor-facing copy): `src/constants/i18n.js` (`UI_TEXT`) and
+  `src/constants/data.jsx` (ARCHITECTURE_SPEC §9); no `CONTENT.md`
+- Runbooks: release and deployment —
+  [release-checklist.md](docs/process/release-checklist.md); local development —
+  [README.md](README.md)
 - Process: [docs/process/](docs/process/) — pr-precheck, pr-workflow, model-cost-policy,
   release-checklist
 - Templates: [docs/templates/](docs/templates/)
@@ -48,13 +59,13 @@ Old PRs and ticket notes reference these files, which no longer exist:
 - Status: Planned
 
 ## Agent allocation
-- Implementation Agent 1: CMP-015 (Claude Code); CMP-014 done (PR #14 merged)
+- Implementation Agent 1: unassigned (CMP-014 and CMP-015 done)
 - Implementation Agent 2: unassigned
 - Implementation Agent 3: unassigned
 - Review-only Agent: GitHub Copilot code review
-- Coordinator: none yet — CMP-014 is merged; the owner starts one on `main` once CMP-015
-  merges, so it starts from the approved specs
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session))
+- Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
+  itself and delegates any code to an implementation agent
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-016
 
 ## Important constraints
 - Zero additional licensing cost — free tier first for any new tool (hosting and ad spend
