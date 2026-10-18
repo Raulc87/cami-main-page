@@ -1,6 +1,6 @@
 # ADR-006 — Adopt the SDD starter kit structure and Scrum process
 
-- Status: Proposed (accepted when the CMP-014 PR is approved and merged)
+- Status: Accepted (CMP-014 PR #14 approved and merged, 2026-10-18)
 - Date: 2026-10-17
 - Decision owner: Raul Casanas
 - Related specs: all — see [PROJECT_CONTEXT.md](../../PROJECT_CONTEXT.md)

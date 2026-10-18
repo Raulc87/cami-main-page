@@ -3,9 +3,9 @@
 ## Metadata
 - Project: cami-main-page (personal brand website for Cami Hernandez)
 - Version: 1.0 (baseline homologated from `00-vision.md` + `05-roadmap.md` in CMP-014)
-- Status: Review — pending approval by the product owner
+- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
 - Owner: Raul Casanas (product owner / final reviewer)
-- Last updated: 2026-10-17
+- Last updated: 2026-10-18
 
 ## 1. Problem Statement
 
@@ -161,5 +161,5 @@ implementation.
 - Should two of three services keep `Catalog coming soon` until US-010 is scheduled?
 
 ## 17. Approval
-- Approved by:
-- Date:
+- Approved by: Raul Casanas (product owner), by merging the CMP-014 PR (#14)
+- Date: 2026-10-18

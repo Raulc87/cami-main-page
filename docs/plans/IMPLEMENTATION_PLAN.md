@@ -2,7 +2,7 @@
 
 ## Metadata
 - Version: 1.0 — baseline (as-built v1.0.1), created in CMP-014
-- Status: Review — pending approval by the product owner
+- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
 - Related specs: [PROJECT_SPEC](../specs/PROJECT_SPEC.md), [ARCHITECTURE_SPEC](../specs/ARCHITECTURE_SPEC.md), [UX_UI_DIRECTION](../ux/UX_UI_DIRECTION.md), [TECH_STACK](../../TECH_STACK.md)
 - Related user stories: US-001..US-009 (Review — shipped, pending Sprint 01 verification); US-010..US-016 (Proposed, not planned here)
 
