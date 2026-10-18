@@ -43,15 +43,17 @@ Old PRs and ticket notes reference these files, which no longer exist:
 - Goal: approve the SDD baseline (CMP-014) and refine at least one backlog story to `Ready`
 - Start: 2026-10-19
 - End: 2026-10-27
-- Deliverable: CMP-014 merged with approved specs; one story `Ready` for Sprint 02
+- Deliverable: CMP-014 merged with approved specs (merged 2026-10-18; approvals recorded in
+  CMP-015); one story `Ready` for Sprint 02
 - Status: Planned
 
 ## Agent allocation
-- Implementation Agent 1: CMP-014 (Claude Code)
+- Implementation Agent 1: CMP-015 (Claude Code); CMP-014 done (PR #14 merged)
 - Implementation Agent 2: unassigned
 - Implementation Agent 3: unassigned
 - Review-only Agent: GitHub Copilot code review
-- Coordinator: none yet — the owner starts one on `main` after CMP-014 merges
+- Coordinator: none yet — CMP-014 is merged; the owner starts one on `main` once CMP-015
+  merges, so it starts from the approved specs
   ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session))
 
 ## Important constraints
