@@ -39,7 +39,7 @@ must be updated by hand** so they don't drift.
 | `C.navyLight` | `#4a6178` | Body text, light navy |
 | `C.rose` | `#c9a4ab` | "Dusty rose" accent (badges, dots, italics) |
 | `C.roseLight` | `#e8d4d8` | Light rose (borders, stats bar backgrounds) |
-| `C.cream` | `#f5ede8` | Section alternation |
+| `C.cream` | `#f5ede8` | Intended for section alternation (`colors.js`); today used only in a gallery gradient |
 | `C.textMuted` | `#8a9aaa` | Muted labels/mono text |
 
 ### Typography
@@ -53,7 +53,8 @@ Imported via the Google Fonts CDN in [global.css](../../src/styles/global.css) (
 - **JetBrains Mono** (400/500) — technical/mono labels: image placeholders, footer URL.
 
 ## 3. Layout Principles
-- Full-width sections stacked vertically, alternating `C.bg` / `C.cream` backgrounds.
+- Full-width sections stacked vertically; section backgrounds use `C.white`, `C.bg` or `C.navy`
+  (`C.cream` is not used as a section background today).
 - **Large rounded corners**: 10–20px on cards/buttons, `100px`/`50%` for pills and circles.
 - Background decoration stays behind content: grain texture overlay and glow orbs (see §6).
 
@@ -133,8 +134,8 @@ pattern (absolute background image) needs the same kind of mobile override (see 
 ## 10. Placeholder Policy
 Use meaningful proposed content, not lorem ipsum. Any placeholder must be explicitly marked in
 code and in [ARCHITECTURE_SPEC.md §9](../specs/ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
-(PROJECT_SPEC BR-002). Current state: all photos and testimonials are real; two of three
-services say `Catalog coming soon`.
+(PROJECT_SPEC BR-002). The current content state is tracked only in ARCHITECTURE_SPEC §9
+("Content state").
 
 ## 11. Validation Items
 - Owner sign-off on the palette and typography as the official brand system.

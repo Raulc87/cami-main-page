@@ -116,7 +116,10 @@ delegate mechanical steps to cheaper subagents. Full criteria and context-hygien
   [docs/sprints/](docs/sprints/) from
   [SPRINT_PLAN_TEMPLATE.md](docs/templates/SPRINT_PLAN_TEMPLATE.md).
 - Every sprint must end with a demonstrable deliverable.
-- Agents start implementation only after the sprint plan is approved by the owner.
+- Agents start sprint work only after the sprint plan is approved by the owner.
+- **Unplanned work** (production hotfixes, small copy/content changes) may proceed outside the
+  sprint as a normal ticket when the owner explicitly asks for it; note it in the active sprint
+  plan's review notes.
 
 ## Parallel agent rules
 

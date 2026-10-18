@@ -66,6 +66,8 @@ The human reviewer is the final approver.
 
 ## Verification
 - `mechanical-check` subagent: `npm run build` passes and every markdown link resolves.
+- Browser check of the retroactive acceptance criteria US-001..US-009 (desktop, 900px, 375px,
+  both languages); fix any AC that doesn't match the rendered page.
 - Owner reads PROJECT_CONTEXT.md and confirms the documentation map is complete.
 
 ## Risks

@@ -5,7 +5,8 @@ This file is the product backlog source (no Jira/Linear yet — see
 [TICKETS.md](../../TICKETS.md); each ticket implements one or more stories from here.
 
 - **US-001..US-009** were reconstructed retroactively in CMP-014 from the features already
-  shipped in v1.0.x. Their acceptance criteria describe the current, verified behavior. Story
+  shipped in v1.0.x. Their acceptance criteria were reconstructed from the code and still
+  need a browser check (Sprint 01 verification) before they count as a verified baseline. Story
   points are not estimated retroactively.
 - **US-010..US-016** come from the former roadmap (`05-roadmap.md`). They are `Proposed`:
   direction, not ready for implementation. Before a sprint can select one, it must be refined
@@ -271,7 +272,7 @@ So that I get the same experience as on desktop
    When the page renders
    Then sections stack vertically, and the hero photo and all 5 gallery photos are visible
    (non-zero size).
-2. Given a viewport ≤ 900px wide
+2. Given a viewport between 641px and 900px wide
    When the services section renders
    Then the grid uses 2 columns.
 
