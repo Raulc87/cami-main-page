@@ -1,7 +1,8 @@
 # TECH_STACK
 
 ## Metadata
-- Version: 1.0 (homologated from `docs/specs/01-tech-stack.md` in CMP-014)
+- Version: 1.1 (homologated from `docs/specs/01-tech-stack.md` in CMP-014; §9 reviewer setup
+  updated in CMP-016, 2026-10-18)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
 - Owner: Raul Casanas
 

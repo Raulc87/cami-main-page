@@ -55,8 +55,9 @@ Maximum implementation agents in parallel: 3.
 ## Merge / Integration Order
 1. CMP-014 (merged), CMP-015 (merged).
 2. CMP-016 — coordinator docs PR #16 (AGENTS.md alignment, reviewer/agent setup, ADR-007).
-3. CMP-017 — Agent 1 verification evidence (docs only); independent of CMP-016 except the
-   shared `TICKETS.md` row (merge `main` in and keep both rows).
+3. CMP-017 — Agent 1 verification evidence (docs only); independent of CMP-016 except
+   `TICKETS.md`: after CMP-016 merges, Agent 1 merges `main` in and keeps exactly one CMP-017
+   row (its own, with its current status).
 4. Coordinator docs PR: AC wording fixes from CMP-017 and Review → Done flips, after the owner
    approves the evidence.
 5. Refinement PR for the selected story.

@@ -85,7 +85,9 @@ Done (SPRINT_01_PLAN → Verification).
 
 Order of work:
 1. Branch CMP-017-sprint-01-browser-verification from main; add the CMP-017 row to TICKETS.md
-   in the first commit (stories US-001..US-009, status in-progress).
+   in the first commit (stories US-001..US-009, status in-progress). [Updated 2026-10-18,
+   CMP-016: PR #16 also adds a CMP-017 `todo` row. When main carries it, merge main in and
+   keep exactly one CMP-017 row — yours, with your current status.]
 2. Run `npm run build`, then the dev server (`npm run dev`). With Playwright (Chromium is
    pre-installed; never run `playwright install`), check every acceptance criterion of
    US-001..US-009 in docs/specs/USER_STORIES.md at 1280px, 900px and 375px wide, in English

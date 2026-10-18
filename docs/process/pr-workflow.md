@@ -93,7 +93,8 @@ owner. For each one:
 
 A PR is ready to merge only if:
 
-- **Zero unresolved line comments** on the PR (whether from Copilot, Codex, the review-only agent or a human).
+- **Zero unresolved line comments** on the PR (whether from Copilot, Codex, the review-only
+  agent or a human).
 - **Suppressed/dismissed (`dismissed`) comments are ≤ 3.**
 - If the PR is where specs or ADRs get approved: their `Status` fields are set (`Approved` /
   `Accepted`, plus PROJECT_SPEC §17 sign-off) **after** the owner approves the PR and before

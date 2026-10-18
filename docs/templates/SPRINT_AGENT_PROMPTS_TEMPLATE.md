@@ -6,8 +6,8 @@ sessions. Adapted from the SDD Starter Kit template for this repo.
 One Claude Code session per agent, each on `Raulc87/cami-main-page`. Start them only after the
 sprint plan is merged and the owner gives the go-ahead. The coordinator session
 ([AGENTS.md](../../AGENTS.md#coordinator-session)) may launch them for the owner: one new
-session per agent, tagged `cmp-sprint-<nn>` and `cmp-agent-<n>` / `cmp-reviewer`. Each agent session stays on
-this sprint only and is archived after it.
+session per agent, tagged `cmp-sprint-<nn>` and `cmp-agent-<n>` / `cmp-reviewer`. Each agent
+session stays on this sprint only and is archived after it.
 
 ## Models
 

@@ -45,13 +45,17 @@ Option A:
 2. `main` is always releasable: a story merges only when it is ready to go live. (No build
    flags exist yet; adopt them with an ADR if a story ever needs to merge unfinished.)
 3. Production = SemVer release tags (`vMAJOR.MINOR.PATCH`) on a `main` commit, published as a
-   GitHub Release, with the `dist/` of that commit uploaded per release-checklist.md. The
-   smoke test of the live site is recorded in the release notes.
+   GitHub Release, with the `dist/` of that commit uploaded per release-checklist.md. The tag
+   and release are created only after the live site has been verified
+   ([release-checklist.md §6](../process/release-checklist.md#6-tag--github-release)).
 4. Urgent fix: because `main` is kept releasable, the fix is a normal `CMP-XXX` ticket
    against `main`, released as a patch. A `release/vMAJOR.MINOR.x` branch is created only if
    `main` ever holds unreleased work that must not go live; it then gets the same protection
    as `main`.
-5. Rollback: re-upload the `dist/` built from the previous release tag.
+5. Rollback: restore the cPanel backup `.zip` taken before the upload; if none exists, build
+   the previous release tag and upload that `dist/`
+   ([release-checklist.md §7](../process/release-checklist.md#7-rollback),
+   [IMPLEMENTATION_PLAN §17](../plans/IMPLEMENTATION_PLAN.md#17-rollback)).
 6. Backends and data (when US-011/US-012 arrive) follow the same rule, with a staging data
    store for previews and tests — to be detailed in the backend ADR.
 

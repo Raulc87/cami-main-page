@@ -119,7 +119,8 @@ history, so dirty context is paid for on every message, not once.
   | Narrow UI/components | Sonnet | `medium` (the default) |
   | Forms, lead data, external integrations | Opus | `high` |
 
-- **Answering Copilot/Codex/reviewer comments** is Sonnet work — or Haiku if the comment is about formatting or
+- **Answering Copilot/Codex/reviewer comments** is Sonnet work — or Haiku if the comment is
+  about formatting or
   naming. Escalate to Opus only if the comment questions a design decision.
 
 ## 6. When to escalate mid-task
