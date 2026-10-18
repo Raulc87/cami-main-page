@@ -19,8 +19,10 @@ it can be migrated to Linear (it has a free tier) by importing these same rows.
    highest + 1). Don't reuse or "reserve" numbers.
 2. Create the branch as `CMP-XXX-short-slug` (English or Spanish, whichever best describes the
    work).
-3. Add the row to the table in the same commit where you start the work, to minimize collisions if
-   at some point more than one thread/agent works in parallel.
+3. Add the row to the table in the same commit where you start the work, to minimize
+   collisions if at some point more than one thread/agent works in parallel. Tickets planned
+   in a sprint get their row (`todo`) in the sprint plan PR instead (AGENTS.md → Sprint
+   readiness).
 4. Update the status as you go. When the PR is merged, status = `done`.
 
 **States:** `todo` · `in-progress` · `review` · `done` · `dropped`

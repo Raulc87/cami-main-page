@@ -37,17 +37,9 @@
   release-checklist
 - Templates: [docs/templates/](docs/templates/)
 
-### Former spec names (before CMP-014)
-Old PRs and ticket notes reference these files, which no longer exist:
-
-| Old file | Now |
-|---|---|
-| `docs/specs/00-vision.md` | `docs/specs/PROJECT_SPEC.md` |
-| `docs/specs/01-tech-stack.md` | `TECH_STACK.md` |
-| `docs/specs/02-design-system.md` | `docs/ux/UX_UI_DIRECTION.md` |
-| `docs/specs/03-content-model.md` | `docs/specs/ARCHITECTURE_SPEC.md` §9 |
-| `docs/specs/04-architecture.md` | `docs/specs/ARCHITECTURE_SPEC.md` |
-| `docs/specs/05-roadmap.md` | `docs/specs/USER_STORIES.md` (US-010..US-016) |
+Former spec file names (before CMP-014) are mapped in
+[ADR-006 → Implementation Impact](docs/decisions/ADR-006-adopt-sdd-starter-kit.md#implementation-impact);
+they are not active paths.
 
 ## Current sprint
 - Sprint: 01

@@ -158,6 +158,10 @@ delegate mechanical steps to cheaper subagents. Full criteria and context-hygien
   blocking items and the human owner gives an explicit go-ahead. Record the result in the
   sprint plan's "Entry Gates" section.
 - Agents do not start a sprint on their own initiative.
+- **Ticket numbers for the plan.** The checklist asks for each story's planned branch name.
+  Here that means a `CMP-XXX` number: the sprint plan PR adds one `todo` row per planned
+  ticket to [TICKETS.md](TICKETS.md), which allocates the numbers (a recorded row is not a
+  "reserved" number). The implementing agent then updates that row instead of adding one.
 - Applies from Sprint 02 on; Sprint 01 was planned before the checklist existed.
 
 ## Parallel agent rules
