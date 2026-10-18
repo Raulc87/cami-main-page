@@ -71,8 +71,10 @@ level in GitHub (Settings → Code review → Copilot), not via `gh` per PR. If 
 that mode configured yet, it's a one-time manual GitHub configuration step to do from the UI —
 tell the user if there's no certainty that the mode is set to `balanced`.
 
-In the starter kit's terms, GitHub Copilot code review acts as the **"review-only agent"**: it
-reviews, it never implements. The human owner is the final approver of every PR.
+Copilot is an **automated reviewer**. The **review-only agent** is a dedicated Claude Code
+session that reviews when the owner or the coordinator asks
+([AGENTS.md → Review-only agent](../../AGENTS.md#review-only-agent)). The human owner is the
+final approver of every PR.
 
 ## 4. Wait for comments
 

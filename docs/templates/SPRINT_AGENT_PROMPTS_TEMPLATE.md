@@ -18,9 +18,9 @@ Per [model-cost-policy.md](../process/model-cost-policy.md).
 | Agent 1 — <workstream> | | |
 | Agent 2 — <workstream> | | |
 | Agent 3 — <workstream> | | |
+| Review-only agent | Opus | Finding spec deviations is where a stronger model pays off |
 
-Review-only agent: GitHub Copilot code review, requested per
-[pr-workflow.md](../process/pr-workflow.md) (no session prompt needed).
+Copilot and Codex run as automated reviewers on every PR (no session prompt needed).
 
 ## Launch order
 
@@ -97,3 +97,9 @@ Order of work:
 [Paste the Common rules block here]
 ...
 ```
+
+## Review-only agent
+
+See the filled-in prompt in
+[SPRINT_01_AGENT_PROMPTS.md](../sprints/SPRINT_01_AGENT_PROMPTS.md#review-only-agent) and
+replace the sprint number.

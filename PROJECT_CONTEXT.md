@@ -54,15 +54,19 @@ Old PRs and ticket notes reference these files, which no longer exist:
 - Goal: approve the SDD baseline (CMP-014) and refine at least one backlog story to `Ready`
 - Start: 2026-10-19
 - End: 2026-10-27
+- Agent prompts: [docs/sprints/SPRINT_01_AGENT_PROMPTS.md](docs/sprints/SPRINT_01_AGENT_PROMPTS.md)
 - Deliverable: CMP-014 merged with approved specs (merged 2026-10-18; approvals recorded in
   CMP-015); one story `Ready` for Sprint 02
-- Status: Planned
+- Status: Active (agent sessions launched 2026-10-18 on the owner's go-ahead)
 
 ## Agent allocation
-- Implementation Agent 1: unassigned (CMP-014 and CMP-015 done)
+- Implementation Agent 1: CMP-017 — Sprint 01 browser verification of US-001..US-009
+  (Claude Code session, Sonnet; prompts in
+  [SPRINT_01_AGENT_PROMPTS.md](docs/sprints/SPRINT_01_AGENT_PROMPTS.md))
 - Implementation Agent 2: unassigned
 - Implementation Agent 3: unassigned
-- Review-only Agent: GitHub Copilot code review
+- Review-only Agent: dedicated Claude Code reviewer session (Opus); Copilot and Codex run as
+  automated reviewers on every PR
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
   ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-016

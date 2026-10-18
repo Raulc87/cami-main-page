@@ -223,14 +223,17 @@ GitHub (pull request required, no force pushes or deletions).
 
 ## Review-only agent
 
-GitHub Copilot code review acts as the review-only agent (plus `/code-review` before opening
-a PR). It may inspect PRs but must not implement features, approve PRs, or merge PRs. It
-reviews when the owner, or the coordinator on the owner's behalf, requests it.
+A dedicated Claude Code session acts as the review-only agent (owner decision, 2026-10-18;
+prompt in the active sprint's `SPRINT_<NN>_AGENT_PROMPTS.md`). Authors still run
+`/code-review` before opening a PR. The reviewer may inspect PRs but must not implement
+features, approve PRs, or merge PRs; it posts comment-only reviews. It reviews when the owner,
+or the coordinator on the owner's behalf, requests it; it does not poll or subscribe to PR
+events. Copilot and Codex are automated reviewers, not the review-only agent (see
+[Automated PR reviewers](#automated-pr-reviewers)).
 
 ### Reviewer independence
 
-A reviewer that changes the code it reviews becomes a co-author and loses impartiality. If a
-Claude session is ever used as the review-only agent (instead of, or in addition to, Copilot):
+A reviewer that changes the code it reviews becomes a co-author and loses impartiality:
 
 - It never changes code or any other file, never commits, pushes, or opens PRs.
 - It posts no ready-to-apply patches (no "suggested changes" blocks, no diffs). A finding
@@ -241,8 +244,8 @@ Claude session is ever used as the review-only agent (instead of, or in addition
 - A session that has written code for the project must not review that code: the reviewer
   always runs in its own session.
 
-Copilot can post "suggested changes" blocks; the author treats them as findings, not as
-patches to apply blindly.
+Automated reviewers can post "suggested changes" blocks; the author treats them as findings,
+not as patches to apply blindly.
 
 It should verify:
 
@@ -294,9 +297,10 @@ an approver.
 
 ## Automated PR reviewers
 
-Copilot code review runs on every PR ([pr-workflow.md §3](docs/process/pr-workflow.md#3-request-copilot-review-balanced-mode));
-any other automated reviewer added later (e.g. the Codex GitHub integration) is treated the
-same way, as an additional, independent reviewer:
+Two automated reviewers run on every PR: GitHub Copilot code review (requested per
+[pr-workflow.md §3](docs/process/pr-workflow.md#3-request-copilot-review-balanced-mode)) and the
+Codex GitHub integration (reviews automatically when a PR opens). Treat each as an additional,
+independent reviewer:
 
 - Every finding gets a visible outcome. The PR's author (the owning agent, or the coordinator
   for docs PRs) checks it against the current head and the specs, then either pushes a fix or
@@ -306,7 +310,9 @@ same way, as an additional, independent reviewer:
   not useful).
 - It does not outrank the specs. A finding that needs a requirement change goes through
   [Change management](#change-management), and the owner decides.
-- Its comments are never an approval and do not replace the owner's.
+- Its comments are never an approval and do not replace the review-only agent or the owner.
+- The review-only agent may triage its findings (valid, obsolete, invalid) in its own review,
+  but under reviewer independence it never fixes them.
 - Resolving threads: per [pr-workflow.md §4](docs/process/pr-workflow.md#4-wait-for-comments)
   the author replies to and resolves each thread it addressed (the merge criteria count
   unresolved threads). The owner may resolve any thread themselves.
@@ -371,7 +377,6 @@ This file follows the [SDD Starter Kit](https://github.com/Raulc87/sdd_starter_k
 - **PR body.** No `.github/pull_request_template.md`; the five mandatory sections in
   [pr-workflow.md §2](docs/process/pr-workflow.md#2-create-the-pr-with-gh) apply. Ownership
   (owned paths, changes outside scope) goes under `Files` when a sprint has an ownership map.
-- **Review-only agent.** GitHub Copilot code review, not a dedicated Claude session.
 - **Thread resolution.** The author resolves the threads it addressed (pr-workflow §4); the kit
   default leaves that to the owner.
 - **No CI yet**, so the kit's "`main` is never red" stacked-PR rule has nothing to enforce;
