@@ -25,13 +25,11 @@ Every sprint must end with a demonstrable deliverable.
 | Story | Points | Agent | Dependencies | Status |
 |---|---:|---|---|---|
 | — (CMP-014, process work) | — | Agent 1 | — | Done (PR #14 merged) |
-| — (CMP-015, record CMP-014 approvals) | — | Agent 1 | CMP-014 merged | Review |
 | Backlog refinement: owner picks US-0XX | — | Owner + Agent 1 | CMP-014 merged | Planned |
 
 ## Parallel Workstreams
 ### Agent 1
 - CMP-014: done (PR #14 merged 2026-10-18).
-- CMP-015: record the spec/ADR approvals and PROJECT_SPEC §17 sign-off; address review comments until merge.
 - Refinement support: draft acceptance criteria / FEATURE_SPEC for the story the owner picks.
 
 ### Agent 2
@@ -47,8 +45,7 @@ Maximum implementation agents in parallel: 3.
 
 ## Merge / Integration Order
 1. CMP-014 (merged).
-2. CMP-015.
-3. Refinement PR for the selected story (if docs change).
+2. Refinement PR for the selected story (if docs change).
 
 ## Review-only Agent
 GitHub Copilot code review (requested per [pr-workflow.md](../process/pr-workflow.md)) plus
@@ -81,4 +78,5 @@ The human reviewer is the final approver.
 - Both deliverables met; TICKETS.md and PROJECT_CONTEXT.md updated; Sprint 02 plan drafted.
 
 ## Sprint Review Notes
--
+- Unplanned work (owner request, 2026-10-18, before the sprint start): CMP-015 records the
+  CMP-014 spec/ADR approvals and PROJECT_SPEC §17 sign-off and marks CMP-014 `done` (PR #15).
