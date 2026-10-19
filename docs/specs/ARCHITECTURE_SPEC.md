@@ -4,7 +4,7 @@
 - Version: 1.1 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
   §22 — in CMP-021)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved (on
-  merge of PR #N))
+  merge of PR #21))
 - Owner: Raul Casanas
 
 ## 1. Purpose

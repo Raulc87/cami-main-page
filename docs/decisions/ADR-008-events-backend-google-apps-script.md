@@ -1,6 +1,6 @@
 # ADR-008 — Backend for events and registrations: Google Apps Script web app
 
-- Status: Accepted (on merge of PR #N, CMP-021; proposed in CMP-019)
+- Status: Accepted (on merge of PR #21, CMP-021; proposed in CMP-019)
 - Date: 2026-10-19
 - Decision owner: Raul Casanas
 - Related specs: [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md),

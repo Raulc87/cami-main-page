@@ -4,7 +4,7 @@
 - Version: 1.2 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
   §1, §5–7, §10–14 — in CMP-021)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved (on
-  merge of PR #N))
+  merge of PR #21))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment

@@ -102,7 +102,7 @@ A PR is ready to merge only if:
 - **Final statuses are already in the PR (no step after approval).** Before reporting the PR
   ready, the author records in the PR itself every status that becomes true when it merges:
   - each spec or ADR the PR asks the owner to approve: `Status: Approved` / `Accepted`, worded
-    "on merge of PR #N" (plus the PROJECT_SPEC §17 sign-off when the PR approves the spec);
+    "on merge of PR #21" (plus the PROJECT_SPEC §17 sign-off when the PR approves the spec);
   - the ticket's own row in [TICKETS.md](../../TICKETS.md): `done`.
 
   Merging the PR **is** the owner's approval, so nothing is left to do after it; if the owner

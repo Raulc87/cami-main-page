@@ -5,7 +5,7 @@
 - Version: 1.1 (v1.0 baseline homologated in CMP-014; v1.1 adds events and registration —
   FR-011, §4, §10, NFR-001 — in CMP-021)
 - Status: Approved by the product owner (v1.0: 2026-10-18, CMP-014 PR #14 merged; v1.1:
-  Approved (on merge of PR #N), owner decision Q-20 of 2026-10-19)
+  Approved (on merge of PR #21), owner decision Q-20 of 2026-10-19)
 - Owner: Raul Casanas (product owner / final reviewer)
 - Last updated: 2026-10-19 (CMP-021)
 
@@ -179,4 +179,4 @@ implementation.
 
 ## 17. Approval
 - v1.0 approved by: Raul Casanas (product owner), by merging the CMP-014 PR (#14), 2026-10-18
-- v1.1 approved by: Raul Casanas (Q-20, 2026-10-19), on merge of PR #N (CMP-021)
+- v1.1 approved by: Raul Casanas (Q-20, 2026-10-19), on merge of PR #21 (CMP-021)

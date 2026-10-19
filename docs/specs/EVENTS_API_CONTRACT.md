@@ -7,7 +7,7 @@ Change management: update this document first, bump the version, notify both own
 
 ## Metadata
 - Version: 1.0
-- Status: Approved — LOCKED (on merge of PR #N)
+- Status: Approved — LOCKED (on merge of PR #21)
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-030)
 - Related stories: US-017..US-025

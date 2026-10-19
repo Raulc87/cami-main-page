@@ -1,7 +1,7 @@
 # ADR-XXX — Decision Title
 
 - Status: Proposed / Accepted / Rejected / Superseded (in the PR that proposes it, write
-  "Accepted (on merge of PR #N)" before reporting the PR ready — pr-workflow §5)
+  "Accepted (on merge of PR #21)" before reporting the PR ready — pr-workflow §5)
 - Date:
 - Decision owner:
 - Related specs:
