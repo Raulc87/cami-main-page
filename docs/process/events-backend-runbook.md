@@ -9,7 +9,9 @@ Interface and names: [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) (
 script property and the frontend variable). The site release itself stays in
 [release-checklist.md](release-checklist.md).
 
-**Code status.** The `apps-script/` folder (including `appsscript.json`) is created by CMP-024; until it is merged, sections 2.2 onward cannot be run end to end. File and function names below are those CMP-024 provides.
+**Code status.** The `apps-script/` folder does not exist yet; CMP-024 creates it. Where this
+runbook mentions `appsscript.json` or a smoke function, that is a requirement CMP-024 must meet
+(and CMP-024 checks it). Until it is merged, sections 2.2 onward cannot be run end to end.
 
 **Who does what.** The owner (Raul Casanas) deploys; agents never hold deploy credentials. An
 agent says which steps of this runbook a merged PR needs and confirms the deploy with a smoke
@@ -52,8 +54,10 @@ Do this once for staging, and again for production when the release gates pass
 
 ### 2.2 Create the Apps Script project
 Pick one of the two paths. The project is a **standalone** script (script.google.com → New
-project); it reaches the spreadsheet through `SPREADSHEET_ID`, not by being bound to it, so the
-same code works in both environments.
+project); it reaches the spreadsheet through `SPREADSHEET_ID`, so the same code works in both
+environments. ADR-008 Option A words it as a script "bound to" the spreadsheet; either works
+with contract §9, and the owner decides which (see the PR). If bound, create each project from
+its spreadsheet (Extensions → Apps Script).
 
 **Path A — paste in the editor (no tooling)**
 1. Open <https://script.google.com> signed in as the Workspace account → **New project**, name it
@@ -64,13 +68,16 @@ same code works in both environments.
    paste `apps-script/appsscript.json` into it.
 
 **Path B — `clasp` (recommended once you push more than twice)**
-1. One time per computer: `npm install -g @google/clasp`, then `clasp login` (signed in as the
+1. One time per computer: `npm install -g @google/clasp` (note the version with
+   `clasp --version` in §10 at the first deploy: command names differ between 2.x and 3.x), then `clasp login` (signed in as the
    Workspace account).
 2. Turn on the Apps Script API for that account: <https://script.google.com/home/usersettings>
    → **Google Apps Script API** → On.
 3. Create the project and link it, from a scratch directory (not committed):
    `clasp create --type standalone --title "cami-events-staging" --rootDir <path-to-repo>/apps-script`
-   This writes `.clasp.json` (contains the script ID). Keep it untracked; if it lands inside the
+   This writes `.clasp.json` (contains the script ID). Run `git status` in `apps-script/` right
+   after: `create` may write a default `appsscript.json`/`Code.js` there; restore the repo
+   versions (`git checkout -- apps-script/`) before `clasp push`. Keep it untracked; if it lands inside the
    repo, do not `git add` it (check `git status`).
 4. Push the code: `clasp push` (accept the manifest overwrite prompt the first time).
 
@@ -82,9 +89,9 @@ directory per environment.
 Required by the payment check (US-022).
 1. In the editor, left sidebar **Services** (+) → **Drive API** → version **v2** → identifier
    `Drive` → **Add**.
-2. The manifest already lists it under `dependencies.enabledAdvancedServices` once
-   `apps-script/appsscript.json` is in place (`clasp push` sets it). Confirm it shows under
-   Services.
+2. CMP-024's `apps-script/appsscript.json` must list it under
+   `dependencies.enabledAdvancedServices`; with `clasp push` it is then set from the manifest.
+   Confirm it shows under Services.
 3. If the call fails later with "Drive API has not been used in project…", open the Google Cloud
    project linked to the script (Project Settings → Google Cloud Platform project) and enable
    **Google Drive API** there.
@@ -97,8 +104,8 @@ and initial values are the contract (§9); do not rename them.
 |---|---|
 | `SPREADSHEET_ID` | the spreadsheet ID for this environment |
 | `DRIVE_ROOT_FOLDER_ID` | the folder ID for this environment |
-| `SINPE_NUMBER` | staging: obvious placeholder; production: real number from Cami |
-| `SINPE_ACCOUNT_NAME` | staging: obvious placeholder; production: real name from Cami |
+| `SINPE_NUMBER` | until Cami confirms (staging, and production before release): `0000-0000 (POR CONFIRMAR / TO BE CONFIRMED)` (BR-E01); then the real number |
+| `SINPE_ACCOUNT_NAME` | until Cami confirms: `Nombre por confirmar` (BR-E01); then the real name |
 | `MAIL_FROM_ALIAS` | the Workspace alias if available, else leave empty (fallback to the account) |
 | `MAIL_REPLY_TO` | `camila@lifetoolscr.com` |
 | `LIMIT_REGISTER_PER_MIN` | `20` |
@@ -121,7 +128,7 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
 2. **Review permissions** → pick the Workspace account → **Advanced** → **Go to <project>
    (unsafe)** → **Allow**. The "unsafe" warning appears because the script is not verified by
    Google; it is your own script.
-3. Scopes are listed in `apps-script/appsscript.json` (`oauthScopes`). If a later PR adds a
+3. Scopes are listed in `apps-script/appsscript.json` (`oauthScopes`, required from CMP-024). If a later PR adds a
    scope, you will have to repeat this step and create a **new version** (section 5) for the web
    app to use it.
 
@@ -137,8 +144,9 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
 6. Record, somewhere private (not the repo), each environment's URL and the **Deployment ID**
    (in **Deploy → Manage deployments**), since you need the ID for `clasp deploy` below.
 
-`apps-script/appsscript.json` already sets `webapp.executeAs` = `USER_DEPLOYING` and
-`webapp.access` = `ANYONE_ANONYMOUS`; with `clasp` these are the defaults of the first deployment.
+CMP-024's `apps-script/appsscript.json` must set `webapp.executeAs` = `USER_DEPLOYING` and
+`webapp.access` = `ANYONE_ANONYMOUS`; with `clasp` these are then the defaults of the first
+deployment.
 
 If your Workspace admin restricts "Anyone" access for scripts, the deploy dialog will not offer
 it; ask the Workspace admin to allow it, or stop and report (the site cannot call an endpoint
@@ -220,5 +228,8 @@ plus: production project updated by section 5, smoke request passes against the 
 and the production build used the production URL.
 
 ## 10. Correct this runbook
+Record at the first deploy: the `clasp` version used, and what `clasp create` wrote into
+`apps-script/`.
+
 Anything that differs from what happens in the Google UI (menu names change) is fixed in the PR
 that finds it. The first staging deploy is the formal check (implementation plan §11 step 3).
