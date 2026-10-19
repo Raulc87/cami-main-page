@@ -1,8 +1,10 @@
 # UX_UI_DIRECTION
 
 ## Metadata
-- Version: 1.0 (homologated from `docs/specs/02-design-system.md` in CMP-014)
-- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
+- Version: 1.1 (homologated from `docs/specs/02-design-system.md` in CMP-014; v1.1 adds the events
+  UI — §4, §13 — in CMP-022)
+- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved (on
+  merge of PR #22))
 - Source: brand moodboard — *Elegance · Calm · Balance · Femininity*
 
 ## 1. Experience Goal
@@ -61,7 +63,9 @@ Imported via the Google Fonts CDN in [global.css](../../src/styles/global.css) (
 ## 4. Navigation / Page Structure
 Single page, anchor navigation. Fixed section order (detail in
 [ARCHITECTURE_SPEC.md §7](../specs/ARCHITECTURE_SPEC.md#7-component-boundaries)):
-Nav → Hero → Services → Gallery → Process → Values → Testimonials → CTA → Footer.
+Events ticker → Nav → Hero → Events → Services → Gallery → Process → Values → Testimonials →
+CTA → Footer. The ticker and the Events section appear only when there are upcoming events
+(§13).
 
 The nav holds the wordmark, the "Available for 2026" badge, the global EN/ES language toggle
 and the "Book Cami" CTA.
@@ -143,3 +147,34 @@ code and in [ARCHITECTURE_SPEC.md §9](../specs/ARCHITECTURE_SPEC.md#9-logical-d
 
 ## 12. Open Questions
 - Is a formal accessibility target required (see PROJECT_SPEC §16)?
+
+## 13. Events UI
+Direction for US-017..US-020 ([FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md)).
+It reuses the palette, type and shapes above; no new colors or fonts.
+
+- **Placement.** The Events section sits right after the Hero, so the ticker's items scroll to
+  something near the top. Both are absent (not empty) when there are no upcoming events
+  (FFR-004).
+- **Ticker.** A full-width band above the nav, about 40 px tall, `C.navy` background, white
+  Outfit text, items `name · date` separated by a `C.rose` dot, moving right to left at a
+  calm, readable speed. It pauses on hover and focus, is static under
+  `prefers-reduced-motion`, and each item is a keyboard-focusable control that scrolls to the
+  event's card (US-018).
+- **Section.** Kicker and headline in the style of the other sections; "Próximos eventos" /
+  "Upcoming Events" from the spec. White cards with 16–20 px corners and the
+  `C.roseLight` border used by `.svc-card`, in a grid of 3 columns on desktop, 2 at 900 px and
+  1 at 640 px.
+- **Card.** Image on top (16:9, `object-fit: cover`); the Lifetools logo, centered on
+  `C.cream`, when there is no image. Then the date and time in `C.textMuted` mono, the name,
+  the brief description, the price as a `C.rose` pill ("Gratis" / "Free" for ₡0), and the
+  register button as `.cta-btn-sm`. A closed or sold-out event shows its status label
+  ("Inscripciones cerradas" / "Registration closed", "Agotado" / "Sold out") above a disabled
+  button (reduced opacity, no hover, `disabled`).
+- **Form.** Opens as a modal dialog over the page (full screen at 640 px and below): focus moves
+  into it, Esc and a close button dismiss it, and focus returns to the card's button. Order:
+  event summary (name, date, time, amount), SINPE Móvil instructions (paid only), fields,
+  coupon, privacy notice, consent, submit. Labels sit above fields; errors appear under each
+  field in the active language and are announced to screen readers. The confirmation replaces
+  the form content and shows the reference.
+- **Placeholders.** The SINPE "placeholder / por confirmar" marker (BR-E01) and the draft
+  privacy notice are visibly marked until the release gates pass (BR-002).

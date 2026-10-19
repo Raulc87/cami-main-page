@@ -7,8 +7,8 @@
 - Related specs: [PROJECT_SPEC](../specs/PROJECT_SPEC.md), [ARCHITECTURE_SPEC](../specs/ARCHITECTURE_SPEC.md), [UX_UI_DIRECTION](../ux/UX_UI_DIRECTION.md), [TECH_STACK](../../TECH_STACK.md)
 - Related user stories: US-001..US-009 (shipped; verified in Sprint 01 — US-001, US-003,
   US-004, US-006, US-008 Done; US-002, US-005, US-007, US-009 Review, see USER_STORIES);
-  US-010..US-016 (Proposed, not planned here); US-017..US-023 (events, Proposed —
-  FEATURE_SPEC_events_registration)
+  US-010..US-016 (Proposed, not planned here); US-017..US-025 (events, `Ready` — planned in
+  [IMPLEMENTATION_PLAN_events_registration.md](IMPLEMENTATION_PLAN_events_registration.md))
 
 ## 1. Purpose
 Record how the shipped site (v1.0.1) implements the approved requirements, so new work starts
