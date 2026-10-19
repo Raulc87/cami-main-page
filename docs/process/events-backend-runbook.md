@@ -74,12 +74,15 @@ its spreadsheet (Extensions → Apps Script).
    Workspace account).
 2. Turn on the Apps Script API for that account: <https://script.google.com/home/usersettings>
    → **Google Apps Script API** → On.
-3. Create the project and link it, from a scratch directory (not committed):
-   `clasp create --type standalone --title "cami-events-staging" --rootDir <path-to-repo>/apps-script`
-   This writes `.clasp.json` (contains the script ID). Run `git status` right after: `create`
-   may add a default `appsscript.json`/`Code.js` or `.clasp.json` inside the repo. Review
-   `git diff` and restore only the files you did not change on purpose; never `git add` or commit
-   `.clasp.json`, and stage files by name, not with `git add -A`.
+3. Create the project in an **empty** scratch directory outside the repo, never with `rootDir`
+   pointing at `apps-script/`: `clasp create` creates a default project and pulls its default
+   files into the directory, which would overwrite the repo's `appsscript.json`.
+   `mkdir ~/cami-events-staging && cd ~/cami-events-staging`
+   `clasp create --type standalone --title "cami-events-staging"`
+   This writes `.clasp.json` (contains the script ID). Edit it to add
+   `"rootDir": "<path-to-repo>/apps-script"`, then delete the default files `create` pulled
+   into the scratch directory. Never `git add` or commit `.clasp.json`; run `git status` in the
+   repo after the first `clasp` command to confirm nothing changed there.
 4. Push the code: `clasp push` (accept the manifest overwrite prompt the first time).
 
 To work on both environments with `clasp`, keep two `.clasp.json` files outside the repo and
@@ -147,8 +150,10 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
    (in **Deploy → Manage deployments**), since you need the ID for `clasp deploy` below.
 
 CMP-024's `apps-script/appsscript.json` must set `webapp.executeAs` = `USER_DEPLOYING` and
-`webapp.access` = `ANYONE_ANONYMOUS`; with `clasp` these are then the defaults of the first
-deployment.
+`webapp.access` = `ANYONE_ANONYMOUS`. Do not rely on it for the first deployment: `clasp`
+does not apply these to a deployment it creates (it defaults to access "Only myself"). Always
+create the first deployment in the editor with the selections above, for `clasp` users too.
+After any `clasp deploy`, check **Manage deployments** still shows Execute as: Me and Anyone.
 
 If your Workspace admin restricts "Anyone" access for scripts, the deploy dialog will not offer
 it; ask the Workspace admin to allow it, or stop and report (the site cannot call an endpoint
