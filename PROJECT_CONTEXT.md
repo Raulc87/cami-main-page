@@ -13,14 +13,18 @@
 - Project spec: [docs/specs/PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md)
 - User stories: [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md)
 - Feature specs: [FEATURE_SPEC_events_registration.md](docs/specs/FEATURE_SPEC_events_registration.md)
-  (Draft — upcoming events and paid registration, US-017..US-023); new ones from
+  (v1.0 — events and registration, US-017..US-025); new ones from
   [docs/templates/FEATURE_SPEC_TEMPLATE.md](docs/templates/FEATURE_SPEC_TEMPLATE.md) as
   `docs/specs/FEATURE_SPEC_<topic>.md`
+- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.0,
+  locked) — site ↔ events backend
+- Events emails and privacy notice (drafts, release gates):
+  [EVENTS_EMAILS_AND_PRIVACY.md](docs/ux/EVENTS_EMAILS_AND_PRIVACY.md)
 - Architecture spec: [docs/specs/ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC.md)
   (includes the content model, §9)
 - UX/UI direction: [docs/ux/UX_UI_DIRECTION.md](docs/ux/UX_UI_DIRECTION.md)
 - Tech stack: [TECH_STACK.md](TECH_STACK.md)
-- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-008 (ADR-008 Proposed)
+- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-008
 - Implementation plan: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
   (baseline + traceability)
 - Active sprint plan: **none** — Sprint 01 is closed
@@ -48,7 +52,8 @@ they are not active paths.
 
 ## Current sprint
 - Sprint: 01 — **Closed 2026-10-19** (early, owner decision; review in the sprint plan).
-  Sprint 02 (events feature) is in planning: refinement of US-017..US-023 comes first.
+  Sprint 02 (events feature) is in planning: US-017..US-025 are `Ready` (CMP-021); the Sprint 02
+  plan is next.
 - Goal (Sprint 01): approve the SDD baseline (CMP-014) and refine at least one backlog story to
   `Ready`
 - Start: 2026-10-19
@@ -67,7 +72,7 @@ they are not active paths.
   automated reviewers on every PR
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-020
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-021
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

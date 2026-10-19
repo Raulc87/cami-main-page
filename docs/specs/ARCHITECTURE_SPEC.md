@@ -1,9 +1,10 @@
 # ARCHITECTURE_SPEC
 
 ## Metadata
-- Version: 1.0 (homologated from `docs/specs/04-architecture.md` + `03-content-model.md` in
-  CMP-014)
-- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
+- Version: 1.1 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
+  §22 — in CMP-021)
+- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved (on
+  merge of PR #21))
 - Owner: Raul Casanas
 
 ## 1. Purpose
@@ -29,15 +30,21 @@ gets its own section/FEATURE_SPEC and ADR when it starts.
 ## 5. System Context
 - Actor: visitor's browser. Loads static assets from GoDaddy (`camihernandez.com`) and fonts
   from Google Fonts.
-- Outbound: `mailto:` link to the contact email. No other external systems.
+- Outbound: `mailto:` link to the contact email.
+- Events backend (since v1.1): the browser calls a Google Apps Script web app in the
+  `lifetoolscr.com` Workspace ([ADR-008](../decisions/ADR-008-events-backend-google-apps-script.md))
+  to list events, check coupons and register. The script reads/writes Google Sheets and Drive,
+  runs Drive OCR, sends email (Gmail) and translates event text (`LanguageApp`). The interface
+  is [EVENTS_API_CONTRACT.md](EVENTS_API_CONTRACT.md).
 
 ## 6. High-Level Architecture
 
 ```
+apps-script/      # events backend (Google Apps Script web app, ADR-008) — deployed by the owner
 public/
   images/         # real photos (hero, gallery, testimonials) — served as /images/file.jpg
 src/
-  components/     # one component per page section
+  components/     # one component per page section (+ Events, EventsTicker, EventRegistration)
   constants/      # data.jsx (list content), i18n.js (UI_TEXT) and colors.js (palette) — see §9 and UX_UI_DIRECTION
   context/        # LanguageContext.jsx — global language state (see §7)
   hooks/          # useReveal.js — scroll-reveal
@@ -246,25 +253,35 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 ## 10. Interfaces and Integrations
 - `mailto:` contact link (CTA, nav).
 - Google Fonts CDN (`@import` in `global.css`).
+- Events backend: [EVENTS_API_CONTRACT.md](EVENTS_API_CONTRACT.md) (locked before parallel
+  work).
 
 ## 11. Authentication and Authorization
-- None.
+- Visitors: anonymous. The backend endpoint is anonymous too and runs as the Workspace account
+  that owns it; only Cami and the owner can open the spreadsheet and Drive folder.
 
 ## 12. Security
-- Static site, no user input processed, no secrets. Never commit credentials.
+- The site processes user input only in the events form; every field is re-validated on the
+  backend, user text is written to Sheets as literal text (no formulas), file types are
+  detected from content, and abuse is limited globally (FEATURE_SPEC_events_registration §12).
+- No secrets in the repo or the client bundle; backend configuration in script properties.
 
 ## 13. Deployment and Environments
 - Local: `npm run dev` (port 5173). Production: `dist/` uploaded to GoDaddy `public_html/`.
   See [TECH_STACK.md](../../TECH_STACK.md) and
   [release-checklist.md](../process/release-checklist.md).
+- Events backend: Apps Script deployments for **staging** (staging spreadsheet and folder) and
+  **production**; the site build points to one through `VITE_EVENTS_API_URL`. Deployed by the
+  owner per the deploy runbook.
 
 ## 14. Configuration and Secrets
-- No runtime environment configuration and no secrets.
+- Frontend: `VITE_EVENTS_API_URL` (build time, public).
+- Backend: script properties (contract §9); no secrets in Git.
 - Versioned config: `vite.config.js` (build-time: React plugin, production `outDir`) and
   `.claude/settings.json` (agent model default).
 
 ## 15. Observability
-- None (backlog US-014).
+- Events backend: `Metrics` tab and alert emails (FFR-029). Site analytics: none (US-014).
 
 ## 16. Performance
 - Single global `IntersectionObserver`; resized JPEG images; no runtime dependencies beyond
@@ -275,7 +292,8 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 
 ## 18. Resilience
 - No runtime dependencies other than the static host and Google Fonts (text falls back to
-  system fonts if the CDN fails).
+  system fonts if the CDN fails), and the events backend: if it is slow (> 3 s) or down, the
+  events section and ticker are hidden and the rest of the page is unaffected.
 
 ## 19. Compatibility / Migration
 - `localStorage` access must keep working if storage is unavailable (language falls back to
@@ -291,6 +309,8 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 - [ADR-002](../decisions/ADR-002-godaddy-static-hosting.md) — GoDaddy static hosting
 - [ADR-003](../decisions/ADR-003-inline-styles-plus-global-css.md) — inline styles + global.css
 - [ADR-004](../decisions/ADR-004-i18n-native-context.md) — i18n with native React Context
+- [ADR-008](../decisions/ADR-008-events-backend-google-apps-script.md) — events backend on Google
+  Apps Script
 
 ## 22. Feature-to-Component Impact
 
@@ -305,3 +325,7 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 | US-007 Booking contact | `CTA.jsx`, `Nav.jsx` |
 | US-008 Mobile layout | `global.css` breakpoints |
 | US-009 Production deploy | `package.json` version, `dist/`, release checklist |
+| US-017 Events section | new `Events.jsx`, events data hook, `UI_TEXT.events`, `App.jsx` |
+| US-018 Ticker | new `EventsTicker.jsx`, `global.css` (animation, reduced motion) |
+| US-019/US-020 Form, coupon | new `EventRegistration.jsx`, `UI_TEXT.events`, API client |
+| US-021..US-025 Backend | `apps-script/` (web app), events spreadsheet, Drive folder |

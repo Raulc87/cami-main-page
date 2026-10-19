@@ -1,8 +1,6 @@
 # ADR-008 — Backend for events and registrations: Google Apps Script web app
 
-- Status: Proposed (CMP-019 Discovery; not accepted by that PR). The refinement PR that makes
-  the events stories `Ready` sets it to "Accepted (on merge of PR #N)" or replaces it
-  (pr-workflow §5).
+- Status: Accepted (on merge of PR #21, CMP-021; proposed in CMP-019)
 - Date: 2026-10-19
 - Decision owner: Raul Casanas
 - Related specs: [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md),
@@ -46,7 +44,8 @@ Cons:
   are impossible, and the script cannot read `Origin` or set CORS headers, so it cannot restrict
   which sites call it. The endpoint is anonymous, callable from anywhere, and runs as Cami's
   account with write access to her Drive.
-- Code lives outside the repo unless synced with `clasp` (to be decided in the plan).
+- Code lives in the repo (`apps-script/`) and the owner deploys it with `clasp` or by pasting it
+  into the script editor, following a deploy runbook.
 Risks:
 - Deployment URL changes if redeployed incorrectly; mitigated by a documented deploy runbook.
 - Abuse of the anonymous endpoint: coupon-code enumeration, or uploads filling the storage
@@ -78,7 +77,8 @@ Cons:
   and NFR-003 today).
 
 ## Decision
-Proposed: **Option A**, to be confirmed when the stories are refined. The site calls the web
+**Option A**, in the `lifetoolscr.com` Google Workspace (owner, 2026-10-19). The owner
+deploys the script, helped by the agents and a deploy runbook; the code lives in the repo. The site calls the web
 app over HTTPS; the contract is defined in `docs/specs/EVENTS_API_CONTRACT.md` before
 implementation.
 
@@ -106,7 +106,8 @@ implementation.
   site, not the Apps Script editor): events fetched; a registration with a SINPE sample image
   submitted cross-origin without a CORS preflight, through the `script.googleusercontent.com`
   redirect, with the JSON reference parsed by the page; the image saved to Drive and the row
-  appended; and Drive OCR extracting number/amount/description from Cami's sample screenshots
+  appended; and Drive OCR extracting Cami's SINPE number or account name and the exact amount from her sample screenshots (no
+  description check, FEATURE_SPEC Q-4)
   with the temporary Doc deleted.
 
 ## Review Trigger

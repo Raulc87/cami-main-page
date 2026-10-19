@@ -23,9 +23,9 @@ detail: [PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md).
 
 Requirement -> Discovery -> Specs -> User Stories -> Architecture/UX/Stack -> Plan -> Sprint -> Implementation -> Review -> Verification
 
-Do not skip required stages. The project is classified **Simple** (see
-[TECH_STACK.md §1](TECH_STACK.md#1-complexity-assessment)); re-assess when a backlog story
-introduces a backend.
+Do not skip required stages. The project is classified **Standard** since the events feature
+added a backend (TECH_STACK v1.2, CMP-021; see
+[TECH_STACK.md §1](TECH_STACK.md#1-complexity-assessment)).
 
 ## Source-of-truth priority
 

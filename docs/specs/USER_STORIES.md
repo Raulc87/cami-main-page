@@ -491,65 +491,69 @@ So that ad spend reaches the right audience
 **Jira**
 - Jira Key: TBD
 
-## Backlog — Events and registration (Proposed, Discovery CMP-019)
+## Events and registration (Ready — refined in CMP-021)
 
-From the owner's requirement of 2026-10-19. Feature spec:
-[FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md) (Draft); proposed
-backend: [ADR-008](../decisions/ADR-008-events-backend-google-apps-script.md). Acceptance
-criteria below are drafts: they become final when the open questions (FEATURE_SPEC §20) are
-answered and each story is refined to `Ready`.
+From the owner's requirement and answers of 2026-10-19. Feature spec:
+[FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md); contract:
+[EVENTS_API_CONTRACT.md](EVENTS_API_CONTRACT.md); backend:
+[ADR-008](../decisions/ADR-008-events-backend-google-apps-script.md). Story points use a 1–2–3–5–8
+scale.
 
-Dependencies between these stories:
-- US-023 (events and coupons in the spreadsheet) and the backend spike come first: US-017,
-  US-018, US-019 and US-020 read from it.
-- US-019 needs US-021 (storage) to be useful. US-021 writes check result `pending`; US-022
-  later replaces it with the real result, so US-021 does not depend on US-022.
-- US-018 depends on US-017 (same events data and the card to scroll to).
+Dependencies:
+- A backend spike (Sprint 02, first) proves the browser → Apps Script path, Drive/Sheets writes,
+  OCR on Cami's samples, HEIC conversion and the mail alias.
+- US-023 (sheet structure) and the contract come before US-017..US-022.
+- US-018 depends on US-017. US-021 does not depend on US-022 (check result `pending` until
+  then). US-025 and US-022 run after US-021 stores the row.
 
 ### US-017 — Upcoming events section
 - Priority: High
-- Story Points: TBD
-- Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-001..FFR-004)
-- Related Requirements: G-005, FR-009, NFR-002
+- Story Points: 3
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-001..FFR-004, FFR-025, FFR-028, BR-E09)
+- Related Requirements: FR-011, FR-009, NFR-002
 
 **User Story**
 
 As a visitor
-I want to see Cami's upcoming events with their date, description and art
+I want to see Cami's upcoming events with their date, description, price and art
 So that I can choose one to attend
 
 **Acceptance Criteria**
 
-1. Given published events that are still open (BR-E09)
+1. Given published events that have not started (BR-E09)
    When the page loads
-   Then an "Upcoming Events" / "Próximos eventos" section shows one card per event that is still
-   open (BR-E09: Costa Rica time, open until its start time or the end of its date), ordered by
-   date and time, each with name, date (and time if set), brief description and a register
-   button.
-2. Given an event with no image
+   Then an "Upcoming Events" / "Próximos eventos" section shows one card per event, ordered by
+   start, each with name, date and time, brief description, price (or "Gratis" / "Free") and a
+   register button.
+2. Given an event with no image URL
    When its card renders
    Then the Lifetools logo is shown in place of the art.
-3. Given past events (BR-E09) or unpublished events
+3. Given an event whose registration has closed (less than 12 h before start) or that is sold
+   out
+   When its card renders
+   Then the button is disabled and the card shows "Inscripciones cerradas" / "Registration
+   closed" or "Agotado" / "Sold out".
+4. Given the site in English
+   When the cards render
+   Then name and description are in English (`nameEn`/`descriptionEn` if filled, otherwise the
+   automatic translation).
+5. Given no upcoming events, or the backend slow (> 3 s) or down
    When the page loads
-   Then they are not shown.
-4. Given no upcoming events, or the backend unavailable
-   When the page loads
-   Then the section shows the agreed empty/fallback state (Q-10) and the rest of the page still
-   renders.
+   Then the section and the ticker are hidden and the rest of the page renders normally.
 
 **Dependencies**
-- US-023 (events data), ADR-008 backend.
+- US-023, contract, backend spike.
 
 **Jira**
 - Jira Key: TBD
 
 ### US-018 — Upcoming-events ticker banner
 - Priority: Medium
-- Story Points: TBD
-- Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-005, FFR-006)
-- Related Requirements: G-005, NFR-002
+- Story Points: 2
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-005, FFR-006)
+- Related Requirements: FR-011, NFR-002
 
 **User Story**
 
@@ -562,9 +566,9 @@ So that I notice them right away
 1. Given at least one upcoming event
    When the page loads
    Then a banner at the top scrolls right-to-left showing up to the N closest events (N = 2 by
-   default, configurable), with name and date.
+   default) with name and date, in the active language.
 2. Given a ticker item
-   When I select it
+   When I select it (click or keyboard)
    Then the page scrolls to that event's card.
 3. Given the pointer or keyboard focus is on the banner
    When it is hovered/focused
@@ -584,11 +588,11 @@ So that I notice them right away
 
 ### US-019 — Event registration form with SINPE Móvil payment proof
 - Priority: High
-- Story Points: TBD
-- Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-007..FFR-011, FFR-018, FFR-022,
-  FFR-023), BR-E01, BR-E02
-- Related Requirements: G-005, FR-009
+- Story Points: 5
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-007..FFR-011, FFR-018, FFR-022, FFR-023,
+  FFR-027), BR-E01..BR-E03, BR-E09
+- Related Requirements: FR-011, FR-009
 
 **User Story**
 
@@ -598,44 +602,50 @@ So that my place is reserved
 
 **Acceptance Criteria**
 
-1. Given I select an event's register button
+1. Given I select a paid event's register button
    When the form opens
-   Then it shows that event's name, date and price, and the SINPE Móvil instructions (number,
-   account name, amount, required description) before the fields.
-2. Given the form
-   When I submit with any of Participant name, Email, WhatsApp number, payment file or consent
-   missing
-   Then submit is blocked and each missing field shows a message in the active language.
-3. Given an invalid email, an invalid WhatsApp number (Q-6) or a file that is not a JPEG/PNG
-   image up to 5 MB
-   When I submit
-   Then the form shows the matching error and sends nothing.
-4. Given valid data
-   When I submit
-   Then I see a confirmation with a registration reference; on a backend error I see a retry
-   message and my entered data is kept.
-5. Given the configured SINPE number and account name
-   When the form opens
-   Then the instructions show exactly those values; while they are placeholders (BR-E01) they
-   carry a visible "placeholder / por confirmar" marker. (Releasing with a placeholder is
-   blocked by the BR-E01 release gate, not by this AC.)
-6. Given the amount due is ₡0 (free event or 100% coupon)
+   Then it shows the event's name, date, time and price, then the SINPE Móvil instructions
+   (number, account name, amount to pay) before the fields; while the SINPE values are
+   placeholders they carry a visible "placeholder / por confirmar" marker (BR-E01).
+2. Given a free event, or an amount due of ₡0 after a coupon
    When the form shows
    Then the payment instructions and the screenshot field are hidden and I can submit without a
-   file (FFR-023).
+   file.
+3. Given the form
+   When I submit with participant name, email, WhatsApp, screenshot (paid) or consent missing
+   Then submit is blocked and each missing field shows a message in the active language.
+4. Given an invalid email, a WhatsApp number not in `+<country code><number>` format, or a file
+   that is not an image or is over 5 MB
+   When I submit
+   Then the matching error is shown and nothing is sent.
+5. Given a valid paid registration with a JPEG, PNG, WebP or HEIC screenshot
+   When I submit
+   Then I see a confirmation with my registration reference.
+6. Given a backend error
+   When I submit
+   Then I see a retry message, my data is kept, and retrying does not create a second
+   registration (same submission ID).
+7. Given my email already has a registration for this event
+   When I submit
+   Then I see "Ya existe una inscripción con este correo para este evento" / "You are already
+   registered for this event" and nothing is stored.
+8. Given the form
+   When it renders
+   Then it shows the privacy notice and a consent checkbox that must be checked to submit.
 
 **Dependencies**
-- US-021 (storage), US-017.
+- US-021, US-017.
 
 **Jira**
 - Jira Key: TBD
 
 ### US-020 — Discount coupon at registration
 - Priority: Medium
-- Story Points: TBD
-- Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-012, FFR-013, FFR-021), §12, BR-E03
-- Related Requirements: G-005
+- Story Points: 3
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-012, FFR-013, FFR-021, FFR-024, §12),
+  BR-E03, BR-E10, BR-E13
+- Related Requirements: FR-011
 
 **User Story**
 
@@ -645,19 +655,30 @@ So that I pay the discounted price
 
 **Acceptance Criteria**
 
-1. Given an active coupon for this event
+1. Given an active coupon for this event, under its max uses and not yet used by my email
    When I apply it
-   Then the amount to pay updates to price × (1 − discount%) (rounding per Q-13) and the coupon
-   is saved with my registration.
-2. Given an unknown, inactive, expired coupon, or one for another event
+   Then the amount to pay updates to price × (1 − discount%) rounded to the nearest colón, and
+   the coupon is saved with my registration.
+2. Given an unknown, inactive, expired or other-event coupon
    When I apply it
-   Then I see "invalid coupon" and the full price stays.
-3. Given any visitor
+   Then I see "invalid coupon" in the active language and the full price stays.
+3. Given a coupon that reached its max uses, or that my email already used
+   When I apply it
+   Then I see the matching message and the full price stays.
+4. Given a registration that used a coupon is marked `refund/cancelled` or `spam`
+   When the coupon is checked again
+   Then that use no longer counts.
+5. Given a coupon that was valid when I applied it but became inactive, expired or exhausted
+   before I submitted
+   When I submit a paid registration
+   Then it is stored with the discount I saw, `needsReview` TRUE and `checkDetails`
+   `coupon changed`; a ₡0 registration in the same case is refused with the coupon message.
+6. Given many failed coupon checks in a short time (any client)
+   When the global limit is reached
+   Then further checks are refused with "try again later".
+7. Given any visitor
    When the page loads
    Then no list of coupons is sent to the browser.
-4. Given many failed coupon checks in a short time (from any client)
-   When the global limit (§12) is reached
-   Then further checks are refused for a while with a "try again later" message.
 
 **Dependencies**
 - US-019, US-023.
@@ -667,118 +688,204 @@ So that I pay the discounted price
 
 ### US-021 — Registrations stored in Google Drive and Sheets
 - Priority: High
-- Story Points: TBD
-- Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-014..FFR-016, FFR-022, FFR-024), §13,
-  BR-E04, BR-E05
-- Related Requirements: G-005, NFR-003
+- Story Points: 5
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-014..FFR-016, FFR-022, FFR-024, FFR-025,
+  FFR-030), BR-E04, BR-E05, BR-E10, BR-E13; contract §6
+- Related Requirements: FR-011, NFR-003
 
 **User Story**
 
 As Cami
 I want every registration saved in my Google Sheets, one tab per event, with the payment
-screenshot in my Drive
+screenshot in a Drive subfolder per event
 So that I can manage participants and payments in one place
 
 **Acceptance Criteria**
 
-1. Given a valid registration with an amount due above ₡0
+1. Given a valid paid registration
    When the backend receives it
-   Then the screenshot is saved in the configured Drive folder as
-   `<ParticipantName>_<YYYY-MM-DD>_<EventCode>.<ext>` (BR-E04, Q-5). A ₡0 registration (FFR-023)
-   stores no file.
+   Then the screenshot is stored as JPEG in `<root>/<eventCode>/` named
+   `<ParticipantName>_<YYYY-MM-DD>_<eventCode>.jpg` (registration date; the subfolder is created
+   if new; `_2` on collision). A ₡0 registration stores no file.
 2. Given a valid registration
    When it is stored
-   Then a row is appended to the event's tab with timestamp, submission ID, reference, event
-   code, name, email, WhatsApp, coupon, discount %, amount due, screenshot URL, check result
-   (`pending` until US-022 ships), check details, status `new` and an empty notes column
-   (FFR-016), with every user value stored as text (no formulas).
-3. Given an event without a tab yet
-   When its first registration arrives
-   Then the tab is created with the header row.
-4. Given invalid data or an unknown event code sent directly to the backend
+   Then a row with the contract §6 columns is appended to the event's tab (created with headers
+   if new), status `new`, check result `pending` (or `not-required` for ₡0), every user value
+   stored as text (no formulas).
+3. Given an event at capacity (counting rule BR-E10)
+   When a ₡0 registration (no file) arrives
+   Then it is refused with `SOLD_OUT`; two simultaneous registrations for the last place never
+   both succeed.
+4. Given an event that is closed, unpublished or at capacity
+   When a paid registration (with a screenshot) arrives
+   Then it is stored with status `new`, `needsReview` TRUE and `checkDetails` naming the reason
+   (BR-E13), and the visitor is told Cami will contact them.
+5. Given invalid data or an unknown event code
    When it is received
    Then it is rejected and nothing is stored.
-5. Given a valid registration for an event that closed or was unpublished after the form opened
-   When it is received
-   Then it is stored with status `new` and check details `event closed at submit` (FFR-024).
 6. Given a retry with a submission ID already stored
    When it is received
-   Then the original reference is returned and no new file or row is created.
+   Then the original reference is returned and nothing new is stored.
 
 **Dependencies**
-- ADR-008 backend, US-023.
+- ADR-008 backend spike, US-023.
 
 **Jira**
 - Jira Key: TBD
 
 ### US-022 — Automatic check of the payment screenshot
 - Priority: Medium
-- Story Points: TBD
-- Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-017), BR-E06 (amount match rule: Q-26)
-- Related Requirements: G-005
+- Story Points: 5
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-030), BR-E06
+- Related Requirements: FR-011
 
 **User Story**
 
 As Cami
-I want each payment screenshot checked automatically for my SINPE number, the amount and the
-description
-So that I spot wrong or suspicious payments before confirming
+I want each payment screenshot checked automatically for my SINPE number or name and the exact
+amount
+So that I spot wrong payments before confirming
 
 **Acceptance Criteria**
 
-1. Given a screenshot showing Cami's number or account name, the amount due and the expected
-   description
+1. Given a screenshot showing Cami's SINPE number or account name and exactly the amount due
    When it is checked
-   Then the row's check result is `ok`.
-2. Given a screenshot where any of those is missing or different
+   Then the row's check result is `ok` and `needsReview` stays FALSE.
+2. Given a screenshot where the account or the exact amount is missing or different
    When it is checked
-   Then the result is `mismatch` with the failing fields listed (or the registration is
-   rejected, if Q-3 decides so).
+   Then the result is `mismatch`, `checkDetails` lists the failing fields, `needsReview` is TRUE
+   and the "payment not validated" email is sent (US-025).
 3. Given an unreadable image
    When it is checked
-   Then the result is `unreadable`.
+   Then the result is `unreadable`, `needsReview` is TRUE and the email is sent.
 4. Given any result
    When it is written
-   Then the status stays `new` until Cami changes it, and the temporary OCR Doc is deleted.
-5. Given Cami's sample screenshots (Q-18)
-   When the spike runs
-   Then the check reads them correctly before this story is `Ready`.
+   Then the status stays `new` and the temporary OCR Doc is deleted.
+5. Given Cami's sample screenshots (2–3 banks)
+   When the check runs on them in the spike
+   Then it returns `ok` for valid ones and `mismatch` for an altered amount.
 
 **Dependencies**
-- US-021; OCR spike with Cami's samples.
+- US-021; Cami's samples (spike).
 
 **Jira**
 - Jira Key: TBD
 
-### US-023 — Cami manages events and coupons without a deploy
+### US-023 — Cami manages events, capacity and coupons without a deploy
 - Priority: High
-- Story Points: TBD
-- Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-019, FFR-020), §13
-- Related Requirements: G-005
+- Story Points: 3
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-019, FFR-020, FFR-028); contract §6
+- Related Requirements: FR-011
 
 **User Story**
 
 As Cami
-I want to add or edit events and coupons in my spreadsheet
-So that the site shows them without waiting for a developer
+I want to add or edit events, capacity and coupons in my spreadsheet
+So that the site reflects them without waiting for a developer
 
 **Acceptance Criteria**
 
-1. Given a new row in `Events` with the published flag on and a future date
+1. Given a new `Events` row, published, with a future start, price and capacity
    When the site is next loaded
    Then the event appears in the section and the ticker.
-2. Given a row in `Coupons` for an event
-   When Cami adds it or changes its discount
-   Then the next coupon check uses the new value.
-3. Given a row with a missing required field (code, name, date, price)
-   When the site loads events
-   Then that event is skipped and the others still show.
+2. Given a row with a missing or invalid required field (code, name, date, time, price,
+   capacity) or a duplicated code
+   When events are loaded
+   Then that event (all rows of a duplicated code) is not shown and the others still are.
+3. Given a `Coupons` row added or its discount or max uses changed
+   When the next coupon check runs
+   Then it uses the new values.
+4. Given `nameEn`/`descriptionEn` filled for an event
+   When the site is in English
+   Then those texts are shown instead of the automatic translation.
+5. Given a `Coupons` row with a code that is not 8–20 characters `A-Z0-9`, or an invalid
+   discount or max uses
+   When coupons are read
+   Then that row is ignored and listed in the next alert email to camila@.
 
 **Dependencies**
-- ADR-008 backend.
+- ADR-008 backend spike.
+
+**Jira**
+- Jira Key: TBD
+
+### US-024 — Abuse metrics and alerts
+- Priority: Medium
+- Story Points: 2
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-029, §12)
+- Related Requirements: FR-011, NFR-003
+
+**User Story**
+
+As Cami
+I want daily numbers on registrations and blocked requests, and an email when something looks
+like spam
+So that we know when to add a captcha
+
+**Acceptance Criteria**
+
+1. Given activity on a day
+   When the day's metrics are written
+   Then the `Metrics` row has accepted registrations, honeypot hits, throttled requests, failed
+   coupon checks, MB uploaded and rows marked `spam`.
+2. Given a day over a threshold (> 10 honeypot hits, > 20 throttled requests, or the upload cap
+   reached)
+   When it is crossed
+   Then one alert email goes to camila@lifetoolscr.com for that day.
+3. Given a request with the honeypot field filled
+   When it is received
+   Then it gets a normal-looking success response, nothing is stored and the hit is counted.
+
+**Dependencies**
+- US-021.
+
+**Jira**
+- Jira Key: TBD
+
+### US-025 — Participant emails (confirmation, payment not validated)
+- Priority: High
+- Story Points: 3
+- Status: Ready
+- Related Spec: FEATURE_SPEC_events_registration (FFR-026), BR-E11
+- Related Requirements: FR-011, FR-009
+
+**User Story**
+
+As a participant
+I want an email confirming my registration, and to be told if my payment could not be
+validated
+So that I know my place is reserved or what to fix
+
+**Acceptance Criteria**
+
+1. Given a stored registration that is not flagged under FFR-024
+   When it is saved
+   Then the participant receives a confirmation email in the language they used on the site,
+   with event, date/time, amount and reference, reply-to camila@lifetoolscr.com.
+2. Given a check result `mismatch` or `unreadable`
+   When it is written
+   Then the participant receives "The payment for <event> could not be validated" / "El pago
+   para <evento> no pudo ser validado" with a short explanation and a request to reply to
+   camila@lifetoolscr.com with the correct proof.
+3. Given the email cannot be sent
+   When sending fails
+   Then the registration stays stored, `checkDetails` gets `email failed` and `needsReview` is
+   TRUE.
+4. Given the templates
+   When the feature is prepared for release
+   Then they are the versions approved by Cami (BR-E11 release gate).
+5. Given a registration stored and flagged under FFR-024 (closed, sold out or coupon changed at
+   submit)
+   When it is saved
+   Then the participant receives the "registration received" email, which does not promise a
+   place and says Cami will contact them, instead of the confirmation.
+
+**Dependencies**
+- US-021, US-022.
 
 **Jira**
 - Jira Key: TBD
