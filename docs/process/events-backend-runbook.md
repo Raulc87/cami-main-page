@@ -69,7 +69,8 @@ its spreadsheet (Extensions → Apps Script).
 
 **Path B — `clasp` (recommended once you push more than twice)**
 1. One time per computer: `npm install -g @google/clasp` (note the version with
-   `clasp --version` in §10 at the first deploy: command names differ between 2.x and 3.x), then `clasp login` (signed in as the
+   `clasp --version` in §10 at the first deploy: command names differ between 2.x and 3.x),
+   then `clasp login` (signed in as the
    Workspace account).
 2. Turn on the Apps Script API for that account: <https://script.google.com/home/usersettings>
    → **Google Apps Script API** → On.
@@ -128,7 +129,8 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
 2. **Review permissions** → pick the Workspace account → **Advanced** → **Go to <project>
    (unsafe)** → **Allow**. The "unsafe" warning appears because the script is not verified by
    Google; it is your own script.
-3. Scopes are listed in `apps-script/appsscript.json` (`oauthScopes`, required from CMP-024). If a later PR adds a
+3. Scopes are listed in `apps-script/appsscript.json` (`oauthScopes`, required from CMP-024).
+   If a later PR adds a
    scope, you will have to repeat this step and create a **new version** (section 5) for the web
    app to use it.
 
@@ -205,13 +207,18 @@ Vite reads `.env.local` too, so check it is **empty or points at the right envir
 every release build. After changing the variable, rebuild; it is not read at runtime.
 
 ## 8. Smoke request (after every deploy)
-Run from any shell (no personal data):
+Run from a directory outside the repo (no personal data):
 ```bash
-curl -sL -w '\nHTTP %{http_code}\n' "<EXEC_URL>?action=events&lang=en" | head -c 1500
+curl -sL -o events.json -w 'HTTP %{http_code}\n' "<EXEC_URL>?action=events&lang=en"
+head -c 1500 events.json
+rm events.json
 ```
-Expected: `HTTP 200` and JSON with the same keys always: `{"ok":true,"data":{...},"error":null}`
-(contract §7); Apps Script also answers 200 for its sign-in and error pages, so read the body, not just the code. `-L` is needed because Apps Script answers through a
-`script.googleusercontent.com` redirect.
+The status line prints first, so it is never cut off. Expected: `HTTP 200` and JSON with the same
+keys always: `{"ok":true,"data":{...},"error":null}` (contract §7).
+
+Apps Script also answers 200 for its sign-in and error pages, so read the body, not just the
+code. `-L` is needed because Apps Script answers through a `script.googleusercontent.com`
+redirect.
 
 Common failures:
 
