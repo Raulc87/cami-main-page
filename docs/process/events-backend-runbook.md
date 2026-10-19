@@ -79,15 +79,17 @@ its spreadsheet (Extensions → Apps Script).
    files into the directory, which would overwrite the repo's `appsscript.json`.
    `mkdir ~/cami-events-staging && cd ~/cami-events-staging`
    `clasp create --type standalone --title "cami-events-staging"`
-   This writes `.clasp.json` (contains the script ID). Edit it to add
-   `"rootDir": "<path-to-repo>/apps-script"`, then delete the default files `create` pulled
-   into the scratch directory. Never `git add` or commit `.clasp.json`; run `git status` in the
-   repo after the first `clasp` command to confirm nothing changed there.
-4. Push the code: `clasp push` (accept the manifest overwrite prompt the first time).
+   This writes `.clasp.json` (contains the script ID) and the default files; delete the default
+   files and keep only `.clasp.json`.
+4. `clasp` needs `rootDir` inside the directory that holds `.clasp.json`, so the file goes at the
+   **repo root** (it is git-ignored). Copy `.clasp.json` there and add
+   `"rootDir": "apps-script"`. Run `git status`: only ignored files may have appeared.
+5. Push the code from the repo root: `clasp push` (accept the manifest overwrite prompt the
+   first time).
 
-To work on both environments with `clasp`, keep two `.clasp.json` files outside the repo and
-copy the right one next to `apps-script/` before each command, or use a separate scratch
-directory per environment.
+Keep one `.clasp.json` per environment outside the repo (for example
+`~/cami-events-staging/.clasp.json`, with `rootDir` added) and copy the one you need to the repo
+root before each `clasp` command. Never `git add` or commit `.clasp.json`.
 
 ### 2.3 Enable the Advanced Drive Service (OCR)
 Required by the payment check (US-022).
