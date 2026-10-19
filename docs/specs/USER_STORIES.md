@@ -178,8 +178,9 @@ So that I know whether her approach fits me
 ### US-005 — Real client testimonials
 - Priority: High
 - Story Points: — (retroactive)
-- Status: Done (verified in CMP-017; evidence approved by merging PR #17; recorded in
-  CMP-020)
+- Status: Review — AC2's Spanish-to-English long-quote fallback is not exercised by current
+  data (every long quote has a Spanish version); needs one check with test data (CMP-017
+  observation, CMP-020)
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-007, BR-003
 - Tickets: CMP-002, CMP-008, CMP-009
@@ -300,8 +301,8 @@ So that I get the same experience as on desktop
 ### US-009 — Site live on the production domain
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Review — AC1/AC2 need the owner's manual checks: live deploy outcome and one
-  social-preview run (CMP-017 open manual checks)
+- Status: Review — AC2 needs one social-preview run on the live site (CMP-017 open manual
+  check); AC1's outcome is verified (an optional checklist re-run remains)
 - Related Spec: [TECH_STACK §10](../../TECH_STACK.md#10-hosting--deployment), [ADR-002](../decisions/ADR-002-godaddy-static-hosting.md)
 - Related Requirements: NFR-001, NFR-005, FR-010
 - Tickets: CMP-012

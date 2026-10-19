@@ -145,19 +145,25 @@ Deliverables:
 
 Verification (CMP-017, [SPRINT_01_VERIFICATION.md](SPRINT_01_VERIFICATION.md), PR #17 merged by the
 owner):
-- `Done`: US-001, US-003, US-004, US-005, US-006, US-008 (all ACs pass).
+- `Done`: US-001, US-003, US-004, US-006, US-008 (all ACs pass).
 - Still `Review`:
+  - US-005 — AC2's Spanish→English long-quote fallback is not exercised by the current data;
+    needs one check with test data.
   - US-002 — AC2 defect (service-card hover shift overridden by the scroll-reveal inline
     transform). Needs a fix ticket (owner approval and approach pending).
   - US-007 — AC1 needs one manual click on the live booking CTA.
-  - US-009 — AC1/AC2 need the owner's manual checks (deploy outcome, one social-preview run).
+  - US-009 — AC2 needs one social-preview run (AC1's outcome is verified; an optional
+    checklist re-run remains).
 - AC wording observations from CMP-017 (not fails) are kept for the Sprint 02 refinement PR:
   US-001 AC3 quote marks, US-004 AC2 / US-006 AC4 CSS uppercase, US-005 AC2 fallback not
   exercised by current data, US-009 AC2 no `og:image`.
+
+Sprint Definition of Done: **not met** — deliverable 2 is carried over and the Sprint 02 plan
+is not drafted yet (next, after refinement). TICKETS.md and PROJECT_CONTEXT.md are updated.
 
 Process work done: CMP-015..CMP-019 (AGENTS.md aligned with the Starter Kit, readiness
 checklist, reviewer and agent sessions, ADR-007, on-merge status rule, events Discovery).
 
 Carried over to Sprint 02: refinement of US-017..US-023 (with the owner's answers of
-2026-10-19), the US-002 fix ticket, the US-007/US-009 manual checks.
+2026-10-19), the US-002 fix ticket, the US-005 fallback check, the US-007/US-009 manual checks.
 

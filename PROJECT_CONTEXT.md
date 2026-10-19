@@ -23,7 +23,9 @@
 - ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-008 (ADR-008 Proposed)
 - Implementation plan: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
   (baseline + traceability)
-- Active sprint plan: [docs/sprints/SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md)
+- Active sprint plan: **none** — Sprint 01 is closed
+  ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md), kept for its review); Sprint 02 (events)
+  is in planning and its plan will be listed here when it is drafted
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
   ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
