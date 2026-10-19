@@ -510,14 +510,16 @@ So that I can choose one to attend
 
 **Acceptance Criteria**
 
-1. Given published events dated today or later
+1. Given published events that are still open (BR-E09)
    When the page loads
-   Then an "Upcoming Events" / "Próximos eventos" section shows one card per event, ordered by
-   date, each with name, date (and time if set), brief description and a register button.
+   Then an "Upcoming Events" / "Próximos eventos" section shows one card per event that is still
+   open (BR-E09: Costa Rica time, open until its start time or the end of its date), ordered by
+   date and time, each with name, date (and time if set), brief description and a register
+   button.
 2. Given an event with no image
    When its card renders
    Then the Lifetools logo is shown in place of the art.
-3. Given past or unpublished events
+3. Given past events (BR-E09) or unpublished events
    When the page loads
    Then they are not shown.
 4. Given no upcoming events, or the backend unavailable
@@ -527,6 +529,9 @@ So that I can choose one to attend
 
 **Dependencies**
 - US-023 (events data), ADR-008 backend.
+
+**Jira**
+- Jira Key: TBD
 
 ### US-018 — Upcoming-events ticker banner
 - Priority: Medium
@@ -545,8 +550,8 @@ So that I notice them right away
 
 1. Given at least one upcoming event
    When the page loads
-   Then a banner at the top scrolls right-to-left showing at least the two closest events (name
-   and date).
+   Then a banner at the top scrolls right-to-left showing up to the N closest events (N = 2 by
+   default, configurable), with name and date.
 2. Given a ticker item
    When I select it
    Then the page scrolls to that event's card.
@@ -562,6 +567,9 @@ So that I notice them right away
 
 **Dependencies**
 - US-017.
+
+**Jira**
+- Jira Key: TBD
 
 ### US-019 — Event registration form with SINPE Móvil payment proof
 - Priority: High
@@ -594,18 +602,23 @@ So that my place is reserved
    When I submit
    Then I see a confirmation with a registration reference; on a backend error I see a retry
    message and my entered data is kept.
-5. Given the SINPE number is still the placeholder (BR-E01)
-   When the feature is prepared for release
-   Then the release is blocked until Cami's real number is configured.
+5. Given the configured SINPE number and account name
+   When the form opens
+   Then the instructions show exactly those values; while they are placeholders (BR-E01) they
+   carry a visible "placeholder / por confirmar" marker. (Releasing with a placeholder is
+   blocked by the BR-E01 release gate, not by this AC.)
 
 **Dependencies**
 - US-021 (storage), US-017.
+
+**Jira**
+- Jira Key: TBD
 
 ### US-020 — Discount coupon at registration
 - Priority: Medium
 - Story Points: TBD
 - Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-012, FFR-013, FFR-021), BR-E03
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-012, FFR-013, FFR-021), §12, BR-E03
 - Related Requirements: G-005
 
 **User Story**
@@ -626,9 +639,15 @@ So that I pay the discounted price
 3. Given any visitor
    When the page loads
    Then no list of coupons is sent to the browser.
+4. Given many failed coupon checks in a short time (from any client)
+   When the global limit (§12) is reached
+   Then further checks are refused for a while with a "try again later" message.
 
 **Dependencies**
 - US-019, US-023.
+
+**Jira**
+- Jira Key: TBD
 
 ### US-021 — Registrations stored in Google Drive and Sheets
 - Priority: High
@@ -653,22 +672,26 @@ So that I can manage participants and payments in one place
 2. Given a valid registration
    When it is stored
    Then a row is appended to the event's tab with timestamp, reference, event code, name,
-   email, WhatsApp, coupon, discount %, amount due, screenshot URL, check result, status `new`.
+   email, WhatsApp, coupon, discount %, amount due, screenshot URL, check result, check details,
+   status `new` and an empty notes column (FFR-016).
 3. Given an event without a tab yet
    When its first registration arrives
    Then the tab is created with the header row.
-4. Given invalid data or a past/unpublished event sent directly to the backend
+4. Given invalid data or a closed (BR-E09) or unpublished event sent directly to the backend
    When it is received
    Then it is rejected and nothing is stored.
 
 **Dependencies**
 - ADR-008 backend, US-023.
 
+**Jira**
+- Jira Key: TBD
+
 ### US-022 — Automatic check of the payment screenshot
 - Priority: Medium
 - Story Points: TBD
 - Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-017), BR-E06
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-017), BR-E06 (amount match rule: Q-26)
 - Related Requirements: G-005
 
 **User Story**
@@ -693,13 +716,16 @@ So that I spot wrong or suspicious payments before confirming
    Then the result is `unreadable`.
 4. Given any result
    When it is written
-   Then the status stays `new` until Cami changes it.
+   Then the status stays `new` until Cami changes it, and the temporary OCR Doc is deleted.
 5. Given Cami's sample screenshots (Q-18)
    When the spike runs
    Then the check reads them correctly before this story is `Ready`.
 
 **Dependencies**
 - US-021; OCR spike with Cami's samples.
+
+**Jira**
+- Jira Key: TBD
 
 ### US-023 — Cami manages events and coupons without a deploy
 - Priority: High
@@ -728,3 +754,6 @@ So that the site shows them without waiting for a developer
 
 **Dependencies**
 - ADR-008 backend.
+
+**Jira**
+- Jira Key: TBD

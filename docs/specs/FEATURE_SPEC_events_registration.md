@@ -26,7 +26,17 @@ persistence (NFR-001, TECH_STACK §5–6). Cami runs paid events (talks, worksho
 sign-ups and SINPE payments by hand. This feature moves that flow onto the site while keeping
 Cami's data in tools she already uses (Google Drive and Sheets) and at zero license cost.
 
-It introduces the project's first backend, first personal-data collection and first
+It conflicts with parts of the approved PROJECT_SPEC, which must change first (AGENTS → Change
+management) in the PR that refines these stories, with the owner's approval (Q-20):
+- §4 Non-goals "No online payments or e-commerce today": the site would sell event places (the
+  payment itself stays a manual SINPE transfer, no gateway).
+- §4 Non-goals "No CMS: content is edited in code": the `Events`/`Coupons` tabs become a runtime
+  content source edited by Cami.
+- §10 "Persistence: none today": registrations are stored in Google Sheets and Drive.
+- FR-008 (email as the booking channel) and NFR-001 (static hosting, no server runtime): a
+  backend outside GoDaddy is added (ADR-008); the static site itself stays on GoDaddy.
+
+It also introduces the project's first backend, first personal-data collection and first
 third-party API, so it also needs: an ADR for the backend (ADR-008), TECH_STACK §5–7 updates, an
 integration contract between the site and the backend, a privacy notice, and re-classifying the
 project from **Simple** to **Standard** (TECH_STACK §1).
@@ -37,13 +47,13 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md) 
 
 | Story | Title | Requirements |
 |---|---|---|
-| US-017 | Upcoming events section | FFR-001..FFR-004 |
+| US-017 | Upcoming events section | FFR-001..FFR-004, BR-E09 |
 | US-018 | Upcoming-events ticker banner | FFR-005, FFR-006 |
 | US-019 | Event registration form with SINPE Móvil payment proof | FFR-007..FFR-011, FFR-018 |
-| US-020 | Discount coupon at registration | FFR-012, FFR-013 |
+| US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021 |
 | US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016 |
 | US-022 | Automatic check of the payment screenshot | FFR-017 |
-| US-023 | Cami manages events and coupons without a deploy | FFR-019..FFR-021 |
+| US-023 | Cami manages events and coupons without a deploy | FFR-019, FFR-020 |
 
 ## 4. Preconditions
 - A Google account owned by Cami (or the Lifetools Workspace) holds the Drive folder, the
@@ -54,8 +64,8 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md) 
 
 ## 5. Functional Requirements
 Events section
-- FFR-001: The page shows an "Upcoming Events" section with one card per published event whose
-  date has not passed, ordered by date ascending.
+- FFR-001: The page shows an "Upcoming Events" section with one card per published event that is
+  still open (BR-E09), ordered by date and time ascending.
 - FFR-002: Each card shows the event name, date (and time, if set), a brief description and the
   event art image; when an event has no image, the card shows the Lifetools logo instead.
 - FFR-003: Each card has a button to register for that event.
@@ -87,7 +97,8 @@ Registration
 
 Coupons
 - FFR-012: The form has an optional coupon field; applying a coupon validates it for **that
-  event** on the server and shows the discounted amount before payment.
+  event** on the server and shows the discounted amount before payment. Coupon checks are
+  throttled globally (§12) so codes cannot be enumerated.
 - FFR-013: A coupon is a percentage discount (1–100%) tied to one event; unknown, inactive or
   expired coupons are rejected with a message and the full price stays.
 
@@ -107,7 +118,9 @@ Payment screenshot check
 - FFR-017: After storing the screenshot, the server extracts its text (OCR) and checks that it
   shows: Cami's SINPE number or account name, the amount due, and the expected description
   (event code). The result (`ok` / `mismatch: <fields>` / `unreadable`) is written to the row.
-  The check never changes the status by itself; Cami confirms (BR-E06; strictness Q-3).
+  The check never changes the status by itself; Cami confirms (BR-E06; strictness Q-3). Drive
+  OCR works by converting the image into a temporary Google Doc; the backend deletes that Doc
+  right after reading it, so no text copy of payment receipts accumulates (FNFR-001).
 
 Administration (Cami)
 - FFR-019: Events are defined in an `Events` tab of the same spreadsheet (code, name, date,
@@ -120,9 +133,11 @@ Administration (Cami)
   code is valid for one event and its discount.
 
 ## 6. Business Rules
-- BR-E01: The SINPE Móvil number shown is a **placeholder** (`8888-8888`, "Nombre por
-  confirmar") until Cami provides the real one; placeholder values must be marked as such
-  (PROJECT_SPEC BR-002) and the feature must not go live with them.
+- BR-E01: Until Cami provides her SINPE Móvil number and account name, the instructions show a
+  value no one can pay to — `0000-0000 (POR CONFIRMAR / TO BE CONFIRMED)` and "Nombre por
+  confirmar" — with a visible "placeholder" marker (PROJECT_SPEC BR-002). **Release gate:** the
+  feature must not be released while any placeholder payment value is configured (checked in
+  the release checklist, not by a visitor-facing AC).
 - BR-E02: Prices are in Costa Rican colones (₡, CRC), whole colones.
 - BR-E03: Amount due = price × (1 − discount%), rounded to the nearest colón (Q-13).
 - BR-E04: Screenshot file name = participant name (accents removed, spaces removed or `_`,
@@ -132,8 +147,12 @@ Administration (Cami)
   Cami in the spreadsheet.
 - BR-E06: The automatic screenshot check is an aid, not proof of payment: a screenshot can be
   edited. Cami confirms against her bank before setting `confirmed`.
-- BR-E07: Only events with the published flag on and a date today or later appear on the site
-  and accept registrations; registering for a past or unpublished event is rejected server side.
+- BR-E07: Only published events that are still open (BR-E09) appear on the site and accept
+  registrations; registering for a closed or unpublished event is rejected server side.
+- BR-E09: All event dates and times are Costa Rica time (`America/Costa_Rica`), evaluated on the
+  server, never on the visitor's clock. An event is open until its start time, or until the end
+  of its date (23:59) when it has no time; after that it is past (Q-21 may set an earlier
+  registration cut-off).
 - BR-E08: Personal data (name, email, WhatsApp, payment screenshot) is used only to manage the
   registration and contact the participant about the event (Q-11).
 
@@ -142,7 +161,8 @@ Administration (Cami)
   payment screenshot (JPEG/PNG ≤ 5 MB), consent checkbox.
 - Cami (spreadsheet): `Events` and `Coupons` rows; status changes on registration rows.
 - Configuration (script properties, never in the repo): spreadsheet ID, Drive folder ID, SINPE
-  number and account name, allowed site origin.
+  number and account name, abuse limits (§12). (An "allowed site origin" cannot be enforced on an
+  Apps Script web app: it cannot read the `Origin` header or set CORS headers — ADR-008.)
 
 ## 8. Outputs
 - Site: events cards, ticker, form, discounted amount, confirmation reference or error.
@@ -183,8 +203,17 @@ Administration (Cami)
 - Upload too large / wrong type: message before upload when possible.
 - Backend quota or timeout: generic error with retry; nothing half-saved without a row
   (or the orphan file is reported — implementation detail for the contract).
-- Spam / abuse: honeypot field and per-client rate limit on the backend; captcha only if abuse
-  appears (Q-19).
+- Spam / abuse: the backend is an anonymous endpoint, callable from anywhere, running as Cami's
+  account (ADR-008). An Apps Script web app receives no client IP or request headers, so
+  per-client rate limits and origin checks are **not possible**. Mitigations that work there:
+  - global throttling with `CacheService` counters and `LockService` (e.g. max registrations
+    and max coupon checks per minute across all clients);
+  - a daily cap on stored uploads (count and MB) so storage shared with Cami's Gmail/Drive and
+    daily quotas cannot be exhausted;
+  - coupon codes long and random enough to resist guessing (≥ 8 characters), and a global cap
+    on failed coupon checks per minute;
+  - a honeypot field;
+  - a captcha verified server side (e.g. Cloudflare Turnstile, free), decided in Q-19.
 
 ## 13. Data
 - Spreadsheet `Cami — Eventos` (name TBD):
@@ -266,7 +295,22 @@ Blocking for refinement (owner/Cami):
 - Q-16: Free events (₡0): registration without the payment step?
 - Q-17: Capacity limit per event / "sold out"?
 - Q-18: Cami's sample SINPE screenshots (2–3 banks) for the OCR spike.
-- Q-19: Spam protection: honeypot + rate limit only (recommended), or a captcha from day one?
+- Q-19: Spam protection: global throttling + daily upload cap + honeypot only, or also a
+  server-verified captcha (e.g. Cloudflare Turnstile) from day one? (Per-client limits are not
+  possible on Apps Script — §12.)
+- Q-20: Approve the PROJECT_SPEC changes in §2 (non-goals "no online payments", "no CMS", §10
+  persistence, FR-008/NFR-001) when the stories are refined?
+- Q-21: Should registration close before the event starts (e.g. 24 h before)?
+- Q-22: Group or proxy registrations: one SINPE transfer for several participants, or a payer
+  who is not the participant? (Changes the form, the amount check and the row model.)
+- Q-23: Minors: can participants be under 18, and does consent then need a parent/guardian?
+- Q-24: Coupon usage limits: maximum uses per code, one use per email?
+- Q-25: Ley 8968 duties beyond the notice: who besides Cami may access the sheet and folder; how
+  access/deletion requests are handled in Sheets and Drive; whether the database must be
+  registered with PRODHAB (owner to confirm — not asserted here).
+- Q-26: Amount check: exact amount due, a tolerance, or "at least the amount due"?
+- Q-27 (not blocking): does a paid registration require a Hacienda electronic invoice (*factura
+  electrónica*)? Do SINPE Móvil per-transfer limits affect higher-priced events?
 
 ## 21. Approval
 - Not approved. Discovery draft for the owner's review (CMP-019).

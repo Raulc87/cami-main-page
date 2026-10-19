@@ -1,7 +1,8 @@
 # ADR-008 — Backend for events and registrations: Google Apps Script web app
 
-- Status: Proposed (CMP-019 Discovery; not accepted by that PR — it is accepted, or replaced,
-  when the events stories are refined to `Ready`)
+- Status: Proposed (CMP-019 Discovery; not accepted by that PR). The refinement PR that makes
+  the events stories `Ready` sets it to "Accepted (on merge of PR #N)" or replaces it
+  (pr-workflow §5).
 - Date: 2026-10-19
 - Decision owner: Raul Casanas
 - Related specs: [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md),
@@ -41,9 +42,17 @@ Cons:
   with JSON), responses come through a redirect; no custom domain.
 - Quotas (execution time 6 min/run, daily triggers/URL fetch limits) and ~50 MB payload — fine
   for this volume.
+- The request event carries **no client IP and no request headers**: per-client rate limits
+  are impossible, and the script cannot read `Origin` or set CORS headers, so it cannot restrict
+  which sites call it. The endpoint is anonymous, callable from anywhere, and runs as Cami's
+  account with write access to her Drive.
 - Code lives outside the repo unless synced with `clasp` (to be decided in the plan).
 Risks:
 - Deployment URL changes if redeployed incorrectly; mitigated by a documented deploy runbook.
+- Abuse of the anonymous endpoint: coupon-code enumeration, or uploads filling the storage
+  shared with Cami's Gmail/Drive and exhausting daily quotas. Mitigations available on Apps
+  Script: global throttling (`CacheService` + `LockService`), a daily upload cap, long random
+  coupon codes, a honeypot, and optionally a server-verified captcha (FEATURE_SPEC §12, Q-19).
 
 ### Option B — Serverless functions (Cloudflare Workers / Netlify / Vercel free tier) + Google APIs
 Pros:

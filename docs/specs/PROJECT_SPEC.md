@@ -5,7 +5,7 @@
 - Version: 1.0 (baseline homologated from `00-vision.md` + `05-roadmap.md` in CMP-014)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
 - Owner: Raul Casanas (product owner / final reviewer)
-- Last updated: 2026-10-18
+- Last updated: 2026-10-19 (§15: events feature listed, CMP-019)
 
 ## 1. Problem Statement
 
