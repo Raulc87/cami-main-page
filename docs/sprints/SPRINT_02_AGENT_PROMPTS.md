@@ -74,9 +74,13 @@ Rules:
 - One CMP-XXX ticket per branch (`CMP-XXX-short-slug`, as named in the sprint plan), one PR
   per branch, base main. PR title "CMP-XXX: ...". Follow docs/process/pr-precheck.md and
   pr-workflow.md.
-- Run `npm run build` and the manual checklist of your acceptance criteria against the
-  **staging** deployment (EVENTS_API_CONTRACT §10) before every push. Record the evidence in
-  the PR body. Check `git status`; never commit temporary files.
+- Run `npm run build` before every push. Then run the manual checklist of your acceptance
+  criteria against the **staging** deployment (EVENTS_API_CONTRACT §10) once the backend
+  actions your ticket uses are deployed there. Tickets that come before any deploy check what
+  they can: CMP-023 (runbook) a read-through against the contract §9 names; CMP-029
+  (foundation) the page unchanged with VITE_EVENTS_API_URL empty, and the API client against
+  an uncommitted fixture that matches contract §7. Record the evidence in the PR body. Check
+  `git status`; never commit temporary files.
 - Subscribe to your own PRs' events and handle every review finding on them: fix it, or
   reply why no change is needed (AGENTS.md → Automated PR reviewers).
 - If you hit a usage limit, list the stories you have not started so the coordinator can
@@ -113,7 +117,8 @@ Order of work (each step one PR, in order; IMPLEMENTATION_PLAN §11 steps 1–7)
       origin (e.g. `npm run preview`), through the script.googleusercontent.com redirect, JSON
       parsed by the page, no CORS preflight;
    b. the image saved to the staging folder and a row appended;
-   c. Drive OCR on each sample: account and exact amount found; the temporary Doc deleted;
+   c. Drive OCR on each sample: account and exact amount found; on a copy with the amount
+      altered, the comparison reports `mismatch` (US-022 AC5); the temporary Doc deleted;
    d. the HEIC → JPEG method (server or client). If it needs a new frontend library, stop:
       that needs TECH_STACK + ADR and the owner's decision;
    e. sending from a Workspace alias without a paid seat (fallback camila@ is decided);
@@ -122,13 +127,15 @@ Order of work (each step one PR, in order; IMPLEMENTATION_PLAN §11 steps 1–7)
 3. CMP-025-events-read-and-sheet-validation — US-023 and the `events` action (contract §3.1,
    §6 validation table, §7): registrationOpen (12 h, BR-E09), soldOut (BR-E10), `sinpe`
    object with isPlaceholder, FFR-028 translation cached by hash, invalid rows skipped and
-   queued for the alert email.
+   queued for the alert email. US-023 AC5's alert email itself is sent and verified in
+   CMP-027; here verify the row is skipped and queued.
 4. CMP-026-registration-storage — US-021: `register` (contract §3.3, §5–7), LockService around
    the capacity/duplicate check and the append, BR-E13 flags, FFR-014 file naming, formula
    neutralization, idempotent submissionId, ALREADY_REGISTERED.
 5. CMP-027-coupons-limits-metrics — US-020 server ACs and US-024: `coupon` action, coupon at
    register (incl. `coupon changed`), counting rule, every LIMIT_*/ALERT_* in contract §9,
-   honeypot fake success, Metrics row, one alert email per day.
+   honeypot fake success, Metrics row, one alert email per day, which also lists the invalid
+   rows queued by CMP-025 (US-023 AC5).
 6. CMP-028-payment-check-and-emails — US-022 and US-025: OCR after the lock is released,
    checkResult/checkDetails/needsReview (FFR-030), the confirmation, "registration received"
    and "payment not validated" emails from docs/ux/EVENTS_EMAILS_AND_PRIVACY.md in the
@@ -169,6 +176,8 @@ Order of work:
 2. CMP-030-events-section-and-ticker — US-017 (AC1–AC5) and US-018 (AC1–AC5):
    Events.jsx, EventsTicker.jsx. The register button mounts <EventRegistration event sinpe
    onClose /> (sprint plan → Integration Contracts); until CMP-032 lands it shows nothing.
+   Neither component uses the `r()` scroll-reveal helper: they mount after useReveal has
+   scanned the page (ARCHITECTURE_SPEC §7).
    Verify against staging (after CMP-025 is deployed) at 1280/900/375 px, EN/ES, keyboard,
    reduced motion.
 3. CMP-031-service-card-hover-fix — US-002 AC2 (Sprint 01 defect, SPRINT_01_VERIFICATION.md):

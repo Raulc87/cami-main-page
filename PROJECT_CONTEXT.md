@@ -57,7 +57,7 @@ they are not active paths.
   Sprint 01 closed 2026-10-19 (review in its plan).
 - Goal: the events feature works end to end on staging
 - Start: 2026-10-20, or the first business day after the go-ahead
-- End: 2026-10-28 (moves with the start)
+- End: 2026-10-28 (if the start moves: the 7th business day from the actual start)
 - Agent prompts: [docs/sprints/SPRINT_02_AGENT_PROMPTS.md](docs/sprints/SPRINT_02_AGENT_PROMPTS.md)
 - Deliverable: staging demo of the contract §10 end-to-end list, with evidence
   (`SPRINT_02_VERIFICATION.md`); no production release until the release-checklist §3b gates

@@ -4,7 +4,8 @@
 - Sprint: 02
 - Status: Planned (Approved on merge of PR #22; starts on the owner's go-ahead, Entry Gate 4)
 - Start: 2026-10-20 (Tuesday), or the first business day after the go-ahead
-- End: 2026-10-28 (Wednesday), moved by the same number of days if the start moves
+- End: 2026-10-28 (Wednesday); if the start moves, the 7th business day counted from the actual
+  start
 - Duration: 7 business days
 - Saturdays and Sundays excluded
 - Final human reviewer: Raul Casanas

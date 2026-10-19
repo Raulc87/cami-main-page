@@ -59,7 +59,9 @@ index.html        # SEO/social metadata
 
 [App.jsx](../../src/App.jsx) renders the sections in this fixed order (all receive the `r`
 prop from the `useReveal` hook, except `Nav` and `Footer`, which don't because they have no
-scroll-reveal animation — `Nav` is still dynamic via `LanguageContext`, see below):
+scroll-reveal animation — `Nav` is still dynamic via `LanguageContext`, see below — and
+`EventsTicker` and `Events`, which mount only after the `events` request resolves, after
+`useReveal` has looked for `[data-rid]` elements, so they render without scroll-reveal):
 
 1. `EventsTicker` — moving banner with the closest events (US-018); not rendered when there are
    no upcoming events or the backend is unavailable.
