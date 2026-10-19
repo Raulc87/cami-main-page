@@ -29,8 +29,8 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md) (Planned, waiting
-  for the owner's go-ahead); Sprint 01 is closed
+- Active sprint plan: [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md) (Active since the
+  owner's go-ahead, 2026-10-19); Sprint 01 is closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md), kept for its review)
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
