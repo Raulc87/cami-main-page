@@ -231,6 +231,9 @@ Abuse metrics
   closed, unpublished or sold out; coupon no longer valid): if a payment screenshot is attached
   (the visitor may have paid), store and flag (FFR-024) — never refuse; if nothing was paid
   (₡0), refuse with the matching error. The server needs no record of when the form opened.
+  Accepted trade-off: anyone who attaches any image can get past a full or closed event; such
+  rows are stored flagged (`needsReview`), never confirmed automatically, count against the
+  global throttles and daily upload cap (§12), and Cami can refund, cancel or mark them `spam`.
 
 ## 7. Inputs
 - Visitor: event, name, email, WhatsApp (international), coupon (optional), screenshot (paid

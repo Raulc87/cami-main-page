@@ -170,13 +170,13 @@ Same keys always:
 | `COUPON_INVALID` | `coupon` check: unknown, inactive, expired or other event. `register`: unknown code for the event (any request) | Show message, full price |
 | `COUPON_EXHAUSTED` | `coupon` check, or `register` without a file (₡0): `maxUses` reached | Show message, full price |
 | `COUPON_ALREADY_USED` | `coupon` check, or `register` without a file: this email already used this coupon | Show message, full price |
+| `RATE_LIMITED` | Global throttle reached | "Try again in a few minutes" |
+| `UPLOAD_CAP_REACHED` | Daily upload cap reached | "Try again later / contact Cami" |
+| `SERVER_ERROR` | Anything else | Retry message, keep data, same `submissionId` |
 
 For a `register` **with** a file whose coupon exists for the event but is no longer valid
 (inactive, expired, exhausted, already used by this email), the server keeps the discount, stores
 the row and flags `coupon changed` (BR-E13, FFR-024).
-| `RATE_LIMITED` | Global throttle reached | "Try again in a few minutes" |
-| `UPLOAD_CAP_REACHED` | Daily upload cap reached | "Try again later / contact Cami" |
-| `SERVER_ERROR` | Anything else | Retry message, keep data, same `submissionId` |
 
 Rule BR-E13: the server does not need to know when the form opened. A `register` with a file
 is never refused for state that changed (closed, unpublished, sold out, coupon); it is stored and
