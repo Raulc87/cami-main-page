@@ -18,7 +18,7 @@ below).
 | # | Gate | Status |
 |---|---|---|
 | 1 | `PROJECT_CONTEXT.md` paths resolve | Pass (link check on this PR's head: 0 broken) |
-| 2 | Readiness checklist has no open blocking items | Pass, except item 8 (go-ahead), which is gate 4 |
+| 2 | Readiness checklist has no open blocking items | Pass (item 8, the go-ahead, passed with gate 4) |
 | 3 | Integration contracts locked (or N/A) | Pass — [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.0, locked in PR #21 |
 | 4 | Final go-ahead from the human owner | Pass — owner, 2026-10-19: "merged, go ahead with Sprint 02" |
 

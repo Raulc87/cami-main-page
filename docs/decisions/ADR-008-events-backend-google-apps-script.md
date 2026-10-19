@@ -29,7 +29,8 @@ and read text from the image. What runs that code?
 
 ### Option A — Google Apps Script web app (recommended)
 A script bound to the events spreadsheet, deployed as a web app (`doGet` for events,
-`doPost` for the coupon check and registrations — EVENTS_API_CONTRACT §2), running as the owning Google account.
+`doPost` for the coupon check and registrations — EVENTS_API_CONTRACT §2), running as the
+owning Google account.
 Pros:
 - Free; built-in `SpreadsheetApp`, `DriveApp` and Drive OCR (Advanced Drive Service) with no
   credentials to manage.
