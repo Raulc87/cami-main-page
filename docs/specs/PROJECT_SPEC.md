@@ -2,10 +2,12 @@
 
 ## Metadata
 - Project: cami-main-page (personal brand website for Cami Hernandez)
-- Version: 1.0 (baseline homologated from `00-vision.md` + `05-roadmap.md` in CMP-014)
-- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
+- Version: 1.1 (v1.0 baseline homologated in CMP-014; v1.1 adds events and registration —
+  FR-011, §4, §10, NFR-001 — in CMP-021)
+- Status: Approved by the product owner (v1.0: 2026-10-18, CMP-014 PR #14 merged; v1.1:
+  Approved (on merge of PR #N), owner decision Q-20 of 2026-10-19)
 - Owner: Raul Casanas (product owner / final reviewer)
-- Last updated: 2026-10-18
+- Last updated: 2026-10-19 (CMP-021)
 
 ## 1. Problem Statement
 
@@ -33,9 +35,14 @@ a service catalog and targeted marketing (see the backlog stories US-010..US-016
 
 ## 4. Non-Goals
 - No user accounts, login or member area.
-- No online payments or e-commerce today (a catalog is backlog, see US-010).
-- No CMS: content is edited in code (see
+- No online payments or e-commerce through a payment gateway (a catalog is backlog, see
+  US-010). Exception since v1.1: event registration with a manual SINPE Móvil transfer and
+  payment-proof upload (FR-011). This may change if another payment platform is adopted
+  (owner, 2026-10-19).
+- No CMS: site content is edited in code (see
   [ARCHITECTURE_SPEC.md §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)).
+  Exception since v1.1: events and coupons are read at runtime from Cami's events spreadsheet
+  (FR-011).
 - No blog or multi-page routing.
 
 ## 5. Users / Actors
@@ -67,10 +74,16 @@ a service catalog and targeted marketing (see the backlog stories US-010..US-016
   the nav; the default follows the visitor's browser language and the choice persists across
   visits.
 - FR-010: The page exposes SEO and social-sharing metadata (`title`, `description`, `og:*`).
+- FR-011: The page lists Cami's upcoming events and lets visitors register (paid by SINPE
+  Móvil with proof upload, or free), with coupons, capacity, participant emails and an events
+  ticker — detailed in
+  [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md) (US-017..US-025).
 
 ## 7. Non-Functional Requirements
-- NFR-001: Hosting is static files on GoDaddy shared hosting — no server runtime is
-  available for the current site (see [ADR-002](../decisions/ADR-002-godaddy-static-hosting.md)).
+- NFR-001: The site is static files on GoDaddy shared hosting, with no server runtime there
+  (see [ADR-002](../decisions/ADR-002-godaddy-static-hosting.md)). Server-side logic for events
+  and registrations runs on Google Apps Script in the `lifetoolscr.com` Workspace
+  ([ADR-008](../decisions/ADR-008-events-backend-google-apps-script.md)).
 - NFR-002: The layout is responsive: desktop, a tablet breakpoint at 900px and a mobile
   breakpoint at 640px; all images stay visible on mobile.
 - NFR-003: Zero additional licensing cost — free tier first for any newly selected tool or
@@ -106,10 +119,13 @@ a service catalog and targeted marketing (see the backlog stories US-010..US-016
 ## 10. Data and Integrations
 - Content: static marketing content bundled in the code (services, steps, values,
   testimonials, stats, translations).
-- Persistence: none today. Language preference is stored in the visitor's browser only.
-- External systems: Google Fonts (CDN). No analytics, forms or third-party APIs today.
-- Future (backlog): lead database, Google Workspace, analytics, email marketing, social ads —
-  see US-010..US-016.
+- Persistence: event registrations in Google Sheets (one tab per event) and payment
+  screenshots in Google Drive, in the `lifetoolscr.com` Workspace (FR-011). The language
+  preference stays in the visitor's browser only.
+- External systems: Google Fonts (CDN); Google Apps Script web app (events backend, ADR-008)
+  with Sheets, Drive, OCR, Gmail and translation.
+- Future (backlog): lead database, analytics, email marketing, social ads — see
+  US-010..US-016.
 
 ## 11. Constraints
 - Budget: personal project, no license budget — free tier first (NFR-003).
@@ -157,9 +173,10 @@ implementation.
 
 ## 16. Open Questions
 - Accessibility target (e.g. WCAG 2.1 AA) has never been defined — should it become an NFR?
-- Where will the backend be hosted once US-011/US-012 start?
+- Backend hosting: Google Apps Script for events (ADR-008); US-011/US-012 to be revisited after
+  the events feature (owner, 2026-10-19).
 - Should two of three services keep `Catalog coming soon` until US-010 is scheduled?
 
 ## 17. Approval
-- Approved by: Raul Casanas (product owner), by merging the CMP-014 PR (#14)
-- Date: 2026-10-18
+- v1.0 approved by: Raul Casanas (product owner), by merging the CMP-014 PR (#14), 2026-10-18
+- v1.1 approved by: Raul Casanas (Q-20, 2026-10-19), on merge of PR #N (CMP-021)

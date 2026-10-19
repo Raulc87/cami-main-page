@@ -1,17 +1,18 @@
 # TECH_STACK
 
 ## Metadata
-- Version: 1.1 (homologated from `docs/specs/01-tech-stack.md` in CMP-014; §9 reviewer setup
-  updated in CMP-016, 2026-10-18)
-- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged)
+- Version: 1.2 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
+  §1, §5–7, §10–14 — in CMP-021)
+- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved (on
+  merge of PR #N))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment
-**Simple.**
+**Standard** (since v1.2, CMP-021).
 
-Reasoning: a single static page, no backend, no persistence, no authentication, one developer.
-The backlog (lead capture, questionnaire, integrations) would move the project to
-**Standard** — re-assess this section when the first of those stories starts.
+Reasoning: still one page and one developer, but the events feature (FR-011) adds a backend
+(Google Apps Script), persistence (Sheets/Drive), personal data, email and an integration
+contract. Before v1.2 the project was **Simple** (static page, no backend).
 
 ## 2. Hosting and Environment Constraints
 - Hosting provider: GoDaddy **Web Hosting** (shared hosting, cPanel) — not the Airo site
@@ -55,20 +56,28 @@ npm run preview   # serves dist/ locally
 ```
 
 ## 5. Backend
-- Technology: **none yet.**
-- Planned: **Node.js**, when the backlog requires it (US-011 questionnaire, US-012 lead
-  capture). It will get its own ARCHITECTURE_SPEC section / FEATURE_SPEC and ADR when the
-  ticket starts — do not design it in advance.
-- Alternatives considered: not yet evaluated (serverless functions, form services with a free
-  tier) — to be evaluated in that ticket.
+- Technology: **Google Apps Script web app** in the `lifetoolscr.com` Workspace
+  ([ADR-008](docs/decisions/ADR-008-events-backend-google-apps-script.md)), plain JavaScript
+  (V8 runtime). Services: `SpreadsheetApp`, `DriveApp`, Advanced Drive Service (OCR),
+  `GmailApp`/`MailApp`, `LanguageApp`, `LockService`, `CacheService`, `PropertiesService`.
+- Code: in the repo under `apps-script/`; deployed by the owner with `clasp` or by pasting into
+  the script editor, following the deploy runbook (Sprint 02).
+- Interface: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md).
+- Alternatives considered: serverless functions + Google APIs, Google Forms, Node.js (ADR-008).
+  Node.js stays the upgrade path (§14).
 
 ## 6. Persistence
-- None. The only stored value is the visitor's language preference in `localStorage`
-  (`cmp-lang`).
+- Google Sheets (events, coupons, one registrations tab per event, metrics) and Google Drive
+  (payment screenshots, one subfolder per event) — contract §6. A separate staging spreadsheet
+  and folder for development and tests (ADR-007 decision 6).
+- Browser: only the language preference in `localStorage` (`cmp-lang`).
 
 ## 7. Integrations
 - Google Fonts CDN.
-- No analytics, forms or third-party APIs (backlog: US-013, US-014, US-015, US-016).
+- Events backend (Apps Script web app) called from the browser with `fetch`
+  (`VITE_EVENTS_API_URL`).
+- Cloudflare Turnstile only if the captcha rule triggers (FEATURE_SPEC FFR-029).
+- No analytics (backlog: US-013..US-016).
 
 ## 8. Testing
 - No automated tests configured.
@@ -86,24 +95,31 @@ npm run preview   # serves dist/ locally
 
 ## 10. Hosting / Deployment
 - `npm run build` generates `dist/`; its contents are uploaded manually to `public_html/`.
+- The events backend is deployed separately (Apps Script deployment, staging and production),
+  by the owner, per the deploy runbook.
 - Full release process (versioning, upload, tag + GitHub Release):
   [release-checklist.md](docs/process/release-checklist.md).
 
 ## 11. Security and Secrets
-- No secrets exist in the current site. Never commit credentials or tokens.
-- When a backend arrives, secrets management must be defined in its ADR.
+- Never commit credentials, tokens, spreadsheet/folder IDs or SINPE data.
+- Backend configuration and secrets live in Apps Script script properties (contract §9). The
+  only backend value in the client bundle is the public `/exec` URL.
 
 ## 12. Observability
-- None (backlog: US-014 analytics).
+- Events backend: daily `Metrics` tab and alert emails to camila@ (FFR-029); Apps Script
+  execution log for errors (no personal data logged).
+- Site analytics: none (backlog US-014).
 
 ## 13. Risks
-- Shared hosting likely cannot run the planned Node.js backend.
+- Apps Script limits: no client IP/headers (global throttling only), quotas, redirect-based
+  responses (ADR-008).
 - Manual deploy with no CI — a broken build can only be caught by the precheck.
 - No tests — regressions rely on manual verification.
 
 ## 14. Upgrade / Scaling Path
 What would cause this stack to change?
-- Starting US-011/US-012 → backend (Node.js), persistence and probably new hosting.
+- Events volume or features outgrowing Apps Script, or US-011/US-012 needs → Node.js backend and
+  new hosting (ADR).
 - A growing number of pages → reconsider routing.
 - Frequent regressions → adopt a test runner (e.g. Vitest) via ADR.
 - More than one regular contributor → CI for build checks.
