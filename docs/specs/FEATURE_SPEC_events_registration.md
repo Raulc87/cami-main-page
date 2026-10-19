@@ -367,6 +367,8 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | #17 | Sender alias if free, else camila@ in Cami's voice |
 | #18 | Automatic translation with overrides |
 | #19 | Risk of false "not validated" emails accepted |
+| Spam status | Keep `spam` as a status Cami can set (frees the place and the coupon use; counted in `Metrics` for the captcha rule) — owner, 2026-10-19: "keep spam status" |
+| BR-E13 | Approved, including its trade-off — owner, 2026-10-19: "BR-E13 approved" |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.
