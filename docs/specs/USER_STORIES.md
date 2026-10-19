@@ -480,3 +480,251 @@ So that ad spend reaches the right audience
 
 **Jira**
 - Jira Key: TBD
+
+## Backlog — Events and registration (Proposed, Discovery CMP-019)
+
+From the owner's requirement of 2026-10-19. Feature spec:
+[FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md) (Draft); proposed
+backend: [ADR-008](../decisions/ADR-008-events-backend-google-apps-script.md). Acceptance
+criteria below are drafts: they become final when the open questions (FEATURE_SPEC §20) are
+answered and each story is refined to `Ready`.
+
+Dependencies between these stories:
+- US-023 (events and coupons in the spreadsheet) and the backend spike come first: US-017,
+  US-018, US-019 and US-020 read from it.
+- US-019 needs US-021 (storage) to be useful; US-022 runs after US-021 stores the image.
+- US-018 depends on US-017 (same events data and the card to scroll to).
+
+### US-017 — Upcoming events section
+- Priority: High
+- Story Points: TBD
+- Status: Proposed
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-001..FFR-004)
+- Related Requirements: G-005, FR-009, NFR-002
+
+**User Story**
+
+As a visitor
+I want to see Cami's upcoming events with their date, description and art
+So that I can choose one to attend
+
+**Acceptance Criteria**
+
+1. Given published events dated today or later
+   When the page loads
+   Then an "Upcoming Events" / "Próximos eventos" section shows one card per event, ordered by
+   date, each with name, date (and time if set), brief description and a register button.
+2. Given an event with no image
+   When its card renders
+   Then the Lifetools logo is shown in place of the art.
+3. Given past or unpublished events
+   When the page loads
+   Then they are not shown.
+4. Given no upcoming events, or the backend unavailable
+   When the page loads
+   Then the section shows the agreed empty/fallback state (Q-10) and the rest of the page still
+   renders.
+
+**Dependencies**
+- US-023 (events data), ADR-008 backend.
+
+### US-018 — Upcoming-events ticker banner
+- Priority: Medium
+- Story Points: TBD
+- Status: Proposed
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-005, FFR-006)
+- Related Requirements: G-005, NFR-002
+
+**User Story**
+
+As a visitor
+I want a moving banner at the top of the page announcing the next events
+So that I notice them right away
+
+**Acceptance Criteria**
+
+1. Given at least one upcoming event
+   When the page loads
+   Then a banner at the top scrolls right-to-left showing at least the two closest events (name
+   and date).
+2. Given a ticker item
+   When I select it
+   Then the page scrolls to that event's card.
+3. Given the pointer or keyboard focus is on the banner
+   When it is hovered/focused
+   Then the movement pauses.
+4. Given my system requests reduced motion
+   When the page loads
+   Then the banner is static.
+5. Given no upcoming events
+   When the page loads
+   Then no banner is shown.
+
+**Dependencies**
+- US-017.
+
+### US-019 — Event registration form with SINPE Móvil payment proof
+- Priority: High
+- Story Points: TBD
+- Status: Proposed
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-007..FFR-011, FFR-018), BR-E01, BR-E02
+- Related Requirements: G-005, FR-009
+
+**User Story**
+
+As a visitor who chose an event
+I want to see how to pay and send my details with the payment screenshot
+So that my place is reserved
+
+**Acceptance Criteria**
+
+1. Given I select an event's register button
+   When the form opens
+   Then it shows that event's name, date and price, and the SINPE Móvil instructions (number,
+   account name, amount, required description) before the fields.
+2. Given the form
+   When I submit with any of Participant name, Email, WhatsApp number, payment file or consent
+   missing
+   Then submit is blocked and each missing field shows a message in the active language.
+3. Given an invalid email, an invalid WhatsApp number (Q-6) or a file that is not a JPEG/PNG
+   image up to 5 MB
+   When I submit
+   Then the form shows the matching error and sends nothing.
+4. Given valid data
+   When I submit
+   Then I see a confirmation with a registration reference; on a backend error I see a retry
+   message and my entered data is kept.
+5. Given the SINPE number is still the placeholder (BR-E01)
+   When the feature is prepared for release
+   Then the release is blocked until Cami's real number is configured.
+
+**Dependencies**
+- US-021 (storage), US-017.
+
+### US-020 — Discount coupon at registration
+- Priority: Medium
+- Story Points: TBD
+- Status: Proposed
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-012, FFR-013, FFR-021), BR-E03
+- Related Requirements: G-005
+
+**User Story**
+
+As a visitor with a promo code
+I want to apply it to my registration
+So that I pay the discounted price
+
+**Acceptance Criteria**
+
+1. Given an active coupon for this event
+   When I apply it
+   Then the amount to pay updates to price × (1 − discount%) (rounding per Q-13) and the coupon
+   is saved with my registration.
+2. Given an unknown, inactive, expired coupon, or one for another event
+   When I apply it
+   Then I see "invalid coupon" and the full price stays.
+3. Given any visitor
+   When the page loads
+   Then no list of coupons is sent to the browser.
+
+**Dependencies**
+- US-019, US-023.
+
+### US-021 — Registrations stored in Google Drive and Sheets
+- Priority: High
+- Story Points: TBD
+- Status: Proposed
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-014..FFR-016), §13, BR-E04, BR-E05
+- Related Requirements: G-005, NFR-003
+
+**User Story**
+
+As Cami
+I want every registration saved in my Google Sheets, one tab per event, with the payment
+screenshot in my Drive
+So that I can manage participants and payments in one place
+
+**Acceptance Criteria**
+
+1. Given a valid registration
+   When the backend receives it
+   Then the screenshot is saved in the configured Drive folder as
+   `<ParticipantName>_<YYYY-MM-DD>_<EventCode>.<ext>` (BR-E04, Q-5).
+2. Given a valid registration
+   When it is stored
+   Then a row is appended to the event's tab with timestamp, reference, event code, name,
+   email, WhatsApp, coupon, discount %, amount due, screenshot URL, check result, status `new`.
+3. Given an event without a tab yet
+   When its first registration arrives
+   Then the tab is created with the header row.
+4. Given invalid data or a past/unpublished event sent directly to the backend
+   When it is received
+   Then it is rejected and nothing is stored.
+
+**Dependencies**
+- ADR-008 backend, US-023.
+
+### US-022 — Automatic check of the payment screenshot
+- Priority: Medium
+- Story Points: TBD
+- Status: Proposed
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-017), BR-E06
+- Related Requirements: G-005
+
+**User Story**
+
+As Cami
+I want each payment screenshot checked automatically for my SINPE number, the amount and the
+description
+So that I spot wrong or suspicious payments before confirming
+
+**Acceptance Criteria**
+
+1. Given a screenshot showing Cami's number or account name, the amount due and the expected
+   description
+   When it is checked
+   Then the row's check result is `ok`.
+2. Given a screenshot where any of those is missing or different
+   When it is checked
+   Then the result is `mismatch` with the failing fields listed (or the registration is
+   rejected, if Q-3 decides so).
+3. Given an unreadable image
+   When it is checked
+   Then the result is `unreadable`.
+4. Given any result
+   When it is written
+   Then the status stays `new` until Cami changes it.
+5. Given Cami's sample screenshots (Q-18)
+   When the spike runs
+   Then the check reads them correctly before this story is `Ready`.
+
+**Dependencies**
+- US-021; OCR spike with Cami's samples.
+
+### US-023 — Cami manages events and coupons without a deploy
+- Priority: High
+- Story Points: TBD
+- Status: Proposed
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-019, FFR-020), §13
+- Related Requirements: G-005
+
+**User Story**
+
+As Cami
+I want to add or edit events and coupons in my spreadsheet
+So that the site shows them without waiting for a developer
+
+**Acceptance Criteria**
+
+1. Given a new row in `Events` with the published flag on and a future date
+   When the site is next loaded
+   Then the event appears in the section and the ticker.
+2. Given a row in `Coupons` for an event
+   When Cami adds it or changes its discount
+   Then the next coupon check uses the new value.
+3. Given a row with a missing required field (code, name, date, price)
+   When the site loads events
+   Then that event is skipped and the others still show.
+
+**Dependencies**
+- ADR-008 backend.

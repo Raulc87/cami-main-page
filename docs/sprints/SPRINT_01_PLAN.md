@@ -128,3 +128,7 @@ The human reviewer is the final approver.
   Owner decision (2026-10-18): "Yes do the missing step to avoid skipping." CMP-018 also
   removes the post-approval step: final statuses (ticket `done`, specs/ADRs approved on merge)
   are recorded in the PR before it is reported ready, and the reviewer checks them.
+- Owner requirement (2026-10-19): upcoming events, paid registration with SINPE Móvil proof,
+  coupons and an events ticker. CMP-019 (coordinator, docs) runs Discovery: draft
+  FEATURE_SPEC, stories US-017..US-023 (`Proposed`) and ADR-008 (Proposed). It feeds the sprint
+  goal "refine at least one backlog story to `Ready`" once the open questions are answered.

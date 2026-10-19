@@ -150,6 +150,8 @@ Not part of the current release; tracked as backlog in [USER_STORIES.md](USER_ST
 - Site analytics (US-014)
 - Email marketing campaigns (US-015)
 - Demographic social ads (US-016)
+- Upcoming events and paid registration (US-017..US-023), Discovery in progress —
+  [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md) (Draft)
 
 Each one needs its own ticket and, when it changes architecture, its own FEATURE_SPEC (from
 [docs/templates/FEATURE_SPEC_TEMPLATE.md](../templates/FEATURE_SPEC_TEMPLATE.md)) before
