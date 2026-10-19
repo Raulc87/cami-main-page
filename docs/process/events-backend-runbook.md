@@ -70,8 +70,7 @@ its spreadsheet (Extensions → Apps Script).
 **Path B — `clasp` (recommended once you push more than twice)**
 1. One time per computer: `npm install -g @google/clasp` (note the version with
    `clasp --version` in §10 at the first deploy: command names differ between 2.x and 3.x),
-   then `clasp login` (signed in as the
-   Workspace account).
+   then `clasp login` (signed in as the Workspace account).
 2. Turn on the Apps Script API for that account: <https://script.google.com/home/usersettings>
    → **Google Apps Script API** → On.
 3. Create the project in an **empty** scratch directory outside the repo, never with `rootDir`
@@ -82,7 +81,8 @@ its spreadsheet (Extensions → Apps Script).
    This writes `.clasp.json` (contains the script ID) and the default files; delete the default
    files and keep only `.clasp.json`.
 4. `clasp` needs `rootDir` inside the directory that holds `.clasp.json`, so the file goes at the
-   **repo root** (CMP-024 git-ignores it; until then do not `git add` it). Copy `.clasp.json`
+   **repo root** (the `.gitignore` entry comes with CMP-024, as the coordinator
+   assigned; until it merges do not `git add` it). Copy `.clasp.json`
    there and add
    `"rootDir": "apps-script"`. Run `git status` to confirm.
 5. Push the code from the repo root: `clasp push` (accept the manifest overwrite prompt the
