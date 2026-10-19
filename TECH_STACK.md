@@ -80,7 +80,10 @@ npm run preview   # serves dist/ locally
 - No analytics (backlog: US-013..US-016).
 
 ## 8. Testing
-- No automated tests configured.
+- No automated tests configured. For the events feature (Standard complexity), each PR runs the
+  manual test checklist of [EVENTS_API_CONTRACT.md §10](docs/specs/EVENTS_API_CONTRACT.md#10-test-obligations)
+  against the staging deployment and records the evidence; adopting a runner (e.g. Vitest) needs
+  an ADR (§14).
 - Verification today: `npm run build` + manual browser check of the golden path and the
   mobile breakpoint (see [pr-precheck.md](docs/process/pr-precheck.md)).
 - Acceptance criteria in [USER_STORIES.md](docs/specs/USER_STORIES.md) are verified manually

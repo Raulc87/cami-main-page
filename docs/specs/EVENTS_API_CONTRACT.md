@@ -40,8 +40,9 @@ Change management: update this document first, bump the version, notify both own
 ## 3. Requests
 
 ### 3.1 `GET ?action=events&lang=es|en`
-Returns published events that are still open for registration or sold out, ordered by start.
-`lang` selects the language of `name`/`description` (default `es`).
+Returns every published event that has not started (BR-E09), ordered by start, each with the
+`registrationOpen` and `soldOut` flags (a closed or sold-out event is still listed, with its
+button disabled). `lang` selects the language of `name`/`description` (default `es`).
 
 ### 3.2 `GET ?action=coupon&eventCode=EV1&couponCode=XXXX&email=a@b.cr`
 Checks one coupon for one event and one email. Throttled globally.
@@ -101,7 +102,7 @@ reference and stores nothing (do not tell bots they were caught); it is counted 
 | `reference` | `<eventCode>-<YYMMDD>-<4 random A-Z0-9>`, e.g. `EV1-261105-K7Q2` |
 | `amountDueCrc` | `round(priceCrc × (1 − discountPercent/100))`, nearest colón |
 | `screenshotUrl` | Drive file URL in `<root>/<eventCode>/` |
-| `needsReview` | `TRUE` when `checkResult` ≠ `ok`/`not-required`, or `checkDetails` has a flag (FFR-024, FFR-019) |
+| `needsReview` | FFR-030: `TRUE` iff `checkResult` is `mismatch`/`unreadable`, or `checkDetails` holds a flag (`event closed at submit`, `sold out at submit`, `coupon changed`, `duplicate event code`, `email failed`); `pending`, `ok`, `not-required` alone → `FALSE` |
 
 ## 6. Persistence mapping
 Spreadsheet (Workspace `lifetoolscr.com`), tabs:
@@ -141,19 +142,24 @@ Same keys always:
 |---|---|---|
 | `VALIDATION_ERROR` | Any field rule fails (§8 per field) | Show field messages, keep data |
 | `EVENT_NOT_FOUND` | Unknown or duplicated event code with no row to flag | Message, reload events |
-| `REGISTRATION_CLOSED` | Event closed or unpublished **before** the form was shown (coupon/precheck) | Message; registrations after payment are stored and flagged instead (FFR-024) |
-| `SOLD_OUT` | Capacity reached | Show "Agotado / Sold out" |
+| `REGISTRATION_CLOSED` | `coupon` check on a closed event; or a `register` **without** a file (₡0) for a closed/unpublished event (BR-E13) | Message; a `register` **with** a file is stored and flagged instead (FFR-024) |
+| `SOLD_OUT` | `register` **without** a file (₡0) when capacity is reached (BR-E13) | Show "Agotado / Sold out"; with a file → stored and flagged |
 | `ALREADY_REGISTERED` | Same email already has a counting row for this event | Show message (FFR-027) |
-| `COUPON_INVALID` | Unknown, inactive, expired or other event | Show message, full price |
-| `COUPON_EXHAUSTED` | `maxUses` reached | Show message, full price |
-| `COUPON_ALREADY_USED` | This email already used this coupon | Show message, full price |
+| `COUPON_INVALID` | `coupon` check: unknown, inactive, expired or other event. `register`: unknown code for the event (any request) | Show message, full price |
+| `COUPON_EXHAUSTED` | `coupon` check, or `register` without a file (₡0): `maxUses` reached | Show message, full price |
+| `COUPON_ALREADY_USED` | `coupon` check, or `register` without a file: this email already used this coupon | Show message, full price |
+
+For a `register` **with** a file whose coupon exists for the event but is no longer valid
+(inactive, expired, exhausted, already used by this email), the server keeps the discount, stores
+the row and flags `coupon changed` (BR-E13, FFR-024).
 | `RATE_LIMITED` | Global throttle reached | "Try again in a few minutes" |
 | `UPLOAD_CAP_REACHED` | Daily upload cap reached | "Try again later / contact Cami" |
 | `SERVER_ERROR` | Anything else | Retry message, keep data, same `submissionId` |
 
-Note: `SOLD_OUT` after payment follows FFR-024 (stored and flagged), because the visitor may
-have paid; only a `register` that arrives when the event was already sold out before the form
-opened is refused — the frontend never shows payment instructions for a sold-out event.
+Rule BR-E13: the server does not need to know when the form opened. A `register` with a file
+is never refused for state that changed (closed, unpublished, sold out, coupon); it is stored and
+flagged. A `register` without a file (₡0) is refused with the matching code. The frontend never
+shows the form for an event the last `events` response marked closed or sold out.
 
 ## 8. Field error codes
 | Code | Meaning |
@@ -182,8 +188,15 @@ The SINPE number and account name reach the browser only inside the `events` res
 decision 6); there is no local Apps Script runtime.
 
 ## 10. Test obligations
+How they are met: there is no test runner yet (TECH_STACK §8). Each PR that implements a side of
+this contract runs a **manual test checklist against the staging deployment** from a browser on
+the site origin and records the evidence (case, input, response, row/file screenshot) in the PR
+body or in `docs/sprints/SPRINT_<NN>_VERIFICATION.md`. Adopting an automated runner needs an ADR.
+
+The checklist must cover:
 - Every validation rule: at least one valid and one invalid case, on both sides.
 - Every error code the provider can return.
-- End-to-end from a browser on the site origin against staging: happy path (paid, coupon, free
-  event), one validation failure, sold out, duplicate email, retry with the same
-  `submissionId`, event closed after the form opened (stored and flagged).
+- End-to-end: happy path (paid, coupon, free event); one validation failure; sold out (₡0
+  refused, paid stored and flagged); duplicate email; retry with the same `submissionId`; event
+  closed after the form opened (paid stored and flagged); coupon changed after apply (paid
+  stored and flagged).

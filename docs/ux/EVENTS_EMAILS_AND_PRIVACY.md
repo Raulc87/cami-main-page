@@ -46,6 +46,36 @@ If you have any questions, just reply to this email.
 Warmly,
 Cami
 
+## 1b. "Registration received" email (flagged late registrations, FFR-024)
+
+### ES
+**Asunto:** Recibimos tu inscripción a {evento}
+
+Hola {nombre}:
+
+Recibimos tu inscripción a **{evento}** (referencia {referencia}), pero llegó cuando el evento ya
+{estaba lleno / había cerrado inscripciones / el cupón ya no estaba disponible}. Cami va a revisar
+tu caso y te escribirá pronto para confirmarte si hay espacio o para coordinar la devolución de
+tu pago.
+
+Si tienes alguna pregunta, responde a este correo.
+
+Cami
+
+### EN
+**Subject:** We received your registration for {event}
+
+Hi {name},
+
+We received your registration for **{event}** (reference {reference}), but it arrived after the
+event {was full / had closed registrations / the coupon was no longer available}. Cami will
+review it and write to you soon to confirm whether there is a place or to arrange a refund of
+your payment.
+
+If you have any questions, just reply to this email.
+
+Cami
+
 ## 2. "Payment not validated" email
 
 ### ES
@@ -79,6 +109,10 @@ Thanks,
 Cami
 
 ## 3. Privacy notice (form) — generic draft
+
+Open points for the lawyer review (BR-E11): the data **retention period** (Q-11; not stated
+below), and the "not shared with third parties" sentence if Cloudflare Turnstile is enabled later
+(FFR-029), since it processes visitor data for the captcha.
 
 ### ES
 **Aviso de privacidad.** Cami Hernandez (Lifetools, camila@lifetoolscr.com) recopila tu nombre,

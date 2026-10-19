@@ -50,8 +50,8 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 | US-017 | Upcoming events section | FFR-001..FFR-004, FFR-025, FFR-028, BR-E09 |
 | US-018 | Upcoming-events ticker banner | FFR-005, FFR-006 |
 | US-019 | Event registration form with SINPE Móvil payment proof | FFR-007..FFR-011, FFR-018, FFR-022, FFR-023, FFR-027 |
-| US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021 |
-| US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024, FFR-030 |
+| US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), BR-E13 |
+| US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024, FFR-025, FFR-030, BR-E13 |
 | US-022 | Automatic check of the payment screenshot | FFR-017 |
 | US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020 |
 | US-024 | Abuse metrics and alerts | FFR-029 |
@@ -77,14 +77,16 @@ Events section
 - FFR-004: When there are no upcoming events, or the backend is unavailable, the section and
   the ticker are hidden (Q-10) and the rest of the page renders normally.
 - FFR-025: Capacity: each event has a capacity in the `Events` tab. When the count of counting
-  registrations (BR-E10) reaches it, the card shows "Agotado / Sold out", the register button is
-  disabled and the backend refuses new registrations for that event — except ones that arrive
-  after the visitor may have paid (FFR-024). Registration is serialized with `LockService` so two
-  people cannot take the last place.
+  registrations (BR-E10) reaches it, the card shows "Agotado / Sold out" and the register button
+  is disabled. At `register` time the server applies BR-E13: a ₡0 registration is refused
+  (`SOLD_OUT`); a paid one (screenshot attached) is stored and flagged (FFR-024). The capacity and
+  duplicate check plus the row append are serialized with `LockService` so two people cannot take
+  the last place; OCR and emails run after the lock is released.
 - FFR-028: Event name and description are written in Spanish by Cami (Q-1). When the site is in
   English, the backend returns an English version: the optional `nameEn`/`descriptionEn` columns
-  if filled, otherwise an automatic translation (Apps Script `LanguageApp`, free), cached until the
-  Spanish text changes.
+  if filled, otherwise an automatic translation (Apps Script `LanguageApp`, free), stored in
+  script properties keyed by a hash of the Spanish text, so it is recomputed only when that text
+  changes.
 
 Ticker banner
 - FFR-005: A banner at the top of the page scrolls right-to-left continuously, showing up to the
@@ -143,13 +145,19 @@ Storage (server side)
   name, email, WhatsApp, language, coupon, discount %, amount due, screenshot URL, check result,
   check details, needsReview, status, consent time, notes). Status is `new` on creation; only Cami
   sets `confirmed`, `refund/cancelled` or `spam`. Check result is `pending` until US-022 ships.
-- FFR-024: Event closed, unpublished or sold out after the form opened: the visitor may already
-  have paid, so the backend **still stores** the registration (file and row) with status `new`,
-  `needsReview` TRUE and `checkDetails` naming the reason (`event closed at submit`, `sold out at
-  submit`), and tells the visitor Cami will contact them. Only unknown event codes and invalid
-  data are rejected.
-- FFR-030: `needsReview` (TRUE/FALSE) tells Cami a row needs her attention: set TRUE when the
-  check result is `mismatch` or `unreadable`, or when FFR-024/FFR-019 flags apply (Q-3).
+- FFR-024: Late changes to a paid registration (BR-E13): if, when `register` arrives with a
+  screenshot, the event is closed, unpublished or sold out, or the coupon the visitor applied is
+  no longer valid, the visitor may already have paid, so the backend **still stores** the
+  registration (file and row) with status `new`, `needsReview` TRUE and `checkDetails` naming the
+  reason (`event closed at submit`, `sold out at submit`, `coupon changed`), sends the
+  "registration received" email instead of the confirmation (FFR-026), and tells the visitor Cami
+  will contact them. For a changed coupon the discount the visitor saw is kept (the code must
+  exist for that event). Unknown event codes, unknown coupon codes and invalid data are rejected.
+- FFR-030: `needsReview` (TRUE/FALSE) tells Cami a row needs her attention (Q-3). It is TRUE if
+  and only if the check result is `mismatch` or `unreadable`, or `checkDetails` holds a flag:
+  `event closed at submit`, `sold out at submit`, `coupon changed`, `duplicate event code` or
+  `email failed`. `pending`, `ok` and `not-required` alone leave it FALSE. (Single definition,
+  used by contract §5 and the ACs.)
 
 Payment screenshot check
 - FFR-017: After storing the screenshot the server extracts its text with Drive OCR and checks
@@ -164,8 +172,10 @@ Participant emails
   `camila@lifetoolscr.com` and sender a Workspace alias (e.g. `eventos@`/`no-reply@`) if the
   spike confirms it works without a paid seat, otherwise `camila@lifetoolscr.com` written in
   Cami's voice (Q-8, #17):
-  - a **confirmation email** for every stored registration (event, date/time, amount, reference;
-    for paid events: "Cami will confirm your payment");
+  - a **confirmation email** for every stored registration that is not flagged under FFR-024
+    (event, date/time, amount, reference; for paid events: "Cami will confirm your payment");
+  - a **"registration received" email** instead of the confirmation for registrations stored and
+    flagged under FFR-024: it does not promise a place and says Cami will contact them;
   - a **"payment not validated" email** when the check result is `mismatch` or `unreadable`:
     "The payment for <event> could not be validated", with a short explanation that the SINPE
     screenshot does not show the expected account or exact amount, and a request to reply to
@@ -180,7 +190,9 @@ Administration (Cami)
   `[A-Z0-9-]{2,20}`; rows with a duplicated code are unpublished, and a registration that
   arrives for one is stored and flagged (`checkDetails`: `duplicate event code`).
 - FFR-020: `Coupons` tab: event code, coupon code, discount %, max uses, active, optional expiry
-  (Q-2). Cami adds or edits rows; no deploy.
+  (Q-2). Cami adds or edits rows; no deploy. Coupon codes are 8–20 characters, `A-Z` and `0-9`
+  only (hard to guess, §12); rows with an invalid code, discount or max uses are ignored and
+  listed in the alert email so Cami can fix them.
 
 Abuse metrics
 - FFR-029: A `Metrics` tab gets one row per day (accepted registrations, honeypot hits,
@@ -215,6 +227,10 @@ Abuse metrics
   (BR-E01); privacy notice reviewed by a lawyer (Q-11/Q-25); email templates approved by Cami;
   Lifetools logo in place.
 - BR-E12: Minors are not handled specially; Cami deals with any case herself (Q-23).
+- BR-E13: When state changes between the visitor seeing the form and `register` arriving (event
+  closed, unpublished or sold out; coupon no longer valid): if a payment screenshot is attached
+  (the visitor may have paid), store and flag (FFR-024) — never refuse; if nothing was paid
+  (₡0), refuse with the matching error. The server needs no record of when the form opened.
 
 ## 7. Inputs
 - Visitor: event, name, email, WhatsApp (international), coupon (optional), screenshot (paid
@@ -236,9 +252,9 @@ Abuse metrics
 5. Optionally the visitor applies a coupon; the amount updates.
 6. Paid event: the visitor pays by SINPE Móvil, then fills the form and attaches the screenshot.
 7. The site validates and sends the registration.
-8. The backend re-validates, checks capacity and duplicates under a lock, stores the file
-   (paid) and the row (`new`), runs the check, sends the confirmation email (and the "not
-   validated" email when applicable) and returns the reference.
+8. The backend re-validates; under a lock it checks capacity and duplicates and appends the row
+   (`new`); it stores the file (paid), returns the reference, then runs the check and sends the
+   emails (confirmation or "registration received", and "not validated" when applicable).
 9. Cami reviews rows (`needsReview` first) and sets `confirmed`, `refund/cancelled` or `spam`.
 
 ## 10. Alternate Flows
@@ -254,8 +270,8 @@ Abuse metrics
 - Non-image renamed `.jpg` → rejected (type from content).
 - HEIC screenshot → converted to JPEG before storage/OCR (method chosen in the spike).
 - Backend unavailable → section and ticker hidden; form shows retry.
-- Email sending fails → the registration is still stored; the failure is written to `notes` and
-  `needsReview` set.
+- Email sending fails → the registration is still stored; `checkDetails` gets `email failed` and
+  `needsReview` is TRUE.
 
 ## 12. Error Scenarios and abuse controls
 - Validation errors: field messages in the active language (contract §8).

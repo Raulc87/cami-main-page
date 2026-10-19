@@ -643,8 +643,8 @@ So that my place is reserved
 - Priority: Medium
 - Story Points: 3
 - Status: Ready
-- Related Spec: FEATURE_SPEC_events_registration (FFR-012, FFR-013, FFR-021, §12), BR-E03,
-  BR-E10
+- Related Spec: FEATURE_SPEC_events_registration (FFR-012, FFR-013, FFR-021, FFR-024, §12),
+  BR-E03, BR-E10, BR-E13
 - Related Requirements: FR-011
 
 **User Story**
@@ -668,10 +668,15 @@ So that I pay the discounted price
 4. Given a registration that used a coupon is marked `refund/cancelled` or `spam`
    When the coupon is checked again
    Then that use no longer counts.
-5. Given many failed coupon checks in a short time (any client)
+5. Given a coupon that was valid when I applied it but became inactive, expired or exhausted
+   before I submitted
+   When I submit a paid registration
+   Then it is stored with the discount I saw, `needsReview` TRUE and `checkDetails`
+   `coupon changed`; a ₡0 registration in the same case is refused with the coupon message.
+6. Given many failed coupon checks in a short time (any client)
    When the global limit is reached
    Then further checks are refused with "try again later".
-6. Given any visitor
+7. Given any visitor
    When the page loads
    Then no list of coupons is sent to the browser.
 
@@ -686,7 +691,7 @@ So that I pay the discounted price
 - Story Points: 5
 - Status: Ready
 - Related Spec: FEATURE_SPEC_events_registration (FFR-014..FFR-016, FFR-022, FFR-024, FFR-025,
-  FFR-030), BR-E04, BR-E05, BR-E10; contract §6
+  FFR-030), BR-E04, BR-E05, BR-E10, BR-E13; contract §6
 - Related Requirements: FR-011, NFR-003
 
 **User Story**
@@ -708,13 +713,14 @@ So that I can manage participants and payments in one place
    Then a row with the contract §6 columns is appended to the event's tab (created with headers
    if new), status `new`, check result `pending` (or `not-required` for ₡0), every user value
    stored as text (no formulas).
-3. Given an event at capacity (counting rule BR-E10) before the form opened
-   When a registration arrives
+3. Given an event at capacity (counting rule BR-E10)
+   When a ₡0 registration (no file) arrives
    Then it is refused with `SOLD_OUT`; two simultaneous registrations for the last place never
    both succeed.
-4. Given an event that closed or sold out after the form opened
-   When a registration arrives
-   Then it is stored with status `new`, `needsReview` TRUE and `checkDetails` naming the reason.
+4. Given an event that is closed, unpublished or at capacity
+   When a paid registration (with a screenshot) arrives
+   Then it is stored with status `new`, `needsReview` TRUE and `checkDetails` naming the reason
+   (BR-E13), and the visitor is told Cami will contact them.
 5. Given invalid data or an unknown event code
    When it is received
    Then it is rejected and nothing is stored.
@@ -795,6 +801,10 @@ So that the site reflects them without waiting for a developer
 4. Given `nameEn`/`descriptionEn` filled for an event
    When the site is in English
    Then those texts are shown instead of the automatic translation.
+5. Given a `Coupons` row with a code that is not 8–20 characters `A-Z0-9`, or an invalid
+   discount or max uses
+   When coupons are read
+   Then that row is ignored and listed in the next alert email to camila@.
 
 **Dependencies**
 - ADR-008 backend spike.
@@ -852,7 +862,7 @@ So that I know my place is reserved or what to fix
 
 **Acceptance Criteria**
 
-1. Given a stored registration
+1. Given a stored registration that is not flagged under FFR-024
    When it is saved
    Then the participant receives a confirmation email in the language they used on the site,
    with event, date/time, amount and reference, reply-to camila@lifetoolscr.com.
@@ -863,11 +873,16 @@ So that I know my place is reserved or what to fix
    camila@lifetoolscr.com with the correct proof.
 3. Given the email cannot be sent
    When sending fails
-   Then the registration stays stored, the failure is written to `notes` and `needsReview` is
+   Then the registration stays stored, `checkDetails` gets `email failed` and `needsReview` is
    TRUE.
 4. Given the templates
    When the feature is prepared for release
    Then they are the versions approved by Cami (BR-E11 release gate).
+5. Given a registration stored and flagged under FFR-024 (closed, sold out or coupon changed at
+   submit)
+   When it is saved
+   Then the participant receives the "registration received" email, which does not promise a
+   place and says Cami will contact them, instead of the confirmation.
 
 **Dependencies**
 - US-021, US-022.

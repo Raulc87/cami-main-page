@@ -40,10 +40,11 @@ gets its own section/FEATURE_SPEC and ADR when it starts.
 ## 6. High-Level Architecture
 
 ```
+apps-script/      # events backend (Google Apps Script web app, ADR-008) — deployed by the owner
 public/
   images/         # real photos (hero, gallery, testimonials) — served as /images/file.jpg
 src/
-  components/     # one component per page section
+  components/     # one component per page section (+ Events, EventsTicker, EventRegistration)
   constants/      # data.jsx (list content), i18n.js (UI_TEXT) and colors.js (palette) — see §9 and UX_UI_DIRECTION
   context/        # LanguageContext.jsx — global language state (see §7)
   hooks/          # useReveal.js — scroll-reveal
