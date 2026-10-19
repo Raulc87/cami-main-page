@@ -1,10 +1,10 @@
 # ARCHITECTURE_SPEC
 
 ## Metadata
-- Version: 1.1 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
-  §22 — in CMP-021)
-- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved (on
-  merge of PR #21))
+- Version: 1.2 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
+  §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022)
+- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
+  merge of PR #21; v1.2 Approved (on merge of PR #22))
 - Owner: Raul Casanas
 
 ## 1. Purpose
@@ -44,10 +44,11 @@ apps-script/      # events backend (Google Apps Script web app, ADR-008) — dep
 public/
   images/         # real photos (hero, gallery, testimonials) — served as /images/file.jpg
 src/
+  api/            # events.js — client for the events backend (EVENTS_API_CONTRACT)
   components/     # one component per page section (+ Events, EventsTicker, EventRegistration)
   constants/      # data.jsx (list content), i18n.js (UI_TEXT) and colors.js (palette) — see §9 and UX_UI_DIRECTION
   context/        # LanguageContext.jsx — global language state (see §7)
-  hooks/          # useReveal.js — scroll-reveal
+  hooks/          # useReveal.js — scroll-reveal; useEvents.js — events data
   styles/         # global.css — reset, fonts, animations, hover, responsive
   App.jsx         # page composition
   main.jsx        # React entry point
@@ -60,18 +61,24 @@ index.html        # SEO/social metadata
 prop from the `useReveal` hook, except `Nav` and `Footer`, which don't because they have no
 scroll-reveal animation — `Nav` is still dynamic via `LanguageContext`, see below):
 
-1. `Nav` — logo, "Available for 2026" badge, language toggle, "Book Cami" CTA.
-2. `Hero` — headline, sub, CTA, photo, stats bar.
-3. `Services` — 3 service cards (`SERVICES`).
-4. `Gallery` — grid of 5 slots with real photos.
-5. `Process` — 3 steps (`STEPS`).
-6. `Values` — 4 value chips (`VALUES`).
-7. `Testimonials` — 4 testimonials (`TESTIMONIALS`).
-8. `CTA` — final call to action.
-9. `Footer` — wordmark, brand words, URL.
+1. `EventsTicker` — moving banner with the closest events (US-018); not rendered when there are
+   no upcoming events or the backend is unavailable.
+2. `Nav` — logo, "Available for 2026" badge, language toggle, "Book Cami" CTA.
+3. `Hero` — headline, sub, CTA, photo, stats bar.
+4. `Events` — upcoming-event cards (US-017); mounts `EventRegistration` for the selected
+   event (US-019/US-020); not rendered under the same conditions as the ticker.
+5. `Services` — 3 service cards (`SERVICES`).
+6. `Gallery` — grid of 5 slots with real photos.
+7. `Process` — 3 steps (`STEPS`).
+8. `Values` — 4 value chips (`VALUES`).
+9. `Testimonials` — 4 testimonials (`TESTIMONIALS`).
+10. `CTA` — final call to action.
+11. `Footer` — wordmark, brand words, URL.
 
 Each component owns its section: it imports what it needs from `constants/` and receives no
-content props from `App.jsx` (only `r`).
+content props from `App.jsx` (only `r`). **Exception (events):** `App.jsx` calls `useEvents()`
+once and passes its result (`events`, `sinpe`) to `EventsTicker` and `Events`, so the page makes
+one `events` request. That data comes from the backend at runtime, not from `constants/`.
 
 ### Global language (`LanguageContext`)
 
@@ -325,7 +332,7 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 | US-007 Booking contact | `CTA.jsx`, `Nav.jsx` |
 | US-008 Mobile layout | `global.css` breakpoints |
 | US-009 Production deploy | `package.json` version, `dist/`, release checklist |
-| US-017 Events section | new `Events.jsx`, events data hook, `UI_TEXT.events`, `App.jsx` |
+| US-017 Events section | new `Events.jsx`, `useEvents.js`, `UI_TEXT.events`, `App.jsx` |
 | US-018 Ticker | new `EventsTicker.jsx`, `global.css` (animation, reduced motion) |
-| US-019/US-020 Form, coupon | new `EventRegistration.jsx`, `UI_TEXT.events`, API client |
+| US-019/US-020 Form, coupon | new `EventRegistration.jsx`, `UI_TEXT.events.form`, `src/api/events.js` |
 | US-021..US-025 Backend | `apps-script/` (web app), events spreadsheet, Drive folder |

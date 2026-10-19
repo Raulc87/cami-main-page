@@ -25,11 +25,13 @@
 - UX/UI direction: [docs/ux/UX_UI_DIRECTION.md](docs/ux/UX_UI_DIRECTION.md)
 - Tech stack: [TECH_STACK.md](TECH_STACK.md)
 - ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-008
-- Implementation plan: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
-  (baseline + traceability)
-- Active sprint plan: **none** — Sprint 01 is closed
-  ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md), kept for its review); Sprint 02 (events)
-  is in planning and its plan will be listed here when it is drafted
+- Implementation plans: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
+  (baseline + traceability);
+  [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
+  (events, US-017..US-025)
+- Active sprint plan: [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md) (Planned, waiting
+  for the owner's go-ahead); Sprint 01 is closed
+  ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md), kept for its review)
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
   ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
@@ -51,39 +53,37 @@ Former spec file names (before CMP-014) are mapped in
 they are not active paths.
 
 ## Current sprint
-- Sprint: 01 — **Closed 2026-10-19** (early, owner decision; review in the sprint plan).
-  Sprint 02 (events feature) is in planning: US-017..US-025 are `Ready` (CMP-021); the Sprint 02
-  plan is next.
-- Goal (Sprint 01): approve the SDD baseline (CMP-014) and refine at least one backlog story to
-  `Ready`
-- Start: 2026-10-19
-- End: 2026-10-27
-- Agent prompts: [docs/sprints/SPRINT_01_AGENT_PROMPTS.md](docs/sprints/SPRINT_01_AGENT_PROMPTS.md)
-- Deliverable: CMP-014 merged with approved specs (merged 2026-10-18; approvals recorded in
-  CMP-015); one story `Ready` for Sprint 02
-- Status: Closed (2026-10-19)
+- Sprint: 02 — events feature (US-017..US-025, 31 points) plus the US-002 fix and US-005 check.
+  Sprint 01 closed 2026-10-19 (review in its plan).
+- Goal: the events feature works end to end on staging
+- Start: 2026-10-20, or the first business day after the go-ahead
+- End: 2026-10-28 (moves with the start)
+- Agent prompts: [docs/sprints/SPRINT_02_AGENT_PROMPTS.md](docs/sprints/SPRINT_02_AGENT_PROMPTS.md)
+- Deliverable: staging demo of the contract §10 end-to-end list, with evidence
+  (`SPRINT_02_VERIFICATION.md`); no production release until the release-checklist §3b gates
+  pass
+- Status: Planned — waiting for the owner's go-ahead (Entry Gate 4)
 
 ## Agent allocation
-- Implementation Agent 1: unassigned (Sprint 01's CMP-017 is done; its session is archived when
-  Sprint 01 closes)
-- Implementation Agent 2: unassigned
-- Implementation Agent 3: unassigned
+- Implementation Agent 1: events backend — CMP-023..CMP-028 (Sprint 02, after the go-ahead)
+- Implementation Agent 2: events section, ticker, frontend foundation, US-002 fix — CMP-029..CMP-031
+- Implementation Agent 3: registration form, integration verification — CMP-032, CMP-033
 - Review-only Agent: dedicated Claude Code reviewer session (Opus); Copilot and Codex run as
   automated reviewers on every PR
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-021
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-022
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
 ## Important constraints
 - Zero additional licensing cost — free tier first for any new tool (hosting and ad spend
   excepted, see PROJECT_SPEC NFR-003).
-- Static GoDaddy shared hosting, manual deploy; no backend yet.
+- Static GoDaddy shared hosting, manual deploy; the events backend runs on Google Apps Script
+  (ADR-008), deployed by the owner.
 - Minimal stack — no new library without TECH_STACK update + ADR.
 - Bilingual EN/ES; fixed Spanish brand accents never translate.
 
 ## Open questions
 - Accessibility target (PROJECT_SPEC §16).
-- Backend hosting once US-011/US-012 start.
-- Which backlog story goes first (owner decision in Sprint 01).
+- Backend hosting for US-011/US-012, if Apps Script does not fit them (ADR-008 review trigger).

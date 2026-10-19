@@ -5,7 +5,7 @@ coach). React + Vite, 100% static frontend — no backend yet. Bilingual (Englis
 global language toggle in the nav.
 
 **Status:** live at [camihernandez.com](https://camihernandez.com) (v1.0.1); Sprint 01 closed,
-Sprint 02 in planning — see [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
+Sprint 02 (events) planned — see [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
 
 ## Quick start
 
