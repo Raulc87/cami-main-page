@@ -23,7 +23,9 @@
 - ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-008 (ADR-008 Proposed)
 - Implementation plan: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
   (baseline + traceability)
-- Active sprint plan: [docs/sprints/SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md)
+- Active sprint plan: **none** — Sprint 01 is closed
+  ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md), kept for its review); Sprint 02 (events)
+  is in planning and its plan will be listed here when it is drafted
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
   ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
@@ -45,26 +47,27 @@ Former spec file names (before CMP-014) are mapped in
 they are not active paths.
 
 ## Current sprint
-- Sprint: 01
-- Goal: approve the SDD baseline (CMP-014) and refine at least one backlog story to `Ready`
+- Sprint: 01 — **Closed 2026-10-19** (early, owner decision; review in the sprint plan).
+  Sprint 02 (events feature) is in planning: refinement of US-017..US-023 comes first.
+- Goal (Sprint 01): approve the SDD baseline (CMP-014) and refine at least one backlog story to
+  `Ready`
 - Start: 2026-10-19
 - End: 2026-10-27
 - Agent prompts: [docs/sprints/SPRINT_01_AGENT_PROMPTS.md](docs/sprints/SPRINT_01_AGENT_PROMPTS.md)
 - Deliverable: CMP-014 merged with approved specs (merged 2026-10-18; approvals recorded in
   CMP-015); one story `Ready` for Sprint 02
-- Status: Active (agent sessions launched 2026-10-18 on the owner's go-ahead)
+- Status: Closed (2026-10-19)
 
 ## Agent allocation
-- Implementation Agent 1: CMP-017 — Sprint 01 browser verification of US-001..US-009
-  (Claude Code session, Sonnet; prompts in
-  [SPRINT_01_AGENT_PROMPTS.md](docs/sprints/SPRINT_01_AGENT_PROMPTS.md))
+- Implementation Agent 1: unassigned (Sprint 01's CMP-017 is done; its session is archived when
+  Sprint 01 closes)
 - Implementation Agent 2: unassigned
 - Implementation Agent 3: unassigned
 - Review-only Agent: dedicated Claude Code reviewer session (Opus); Copilot and Codex run as
   automated reviewers on every PR
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-019
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-020
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
