@@ -12,14 +12,15 @@
 ## Active documentation
 - Project spec: [docs/specs/PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md)
 - User stories: [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md)
-- Feature specs: none yet — create from
+- Feature specs: [FEATURE_SPEC_events_registration.md](docs/specs/FEATURE_SPEC_events_registration.md)
+  (Draft — upcoming events and paid registration, US-017..US-023); new ones from
   [docs/templates/FEATURE_SPEC_TEMPLATE.md](docs/templates/FEATURE_SPEC_TEMPLATE.md) as
   `docs/specs/FEATURE_SPEC_<topic>.md`
 - Architecture spec: [docs/specs/ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC.md)
   (includes the content model, §9)
 - UX/UI direction: [docs/ux/UX_UI_DIRECTION.md](docs/ux/UX_UI_DIRECTION.md)
 - Tech stack: [TECH_STACK.md](TECH_STACK.md)
-- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-007
+- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-008 (ADR-008 Proposed)
 - Implementation plan: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
   (baseline + traceability)
 - Active sprint plan: [docs/sprints/SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md)
@@ -63,7 +64,7 @@ they are not active paths.
   automated reviewers on every PR
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-018
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-019
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
