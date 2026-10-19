@@ -36,7 +36,7 @@ could then write to production data. The code is identical: both projects receiv
 `apps-script/` files from the repo.
 
 Both projects live in the `lifetoolscr.com` Google Workspace account that owns the spreadsheet
-and folder, because the web app runs as that account (section 4).
+and folder, because the web app runs as that account (section 3).
 
 ## 2. One-time setup (per environment)
 
@@ -75,10 +75,10 @@ its spreadsheet (Extensions → Apps Script).
    → **Google Apps Script API** → On.
 3. Create the project and link it, from a scratch directory (not committed):
    `clasp create --type standalone --title "cami-events-staging" --rootDir <path-to-repo>/apps-script`
-   This writes `.clasp.json` (contains the script ID). Run `git status` in `apps-script/` right
-   after: `create` may write a default `appsscript.json`/`Code.js` there; restore the repo
-   versions (`git checkout -- apps-script/`) before `clasp push`. Keep it untracked; if it lands inside the
-   repo, do not `git add` it (check `git status`).
+   This writes `.clasp.json` (contains the script ID). Run `git status` right after: `create`
+   may add a default `appsscript.json`/`Code.js` or `.clasp.json` inside the repo. Review
+   `git diff` and restore only the files you did not change on purpose; never `git add` or commit
+   `.clasp.json`, and stage files by name, not with `git add -A`.
 4. Push the code: `clasp push` (accept the manifest overwrite prompt the first time).
 
 To work on both environments with `clasp`, keep two `.clasp.json` files outside the repo and
@@ -198,7 +198,7 @@ The URL is read at **build time** (`import.meta.env.VITE_EVENTS_API_URL`, public
 |---|---|
 | Local development against staging | `.env.local` (git-ignored): `VITE_EVENTS_API_URL=<staging /exec URL>`, then `npm run dev` |
 | Check a production-like build | `VITE_EVENTS_API_URL=<url> npm run build && npm run preview` |
-| Release without the events feature | variable empty or unset: the events section and ticker stay hidden and the page is unchanged (FFR-004) |
+| Release without the events feature | variable empty or unset **and no `.env.local` supplying one** (delete or empty it): the events section and ticker stay hidden and the page is unchanged (FFR-004) |
 | Production release | `VITE_EVENTS_API_URL=<production /exec URL> npm run build`, then upload `dist/` per [release-checklist.md](release-checklist.md); only after the §3b gates pass |
 
 Vite reads `.env.local` too, so check it is **empty or points at the right environment** before
@@ -207,10 +207,10 @@ every release build. After changing the variable, rebuild; it is not read at run
 ## 8. Smoke request (after every deploy)
 Run from any shell (no personal data):
 ```bash
-curl -sL "<EXEC_URL>?action=events&lang=en" | head -c 600
+curl -sL -w '\nHTTP %{http_code}\n' "<EXEC_URL>?action=events&lang=en" | head -c 1500
 ```
-Expected: HTTP 200 and JSON with the same keys always: `{"ok":true,"data":{...},"error":null}`
-(contract §7). `-L` is needed because Apps Script answers through a
+Expected: `HTTP 200` and JSON with the same keys always: `{"ok":true,"data":{...},"error":null}`
+(contract §7); Apps Script also answers 200 for its sign-in and error pages, so read the body, not just the code. `-L` is needed because Apps Script answers through a
 `script.googleusercontent.com` redirect.
 
 Common failures:
