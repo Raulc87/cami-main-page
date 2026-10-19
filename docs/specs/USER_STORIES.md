@@ -492,7 +492,8 @@ answered and each story is refined to `Ready`.
 Dependencies between these stories:
 - US-023 (events and coupons in the spreadsheet) and the backend spike come first: US-017,
   US-018, US-019 and US-020 read from it.
-- US-019 needs US-021 (storage) to be useful; US-022 runs after US-021 stores the image.
+- US-019 needs US-021 (storage) to be useful. US-021 writes check result `pending`; US-022
+  later replaces it with the real result, so US-021 does not depend on US-022.
 - US-018 depends on US-017 (same events data and the card to scroll to).
 
 ### US-017 — Upcoming events section
@@ -575,7 +576,8 @@ So that I notice them right away
 - Priority: High
 - Story Points: TBD
 - Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-007..FFR-011, FFR-018), BR-E01, BR-E02
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-007..FFR-011, FFR-018, FFR-022,
+  FFR-023), BR-E01, BR-E02
 - Related Requirements: G-005, FR-009
 
 **User Story**
@@ -607,6 +609,10 @@ So that my place is reserved
    Then the instructions show exactly those values; while they are placeholders (BR-E01) they
    carry a visible "placeholder / por confirmar" marker. (Releasing with a placeholder is
    blocked by the BR-E01 release gate, not by this AC.)
+6. Given the amount due is ₡0 (free event or 100% coupon)
+   When the form shows
+   Then the payment instructions and the screenshot field are hidden and I can submit without a
+   file (FFR-023).
 
 **Dependencies**
 - US-021 (storage), US-017.
@@ -653,7 +659,8 @@ So that I pay the discounted price
 - Priority: High
 - Story Points: TBD
 - Status: Proposed
-- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-014..FFR-016), §13, BR-E04, BR-E05
+- Related Spec: FEATURE_SPEC_events_registration §5 (FFR-014..FFR-016, FFR-022, FFR-024), §13,
+  BR-E04, BR-E05
 - Related Requirements: G-005, NFR-003
 
 **User Story**
@@ -671,15 +678,22 @@ So that I can manage participants and payments in one place
    `<ParticipantName>_<YYYY-MM-DD>_<EventCode>.<ext>` (BR-E04, Q-5).
 2. Given a valid registration
    When it is stored
-   Then a row is appended to the event's tab with timestamp, reference, event code, name,
-   email, WhatsApp, coupon, discount %, amount due, screenshot URL, check result, check details,
-   status `new` and an empty notes column (FFR-016).
+   Then a row is appended to the event's tab with timestamp, submission ID, reference, event
+   code, name, email, WhatsApp, coupon, discount %, amount due, screenshot URL, check result
+   (`pending` until US-022 ships), check details, status `new` and an empty notes column
+   (FFR-016), with every user value stored as text (no formulas).
 3. Given an event without a tab yet
    When its first registration arrives
    Then the tab is created with the header row.
-4. Given invalid data or a closed (BR-E09) or unpublished event sent directly to the backend
+4. Given invalid data or an unknown event code sent directly to the backend
    When it is received
    Then it is rejected and nothing is stored.
+5. Given a valid registration for an event that closed or was unpublished after the form opened
+   When it is received
+   Then it is stored with status `new` and check details `event closed at submit` (FFR-024).
+6. Given a retry with a submission ID already stored
+   When it is received
+   Then the original reference is returned and no new file or row is created.
 
 **Dependencies**
 - ADR-008 backend, US-023.

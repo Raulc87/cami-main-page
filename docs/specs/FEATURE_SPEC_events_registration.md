@@ -49,9 +49,9 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md) 
 |---|---|---|
 | US-017 | Upcoming events section | FFR-001..FFR-004, BR-E09 |
 | US-018 | Upcoming-events ticker banner | FFR-005, FFR-006 |
-| US-019 | Event registration form with SINPE Móvil payment proof | FFR-007..FFR-011, FFR-018 |
+| US-019 | Event registration form with SINPE Móvil payment proof | FFR-007..FFR-011, FFR-018, FFR-022, FFR-023 |
 | US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021 |
-| US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016 |
+| US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024 |
 | US-022 | Automatic check of the payment screenshot | FFR-017 |
 | US-023 | Cami manages events and coupons without a deploy | FFR-019, FFR-020 |
 
@@ -91,7 +91,14 @@ Registration
   valid phone number (Costa Rica 8 digits by default, international `+` format allowed — Q-6);
   the file must be an image (JPEG/PNG; HEIC handling Q-14) no larger than 5 MB.
 - FFR-011: On submit the participant sees a confirmation with a registration reference, or a
-  clear error message that keeps the entered data so they can retry.
+  clear error message that keeps the entered data so they can retry. Each form attempt carries
+  a client-generated submission ID (UUID); retrying with the same ID returns the original
+  reference instead of creating another file or row (FFR-022).
+- FFR-022: Idempotency: the backend stores the submission ID with the row; a request whose ID is
+  already stored returns that row's reference and stores nothing new.
+- FFR-023: Zero total: when the amount due is ₡0 (a free event or a 100% coupon), the form hides
+  the payment instructions and the screenshot field, the row is stored with check result
+  `not-required`, and no Drive file is created (confirmation of free events: Q-16).
 - FFR-018: The form shows a privacy notice and requires an explicit consent checkbox before
   submit (Costa Rica Ley 8968; Q-11).
 
@@ -106,12 +113,21 @@ Storage (server side)
 - FFR-014: The server re-validates every field (never trusts the client), stores the screenshot
   in the configured Drive folder named `<ParticipantName>_<date>_<EventCode>.<ext>`
   (normalization rules and which date: BR-E04, Q-5) and appends a row to the event's tab in the
-  registrations spreadsheet.
+  registrations spreadsheet. Every user-controlled value written to a cell is neutralized as
+  text (a leading `=`, `+`, `-`, `@`, tab or CR is prefixed with `'`), because `appendRow`
+  otherwise stores such values as live formulas.
+- FFR-024: Event closed after payment: the payment instructions are shown only after the server
+  confirms the event is open, but the visitor pays before submitting, so the event may close in
+  between. If the event code exists but the event is now closed or unpublished, the backend
+  **still stores** the registration (file and row) with status `new` and `checkDetails`
+  `event closed at submit`, and tells the visitor Cami will contact them; it rejects only
+  unknown event codes and invalid data. Cami then refunds or moves the participant.
 - FFR-015: Each event has its own tab in the spreadsheet (named by event code); the server
   creates the tab with the header row if it does not exist.
-- FFR-016: Each row stores: timestamp, registration reference, event code, participant name,
-  email, WhatsApp, coupon code, discount %, amount due (CRC), screenshot Drive URL, automatic
-  check result and details (US-022), status, notes. Status is one of `new` (set on create),
+- FFR-016: Each row stores: timestamp, submission ID, registration reference, event code,
+  participant name, email, WhatsApp, coupon code, discount %, amount due (CRC), screenshot Drive
+  URL, automatic check result and details (US-022), status, notes. Until US-022 ships, the check
+  result is `pending`. Status is one of `new` (set on create),
   `confirmed`, `refund`; only Cami changes it after creation.
 
 Payment screenshot check
@@ -125,7 +141,9 @@ Payment screenshot check
 Administration (Cami)
 - FFR-019: Events are defined in an `Events` tab of the same spreadsheet (code, name, date,
   time, brief description, price CRC, image URL, published flag); the site reads them at
-  runtime, so publishing or editing an event needs no deploy.
+  runtime, so publishing or editing an event needs no deploy. Event codes must be unique and
+  match `[A-Z0-9-]{2,20}` (they name the tab and the file); if two rows share a code, **all**
+  rows with that code are skipped (not published, registrations rejected) until Cami fixes it.
 - FFR-020: Coupons are defined in a `Coupons` tab (event code, coupon code, discount %, active,
   optional expiry) — recommended over a JSON file in Drive (Q-2); Cami can add a coupon or change
   its value by editing a row.
@@ -147,8 +165,9 @@ Administration (Cami)
   Cami in the spreadsheet.
 - BR-E06: The automatic screenshot check is an aid, not proof of payment: a screenshot can be
   edited. Cami confirms against her bank before setting `confirmed`.
-- BR-E07: Only published events that are still open (BR-E09) appear on the site and accept
-  registrations; registering for a closed or unpublished event is rejected server side.
+- BR-E07: Only published events that are still open (BR-E09) appear on the site and show payment
+  instructions; a registration that arrives after its event closed is stored and flagged, not
+  dropped (FFR-024), because the visitor may already have paid.
 - BR-E09: All event dates and times are Costa Rica time (`America/Costa_Rica`), evaluated on the
   server, never on the visitor's clock. An event is open until its start time, or until the end
   of its date (23:59) when it has no time; after that it is past (Q-21 may set an earlier
@@ -190,13 +209,14 @@ Administration (Cami)
 - Refund: Cami refunds outside the site and sets status `refund`.
 
 ## 11. Edge Cases
-- Event becomes past or unpublished between page load and submit → rejected with a message.
+- Event becomes past or unpublished between page load and submit → stored and flagged for Cami
+  (FFR-024), since the visitor may already have paid.
 - Same person registers twice for the same event → stored twice; flagged? (Q-15).
 - Two participants with the same name on the same day → file name suffix (BR-E04).
 - Very large or non-image file renamed `.jpg` → rejected (type checked from content, not name).
 - Backend unavailable → Events section shows a fallback (e.g. "Contact Cami" CTA) instead of
   breaking the page; form shows a retry message.
-- Event price ₡0 (free event) → no payment step? (Q-16).
+- Amount due ₡0 (free event or 100% coupon) → no payment step (FFR-023; Q-16 confirms).
 
 ## 12. Error Scenarios
 - Validation error (client or server): field-level message in the active language.
@@ -219,9 +239,9 @@ Administration (Cami)
 - Spreadsheet `Cami — Eventos` (name TBD):
   - `Events`: eventCode, name, date, time, description, priceCRC, imageUrl, published.
   - `Coupons`: eventCode, couponCode, discountPercent, active, expiresOn.
-  - `<eventCode>` (one per event): timestamp, reference, eventCode, participantName, email,
-    whatsapp, couponCode, discountPercent, amountDueCRC, screenshotUrl, checkResult,
-    checkDetails, status, notes.
+  - `<eventCode>` (one per event): timestamp, submissionId, reference, eventCode,
+    participantName, email, whatsapp, couponCode, discountPercent, amountDueCRC, screenshotUrl,
+    checkResult, checkDetails, status, notes.
 - Drive folder `Pagos eventos` (name TBD), optionally one subfolder per event (Q-5).
 - Event names/descriptions: language of entry as written by Cami; bilingual event content is
   Q-1. All UI labels go through `UI_TEXT` (EN/ES, FR-009).

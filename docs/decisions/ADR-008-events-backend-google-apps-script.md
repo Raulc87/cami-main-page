@@ -102,8 +102,12 @@ implementation.
   spreadsheet and folder for previews and tests (ADR-007 decision 6).
 
 ## Validation
-- A spike proves: events read from Sheets, an upload of a SINPE sample saved to Drive, a row
-  appended, and Drive OCR extracting number/amount/description from Cami's sample screenshots.
+- A spike proves, **from the real site origin in a browser** (a page served like the GoDaddy
+  site, not the Apps Script editor): events fetched; a registration with a SINPE sample image
+  submitted cross-origin without a CORS preflight, through the `script.googleusercontent.com`
+  redirect, with the JSON reference parsed by the page; the image saved to Drive and the row
+  appended; and Drive OCR extracting number/amount/description from Cami's sample screenshots
+  with the temporary Doc deleted.
 
 ## Review Trigger
 - Volume or features outgrow Apps Script quotas, or a payment gateway is introduced.
