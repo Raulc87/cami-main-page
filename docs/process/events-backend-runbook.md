@@ -82,7 +82,8 @@ its spreadsheet (Extensions → Apps Script).
    This writes `.clasp.json` (contains the script ID) and the default files; delete the default
    files and keep only `.clasp.json`.
 4. `clasp` needs `rootDir` inside the directory that holds `.clasp.json`, so the file goes at the
-   **repo root** (CMP-024 git-ignores it; until then do not `git add` it). Copy `.clasp.json` there and add
+   **repo root** (CMP-024 git-ignores it; until then do not `git add` it). Copy `.clasp.json`
+   there and add
    `"rootDir": "apps-script"`. Run `git status` to confirm.
 5. Push the code from the repo root: `clasp push` (accept the manifest overwrite prompt the
    first time).
