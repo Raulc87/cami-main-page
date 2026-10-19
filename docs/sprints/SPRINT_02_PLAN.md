@@ -2,8 +2,8 @@
 
 ## Metadata
 - Sprint: 02
-- Status: Planned (Approved on merge of PR #22; starts on the owner's go-ahead, Entry Gate 4)
-- Start: 2026-10-20 (Tuesday), or the first business day after the go-ahead
+- Status: Active (plan approved on merge of PR #22; owner's go-ahead 2026-10-19, Entry Gate 4)
+- Start: 2026-10-20 (Tuesday), the first business day after the go-ahead
 - End: 2026-10-28 (Wednesday); if the start moves, the 7th business day counted from the actual
   start
 - Duration: 7 business days
@@ -20,7 +20,7 @@ below).
 | 1 | `PROJECT_CONTEXT.md` paths resolve | Pass (link check on this PR's head: 0 broken) |
 | 2 | Readiness checklist has no open blocking items | Pass, except item 8 (go-ahead), which is gate 4 |
 | 3 | Integration contracts locked (or N/A) | Pass — [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.0, locked in PR #21 |
-| 4 | Final go-ahead from the human owner | Pending — the coordinator records the owner's words here |
+| 4 | Final go-ahead from the human owner | Pass — owner, 2026-10-19: "merged, go ahead with Sprint 02" |
 
 ### Readiness checklist result (2026-10-19)
 | Item | Result |
@@ -61,7 +61,7 @@ below).
 | 7.1 `main` protected | Owner to confirm in GitHub settings (not blocking) |
 | 7.1 `release/*` protection | N/A — no `release/*` branches |
 | 7.1 Coordinator follows AGENTS.md | Pass |
-| 8. Explicit go-ahead **(blocking)** | Pending — Entry Gate 4 |
+| 8. Explicit go-ahead **(blocking)** | Pass — owner, 2026-10-19: "merged, go ahead with Sprint 02" |
 
 ## Sprint Goal
 - The events feature works end to end on **staging**: a visitor sees upcoming events and the
@@ -217,4 +217,7 @@ The human reviewer is the final approver.
   (release) drafted if the gates are in sight.
 
 ## Sprint Review Notes
--
+- Go-ahead (owner, 2026-10-19, after merging PR #22): "merged, go ahead with Sprint 02". The coordinator launched, from
+  [SPRINT_02_AGENT_PROMPTS.md](SPRINT_02_AGENT_PROMPTS.md), the review-only session (Opus) and
+  Agents 1 and 2 (Sonnet), tagged `cmp-sprint-02`. Agent 3 starts when CMP-029 is merged
+  (launch order). The Sprint 01 reviewer session is archived.
