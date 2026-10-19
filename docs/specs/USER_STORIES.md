@@ -672,10 +672,11 @@ So that I can manage participants and payments in one place
 
 **Acceptance Criteria**
 
-1. Given a valid registration
+1. Given a valid registration with an amount due above ₡0
    When the backend receives it
    Then the screenshot is saved in the configured Drive folder as
-   `<ParticipantName>_<YYYY-MM-DD>_<EventCode>.<ext>` (BR-E04, Q-5).
+   `<ParticipantName>_<YYYY-MM-DD>_<EventCode>.<ext>` (BR-E04, Q-5). A ₡0 registration (FFR-023)
+   stores no file.
 2. Given a valid registration
    When it is stored
    Then a row is appended to the event's tab with timestamp, submission ID, reference, event

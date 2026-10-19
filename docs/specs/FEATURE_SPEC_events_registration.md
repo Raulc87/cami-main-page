@@ -143,7 +143,9 @@ Administration (Cami)
   time, brief description, price CRC, image URL, published flag); the site reads them at
   runtime, so publishing or editing an event needs no deploy. Event codes must be unique and
   match `[A-Z0-9-]{2,20}` (they name the tab and the file); if two rows share a code, **all**
-  rows with that code are skipped (not published, registrations rejected) until Cami fixes it.
+  rows with that code are unpublished until Cami fixes it. A registration that arrives for a
+  duplicated code is stored and flagged (`checkDetails`: `duplicate event code`) like FFR-024,
+  not rejected, because the visitor may already have paid.
 - FFR-020: Coupons are defined in a `Coupons` tab (event code, coupon code, discount %, active,
   optional expiry) — recommended over a JSON file in Drive (Q-2); Cami can add a coupon or change
   its value by editing a row.
@@ -233,6 +235,8 @@ Administration (Cami)
   - coupon codes long and random enough to resist guessing (≥ 8 characters), and a global cap
     on failed coupon checks per minute;
   - a honeypot field;
+  - these limits apply to **every** write, including registrations stored and flagged under
+    FFR-024 (closed or unpublished events) and FFR-019 (duplicate codes);
   - a captcha verified server side (e.g. Cloudflare Turnstile, free), decided in Q-19.
 
 ## 13. Data
