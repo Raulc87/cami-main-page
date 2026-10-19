@@ -49,6 +49,22 @@ Generates `dist/`. Before uploading:
       [PROJECT_SPEC.md](../specs/PROJECT_SPEC.md) on which content remains placeholder on
       purpose).
 
+## 3b. Events feature release gates (FEATURE_SPEC_events_registration BR-E11)
+
+For any release that ships or changes the events feature, all of these must be true before the
+upload; if one is not, do not release:
+
+- [ ] Real SINPE Móvil number and account name configured in the **production** script
+      properties (no `0000-0000` placeholder, BR-E01).
+- [ ] Privacy notice text reviewed by a lawyer, including the retention period
+      ([EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3), and the reviewed
+      text is what the site shows.
+- [ ] Email templates (confirmation, registration received, payment not validated) approved by
+      Cami and in use by the production script.
+- [ ] Lifetools logo in place for events without art.
+- [ ] Production Apps Script deployment updated per its runbook, and the site build points
+      `VITE_EVENTS_API_URL` at the production `/exec` URL.
+
 ## 4. Upload to GoDaddy (cPanel File Manager)
 
 GoDaddy shared hosting, with no FTP/SSH configured — upload from the browser.

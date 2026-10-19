@@ -106,7 +106,8 @@ implementation.
   site, not the Apps Script editor): events fetched; a registration with a SINPE sample image
   submitted cross-origin without a CORS preflight, through the `script.googleusercontent.com`
   redirect, with the JSON reference parsed by the page; the image saved to Drive and the row
-  appended; and Drive OCR extracting number/amount/description from Cami's sample screenshots
+  appended; and Drive OCR extracting Cami's SINPE number or account name and the exact amount from her sample screenshots (no
+  description check, FEATURE_SPEC Q-4)
   with the temporary Doc deleted.
 
 ## Review Trigger

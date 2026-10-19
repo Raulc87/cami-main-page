@@ -52,7 +52,8 @@ they are not active paths.
 
 ## Current sprint
 - Sprint: 01 — **Closed 2026-10-19** (early, owner decision; review in the sprint plan).
-  Sprint 02 (events feature) is in planning: refinement of US-017..US-023 comes first.
+  Sprint 02 (events feature) is in planning: US-017..US-025 are `Ready` (CMP-021); the Sprint 02
+  plan is next.
 - Goal (Sprint 01): approve the SDD baseline (CMP-014) and refine at least one backlog story to
   `Ready`
 - Start: 2026-10-19

@@ -29,7 +29,7 @@ Change management: update this document first, bump the version, notify both own
 | Item | Value |
 |---|---|
 | Base URL | The web app `/exec` URL (config `VITE_EVENTS_API_URL`) |
-| Methods | `GET` (read: `action=events`, `action=coupon`); `POST` (write: `action=register`) |
+| Methods | `GET` (`action=events`, no personal data); `POST` (`action=coupon`, `action=register` — anything carrying an email goes in the body, never the URL) |
 | Request content type | `GET`: query string. `POST`: `text/plain;charset=utf-8` whose body is a JSON string (avoids a CORS preflight, which Apps Script cannot answer) |
 | Response content type | `application/json` (Apps Script `ContentService`, served through the `script.googleusercontent.com` redirect; the consumer uses `fetch` with `redirect: "follow"`) |
 | HTTP status | **Always 200** — Apps Script cannot set status codes. Success or failure is in the body (`ok`) |
@@ -44,8 +44,9 @@ Returns every published event that has not started (BR-E09), ordered by start, e
 `registrationOpen` and `soldOut` flags (a closed or sold-out event is still listed, with its
 button disabled). `lang` selects the language of `name`/`description` (default `es`).
 
-### 3.2 `GET ?action=coupon&eventCode=EV1&couponCode=XXXX&email=a@b.cr`
-Checks one coupon for one event and one email. Throttled globally.
+### 3.2 `POST` body `{"action":"coupon","eventCode":"EV1","couponCode":"XXXXXXXX","email":"a@b.cr"}`
+Checks one coupon for one event and one email. Sent as a `text/plain` POST like `register` so the
+email never appears in a URL (FNFR-001). Throttled globally.
 
 ### 3.3 `POST` body (`action=register`)
 
@@ -118,6 +119,27 @@ Spreadsheet (Workspace `lifetoolscr.com`), tabs:
 - `Metrics`: one row per day — `date`, `accepted`, `honeypotHits`, `throttled`,
   `couponFailures`, `uploadedMb`, `spamMarked`.
 
+Validation of rows Cami edits (applied each time the backend reads them; an invalid row is
+skipped and listed in the next alert email):
+
+| Tab.column | Rule |
+|---|---|
+| `Events.eventCode` | required, `^[A-Z0-9-]{2,20}$`, unique (duplicates: all rows skipped, FFR-019) |
+| `Events.name`, `Events.description` | required text, ≤ 120 / ≤ 600 characters |
+| `Events.nameEn`, `Events.descriptionEn` | optional, same limits |
+| `Events.date` | required, a valid date (Sheets date or `YYYY-MM-DD`) |
+| `Events.time` | required, `HH:mm` 24 h |
+| `Events.priceCrc` | required integer ≥ 0 (0 = free) |
+| `Events.capacity` | required integer ≥ 1 |
+| `Events.imageUrl` | optional `https://` URL; empty or invalid → Lifetools logo |
+| `Events.published` | checkbox/boolean; only `TRUE` publishes |
+| `Coupons.eventCode` | required, must match a valid event |
+| `Coupons.couponCode` | required, `^[A-Z0-9]{8,20}$`, unique per event |
+| `Coupons.discountPercent` | required integer 1–100 (`10` or `10%` accepted) |
+| `Coupons.maxUses` | required integer ≥ 1 |
+| `Coupons.active` | checkbox/boolean; only `TRUE` is usable |
+| `Coupons.expiresOn` | optional date; usable through 23:59:59 Costa Rica time of that date (inclusive) |
+
 Counting rule (capacity and coupon uses): rows with status `new` or `confirmed`, flagged or not,
 count; `refund/cancelled` and `spam` do not.
 
@@ -180,7 +202,17 @@ shows the form for an event the last `events` response marked closed or sold out
 | `DRIVE_ROOT_FOLDER_ID` | Script property | Root folder for screenshots |
 | `SINPE_NUMBER`, `SINPE_ACCOUNT_NAME` | Script property | Shown in instructions and used by the check (placeholder until Cami confirms, BR-E01) |
 | `MAIL_FROM_ALIAS`, `MAIL_REPLY_TO` | Script property | Sender alias (if available) and `camila@lifetoolscr.com` |
-| `LIMITS_*` | Script property | Throttle, daily upload cap, alert thresholds (FEATURE_SPEC §12) |
+| `LIMIT_REGISTER_PER_MIN` = 20 | Script property | Max `register` calls per minute, all clients (fixed 1-minute window, `CacheService`); over → `RATE_LIMITED` |
+| `LIMIT_COUPON_CHECKS_PER_MIN` = 30 | Script property | Max `coupon` calls per minute, all clients; over → `RATE_LIMITED` |
+| `LIMIT_COUPON_FAILS_PER_MIN` = 10 | Script property | Max failed coupon checks per minute; over → `RATE_LIMITED` for coupon checks until the minute ends |
+| `LIMIT_UPLOADS_PER_DAY` = 100 | Script property | Max stored screenshots per day (Costa Rica day, resets 00:00); over → `UPLOAD_CAP_REACHED` (₡0 registrations unaffected) |
+| `LIMIT_UPLOAD_MB_PER_DAY` = 300 | Script property | Max MB stored per day; over → `UPLOAD_CAP_REACHED` |
+| `ALERT_HONEYPOT_PER_DAY` = 10 | Script property | Alert email when the day's honeypot hits exceed it (FFR-029) |
+| `ALERT_THROTTLED_PER_DAY` = 20 | Script property | Alert email when the day's throttled requests exceed it |
+
+Initial values above; the owner may change them in script properties without a contract change
+(the names are the contract). A paid `register` refused by `RATE_LIMITED` or
+`UPLOAD_CAP_REACHED` keeps the visitor's data and `submissionId` for a retry.
 
 The SINPE number and account name reach the browser only inside the `events` response
 (`sinpe` object), never in the repo. Local development: the frontend points
