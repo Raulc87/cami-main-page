@@ -47,12 +47,13 @@ So that ...
 
 ---
 
-## Shipped (Review — pending Sprint 01 verification)
+## Shipped (verified in Sprint 01, CMP-017)
 
 ### US-001 — Brand hero with credibility stats
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Done (verified in CMP-017; evidence approved by merging PR #17; recorded in
+  CMP-020)
 - Related Spec: [PROJECT_SPEC](PROJECT_SPEC.md), [ARCHITECTURE_SPEC §22](ARCHITECTURE_SPEC.md#22-feature-to-component-impact)
 - Related Requirements: FR-001, FR-002, BR-001
 - Tickets: CMP-011
@@ -86,7 +87,8 @@ So that I trust her enough to keep reading
 ### US-002 — Service pillars overview
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Review — AC2 defect: hover shift overridden by the scroll-reveal inline transform
+  (CMP-017); fix ticket pending owner approval
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-003
 - Tickets: (initial build, before CMP-001)
@@ -116,7 +118,8 @@ So that I know what I can book
 ### US-003 — Photo gallery
 - Priority: High
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Done (verified in CMP-017; evidence approved by merging PR #17; recorded in
+  CMP-020)
 - Related Spec: [UX_UI_DIRECTION §7](../ux/UX_UI_DIRECTION.md#7-imagery)
 - Related Requirements: FR-004, BR-002, NFR-006
 - Tickets: CMP-002, CMP-010
@@ -146,7 +149,8 @@ So that I can picture her at my event
 ### US-004 — Process and values
 - Priority: Medium
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Done (verified in CMP-017; evidence approved by merging PR #17; recorded in
+  CMP-020)
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-005, FR-006, BR-001
 - Tickets: (initial build, before CMP-001)
@@ -174,7 +178,8 @@ So that I know whether her approach fits me
 ### US-005 — Real client testimonials
 - Priority: High
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Done (verified in CMP-017; evidence approved by merging PR #17; recorded in
+  CMP-020)
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-007, BR-003
 - Tickets: CMP-002, CMP-008, CMP-009
@@ -205,7 +210,8 @@ So that I trust the results she promises
 ### US-006 — Global English/Spanish toggle
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Done (verified in CMP-017; evidence approved by merging PR #17; recorded in
+  CMP-020)
 - Related Spec: [ARCHITECTURE_SPEC §7](ARCHITECTURE_SPEC.md#global-language-languagecontext), [ADR-004](../decisions/ADR-004-i18n-native-context.md)
 - Related Requirements: FR-009, BR-001, BR-005
 - Tickets: CMP-003
@@ -238,7 +244,8 @@ So that I understand everything without effort
 ### US-007 — Booking contact by email
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Review — AC1 mail-client handoff needs one manual click on the live site (CMP-017
+  open manual check)
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-008, BR-004
 - Tickets: CMP-006
@@ -265,7 +272,8 @@ So that I can book her
 ### US-008 — Mobile-friendly layout
 - Priority: High
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Done (verified in CMP-017; evidence approved by merging PR #17; recorded in
+  CMP-020)
 - Related Spec: [UX_UI_DIRECTION §8](../ux/UX_UI_DIRECTION.md#8-responsive-behavior)
 - Related Requirements: NFR-002
 - Tickets: CMP-013
@@ -292,7 +300,8 @@ So that I get the same experience as on desktop
 ### US-009 — Site live on the production domain
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Review
+- Status: Review — AC1/AC2 need the owner's manual checks: live deploy outcome and one
+  social-preview run (CMP-017 open manual checks)
 - Related Spec: [TECH_STACK §10](../../TECH_STACK.md#10-hosting--deployment), [ADR-002](../decisions/ADR-002-godaddy-static-hosting.md)
 - Related Requirements: NFR-001, NFR-005, FR-010
 - Tickets: CMP-012

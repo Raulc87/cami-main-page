@@ -2,7 +2,7 @@
 
 ## Metadata
 - Sprint: 01
-- Status: Active (owner go-ahead 2026-10-18)
+- Status: Closed (2026-10-19, early, on the owner's decision; see Sprint Review)
 - Start: 2026-10-19 (Monday); agent sessions launched early, 2026-10-18, on the owner's
   go-ahead (see Sprint Review Notes)
 - End: 2026-10-27 (Tuesday)
@@ -26,8 +26,8 @@ Every sprint must end with a demonstrable deliverable.
 | Story | Points | Agent | Dependencies | Status |
 |---|---:|---|---|---|
 | — (CMP-014, process work) | — | Agent 1 | — | Done (PR #14 merged) |
-| Backlog refinement: owner picks US-0XX | — | Owner + Coordinator (docs PR) | CMP-014 merged | Planned |
-| US-001..US-009 browser verification (CMP-017, `CMP-017-sprint-01-browser-verification`) | — | Agent 1 | — | In Progress |
+| Backlog refinement: owner picks US-0XX | — | Owner + Coordinator (docs PR) | CMP-014 merged | Carried over to Sprint 02 planning (events stories US-017..US-023, Discovery done in CMP-019) |
+| US-001..US-009 browser verification (CMP-017, `CMP-017-sprint-01-browser-verification`) | — | Agent 1 | — | Done (PR #17 merged) |
 
 ## Parallel Workstreams
 ### Agent 1
@@ -133,3 +133,31 @@ The human reviewer is the final approver.
   FEATURE_SPEC, stories US-017..US-023 (`Proposed`) and ADR-008 (Proposed). It feeds the sprint
   goal only if the owner extends the Required Deliverable, which today limits the choice to
   US-010..US-016; until then CMP-019 is Discovery outside that deliverable.
+
+## Sprint Review (closed 2026-10-19)
+Owner decision (2026-10-19): "I think we would need to close this one and open Spring 02 for
+this endeavor." Sprint 01 closes early; the events feature becomes Sprint 02.
+
+Deliverables:
+- CMP-014 merged with approved specs: **met** (PR #14; approvals recorded in CMP-015).
+- One backlog story refined to `Ready`: **not met**. Carried over: US-017..US-023 are in
+  Discovery (CMP-019, PR #19) and will be refined to `Ready` before Sprint 02 starts.
+
+Verification (CMP-017, [SPRINT_01_VERIFICATION.md](SPRINT_01_VERIFICATION.md), PR #17 merged by the
+owner):
+- `Done`: US-001, US-003, US-004, US-005, US-006, US-008 (all ACs pass).
+- Still `Review`:
+  - US-002 — AC2 defect (service-card hover shift overridden by the scroll-reveal inline
+    transform). Needs a fix ticket (owner approval and approach pending).
+  - US-007 — AC1 needs one manual click on the live booking CTA.
+  - US-009 — AC1/AC2 need the owner's manual checks (deploy outcome, one social-preview run).
+- AC wording observations from CMP-017 (not fails) are kept for the Sprint 02 refinement PR:
+  US-001 AC3 quote marks, US-004 AC2 / US-006 AC4 CSS uppercase, US-005 AC2 fallback not
+  exercised by current data, US-009 AC2 no `og:image`.
+
+Process work done: CMP-015..CMP-019 (AGENTS.md aligned with the Starter Kit, readiness
+checklist, reviewer and agent sessions, ADR-007, on-merge status rule, events Discovery).
+
+Carried over to Sprint 02: refinement of US-017..US-023 (with the owner's answers of
+2026-10-19), the US-002 fix ticket, the US-007/US-009 manual checks.
+
