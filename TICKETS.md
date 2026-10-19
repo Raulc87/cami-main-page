@@ -61,7 +61,7 @@ it can be migrated to Linear (it has a free tier) by importing these same rows.
 | CMP-026 | Registration storage in Sheets and Drive (`register` action) | US-021 | todo | `CMP-026-registration-storage` | 2026-10-19 | Sprint 02, Agent 1. |
 | CMP-027 | Coupons (server), abuse limits and metrics | US-020 (server), US-024 | todo | `CMP-027-coupons-limits-metrics` | 2026-10-19 | Sprint 02, Agent 1. |
 | CMP-028 | Payment screenshot check and participant emails | US-022, US-025 | todo | `CMP-028-payment-check-and-emails` | 2026-10-19 | Sprint 02, Agent 1. First to move to Sprint 03 if the backend falls behind. |
-| CMP-029 | Events frontend foundation (API client, `useEvents`, `UI_TEXT.events`, styles, `App.jsx` slots) | — | todo | `CMP-029-events-frontend-foundation` | 2026-10-19 | Sprint 02, Agent 2. Merges before CMP-030..CMP-032. |
+| CMP-029 | Events frontend foundation (API client, `useEvents`, `UI_TEXT.events`, styles, `App.jsx` slots) | — | in-progress | `CMP-029-events-frontend-foundation` | 2026-10-19 | Sprint 02, Agent 2. Merges before CMP-030..CMP-032. |
 | CMP-030 | Upcoming events section and ticker | US-017, US-018 | todo | `CMP-030-events-section-and-ticker` | 2026-10-19 | Sprint 02, Agent 2. |
 | CMP-031 | Fix service-card hover overridden by the scroll-reveal transform | US-002 | todo | `CMP-031-service-card-hover-fix` | 2026-10-19 | Sprint 02, Agent 2. US-002 AC2 defect from CMP-017; approved with the Sprint 02 plan. |
 | CMP-032 | Event registration form with SINPE instructions and coupon | US-019, US-020 (client) | todo | `CMP-032-event-registration-form` | 2026-10-19 | Sprint 02, Agent 3. |
