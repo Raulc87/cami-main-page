@@ -285,8 +285,7 @@ The human reviewer is the final approver.
   confirmed one staging deployment only.
 - CMP-025 retiming with the 5-minute trigger (2026-10-20): 18 of 20 `events` calls over 10
   minutes took 0.9–2.2 s; 2 took 3.4 s and 4.6 s (Apps Script start-up), over the 3 s client
-  wait. Question as asked: "about 1 in 10 loads took longer than 3 s … How should we handle
-  it?" — options: wait up to 5 s; accept for now; retry once; remember the last list. Owner:
+  wait. Question as asked: "On staging, about 1 in 10 loads of the event list took longer than the site's 3-second wait (3.4 s and 4.6 s), so for those visitors the events section and ticker stay hidden. The page itself is never slowed down; the events just load in after it. How should we handle it?" — options: wait up to 5 s; accept for now; retry once; remember the last list. Owner:
   **"Wait up to 5 s"** (FFR-004, FNFR-003; CMP-038). Agent 2 changes the `events` timeout in
   `src/api/events.js`.
 
