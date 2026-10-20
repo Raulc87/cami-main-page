@@ -790,7 +790,7 @@ So that I spot wrong payments before confirming
 - Priority: High
 - Story Points: 3
 - Status: Ready
-- Related Spec: FEATURE_SPEC_events_registration (FFR-019, FFR-020, FFR-028); contract §6
+- Related Spec: FEATURE_SPEC_events_registration (FFR-019, FFR-020, FFR-033, FFR-028); contract §6
 - Related Requirements: FR-011
 
 **User Story**
@@ -802,7 +802,7 @@ So that the site reflects them without waiting for a developer
 **Acceptance Criteria**
 
 1. Given a new `Events` row, published, with a future start, price and capacity
-   When the site is next loaded
+   When the site is loaded about 5 minutes later (the events cache refresh, FFR-033)
    Then the event appears in the section and the ticker.
 2. Given a row with a missing or invalid required field (code, name, date, time, price,
    capacity) or a duplicated code
@@ -810,7 +810,7 @@ So that the site reflects them without waiting for a developer
    Then that event (all rows of a duplicated code) is not shown and the others still are.
 3. Given a `Coupons` row added or its discount or max uses changed
    When the next coupon check runs
-   Then it uses the new values.
+   Then it uses the new values (coupon checks read the sheet directly, not the events cache).
 4. Given `nameEn`/`descriptionEn` filled for an event
    When the site is in English
    Then those texts are shown instead of the automatic translation.

@@ -1,11 +1,12 @@
 # TECH_STACK
 
 ## Metadata
-- Version: 1.4 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
+- Version: 1.5 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
   §1, §5–7, §10–14 — in CMP-021; v1.3: §10 two Apps Script projects — CMP-035;
-  v1.4: §11 script permissions — CMP-036)
+  v1.4: §11 script permissions — CMP-036; v1.5: §11 full Drive scope named — CMP-037)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved on
-  merge of PR #21; v1.3 Approved on merge of PR #26; v1.4 Approved (on merge of PR #30))
+  merge of PR #21; v1.3 Approved on merge of PR #26; v1.4 Approved on merge of PR #30; v1.5 Approved (on
+  merge of PR #XX))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment
@@ -110,7 +111,8 @@ npm run preview   # serves dist/ locally
 - Backend configuration and secrets live in Apps Script script properties (contract §9). The
   only backend value in the client bundle is the public `/exec` URL.
 - Script permissions: the OAuth scopes are those in `apps-script/appsscript.json` (`oauthScopes`). Besides Sheets,
-  Drive, Docs, external requests and sending mail, the script holds a Gmail settings scope so it
+  Drive (full access to the owning account's files, needed to create folders and files and run
+  OCR), Docs, external requests and sending mail, the script holds a Gmail settings scope so it
   can send as `no-reply@lifetoolscr.com` (owner, 2026-10-20); that scope lets it read and change
   the owning account's Gmail settings. The spike's alias test confirmed `gmail.settings.basic` is
   enough (2026-10-20); any scope broader than the one the owner accepted (e.g. full mailbox

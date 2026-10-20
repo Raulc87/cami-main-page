@@ -4,13 +4,13 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+- Version: 1.3 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
-  CMP-036)
-- Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
-  PR #30))
+  CMP-036; v1.3: FFR-033 events cache refreshed every 5 minutes, owner 2026-10-20 — CMP-037)
+- Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
+  v1.3 Approved (on merge of PR #XX))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -57,7 +57,7 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 | US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), FFR-031, BR-E13 |
 | US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024, FFR-025, FFR-030, BR-E13 |
 | US-022 | Automatic check of the payment screenshot | FFR-017, FFR-032 |
-| US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020 |
+| US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020, FFR-033 |
 | US-024 | Abuse metrics and alerts | FFR-029 |
 | US-025 | Participant emails (confirmation, payment not validated) | FFR-026 |
 
@@ -217,6 +217,12 @@ Administration (Cami)
   (Q-2). Cami adds or edits rows; no deploy. Coupon codes are 8–20 characters, `A-Z` and `0-9`
   only (hard to guess, §12); rows with an invalid code, discount or max uses are ignored and
   listed in the alert email so Cami can fix them.
+- FFR-033: To answer within the 3 s limit (FNFR-003), the backend serves the `events` response
+  from a cache that a time-driven trigger refreshes every 5 minutes (one entry per language).
+  Changes Cami makes in the `Events`/`Coupons` tabs therefore show on the site within about
+  5 minutes; a registration that changes an event's availability (e.g. sells it out) clears the
+  cache at once. Owner, 2026-10-20 (spike and CMP-025 timing: a cold `events` request took about
+  5 s).
 
 Abuse metrics
 - FFR-029: A `Metrics` tab gets one row per day (accepted registrations, honeypot hits,
@@ -406,6 +412,7 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
 | OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |
 | Sender alias (FFR-026, #17) | Send from `no-reply@lifetoolscr.com`; the script gets the Gmail scope `gmail.settings.basic` (it can read and change the owning account's Gmail settings), accepted by the owner — 2026-10-20: "add the permission for no-reply@"; the spike's alias test confirmed it is enough (the test email arrived From no-reply@lifetoolscr.com). A broader scope (e.g. full mailbox) goes back to the owner before deploy (ARCHITECTURE §12, TECH_STACK §11) |
+| Events cache (FFR-033) | Cache the `events` response, refreshed by a time-driven trigger every 5 minutes; sheet changes show within about 5 minutes — owner, 2026-10-20: "OK on the cache" (first, a 60 s cache), then "b" (the 5-minute refresh, chosen because on a low-traffic site most visitors would otherwise hit an expired cache and a ~5 s answer) |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.

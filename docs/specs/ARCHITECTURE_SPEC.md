@@ -1,13 +1,14 @@
 # ARCHITECTURE_SPEC
 
 ## Metadata
-- Version: 1.4 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
+- Version: 1.5 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
   §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022;
   v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035; v1.4: §7
-  scroll-reveal wrapper rule, §12 script scopes — CMP-036)
+  scroll-reveal wrapper rule, §12 script scopes — CMP-036; v1.5: §12 full Drive scope named,
+  §18 events cache — CMP-037)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
   merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved on merge of PR #26; v1.4
-  Approved (on merge of PR #30))
+  Approved on merge of PR #30; v1.5 Approved (on merge of PR #XX))
 - Owner: Raul Casanas
 
 ## 1. Purpose
@@ -293,7 +294,8 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 - No secrets in the repo or the client bundle; backend configuration in script properties.
 - The script runs as the owning Workspace account behind an anonymous endpoint, so each scope it
   holds is exposed if it is misused: the OAuth scopes are those in `apps-script/appsscript.json` (`oauthScopes`). Besides Sheets,
-  Drive, Docs, external requests and sending mail, the script holds a Gmail settings scope so it
+  Drive (full access to the owning account's files, needed to create folders and files and run
+  OCR), Docs, external requests and sending mail, the script holds a Gmail settings scope so it
   can send as `no-reply@lifetoolscr.com` (owner, 2026-10-20); that scope lets it read and change
   the owning account's Gmail settings. The spike's alias test confirmed `gmail.settings.basic` is
   enough (2026-10-20); any scope broader than the one the owner accepted (e.g. full mailbox
@@ -327,6 +329,8 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 - No runtime dependencies other than the static host and Google Fonts (text falls back to
   system fonts if the CDN fails), and the events backend: if it is slow (> 3 s) or down, the
   events section and ticker are hidden and the rest of the page is unaffected.
+- The `events` response is cached and refreshed every 5 minutes by a time-driven trigger, so it
+  answers well within 3 s (FFR-033).
 
 ## 19. Compatibility / Migration
 - `localStorage` access must keep working if storage is unavailable (language falls back to
