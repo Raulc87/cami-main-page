@@ -123,6 +123,8 @@ and initial values are the contract (§9); do not rename them.
 
 The spike stub `register` (CMP-024 to CMP-026) accepts uploads only when the script property
 `SPIKE_ENABLED` is `true`. Set it on **staging only**, and never on production; CMP-026 removes it.
+**Create the production project only after CMP-026 and CMP-027 are merged** (validated `register`,
+throttling and daily caps); until then `main` holds a backend that must not be public.
 
 A placeholder SINPE value is shown to visitors with the placeholder marker
 (`isPlaceholder`, BR-E01). Production must never keep it
