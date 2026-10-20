@@ -524,8 +524,8 @@ So that I can choose one to attend
 1. Given published events that have not started (BR-E09)
    When the page loads
    Then an "Upcoming Events" / "Próximos eventos" section shows one card per event, ordered by
-   start, each with name, date and time, brief description, price (or "Gratis" / "Free") and a
-   register button.
+   start, each with name, date and time (24-hour `HH:mm` in both languages), brief description,
+   price (or "Gratis" / "Free") and a register button.
 2. Given an event with no image URL
    When its card renders
    Then the Lifetools logo is shown in place of the art.
@@ -604,9 +604,11 @@ So that my place is reserved
 
 1. Given I select a paid event's register button
    When the form opens
-   Then it shows the event's name, date, time and price, then the SINPE Móvil instructions
-   (number, account name, amount to pay) before the fields; while the SINPE values are
-   placeholders they carry a visible "placeholder / por confirmar" marker (BR-E01).
+   Then it shows the event's name, date, time and price at the top, and the SINPE Móvil
+   instructions (number, account name, amount to pay after any coupon) before the screenshot
+   field; while the SINPE values are placeholders they carry a visible "placeholder / por
+   confirmar" marker (BR-E01). (Reworded 2026-10-20, CMP-036: the coupon, which needs the email,
+   comes before the payment part; UX_UI_DIRECTION §13.)
 2. Given a free event, or an amount due of ₡0 after a coupon
    When the form shows
    Then the payment instructions and the screenshot field are hidden and I can submit without a
@@ -643,7 +645,7 @@ So that my place is reserved
 - Priority: Medium
 - Story Points: 3
 - Status: Ready
-- Related Spec: FEATURE_SPEC_events_registration (FFR-012, FFR-013, FFR-021, FFR-024, §12),
+- Related Spec: FEATURE_SPEC_events_registration (FFR-012, FFR-013, FFR-021, FFR-024, FFR-031, §12),
   BR-E03, BR-E10, BR-E13
 - Related Requirements: FR-011
 
@@ -679,6 +681,10 @@ So that I pay the discounted price
 7. Given any visitor
    When the page loads
    Then no list of coupons is sent to the browser.
+8. Given I typed a coupon code but did not apply it
+   When I submit
+   Then submit is blocked and I see a message asking me to apply the coupon or clear the field
+   (FFR-031, owner 2026-10-20).
 
 **Dependencies**
 - US-019, US-023.
@@ -738,7 +744,7 @@ So that I can manage participants and payments in one place
 - Priority: Medium
 - Story Points: 5
 - Status: Ready
-- Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-030), BR-E06
+- Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-032, FFR-030), BR-E06
 - Related Requirements: FR-011
 
 **User Story**
@@ -766,6 +772,13 @@ So that I spot wrong payments before confirming
 5. Given Cami's sample screenshots (2–3 banks)
    When the check runs on them in the spike
    Then it returns `ok` for valid ones and `mismatch` for an altered amount.
+6. Given the OCR service refuses the call (e.g. the per-user rate limit) after the retries
+   When the check runs
+   Then the row stays `pending` and no "payment not validated" email is sent yet (the
+   confirmation is still sent at save time); a retry every 10 minutes writes the final result
+   and sends that email if needed; after 24 hours still `pending`, retries stop and the row is
+   listed in that day's alert email to camila@, which it triggers (FFR-029, FFR-032, owner
+   2026-10-20).
 
 **Dependencies**
 - US-021; Cami's samples (spike).
@@ -804,7 +817,8 @@ So that the site reflects them without waiting for a developer
 5. Given a `Coupons` row with a code that is not 8–20 characters `A-Z0-9`, or an invalid
    discount or max uses
    When coupons are read
-   Then that row is ignored and listed in the next alert email to camila@.
+   Then that row is ignored and listed in that day's alert email to camila@, which it triggers
+   on its own (at most one per day, FFR-029).
 
 **Dependencies**
 - ADR-008 backend spike.
@@ -835,7 +849,9 @@ So that we know when to add a captcha
 2. Given a day over a threshold (> 10 honeypot hits, > 20 throttled requests, or the upload cap
    reached)
    When it is crossed
-   Then one alert email goes to camila@lifetoolscr.com for that day.
+   Then one alert email goes to camila@lifetoolscr.com for that day; an invalid sheet row or a
+   check stuck `pending` past its limit also triggers it, still at most one per day (FFR-029,
+   FFR-032).
 3. Given a request with the honeypot field filled
    When it is received
    Then it gets a normal-looking success response, nothing is stored and the hit is counted.

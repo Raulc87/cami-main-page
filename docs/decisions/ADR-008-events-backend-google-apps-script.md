@@ -54,6 +54,9 @@ Risks:
   shared with Cami's Gmail/Drive and exhausting daily quotas. Mitigations available on Apps
   Script: global throttling (`CacheService` + `LockService`), a daily upload cap, long random
   coupon codes, a honeypot, and optionally a server-verified captcha (FEATURE_SPEC §12, Q-19).
+- Scopes held by the script are exposed through the same anonymous endpoint. Sending as
+  `no-reply@` adds a Gmail settings scope (owner, 2026-10-20); anything broader goes back to
+  the owner (ARCHITECTURE_SPEC §12, TECH_STACK §11).
 
 ### Option B — Serverless functions (Cloudflare Workers / Netlify / Vercel free tier) + Google APIs
 Pros:

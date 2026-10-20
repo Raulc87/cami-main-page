@@ -1,10 +1,11 @@
 # TECH_STACK
 
 ## Metadata
-- Version: 1.3 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
-  §1, §5–7, §10–14 — in CMP-021; v1.3: §10 two Apps Script projects — CMP-035)
+- Version: 1.4 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
+  §1, §5–7, §10–14 — in CMP-021; v1.3: §10 two Apps Script projects — CMP-035;
+  v1.4: §11 script permissions — CMP-036)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved on
-  merge of PR #21; v1.3 Approved (on merge of PR #26))
+  merge of PR #21; v1.3 Approved on merge of PR #26; v1.4 Approved (on merge of PR #30))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment
@@ -108,6 +109,12 @@ npm run preview   # serves dist/ locally
 - Never commit credentials, tokens, spreadsheet/folder IDs or SINPE data.
 - Backend configuration and secrets live in Apps Script script properties (contract §9). The
   only backend value in the client bundle is the public `/exec` URL.
+- Script permissions: the OAuth scopes are those in `apps-script/appsscript.json` (`oauthScopes`). Besides Sheets,
+  Drive, Docs, external requests and sending mail, the script holds a Gmail settings scope so it
+  can send as `no-reply@lifetoolscr.com` (owner, 2026-10-20); that scope lets it read and change
+  the owning account's Gmail settings. The spike's alias test confirmed `gmail.settings.basic` is
+  enough (2026-10-20); any scope broader than the one the owner accepted (e.g. full mailbox
+  `https://mail.google.com/`) goes back to the owner before it is deployed.
 
 ## 12. Observability
 - Events backend: daily `Metrics` tab and alert emails to camila@ (FFR-029); Apps Script
