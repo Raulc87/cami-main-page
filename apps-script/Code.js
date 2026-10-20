@@ -1,11 +1,11 @@
 // Entry points. Router on `action` (EVENTS_API_CONTRACT §2, §3).
-// Spike (CMP-024): `events` and `register` are minimal stubs that prove ADR-008 → Validation;
-// CMP-025 and CMP-026 replace them with the specified behavior.
+// `events` is implemented in Events.js (CMP-025); `register` is still the CMP-024 spike stub
+// that CMP-026 replaces.
 
 function doGet(e) {
   try {
     var params = (e && e.parameter) || {};
-    if (params.action === 'events') return handleEventsSpike_(params);
+    if (params.action === 'events') return handleEvents_(params);
     return fail('SERVER_ERROR');
   } catch (err) {
     console.error('doGet failed: ' + err.name);
@@ -30,10 +30,6 @@ function smokeCheck() {
   var missing = missingProperties();
   console.log(missing.length ? 'Missing script properties: ' + missing.join(', ') : 'Script properties OK');
   console.log('Drive advanced service: ' + (typeof Drive !== 'undefined' && Drive.Files ? 'OK' : 'MISSING'));
-}
-
-function handleEventsSpike_() {
-  return ok({ sinpe: getSinpe(), events: [] });
 }
 
 // Spike only: refuses unless the script property SPIKE_ENABLED is `true` (set it on staging only;
