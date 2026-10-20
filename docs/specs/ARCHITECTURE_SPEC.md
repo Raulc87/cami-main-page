@@ -3,9 +3,10 @@
 ## Metadata
 - Version: 1.3 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
   §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022;
-  v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035)
+  v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035; v1.4: §7
+  scroll-reveal wrapper rule — CMP-036)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
-  merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved (on merge of PR #26))
+  merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved on merge of PR #26; v1.4 Approved (on merge of PR #30))
 - Owner: Raul Casanas
 
 ## 1. Purpose
@@ -124,6 +125,8 @@ Rules:
 - The `id` passed to `r(id, delay)` (via `data-rid`) **must be unique across the whole page**,
   not just within the component — the observer is global.
 - `delay` is optional, in milliseconds, to stagger animations within a section.
+- An element with its own `:hover` transform (e.g. `.svc-card`) gets `r()` on a wrapper, not on
+  itself: the inline reveal transform would override the hover rule (CMP-031, US-002 AC2).
 
 ### Styles
 See [UX_UI_DIRECTION.md](../ux/UX_UI_DIRECTION.md) — inline styles + classes in `global.css`.

@@ -4,9 +4,11 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.1 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
-  CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035)
-- Status: Approved (v1.0 on merge of PR #21; v1.1 Approved (on merge of PR #26))
+- Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+  CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031 and §20 form
+  decisions, owner 2026-10-20 — CMP-036)
+- Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
+  PR #30))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -50,7 +52,7 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 | US-017 | Upcoming events section | FFR-001..FFR-004, FFR-025, FFR-028, BR-E09 |
 | US-018 | Upcoming-events ticker banner | FFR-005, FFR-006 |
 | US-019 | Event registration form with SINPE Móvil payment proof | FFR-007..FFR-011, FFR-018, FFR-022, FFR-023, FFR-027 |
-| US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), BR-E13 |
+| US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), FFR-031, BR-E13 |
 | US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024, FFR-025, FFR-030, BR-E13 |
 | US-022 | Automatic check of the payment screenshot | FFR-017 |
 | US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020 |
@@ -127,6 +129,9 @@ Coupons
 - FFR-012: Optional coupon field; applying it checks the code for **that event and that email**
   on the server and shows the discounted amount before payment. Checks are throttled globally
   (§12).
+- FFR-031: A coupon code typed but not applied blocks submit with a message asking the visitor to
+  apply the coupon or clear the field (EN/ES), so the amount paid always matches the amount shown
+  (owner, 2026-10-20).
 - FFR-013: A coupon is a percentage discount (1–100%) tied to one event, with a maximum number of
   uses set by Cami and **one use per email** (Q-24). Unknown, inactive, expired, exhausted or
   already-used coupons are refused with a message and the full price stays. A use counts while
@@ -369,6 +374,9 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | #19 | Risk of false "not validated" emails accepted |
 | Spam status | Keep `spam` as a status Cami can set (frees the place and the coupon use; counted in `Metrics` for the captcha rule) — owner, 2026-10-19: "keep spam status" |
 | BR-E13 | Approved, including its trade-off — owner, 2026-10-19: "BR-E13 approved" |
+| Form order | The coupon comes before the SINPE instructions and the screenshot (§9 steps 5–6) — owner, 2026-10-20, answer 2 to "coupon before the screenshot?": "yes" |
+| Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
+| Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.

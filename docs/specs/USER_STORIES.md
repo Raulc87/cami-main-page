@@ -643,7 +643,7 @@ So that my place is reserved
 - Priority: Medium
 - Story Points: 3
 - Status: Ready
-- Related Spec: FEATURE_SPEC_events_registration (FFR-012, FFR-013, FFR-021, FFR-024, §12),
+- Related Spec: FEATURE_SPEC_events_registration (FFR-012, FFR-013, FFR-021, FFR-024, FFR-031, §12),
   BR-E03, BR-E10, BR-E13
 - Related Requirements: FR-011
 
@@ -679,6 +679,10 @@ So that I pay the discounted price
 7. Given any visitor
    When the page loads
    Then no list of coupons is sent to the browser.
+8. Given I typed a coupon code but did not apply it
+   When I submit
+   Then submit is blocked and I see a message asking me to apply the coupon or clear the field
+   (FFR-031, owner 2026-10-20).
 
 **Dependencies**
 - US-019, US-023.
