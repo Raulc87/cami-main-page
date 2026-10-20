@@ -12,7 +12,7 @@
   v1.4: `events` client wait raised from 3 s to 5 s (FFR-004, FNFR-003), owner 2026-10-20 —
   CMP-038)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
-  v1.3 on merge of PR #32; v1.4 Approved (on merge of PR #XX))
+  v1.3 on merge of PR #32; v1.4 Approved (on merge of PR #34))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
