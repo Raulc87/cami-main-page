@@ -34,7 +34,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
 | Requirement | Story | AC | Step | Test (manual, against staging — contract §10) |
 |---|---|---|---|---|
 | FFR-019, FFR-020, FFR-028 | US-023 | AC1–AC4; AC5 (row skipped and queued) | 4 | Edit staging `Events`/`Coupons`; reload; invalid rows hidden and queued |
-| FFR-019, FFR-029 | US-023 | AC5 (alert email lists the row) | 6 | Invalid `Coupons` row appears in the next alert email |
+| FFR-019, FFR-029 | US-023 | AC5 (alert email lists the row) | 6 | Invalid `Coupons` row triggers that day's alert email and appears in it (FFR-029) |
 | FFR-001..FFR-004, FFR-025, BR-E09 | US-017 | AC1–AC5 | 4, 9 | Cards at 1280/900/375 px, EN/ES; closed/sold-out buttons; backend down → hidden |
 | FFR-005, FFR-006 | US-018 | AC1–AC5 | 9 | Ticker moves, pauses on hover/focus, static with reduced motion, click scrolls |
 | FFR-007..FFR-011, FFR-018, FFR-022, FFR-023, FFR-027 | US-019 | AC1–AC8 | 5, 11 | Form validation cases, paid and free submits, retry, duplicate email |

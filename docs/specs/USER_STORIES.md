@@ -777,7 +777,8 @@ So that I spot wrong payments before confirming
    Then the row stays `pending` and no "payment not validated" email is sent yet (the
    confirmation is still sent at save time); a retry every 10 minutes writes the final result
    and sends that email if needed; after 24 hours still `pending`, retries stop and the row is
-   listed in the next alert email to camila@ (FFR-032, owner 2026-10-20).
+   listed in that day's alert email to camila@, which it triggers (FFR-029, FFR-032, owner
+   2026-10-20).
 
 **Dependencies**
 - US-021; Cami's samples (spike).
@@ -816,7 +817,8 @@ So that the site reflects them without waiting for a developer
 5. Given a `Coupons` row with a code that is not 8–20 characters `A-Z0-9`, or an invalid
    discount or max uses
    When coupons are read
-   Then that row is ignored and listed in the next alert email to camila@.
+   Then that row is ignored and listed in that day's alert email to camila@, which it triggers
+   on its own (at most one per day, FFR-029).
 
 **Dependencies**
 - ADR-008 backend spike.
@@ -847,7 +849,9 @@ So that we know when to add a captcha
 2. Given a day over a threshold (> 10 honeypot hits, > 20 throttled requests, or the upload cap
    reached)
    When it is crossed
-   Then one alert email goes to camila@lifetoolscr.com for that day.
+   Then one alert email goes to camila@lifetoolscr.com for that day; an invalid sheet row or a
+   check stuck `pending` past its limit also triggers it, still at most one per day (FFR-029,
+   FFR-032).
 3. Given a request with the honeypot field filled
    When it is received
    Then it gets a normal-looking success response, nothing is stored and the hit is counted.

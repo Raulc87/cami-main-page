@@ -7,7 +7,7 @@
 - Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
-  rule, FFR-032 OCR retry, owner 2026-10-20 — CMP-036)
+  rule, FFR-032 OCR retry, FFR-029 action alerts, owner 2026-10-20 — CMP-036)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
   PR #30))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
@@ -184,8 +184,8 @@ Payment screenshot check
   still sent when the row is saved (FFR-026). A time-driven trigger retries the `pending` rows
   every 10 minutes; when a retry gets `ok`, `mismatch` or `unreadable`, it writes the result and
   sends the "not validated" email if FFR-017 requires it. A row still `pending` 24 hours after
-  it was saved is no longer retried and is listed in the next alert email to camila@ (FFR-029)
-  for Cami to check by hand; its participant gets no "not validated" email. `pending` alone
+  it was saved is no longer retried and triggers that day's alert email to camila@ (FFR-029),
+  which lists it for Cami to check by hand; its participant gets no "not validated" email. `pending` alone
   never sets `needsReview` (FFR-030). Owner, 2026-10-20 (spike finding, CMP-024); the
   10-minute interval and the 24-hour limit are proposed in CMP-036 for the owner's approval.
 
@@ -220,7 +220,10 @@ Abuse metrics
 - FFR-029: A `Metrics` tab gets one row per day (accepted registrations, honeypot hits,
   throttled requests, failed coupon checks, MB uploaded, rows marked `spam`). The backend emails
   camila@ when a day exceeds a threshold (initially: > 10 honeypot hits, > 20 throttled
-  requests, or the daily upload cap reached). **Captcha rule (Q-19):** no captcha at launch;
+  requests, or the daily upload cap reached), and also when there is something Cami must act
+  on: an invalid `Events`/`Coupons` row (FFR-019, US-023 AC5) or a check stuck `pending` past
+  its limit (FFR-032). At most one alert email per day, listing everything found that day
+  (proposed in CMP-036 for the owner's approval). **Captcha rule (Q-19):** no captcha at launch;
   enable Cloudflare Turnstile (free, verified server side) if alerts fire on 3+ days in a week or
   Cami marks more than 2 `spam` rows in a week.
 
