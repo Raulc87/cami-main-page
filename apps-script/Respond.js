@@ -5,6 +5,11 @@ function jsonOut(body) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+// An already-serialized envelope (from the response cache).
+function rawJson(text) {
+  return ContentService.createTextOutput(text).setMimeType(ContentService.MimeType.JSON);
+}
+
 function ok(data) {
   return jsonOut({ ok: true, data: data, error: null });
 }
