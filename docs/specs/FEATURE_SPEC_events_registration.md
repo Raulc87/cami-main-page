@@ -217,7 +217,7 @@ Administration (Cami)
   arrives for one is stored and flagged (`checkDetails`: `duplicate event code`). Only published
   rows are validated and queued for the alert email; drafts (published unchecked) are ignored
   until published, except that a code shared with a published row is still reported as
-  duplicated. Owner, 2026-10-20: "No, only published".
+  duplicated (contract §6, v1.1). Owner, 2026-10-20: "No, only published".
 - FFR-020: `Coupons` tab: event code, coupon code, discount %, max uses, active, optional expiry
   (Q-2). Cami adds or edits rows; no deploy. Coupon codes are 8–20 characters, `A-Z` and `0-9`
   only (hard to guess, §12); rows with an invalid code, discount or max uses are ignored and

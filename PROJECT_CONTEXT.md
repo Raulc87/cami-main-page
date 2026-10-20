@@ -16,7 +16,7 @@
   (v1.4 — events and registration, US-017..US-025); new ones from
   [docs/templates/FEATURE_SPEC_TEMPLATE.md](docs/templates/FEATURE_SPEC_TEMPLATE.md) as
   `docs/specs/FEATURE_SPEC_<topic>.md`
-- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.0,
+- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.1,
   locked) — site ↔ events backend
 - Events emails and privacy notice (drafts, release gates):
   [EVENTS_EMAILS_AND_PRIVACY.md](docs/ux/EVENTS_EMAILS_AND_PRIVACY.md)

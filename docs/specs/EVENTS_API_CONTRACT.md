@@ -6,8 +6,9 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.0
-- Status: Approved — LOCKED (on merge of PR #21)
+- Version: 1.1 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+  — CMP-038)
+- Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 Approved (on merge of PR #34))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-030)
 - Related stories: US-017..US-025
@@ -120,7 +121,9 @@ Spreadsheet (Workspace `lifetoolscr.com`), tabs:
   `couponFailures`, `uploadedMb`, `spamMarked`.
 
 Validation of rows Cami edits (applied each time the backend reads them; an invalid row is
-skipped and listed in the next alert email):
+skipped and listed in the next alert email). Unpublished `Events` rows (drafts) are not
+validated or listed, except that a code shared with a published row is reported as duplicated
+(FFR-019; owner, 2026-10-20):
 
 | Tab.column | Rule |
 |---|---|
