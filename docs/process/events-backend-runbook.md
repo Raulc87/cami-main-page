@@ -165,6 +165,9 @@ may not see the events section.
 5. Check: after about 6 minutes, open **Executions** (sidebar): a `refreshEventsCache` run
    appears about every 5 minutes with status **Completed**. A **Failed** run: open it and read the
    log; the site keeps working from the last cache or rebuilds on demand.
+If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). The
+last good answer is also kept in script properties and used for up to 20 minutes if Google drops
+the cache early, so a short outage does not empty the page.
 Triggers run the **saved** code (Head), not the deployed version: after changing `Events.js`,
 saving is enough for the trigger, while visitors still need a **New version** (section 5).
 The automatic English translations are kept in script properties named `TR_<hash>` (one per

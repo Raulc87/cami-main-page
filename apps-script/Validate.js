@@ -148,9 +148,14 @@ function parseDiscount_(display) {
 // `rows`: [{ row, raw: { eventCode, couponCode, discountDisplay, maxUses, active, expiresOnText } }].
 // Returns { valid: [coupon], invalid: [{ row, problems }] }.
 function validateCouponRows_(rows, validEventCodes) {
-  var seen = Object.create(null);
   var valid = [];
   var invalid = [];
+  var counts = Object.create(null); // rows per event/coupon code: every row of a duplicate is skipped
+  rows.forEach(function (r) {
+    var key = String(r.raw.eventCode === undefined ? '' : r.raw.eventCode).trim() + '/' +
+      String(r.raw.couponCode === undefined ? '' : r.raw.couponCode).trim();
+    counts[key] = (counts[key] || 0) + 1;
+  });
   rows.forEach(function (r) {
     var problems = [];
     var eventCode = String(r.raw.eventCode === undefined ? '' : r.raw.eventCode).trim();
@@ -166,11 +171,7 @@ function validateCouponRows_(rows, validEventCodes) {
       expiresOn = normalizeDate_(r.raw.expiresOnText);
       if (!expiresOn) problems.push('expiresOn');
     }
-    var key = eventCode + '/' + couponCode;
-    if (!problems.length) {
-      if (seen[key]) problems.push('couponCode (duplicated)');
-      seen[key] = true;
-    }
+    if (counts[eventCode + '/' + couponCode] > 1) problems.push('couponCode (duplicated)');
     if (problems.length) { invalid.push({ row: r.row, problems: problems }); return; }
     valid.push({
       row: r.row, eventCode: eventCode, couponCode: couponCode, discountPercent: discount,

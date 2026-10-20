@@ -2,7 +2,7 @@
 
 var INVALID_EVENTS_KEY = 'ALERT_INVALID_EVENTS';
 var INVALID_COUPONS_KEY = 'ALERT_INVALID_COUPONS';
-var INVALID_QUEUE_MAX = 30;
+var INVALID_PAYLOAD_MAX = 8000; // a script property holds about 9 KB
 
 function rawEventFrom_(r) {
   return {
@@ -60,10 +60,15 @@ function readCoupons(validEventCodes) {
 // CMP-027). The list is replaced on every read, so a row Cami has fixed drops out. No personal
 // data is stored: only tab, row number and the names of the failing fields.
 function queueInvalidRows_(key, tab, invalid) {
-  var entries = invalid.slice(0, INVALID_QUEUE_MAX).map(function (i) {
+  var entries = invalid.map(function (i) {
     return tab + ' row ' + i.row + ': ' + i.problems.join(', ');
   });
+  // Every row is kept while it fits; beyond that the alert says how many more there are.
   var payload = JSON.stringify({ count: invalid.length, entries: entries });
+  while (payload.length > INVALID_PAYLOAD_MAX && entries.length) {
+    entries.pop();
+    payload = JSON.stringify({ count: invalid.length, entries: entries, more: invalid.length - entries.length });
+  }
   var props = PropertiesService.getScriptProperties();
   if (props.getProperty(key) !== payload) {
     if (invalid.length || props.getProperty(key)) props.setProperty(key, payload);
@@ -74,7 +79,14 @@ function queueInvalidRows_(key, tab, invalid) {
 // installed (runbook, "Events cache trigger") every visitor is served from it.
 var EVENTS_CACHE_SECONDS = 360;
 var EVENTS_REFRESH_MINUTES = 5;
-var EVENTS_CACHE_PREFIX = 'EVENTS_';
+// Bump the version whenever the answer's shape or logic changes: the trigger runs the saved
+// code (Head) while visitors are served by the deployed version, and they share one cache.
+var EVENTS_CACHE_VERSION = 'v1';
+var EVENTS_CACHE_PREFIX = 'EVENTS_' + EVENTS_CACHE_VERSION + '_';
+// CacheService entries may be evicted early, so the last good answer is also kept in script
+// properties and served when it is younger than this (the trigger refreshes it every 5 minutes).
+var EVENTS_LAST_PREFIX = 'EVENTS_LAST_' + EVENTS_CACHE_VERSION + '_';
+var EVENTS_LAST_MAX_AGE_MS = 20 * 60000;
 
 // `events` is read on every page load and reads several tabs, which takes seconds in Apps Script
 // (the site gives up after 3 s, FFR-004). The finished response is kept per language and
@@ -92,26 +104,51 @@ function handleEvents_(params) {
   } catch (err) {
     console.error('cache read failed: ' + err.name);
   }
+  var last = readLastEvents_(lang);
+  if (last) return rawJson(last);
   var response = buildEventsResponse_(lang);
+  storeEvents_(lang, JSON.stringify(response));
+  return ok(response.data);
+}
+
+function storeEvents_(lang, body) {
   try {
-    cache.put(EVENTS_CACHE_PREFIX + lang, JSON.stringify(response), EVENTS_CACHE_SECONDS);
+    CacheService.getScriptCache().put(EVENTS_CACHE_PREFIX + lang, body, EVENTS_CACHE_SECONDS);
   } catch (err) {
     console.error('cache write failed: ' + err.name);
   }
-  return ok(response.data);
+  try {
+    PropertiesService.getScriptProperties().setProperty(EVENTS_LAST_PREFIX + lang, JSON.stringify({ at: Date.now(), body: body }));
+  } catch (err) {
+    console.error('last answer write failed: ' + err.name); // too large or quota: the cache still works
+  }
+}
+
+function readLastEvents_(lang) {
+  try {
+    var raw = PropertiesService.getScriptProperties().getProperty(EVENTS_LAST_PREFIX + lang);
+    if (!raw) return null;
+    var last = JSON.parse(raw);
+    return Date.now() - last.at < EVENTS_LAST_MAX_AGE_MS ? last.body : null;
+  } catch (err) {
+    return null;
+  }
 }
 
 // Run by the time-driven trigger every 5 minutes (FFR-033): rebuilds both languages. CMP-026's
 // `register` calls it too when a registration changes availability.
+// Both languages are attempted; if any fails the run ends as Failed so the owner sees it.
 function refreshEventsCache() {
-  var cache = CacheService.getScriptCache();
+  var failed = [];
   ['es', 'en'].forEach(function (lang) {
     try {
-      cache.put(EVENTS_CACHE_PREFIX + lang, JSON.stringify(buildEventsResponse_(lang)), EVENTS_CACHE_SECONDS);
+      storeEvents_(lang, JSON.stringify(buildEventsResponse_(lang)));
     } catch (err) {
-      console.error('refresh ' + lang + ' failed: ' + err.name); // one language failing must not stop the other
+      console.error('refresh ' + lang + ' failed: ' + err.name);
+      failed.push(lang);
     }
   });
+  if (failed.length) throw new Error('refreshEventsCache failed for: ' + failed.join(', '));
 }
 
 function buildEventsResponse_(lang) {
