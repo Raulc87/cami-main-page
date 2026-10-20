@@ -1,7 +1,10 @@
 import { C } from './constants/colors'
 import { useReveal } from './hooks/useReveal'
+import { useEvents } from './hooks/useEvents'
+import EventsTicker from './components/EventsTicker'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
+import Events from './components/Events'
 import Services from './components/Services'
 import Gallery from './components/Gallery'
 import Process from './components/Process'
@@ -14,6 +17,9 @@ export default function App() {
   // Single IntersectionObserver for the whole page — passed as prop to each section.
   // All element IDs (data-rid) must be unique across components.
   const r = useReveal()
+  // One `events` request for the page; the ticker and the section hide themselves when
+  // status is not 'ready' (FFR-004).
+  const { status, sinpe, events } = useEvents()
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden' }}>
@@ -32,8 +38,10 @@ export default function App() {
       }} />
 
       {/* ── Sections ──────────────────────────────────────── */}
+      {status === 'ready' && <EventsTicker events={events} />}
       <Nav />
       <Hero r={r} />
+      {status === 'ready' && <Events events={events} sinpe={sinpe} />}
       <Services r={r} />
       <Gallery r={r} />
       <Process r={r} />

@@ -73,4 +73,18 @@ export const UI_TEXT = {
     },
     link: { en: 'Connect with Cami', es: 'Conecta con Cami' },
   },
+  events: {
+    // Strings quoted by the spec/stories (heading, free, closed, sold out) are verbatim; kicker,
+    // button and ticker label are drafts pending the owner's approval (CMP-029 PR).
+    kicker: { en: 'Join Cami', es: 'Acompaña a Cami' },
+    heading: { en: 'Upcoming Events', es: 'Próximos eventos' },
+    free: { en: 'Free', es: 'Gratis' },
+    registrationClosed: { en: 'Registration closed', es: 'Inscripciones cerradas' },
+    soldOut: { en: 'Sold out', es: 'Agotado' },
+    register: { en: 'Register', es: 'Inscribirme' },
+    tickerLabel: { en: 'Upcoming events', es: 'Próximos eventos' },
+    logoAlt: { en: 'Lifetools logo', es: 'Logo de Lifetools' },
+    // Registration form copy (US-019/US-020): Agent 3 adds keys here in CMP-032.
+    form: {},
+  },
 }
