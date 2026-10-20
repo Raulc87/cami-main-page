@@ -42,7 +42,10 @@ function insertWithBackoff_(blob) {
 // number (thousands separators `.`, `,` or space allowed), not as part of a longer number.
 function compareOcr(text, accountNumber, accountName, amountCrc) {
   var grouped = String(amountCrc).replace(/\B(?=(\d{3})+(?!\d))/g, '[., ]?');
-  var amountFound = new RegExp('(^|\\D)' + grouped + '(\\D|$)').test(text);
+  // Not part of a longer number: no digit before (or digit plus a thousands separator, as in
+  // `3,500`), no digit after (or a separator plus three digits, as in `500,000`). A decimal
+  // part such as `500,00` is allowed.
+  var amountFound = new RegExp('(?<!\\d)(?<!\\d[.,])' + grouped + '(?!\\d)(?![.,]\\d{3})').test(text);
   var squash = function (v) { return String(v).replace(/[\s-]/g, '').toLowerCase(); };
   var haystack = squash(text);
   var accountFound = (!!accountNumber && haystack.indexOf(squash(accountNumber)) !== -1) ||
@@ -95,9 +98,6 @@ function runOcrSamples() {
 // is not set up, and says so in the log.
 function emailAliasTest() {
   var to = getProp('SPIKE_TEST_RECIPIENT');
-  if (!to) {
-    try { to = Session.getEffectiveUser().getEmail(); } catch (e) { to = ''; }
-  }
   if (!to) throw new Error('No recipient: set the script property SPIKE_TEST_RECIPIENT to your own address');
   var alias = getProp('MAIL_FROM_ALIAS');
   var subject = 'Spike test: sender alias';
