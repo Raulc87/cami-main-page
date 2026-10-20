@@ -1,6 +1,6 @@
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
-import { cardId, formatEventDate } from './Events'
+import { cardId, formatEventDate } from './eventsShared'
 
 const TICKER_EVENTS = 2 // FFR-005: N closest events
 const MIN_ITEMS_PER_TRACK = 8 // item copies per track, so one track is wider than the bar

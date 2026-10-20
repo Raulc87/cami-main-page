@@ -3,19 +3,9 @@ import { C } from '../constants/colors'
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
 import EventRegistration from './EventRegistration'
+import { cardId, formatEventDate } from './eventsShared'
 
 const LOGO = '/images/lifetools-logo.svg'
-
-export function formatEventDate(date, lang) {
-  const [y, m, d] = date.split('-').map(Number)
-  return new Date(y, m - 1, d).toLocaleDateString(lang === 'es' ? 'es-CR' : 'en-US', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  })
-}
-
-export function cardId(eventCode) {
-  return `evt-${eventCode}`
-}
 
 // No `r()` scroll-reveal here: the section mounts after useReveal has scanned the page
 // (ARCHITECTURE_SPEC §7).
@@ -67,7 +57,8 @@ export default function Events({ events, sinpe }) {
                 <img
                   className={hasImage ? 'evt-card-img' : 'evt-card-img evt-card-img-logo'}
                   src={hasImage ? ev.imageUrl : LOGO}
-                  alt={hasImage ? ev.name : t.logoAlt[lang]}
+                  // The art is decorative: the event name is the card's heading.
+                  alt={hasImage ? '' : t.logoAlt[lang]}
                   onError={hasImage ? () => setImgFailed((f) => ({ ...f, [ev.eventCode]: true })) : undefined}
                 />
                 <div className="evt-card-body">
