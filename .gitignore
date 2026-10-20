@@ -6,3 +6,6 @@ dist/
 *.local
 .claude/worktrees/
 .claude/settings.local.json
+
+# clasp
+.clasp.json
