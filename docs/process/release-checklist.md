@@ -65,6 +65,8 @@ upload; if one is not, do not release:
 - [ ] Production Apps Script deployment updated per
       [events-backend-runbook.md](events-backend-runbook.md), and the site build points
       `VITE_EVENTS_API_URL` at the production `/exec` URL.
+- [ ] The 5-minute `refreshEventsCache` trigger installed in the **production** script, with a
+      Completed run in Executions (FFR-033; runbook "Events cache trigger").
 
 ## 4. Upload to GoDaddy (cPanel File Manager)
 

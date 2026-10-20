@@ -276,4 +276,11 @@ The human reviewer is the final approver.
   `appsscript.json` and `Spike.js`? → done; 3. ran `emailAliasTest` and allowed the permission?
   → allowed; 4. the log lines → as quoted; 5. the From line of the test email → no-reply@.
   Spike step e passes with that scope.
+- CMP-025 on staging (2026-10-20): `events` returns the expected events in ES and EN after the
+  owner fixed duplicated test codes; the invalid-row queues hold 8 event rows and 4 coupon rows
+  as designed. A cold `events` request took about 5 s (over the 3 s client limit). Owner,
+  verbatim: "OK on the cache" (a 60 s cache), then "b" — question as asked: (a) leave the 60 s
+  cache until CMP-028, or (b) refresh the cache with a time-driven trigger every 5 minutes now,
+  so sheet changes show within about 5 minutes? → **(b)** (FFR-033, US-023 AC1). The owner
+  confirmed one staging deployment only.
 
