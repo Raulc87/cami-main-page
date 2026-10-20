@@ -121,6 +121,9 @@ and initial values are the contract (§9); do not rename them.
 | `ALERT_HONEYPOT_PER_DAY` | `10` |
 | `ALERT_THROTTLED_PER_DAY` | `20` |
 
+The spike stub `register` (CMP-024 to CMP-026) accepts uploads only when the script property
+`SPIKE_ENABLED` is `true`. Set it on **staging only**, and never on production; CMP-026 removes it.
+
 A placeholder SINPE value is shown to visitors with the placeholder marker
 (`isPlaceholder`, BR-E01). Production must never keep it
 ([release-checklist.md §3b](release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)).
