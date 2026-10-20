@@ -132,6 +132,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner.
 | Path | Owner |
 |---|---|
 | `apps-script/**` | Agent 1 |
+| `.gitignore` — the `.clasp.json` entry only (CMP-024) | Agent 1 (owner, 2026-10-20) |
 | `docs/process/events-backend-runbook.md`, `docs/sprints/SPRINT_02_SPIKE.md` | Agent 1 |
 | `src/api/**`, `src/hooks/useEvents.js` | Agent 2 |
 | `src/components/Events.jsx`, `src/components/EventsTicker.jsx`, `src/App.jsx` | Agent 2 |
@@ -221,3 +222,17 @@ The human reviewer is the final approver.
   [SPRINT_02_AGENT_PROMPTS.md](SPRINT_02_AGENT_PROMPTS.md), the review-only session (Opus) and
   Agents 1 and 2 (Sonnet), tagged `cmp-sprint-02`. Agent 3 starts when CMP-029 is merged
   (launch order). The Sprint 01 reviewer session is archived.
+- Owner answers (2026-10-20), verbatim: "1. Yes 2. Yes 3. Yes 4. Yes
+  5. no-reply@lifetoolscr.com 6. I need help to do this". The coordinator's questions, as asked:
+  1. Two separate Apps Script projects for staging and production? → **Yes**: two standalone
+     projects with the same code (ADR-008; ARCHITECTURE §13, TECH_STACK §10 in CMP-035).
+  2. Standalone scripts (not bound to the spreadsheet)? → **Yes** (ADR-008 Option A wording).
+  3. Agent 1 adds the `.clasp.json` line to the root `.gitignore` in CMP-024? → **Yes**
+     (ownership map).
+  4. Cami's samples in a non-shared `samples` subfolder of the staging folder, named
+     `<name>_<amountCrc>.jpg`, plus one copy with the amount altered? → **Yes**.
+  5. Which Workspace alias to test for sending in the spike? → `no-reply@lifetoolscr.com`
+     (FEATURE_SPEC §20 #17).
+  6. The staging spreadsheet, folder, script properties and first deploy? → the owner asked
+     for help; the coordinator guided the setup step by step from the runbook.
+- Agent 3 launched 2026-10-20 after CMP-029 (PR #25) merged.
