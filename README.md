@@ -30,10 +30,11 @@ detail in [TECH_STACK.md](TECH_STACK.md).
 ```
 public/images/    # real photos (hero, gallery, testimonials)
 src/
+  api/            # events.js — client for the events backend
   components/     # one component per page section
   constants/      # data.jsx (list content), i18n.js (UI_TEXT translations), colors.js (palette)
   context/        # LanguageContext.jsx — global EN/ES toggle state
-  hooks/          # useReveal.js — scroll-reveal
+  hooks/          # useReveal.js — scroll-reveal; useEvents.js — events data
   styles/         # global.css
   App.jsx         # page composition
   main.jsx        # entry point
