@@ -62,7 +62,8 @@ upload; if one is not, do not release:
 - [ ] Email templates (confirmation, registration received, payment not validated) approved by
       Cami and in use by the production script.
 - [ ] Lifetools logo in place for events without art.
-- [ ] Production Apps Script deployment updated per its runbook, and the site build points
+- [ ] Production Apps Script deployment updated per
+      [events-backend-runbook.md](events-backend-runbook.md), and the site build points
       `VITE_EVENTS_API_URL` at the production `/exec` URL.
 
 ## 4. Upload to GoDaddy (cPanel File Manager)

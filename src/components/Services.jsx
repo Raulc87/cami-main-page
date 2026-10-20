@@ -26,28 +26,35 @@ export default function Services({ r }) {
 
         {/* Cards */}
         <div className="svc-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22 }}>
-          {SERVICES.map((s, i) => (
-            <div key={i} {...r(`svc-${i}`, i * 80)} className="svc-card">
-              {/* Icon */}
-              <div
-                style={{
-                  width: 46, height: 46, borderRadius: 12,
-                  background: `linear-gradient(135deg, ${C.roseLight}, rgba(201,164,171,0.25))`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: C.navy, marginBottom: 20,
-                }}
-              >
-                {s.icon}
-              </div>
+          {SERVICES.map((s, i) => {
+            // The reveal (inline opacity/transform/transition) lives on a wrapper so it cannot
+            // override .svc-card:hover (US-002 AC2).
+            const reveal = r(`svc-${i}`, i * 80)
+            return (
+              <div key={i} {...reveal} style={{ ...reveal.style, display: 'flex' }}>
+                <div className="svc-card" style={{ flex: 1 }}>
+                  {/* Icon */}
+                  <div
+                    style={{
+                      width: 46, height: 46, borderRadius: 12,
+                      background: `linear-gradient(135deg, ${C.roseLight}, rgba(201,164,171,0.25))`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: C.navy, marginBottom: 20,
+                    }}
+                  >
+                    {s.icon}
+                  </div>
 
-              <div style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 10 }}>
-                {isEs ? s.labelEs || s.label : s.label}
+                  <div style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 10 }}>
+                    {isEs ? s.labelEs || s.label : s.label}
+                  </div>
+                  <h3 style={{ fontWeight: 700, fontSize: 19, color: C.navy, marginBottom: 12 }}>{isEs ? s.titleEs || s.title : s.title}</h3>
+                  <p style={{ fontSize: 14, lineHeight: 1.75, color: C.navyLight, marginBottom: 20 }}>{isEs ? s.descEs || s.desc : s.desc}</p>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.textMuted }}>{isEs ? s.noteEs || s.note : s.note}</div>
+                </div>
               </div>
-              <h3 style={{ fontWeight: 700, fontSize: 19, color: C.navy, marginBottom: 12 }}>{isEs ? s.titleEs || s.title : s.title}</h3>
-              <p style={{ fontSize: 14, lineHeight: 1.75, color: C.navyLight, marginBottom: 20 }}>{isEs ? s.descEs || s.desc : s.desc}</p>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.textMuted }}>{isEs ? s.noteEs || s.note : s.note}</div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
