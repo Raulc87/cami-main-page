@@ -330,7 +330,8 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
   system fonts if the CDN fails), and the events backend: if it is slow (> 3 s) or down, the
   events section and ticker are hidden and the rest of the page is unaffected.
 - The `events` response is cached and refreshed every 5 minutes by a time-driven trigger, so it
-  answers well within 3 s (FFR-033).
+  answers well within 3 s (FFR-033). A registration that changes availability rebuilds it
+  rather than clearing it, so no visitor gets a cold request.
 
 ## 19. Compatibility / Migration
 - `localStorage` access must keep working if storage is unavailable (language falls back to

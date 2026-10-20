@@ -219,10 +219,15 @@ Administration (Cami)
   listed in the alert email so Cami can fix them.
 - FFR-033: To answer within the 3 s limit (FNFR-003), the backend serves the `events` response
   from a cache that a time-driven trigger refreshes every 5 minutes (one entry per language).
-  Changes Cami makes in the `Events`/`Coupons` tabs therefore show on the site within about
-  5 minutes; a registration that changes an event's availability (e.g. sells it out) clears the
-  cache at once. Owner, 2026-10-20 (spike and CMP-025 timing: a cold `events` request took about
-  5 s).
+  Changes Cami makes in the `Events`/`Coupons` tabs therefore show on the site within 5 minutes.
+  A registration that changes an event's availability (e.g. sells it out) rebuilds the cache
+  before it answers, rather than clearing it, so the next visitor never waits for a cold
+  request; the rebuild adds a few seconds to that registration's own request. The
+  clock-based fields (`registrationOpen`, 12 h before start, BR-E09; an event dropped once it
+  starts, contract §3.1) may lag by up to 5 minutes; a registration sent in that window is
+  handled by BR-E13 on the server. Tests (CMP-025, CMP-033) check these boundaries against a
+  5-minute tolerance. Owner, 2026-10-20 (spike and CMP-025 timing: a cold `events` request
+  took about 5 s).
 
 Abuse metrics
 - FFR-029: A `Metrics` tab gets one row per day (accepted registrations, honeypot hits,

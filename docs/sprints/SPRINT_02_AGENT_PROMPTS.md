@@ -128,10 +128,15 @@ Order of work (each step one PR, in order; IMPLEMENTATION_PLAN §11 steps 1–7)
    §6 validation table, §7): registrationOpen (12 h, BR-E09), soldOut (BR-E10), `sinpe`
    object with isPlaceholder, FFR-028 translation cached by hash, invalid rows skipped and
    queued for the alert email. US-023 AC5's alert email itself is sent and verified in
-   CMP-027; here verify the row is skipped and queued.
+   CMP-027; here verify the row is skipped and queued. FFR-033: serve `events` from a cache
+   (one entry per language) rebuilt by a time-driven trigger every 5 minutes; add the
+   trigger-installation steps to the runbook and the release checklist; test the clock-based
+   fields against a 5-minute tolerance. CMP-026 rebuilds the cache after a registration that
+   changes availability.
 4. CMP-026-registration-storage — US-021: `register` (contract §3.3, §5–7), LockService around
    the capacity/duplicate check and the append, BR-E13 flags, FFR-014 file naming, formula
-   neutralization, idempotent submissionId, ALREADY_REGISTERED.
+   neutralization, idempotent submissionId, ALREADY_REGISTERED; rebuild the events cache when a
+   registration changes availability (FFR-033).
 5. CMP-027-coupons-limits-metrics — US-020 server ACs and US-024: `coupon` action, coupon at
    register (incl. `coupon changed`), counting rule, every LIMIT_*/ALERT_* in contract §9,
    honeypot fake success, Metrics row, and the alert email (FFR-029 as revised 2026-10-20):
