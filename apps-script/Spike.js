@@ -39,15 +39,18 @@ function insertWithBackoff_(blob) {
 }
 
 // Compares OCR text against the account and an exact amount. The amount must appear as a whole
-// number (thousands separators `.`, `,` or space allowed), not as part of a longer number.
+// number: thousands separators `.`, `,`, space and non-breaking space are allowed inside it, and
+// the same separators make a match inside a larger number impossible. No match inside `3,500`,
+// `3 500`, `500,000` or `500 000` when the amount is 500; a decimal part like `500,00` is fine.
+// The same rule is a CMP-028 requirement (test data: see docs/sprints/SPRINT_02_SPIKE.md).
 function compareOcr(text, accountNumber, accountName, amountCrc) {
+  var plain = String(text).replace(/[\u00a0\u202f]/g, ' ');
   var grouped = String(amountCrc).replace(/\B(?=(\d{3})+(?!\d))/g, '[., ]?');
-  // Not part of a longer number: no digit before (or digit plus a thousands separator, as in
-  // `3,500`), no digit after (or a separator plus three digits, as in `500,000`). A decimal
-  // part such as `500,00` is allowed.
-  var amountFound = new RegExp('(?<!\\d)(?<!\\d[.,])' + grouped + '(?!\\d)(?![.,]\\d{3})').test(text);
+  var before = '(?<!\\d)(?<!(?<!\\d)\\d{1,3}[., ])';
+  var after = '(?!\\d)(?![., ]\\d{3}(?!\\d))';
+  var amountFound = new RegExp(before + grouped + after).test(plain);
   var squash = function (v) { return String(v).replace(/[\s-]/g, '').toLowerCase(); };
-  var haystack = squash(text);
+  var haystack = squash(plain);
   var accountFound = (!!accountNumber && haystack.indexOf(squash(accountNumber)) !== -1) ||
     (!!accountName && haystack.indexOf(squash(accountName)) !== -1);
   return { checkResult: amountFound && accountFound ? 'ok' : 'mismatch', accountFound: accountFound, amountFound: amountFound };
