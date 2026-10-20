@@ -4,13 +4,16 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+- Version: 1.5 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
-  CMP-036)
-- Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
-  PR #30))
+  CMP-036; v1.3: FFR-033 events cache refreshed every 5 minutes, owner 2026-10-20 — CMP-037;
+  v1.4: `events` client wait raised from 3 s to 5 s (FFR-004, FNFR-003) and drafts not
+  validated (FFR-019), owner 2026-10-20 — CMP-038; v1.5: FFR-014 original-format fallback
+  and its FFR-017 payment check, owner 2026-10-20 — CMP-039)
+- Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
+  v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 Approved (on merge of PR #35))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -57,7 +60,7 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 | US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), FFR-031, BR-E13 |
 | US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024, FFR-025, FFR-030, BR-E13 |
 | US-022 | Automatic check of the payment screenshot | FFR-017, FFR-032 |
-| US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020 |
+| US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020, FFR-033 |
 | US-024 | Abuse metrics and alerts | FFR-029 |
 | US-025 | Participant emails (confirmation, payment not validated) | FFR-026 |
 
@@ -80,7 +83,7 @@ Events section
 - FFR-003: Each card has a register button; it is disabled when registration is closed
   (12 h before start, BR-E09) or the event is sold out (FFR-025).
 - FFR-004: When the page loads and there are no upcoming events, or the backend is unavailable
-  or slower than 3 s, the section and the ticker are hidden (Q-10) and the rest of the page
+  or slower than 5 s, the section and the ticker are hidden (Q-10) and the rest of the page
   renders normally. A later refresh (language change, or a stale-event refresh from the form)
   that fails keeps the events already shown, so an open registration form and its typed data
   are not lost; the backend re-checks every registration anyway (BR-E13). Owner, 2026-10-20:
@@ -148,10 +151,14 @@ Coupons
 
 Storage (server side)
 - FFR-014: The server re-validates every field, converts the screenshot to JPEG, stores it as
-  `<root>/<eventCode>/<ParticipantName>_<YYYY-MM-DD>_<eventCode>.jpg` (registration date, BR-E04),
+  `<root>/<eventCode>/<ParticipantName>_<YYYY-MM-DD>_<eventCode>.<ext>` (`ext` = `jpg`, or the
+  original extension when conversion fails; registration date, BR-E04),
   creating the event's subfolder if it is new (Q-5), and appends a row to the event's tab. Every
   user-controlled value written to a cell is neutralized as text (a leading `=`, `+`, `-`, `@`,
-  tab or CR is prefixed with `'`).
+  tab or CR is prefixed with `'`). If the screenshot cannot be converted, the original is stored
+  with its own extension and `checkDetails` notes `stored as original format: <ext>`; the
+  registration is not refused and the note alone does not set `needsReview` (contract §3.3
+  v1.2). Owner, 2026-10-20: "Save the original (Recommended)".
 - FFR-015: Each event has its own tab named by event code, created with the header row on its
   first registration.
 - FFR-016: Row columns and order: contract §6 (timestamp, submission ID, reference, event code,
@@ -178,7 +185,11 @@ Payment screenshot check
   description check, Q-4). Result `ok` / `mismatch` (with the failing fields in `checkDetails`) /
   `unreadable`. A non-`ok` result sets `needsReview` and sends the participant the
   "payment not validated" email (FFR-026). The check never changes the status. The temporary
-  OCR Google Doc is deleted right after reading.
+  OCR Google Doc is deleted right after reading. For a screenshot stored in its original format
+  (FFR-014) that Drive OCR cannot read (the import fails or finds no usable text), the result is `unreadable` at once, with no retries
+  (not a service failure under FFR-032); it sets `needsReview` so Cami checks it by hand, and the
+  participant gets **no** "payment not validated" email. Owner, 2026-10-20: "Cami checks by hand
+  (Recommended)".
 - FFR-032: If the OCR call fails for a service reason (e.g. Google's per-user OCR rate limit)
   after its in-execution retries, the row keeps check result `pending`. Only the "payment not
   validated" email waits for the check; the confirmation or "registration received" email is
@@ -200,7 +211,8 @@ Participant emails
     (event, date/time, amount, reference; for paid events: "Cami will confirm your payment");
   - a **"registration received" email** instead of the confirmation for registrations stored and
     flagged under FFR-024: it does not promise a place and says Cami will contact them;
-  - a **"payment not validated" email** when the check result is `mismatch` or `unreadable`:
+  - a **"payment not validated" email** when the check result is `mismatch` or `unreadable`
+    (except an original-format screenshot OCR cannot read, FFR-017):
     "The payment for <event> could not be validated", with a short explanation that the SINPE
     screenshot does not show the expected account or exact amount, and a request to reply to
     camila@lifetoolscr.com with the correct proof (Q-3, Q-26).
@@ -212,11 +224,27 @@ Administration (Cami)
 - FFR-019: `Events` tab: code, name, description, optional `nameEn`/`descriptionEn`, date, time
   (required), price CRC (0 = free), capacity, image URL, published. Codes unique,
   `[A-Z0-9-]{2,20}`; rows with a duplicated code are unpublished, and a registration that
-  arrives for one is stored and flagged (`checkDetails`: `duplicate event code`).
+  arrives for one is stored and flagged (`checkDetails`: `duplicate event code`). Only published
+  rows are validated and queued for the alert email; drafts (published unchecked) are ignored
+  until published, except that a code shared with a published row is still reported as
+  duplicated (contract §6, v1.1). Owner, 2026-10-20: "No, only published".
 - FFR-020: `Coupons` tab: event code, coupon code, discount %, max uses, active, optional expiry
   (Q-2). Cami adds or edits rows; no deploy. Coupon codes are 8–20 characters, `A-Z` and `0-9`
   only (hard to guess, §12); rows with an invalid code, discount or max uses are ignored and
   listed in the alert email so Cami can fix them.
+- FFR-033: To answer within the 5 s limit (FNFR-003), the backend serves the `events` response
+  from a cache that a time-driven trigger refreshes every 5 minutes (one entry per language).
+  Changes Cami makes in the `Events`/`Coupons` tabs therefore show on the site within 5 minutes.
+  A registration that changes an event's availability (e.g. sells it out) rebuilds the cache
+  after the lock is released (like OCR and emails, FFR-025) and before it answers, rather than
+  clearing it, so the next visitor never waits for a cold
+  request; the rebuild adds a few seconds to that registration's own request. The
+  clock-based fields (`registrationOpen`, 12 h before start, BR-E09; an event dropped once it
+  starts, contract §3.1) may lag by up to 5 minutes; a registration sent in that window is
+  handled by BR-E13 on the server. Tests (CMP-025, CMP-033) check these boundaries against a
+  5-minute tolerance. Owner, 2026-10-20 (spike and CMP-025 timing: a cold `events` request
+  took about 5 s). If a refresh fails, the last good answer is served for up to 20 minutes (the
+  failed run shows in Executions); the backend still re-checks every registration (BR-E13).
 
 Abuse metrics
 - FFR-029: A `Metrics` tab gets one row per day (accepted registrations, honeypot hits,
@@ -238,7 +266,8 @@ Abuse metrics
 - BR-E02: Prices in Costa Rican colones (₡, CRC), whole colones; 0 = free event.
 - BR-E03: Amount due = price × (1 − discount%), rounded to the nearest colón (Q-13).
 - BR-E04: File name = participant name (accents removed, spaces → `_`, only `[A-Za-z0-9_-]`) +
-  `_` + registration date `YYYY-MM-DD` + `_` + event code + `.jpg`; `_2`, `_3`… on collision.
+  `_` + registration date `YYYY-MM-DD` + `_` + event code + `.jpg` (or the original extension,
+  FFR-014); `_2`, `_3`… on collision.
 - BR-E05: Registrations are created `new`; `confirmed`, `refund/cancelled` and `spam` are set only
   by Cami.
 - BR-E06: The automatic check is an aid, not proof of payment; Cami confirms against her bank.
@@ -272,7 +301,8 @@ Abuse metrics
 
 ## 8. Outputs
 - Site: cards, ticker, form, discounted amount, confirmation reference or error.
-- Drive: one JPEG per paid registration, in the event's subfolder.
+- Drive: one JPEG per paid registration (the original format if conversion fails, FFR-014), in
+  the event's subfolder.
 - Sheets: one row per registration; `Metrics` daily rows.
 - Email: confirmation and "payment not validated" to participants; abuse alerts to camila@.
 
@@ -292,7 +322,8 @@ Abuse metrics
 
 ## 10. Alternate Flows
 - Coupon refused: message, full price, the visitor can continue without it.
-- Check `mismatch`/`unreadable`: stored, `needsReview` TRUE, "not validated" email sent.
+- Check `mismatch`/`unreadable`: stored, `needsReview` TRUE, "not validated" email sent (except
+  an original-format screenshot OCR cannot read: no email, FFR-017).
 - Sold out / closed before the form opened: button disabled, no form.
 - Already registered with that email: message, nothing stored.
 - Refund or cancellation: Cami handles it outside the site and sets `refund/cancelled`.
@@ -301,7 +332,8 @@ Abuse metrics
 - Event closes or sells out between form open and submit → stored and flagged (FFR-024).
 - Two participants with the same name on the same day → file suffix (BR-E04).
 - Non-image renamed `.jpg` → rejected (type from content).
-- HEIC screenshot → converted to JPEG before storage/OCR (method chosen in the spike).
+- HEIC screenshot → converted to JPEG before storage/OCR (method chosen in the spike); if the
+  conversion fails, the original is stored and noted (FFR-014).
 - Backend unavailable → section and ticker hidden; form shows retry.
 - Email sending fails → the registration is still stored; `checkDetails` gets `email failed` and
   `needsReview` is TRUE.
@@ -336,8 +368,9 @@ Exact tabs, columns, codes and Drive layout: [EVENTS_API_CONTRACT.md §6](EVENTS
   repo.
 - FNFR-002 Secrets: script properties only; the public `/exec` URL is the only backend value in
   the client bundle.
-- FNFR-003 Performance: the events request never blocks first paint; > 3 s or failure hides the
-  section.
+- FNFR-003 Performance: the events request never blocks first paint; > 5 s or failure hides the
+  section. The limit was 3 s until 2026-10-20; the owner raised it to 5 s after CMP-025 staging
+  timing showed about 1 in 10 cached answers taking 3.4–4.6 s (Apps Script start-up).
 - FNFR-004 Accessibility: keyboard-usable cards and form, labelled fields, ticker pausable and
   `prefers-reduced-motion` aware.
 - FNFR-005 Bilingual: all UI strings EN/ES; event text per FFR-028; emails per `lang`.
@@ -402,10 +435,15 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Form order | The coupon comes before the SINPE instructions and the screenshot (§9 steps 5–6) — owner, 2026-10-20, answer 2 to "coupon before the screenshot?": "yes" |
 | Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
 | Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
+| Events wait (FFR-004, FNFR-003) | The site waits up to 5 s (was 3 s) for the `events` answer before hiding the section and the ticker; the page itself never waits — owner, 2026-10-20, asked "On staging, about 1 in 10 loads of the event list took longer than the site's 3-second wait (3.4 s and 4.6 s), so for those visitors the events section and ticker stay hidden. The page itself is never slowed down; the events just load in after it. How should we handle it?" (options: wait up to 5 s; accept for now; retry once; remember the last list): "Wait up to 5 s" |
+| Screenshot format (FFR-014) | If conversion to JPEG fails, store the original with its own extension and a `checkDetails` note; never refuse the registration for it — owner, 2026-10-20, asked "When someone pays and uploads their SINPE screenshot, the backend saves it as a JPEG. If Google can't convert an unusual image type (WebP or iPhone HEIC; most phones send JPEG anyway), what should happen?" (options: save the original; refuse the upload): "Save the original (Recommended)" |
+| Original-format payment check (FFR-017) | A screenshot kept in its original format that OCR cannot read → `unreadable`, no retries, flagged for Cami, no "not validated" email — owner, 2026-10-20, asked "Follow-up to 'Save the original': when a screenshot is kept in its original format (rare WebP/HEIC), Google's automatic payment check may not be able to read it. What should happen then?" (options: Cami checks by hand; normal "not validated" email): "Cami checks by hand (Recommended)" |
+| Draft rows (FFR-019) | Only published `Events` rows are validated and queued for the alert email; drafts are ignored (a code shared with a published row is still reported) — owner, 2026-10-20, asked "Should the daily alert email also flag mistakes in event rows Cami hasn't published yet …?": "No, only published" |
 | Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
 | OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
 | OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |
 | Sender alias (FFR-026, #17) | Send from `no-reply@lifetoolscr.com`; the script gets the Gmail scope `gmail.settings.basic` (it can read and change the owning account's Gmail settings), accepted by the owner — 2026-10-20: "add the permission for no-reply@"; the spike's alias test confirmed it is enough (the test email arrived From no-reply@lifetoolscr.com). A broader scope (e.g. full mailbox) goes back to the owner before deploy (ARCHITECTURE §12, TECH_STACK §11) |
+| Events cache (FFR-033) | Cache the `events` response, refreshed by a time-driven trigger every 5 minutes; sheet changes show within about 5 minutes — owner, 2026-10-20: "OK on the cache" (first, a 60 s cache), then "b" (the 5-minute refresh, chosen because on a low-traffic site most visitors would otherwise hit an expired cache and a ~5 s answer) |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.

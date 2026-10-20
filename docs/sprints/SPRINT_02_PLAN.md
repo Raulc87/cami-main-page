@@ -147,7 +147,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner.
 | `src/constants/data.jsx`, `colors.js`, every other existing component | Nobody this sprint |
 
 ## Integration Contracts
-- [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.0, locked: Agent 1 is the provider,
+- [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.2, locked: Agent 1 is the provider,
   Agents 2 and 3 the consumers. A change follows its change rule (coordinator docs PR first,
   version bump, both sides told) before any code relies on it.
 - Inside the frontend: `useEvents()` returns `{ status: "loading" | "ready" | "hidden", sinpe,
@@ -203,7 +203,10 @@ The human reviewer is the final approver.
   PR body.
 - CMP-033: the full contract §10 end-to-end list on `main` against staging; each email received
   in a Gmail and an Outlook inbox; layouts at 1280/900/375 px in EN and ES; regression of the
-  existing sections; the US-005 AC2 fallback with test data (not committed).
+  existing sections; the US-005 AC2 fallback with test data (not committed); the `events` and
+  `register` calls from a real browser to the Apps Script `/exec` URL (CORS and redirect path,
+  not exercised in PR #28); the ticker layout shift (CLS) while the events answer takes up to
+  5 s (FFR-004).
 - A story moves to `Done` only when all its ACs pass and the owner approves the evidence; the
   coordinator records it.
 
@@ -276,4 +279,26 @@ The human reviewer is the final approver.
   `appsscript.json` and `Spike.js`? → done; 3. ran `emailAliasTest` and allowed the permission?
   → allowed; 4. the log lines → as quoted; 5. the From line of the test email → no-reply@.
   Spike step e passes with that scope.
+- CMP-025 on staging (2026-10-20): `events` returns the expected events in ES and EN after the
+  owner fixed duplicated test codes; the invalid-row queues hold 8 event rows and 4 coupon rows
+  as designed. A cold `events` request took about 5 s (over the 3 s client limit). Owner,
+  verbatim: "OK on the cache" (a 60 s cache), then "b" — question as asked: (a) leave the 60 s
+  cache until CMP-028, or (b) refresh the cache with a time-driven trigger every 5 minutes now,
+  so sheet changes show within about 5 minutes? → **(b)** (FFR-033, US-023 AC1). The owner
+  confirmed one staging deployment only.
+- CMP-025 retiming with the 5-minute trigger (2026-10-20): 18 of 20 `events` calls over 10 minutes
+  took 0.9–2.2 s; 2 took 3.4 s and 4.6 s (Apps Script start-up), over the 3 s client wait. Question
+  as asked: "On staging, about 1 in 10 loads of the event list took longer than the site's 3-second
+  wait (3.4 s and 4.6 s), so for those visitors the events section and ticker stay hidden. The page
+  itself is never slowed down; the events just load in after it. How should we handle it?" —
+  options: wait up to 5 s; accept for now; retry once; remember the last list. Owner: **"Wait up to
+  5 s"** (FFR-004, FNFR-003; CMP-038). Agent 2 changes the `events` timeout in `src/api/events.js`.
+- CMP-026 (2026-10-20), screenshot format: question as asked: "When someone pays and uploads their
+  SINPE screenshot, the backend saves it as a JPEG. If Google can't convert an unusual image type
+  (WebP or iPhone HEIC; most phones send JPEG anyway), what should happen?" — options: save the
+  original; refuse the upload. Owner: **"Save the original (Recommended)"** (FFR-014, contract §3.3
+  v1.2; CMP-039). Follow-up question as asked: "Follow-up to 'Save the original': when a screenshot
+  is kept in its original format (rare WebP/HEIC), Google's automatic payment check may not be able
+  to read it. What should happen then?" — options: Cami checks by hand; normal "not validated"
+  email. Owner: **"Cami checks by hand (Recommended)"** (FFR-017).
 

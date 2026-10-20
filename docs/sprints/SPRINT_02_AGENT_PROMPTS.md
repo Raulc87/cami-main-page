@@ -128,10 +128,16 @@ Order of work (each step one PR, in order; IMPLEMENTATION_PLAN §11 steps 1–7)
    §6 validation table, §7): registrationOpen (12 h, BR-E09), soldOut (BR-E10), `sinpe`
    object with isPlaceholder, FFR-028 translation cached by hash, invalid rows skipped and
    queued for the alert email. US-023 AC5's alert email itself is sent and verified in
-   CMP-027; here verify the row is skipped and queued.
+   CMP-027; here verify the row is skipped and queued. FFR-033: serve `events` from a cache
+   (one entry per language) rebuilt by a time-driven trigger every 5 minutes; add the
+   trigger-installation steps to the runbook only (the coordinator adds the release-checklist
+   line); test the clock-based
+   fields against a 5-minute tolerance. CMP-026 rebuilds the cache after a registration that
+   changes availability.
 4. CMP-026-registration-storage — US-021: `register` (contract §3.3, §5–7), LockService around
    the capacity/duplicate check and the append, BR-E13 flags, FFR-014 file naming, formula
-   neutralization, idempotent submissionId, ALREADY_REGISTERED.
+   neutralization, idempotent submissionId, ALREADY_REGISTERED; rebuild the events cache when a
+   registration changes availability (FFR-033), after the lock is released (FFR-025).
 5. CMP-027-coupons-limits-metrics — US-020 server ACs and US-024: `coupon` action, coupon at
    register (incl. `coupon changed`), counting rule, every LIMIT_*/ALERT_* in contract §9,
    honeypot fake success, Metrics row, and the alert email (FFR-029 as revised 2026-10-20):
@@ -166,7 +172,7 @@ Order of work:
    - src/api/events.js: getEvents(lang), checkCoupon({eventCode, couponCode, email}),
      register(payload), per EVENTS_API_CONTRACT §2 (text/plain POST with a JSON string body,
      redirect "follow", no custom headers), each resolving to the §7 envelope; network failure
-     or timeout → SERVER_ERROR; `events` times out at 3 s.
+     or timeout → SERVER_ERROR; `events` times out at 5 s (owner, 2026-10-20; was 3 s).
    - src/hooks/useEvents.js: returns { status: "loading" | "ready" | "hidden", sinpe, events,
      refetch } (refetch added 2026-10-20, SPRINT_02_PLAN → Integration Contracts);
      "hidden" when VITE_EVENTS_API_URL is empty, on error, timeout or zero events (FFR-004);
@@ -219,7 +225,11 @@ Order of work:
    Gmail and an Outlook inbox; check layouts at 1280/900/375 px in EN and ES and the existing
    sections for regressions; check US-005 AC2 with test data you do not commit; with the
    owner, upload a screenshot from a real iPhone (default HEIC settings) through the form and
-   confirm it is stored as JPEG and checked (owner skipped the raw-HEIC spike test, 2026-10-20). Write
+   confirm it is stored as JPEG and checked (owner skipped the raw-HEIC spike test, 2026-10-20),
+   or, if conversion fails, stored in its original format with the note and checked per FFR-017;
+   confirm the `events` and `register` calls work from a real browser to the staging `/exec` URL
+   (CORS and redirect path, not exercised in PR #28); measure the ticker layout shift (CLS) while
+   the events answer takes up to 5 s (FFR-004), with evidence. Write
    docs/sprints/SPRINT_02_VERIFICATION.md (one table per story, AC × case, Pass/Fail/N/A) with
    JPEG evidence in docs/sprints/evidence/sprint-02/ (under 5 MB, personal data masked).
    A Fail is not fixed in this PR: classify it as AC wording or defect and propose a ticket.

@@ -538,7 +538,7 @@ So that I can choose one to attend
    When the cards render
    Then name and description are in English (`nameEn`/`descriptionEn` if filled, otherwise the
    automatic translation).
-5. Given no upcoming events, or the backend slow (> 3 s) or down
+5. Given no upcoming events, or the backend slow (> 5 s) or down
    When the page loads
    Then the section and the ticker are hidden and the rest of the page renders normally.
 
@@ -713,7 +713,8 @@ So that I can manage participants and payments in one place
    When the backend receives it
    Then the screenshot is stored as JPEG in `<root>/<eventCode>/` named
    `<ParticipantName>_<YYYY-MM-DD>_<eventCode>.jpg` (registration date; the subfolder is created
-   if new; `_2` on collision). A ₡0 registration stores no file.
+   if new; `_2` on collision). A ₡0 registration stores no file. If the image cannot be converted,
+   it is stored in its original format with that extension and a `checkDetails` note (FFR-014).
 2. Given a valid registration
    When it is stored
    Then a row with the contract §6 columns is appended to the event's tab (created with headers
@@ -765,7 +766,8 @@ So that I spot wrong payments before confirming
    and the "payment not validated" email is sent (US-025).
 3. Given an unreadable image
    When it is checked
-   Then the result is `unreadable`, `needsReview` is TRUE and the email is sent.
+   Then the result is `unreadable`, `needsReview` is TRUE and the email is sent (except the case
+   in AC7).
 4. Given any result
    When it is written
    Then the status stays `new` and the temporary OCR Doc is deleted.
@@ -779,6 +781,11 @@ So that I spot wrong payments before confirming
    and sends that email if needed; after 24 hours still `pending`, retries stop and the row is
    listed in that day's alert email to camila@, which it triggers (FFR-029, FFR-032, owner
    2026-10-20).
+7. Given a screenshot stored in its original format (conversion failed, FFR-014) that OCR cannot
+   read
+   When it is checked
+   Then the result is `unreadable` at once (no retries), `needsReview` is TRUE and **no**
+   "payment not validated" email is sent; Cami checks it by hand (FFR-017, owner 2026-10-20).
 
 **Dependencies**
 - US-021; Cami's samples (spike).
@@ -790,7 +797,7 @@ So that I spot wrong payments before confirming
 - Priority: High
 - Story Points: 3
 - Status: Ready
-- Related Spec: FEATURE_SPEC_events_registration (FFR-019, FFR-020, FFR-028); contract §6
+- Related Spec: FEATURE_SPEC_events_registration (FFR-019, FFR-020, FFR-033, FFR-028); contract §6
 - Related Requirements: FR-011
 
 **User Story**
@@ -802,17 +809,17 @@ So that the site reflects them without waiting for a developer
 **Acceptance Criteria**
 
 1. Given a new `Events` row, published, with a future start, price and capacity
-   When the site is next loaded
+   When the site is loaded within 5 minutes (the events cache refresh, FFR-033)
    Then the event appears in the section and the ticker.
 2. Given a row with a missing or invalid required field (code, name, date, time, price,
    capacity) or a duplicated code
-   When events are loaded
+   When events are loaded within 5 minutes (FFR-033)
    Then that event (all rows of a duplicated code) is not shown and the others still are.
 3. Given a `Coupons` row added or its discount or max uses changed
    When the next coupon check runs
-   Then it uses the new values.
+   Then it uses the new values (coupon checks read the sheet directly, not the events cache).
 4. Given `nameEn`/`descriptionEn` filled for an event
-   When the site is in English
+   When the site is in English, within 5 minutes of the edit (FFR-033)
    Then those texts are shown instead of the automatic translation.
 5. Given a `Coupons` row with a code that is not 8–20 characters `A-Z0-9`, or an invalid
    discount or max uses
@@ -882,7 +889,8 @@ So that I know my place is reserved or what to fix
    When it is saved
    Then the participant receives a confirmation email in the language they used on the site,
    with event, date/time, amount and reference, reply-to camila@lifetoolscr.com.
-2. Given a check result `mismatch` or `unreadable`
+2. Given a check result `mismatch` or `unreadable` (except an original-format screenshot OCR
+   cannot read, US-022 AC7)
    When it is written
    Then the participant receives "The payment for <event> could not be validated" / "El pago
    para <evento> no pudo ser validado" with a short explanation and a request to reply to

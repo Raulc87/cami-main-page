@@ -4,7 +4,7 @@
 - Version: 1.0 (CMP-022)
 - Status: Approved (on merge of PR #22)
 - Related specs: [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md)
-  (v1.0), [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) (v1.0, locked),
+  (v1.0), [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) (v1.2, locked),
   [ARCHITECTURE_SPEC.md](../specs/ARCHITECTURE_SPEC.md) (v1.2),
   [UX_UI_DIRECTION.md](../ux/UX_UI_DIRECTION.md) (v1.1), [TECH_STACK.md](../../TECH_STACK.md)
   (v1.2), [ADR-008](../decisions/ADR-008-events-backend-google-apps-script.md)
@@ -33,7 +33,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
 
 | Requirement | Story | AC | Step | Test (manual, against staging — contract §10) |
 |---|---|---|---|---|
-| FFR-019, FFR-020, FFR-028 | US-023 | AC1–AC4; AC5 (row skipped and queued) | 4 | Edit staging `Events`/`Coupons`; reload; invalid rows hidden and queued |
+| FFR-019, FFR-020, FFR-028, FFR-033 | US-023 | AC1–AC4; AC5 (row skipped and queued) | 4 | Edit staging `Events`/`Coupons`; reload within 5 minutes (after the trigger refresh); invalid rows hidden and queued; `refreshEventsCache` trigger shows Completed runs; cached `events` answers within 5 s; clock-based fields checked with a 5-minute tolerance |
 | FFR-019, FFR-029 | US-023 | AC5 (alert email lists the row) | 6 | Invalid `Coupons` row triggers that day's alert email and appears in it (FFR-029) |
 | FFR-001..FFR-004, FFR-025, BR-E09 | US-017 | AC1–AC5 | 4, 9 | Cards at 1280/900/375 px, EN/ES; closed/sold-out buttons; backend down → hidden |
 | FFR-005, FFR-006 | US-018 | AC1–AC5 | 9 | Ticker moves, pauses on hover/focus, static with reduced motion, click scrolls |
@@ -54,7 +54,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
 
 ## 5. Target State
 - `main` holds the events backend source and the events UI. The UI renders only when
-  `VITE_EVENTS_API_URL` is set and the backend answers in ≤ 3 s; otherwise the page is exactly
+  `VITE_EVENTS_API_URL` is set and the backend answers in ≤ 5 s; otherwise the page is exactly
   today's page (FFR-004). A hotfix release from `main` before the gates pass therefore ships no
   visible events feature.
 - A **staging** Apps Script deployment, spreadsheet and folder run the full flow end to end, with
@@ -68,7 +68,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
   staging by the owner after merge.
 - **Frontend against the contract.** The frontend foundation (step 8) adds the API client
   (`src/api/events.js`: `getEvents(lang)`, `checkCoupon(...)`, `register(...)`, all following
-  contract §2: `text/plain` POST, `redirect: "follow"`, no custom headers, 3 s timeout for
+  contract §2: `text/plain` POST, `redirect: "follow"`, no custom headers, 5 s timeout for
   `events`) and the `useEvents` hook. Until the staging `events` action is deployed, frontend
   agents may use a local fixture that matches contract §7 **that is never committed**; final
   verification is always against staging.
@@ -100,7 +100,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
   owner creates them; the runbook says how.
 
 ## 9. API / Integration Changes
-- New: the events web app, per [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.0.
+- New: the events web app, per [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.2.
   Any change follows the contract's change rule (spec first, version bump, both owners told).
 
 ## 10. Configuration / Secrets
@@ -117,8 +117,8 @@ Planning model: Opus — this plan sequences a new backend and three workstreams
 | 1 | CMP-023 | Deploy runbook v1: create the Apps Script project, set script properties, deploy as web app (execute as owner, access "Anyone"), update a deployment keeping its URL, staging vs production, rollback to a previous version | Agent 1 | Sonnet | Specified procedure |
 | 2 | CMP-024 | Backend spike (ADR-008 → Validation) and backend skeleton; findings in `SPRINT_02_SPIKE.md`: browser→script path from a page on a site-like origin, Drive/Sheets writes, OCR on Cami's samples, HEIC → JPEG method, mail alias, timing | Agent 1 | Sonnet | Implementing and measuring; decisions it reveals go to the owner |
 | 3 | — | Owner deploys the skeleton to staging with the runbook; the runbook is corrected from what happened | Owner + Agent 1 | — | — |
-| 4 | CMP-025 | US-023 and the `events` action: read and validate `Events`/`Coupons`, translation with overrides, `registrationOpen`/`soldOut`, `sinpe` object | Agent 1 | Sonnet | Specified |
-| 5 | CMP-026 | US-021: `register` — validation, lock, capacity and duplicate checks, BR-E13 flags, Drive file, row, idempotency | Agent 1 | Sonnet | Specified; the hardest backend step |
+| 4 | CMP-025 | US-023 and the `events` action: read and validate `Events`/`Coupons`, translation with overrides, `registrationOpen`/`soldOut`, `sinpe` object; FFR-033 events cache with a 5-minute trigger and its runbook step | Agent 1 | Sonnet | Specified |
+| 5 | CMP-026 | US-021: `register` — validation, lock, capacity and duplicate checks, BR-E13 flags, Drive file, row, idempotency; rebuild the events cache, outside the lock, when availability changes (FFR-033) | Agent 1 | Sonnet | Specified; the hardest backend step |
 | 6 | CMP-027 | US-020 (server) and US-024: `coupon` action, coupon at `register`, counting rule, `LIMIT_*` throttles, upload cap, honeypot, `Metrics`, the alert email triggered by a threshold or an invalid sheet row (US-023 AC5), at most one per day (FFR-029) | Agent 1 | Sonnet | Specified |
 | 7 | CMP-028 | US-022 and US-025: OCR check after the lock, `checkResult`/`checkDetails`/`needsReview`, the three participant emails from the drafts; FFR-032 time-driven retry of `pending` checks (10 min, 24 h limit, alert), plus a runbook step to install the trigger | Agent 1 | Sonnet | Specified |
 | 8 | CMP-029 | Frontend foundation: API client, `useEvents`, `UI_TEXT.events` (section, ticker, statuses), `global.css` events block, `App.jsx` slots, logo placeholder, `.env.example` | Agent 2 | Sonnet | Shared files; must merge before steps 9 and 11 |
@@ -152,7 +152,7 @@ staging. A story moves to `Done` only when all its ACs pass there and the owner 
 evidence.
 
 ## 15. Error Handling
-As specified: contract §7 error codes and consumer behavior; FFR-004 (hide on failure or > 3 s);
+As specified: contract §7 error codes and consumer behavior; FFR-004 (hide on failure or > 5 s);
 FFR-022 (same `submissionId` on retry); BR-E13 (store and flag a paid registration whose state
 changed); `email failed` flag (US-025 AC3).
 

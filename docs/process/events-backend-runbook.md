@@ -44,6 +44,8 @@ Do this once for staging, and again for production when the release gates pass
 ([release-checklist.md §3b](release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)).
 
 ### 2.1 Data store
+Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a time shown as
+`6:30 PM` is treated as invalid and the event is not shown (it is listed in the alert email).
 1. In Google Drive (Workspace account), create the spreadsheet with the tabs from contract §6:
    `Events`, `Coupons`, `Metrics`, with the column headers exactly as listed there. Registration
    tabs (`<eventCode>`) are created by the script on the first registration.
@@ -55,9 +57,7 @@ Do this once for staging, and again for production when the release gates pass
 ### 2.2 Create the Apps Script project
 Pick one of the two paths. The project is a **standalone** script (script.google.com → New
 project); it reaches the spreadsheet through `SPREADSHEET_ID`, so the same code works in both
-environments. ADR-008 Option A words it as a script "bound to" the spreadsheet; either works
-with contract §9, and the owner decides which (see the PR). If bound, create each project from
-its spreadsheet (Extensions → Apps Script).
+environments (owner decision 2026-10-20, recorded in ADR-008).
 
 **Path A — paste in the editor (no tooling)**
 1. Open <https://script.google.com> signed in as the Workspace account → **New project**, name it
@@ -113,7 +113,7 @@ and initial values are the contract (§9); do not rename them.
 | `DRIVE_ROOT_FOLDER_ID` | the folder ID for this environment |
 | `SINPE_NUMBER` | until Cami confirms (staging, and production before release): `0000-0000 (POR CONFIRMAR / TO BE CONFIRMED)` (BR-E01); then the real number |
 | `SINPE_ACCOUNT_NAME` | until Cami confirms: `Nombre por confirmar` (BR-E01); then the real name |
-| `MAIL_FROM_ALIAS` | the Workspace alias if available, else leave empty (fallback to the account) |
+| `MAIL_FROM_ALIAS` | `no-reply@lifetoolscr.com`; the account that owns the project must have it as a verified "Send mail as" alias in Gmail (Settings → Accounts → Send mail as), (checked in the spike, step e); if sending from it fails, the fallback is `camila@lifetoolscr.com` |
 | `MAIL_REPLY_TO` | `camila@lifetoolscr.com` |
 | `LIMIT_REGISTER_PER_MIN` | `20` |
 | `LIMIT_COUPON_CHECKS_PER_MIN` | `30` |
@@ -122,6 +122,11 @@ and initial values are the contract (§9); do not rename them.
 | `LIMIT_UPLOAD_MB_PER_DAY` | `300` |
 | `ALERT_HONEYPOT_PER_DAY` | `10` |
 | `ALERT_THROTTLED_PER_DAY` | `20` |
+
+The spike stub `register` (CMP-024 to CMP-026) accepts uploads only when the script property
+`SPIKE_ENABLED` is `true`. Set it on **staging only**, and never on production; CMP-026 removes it.
+**Create the production project only after CMP-026 and CMP-027 are merged** (validated `register`,
+throttling and daily caps); until then `main` holds a backend that must not be public.
 
 A placeholder SINPE value is shown to visitors with the placeholder marker
 (`isPlaceholder`, BR-E01). Production must never keep it
@@ -136,9 +141,43 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
    (unsafe)** → **Allow**. The "unsafe" warning appears because the script is not verified by
    Google; it is your own script.
 3. Scopes are listed in `apps-script/appsscript.json` (`oauthScopes`, required from CMP-024).
+   `gmail.settings.basic` is there only so the script may send from the `MAIL_FROM_ALIAS` address
+   (Apps Script checks it against the account's "Send mail as" list); it also allows reading and
+   changing Gmail settings, so run only this repo's code in the project.
    If a later PR adds a
    scope, you will have to repeat this step and create a **new version** (section 5) for the web
    app to use it.
+
+### 2.6 Events cache trigger
+Do this once in **each** environment: staging, and production before it is released.
+The `events` answer is kept in a cache and rebuilt every 5 minutes, so the page never waits for
+the spreadsheet (a rebuild takes about 5 s and the site gives up after 3 s). A change Cami makes
+in the sheet shows within about 5 minutes (owner decision 2026-10-20). Without the trigger the
+page still works, but the first visitor after the cache expires (6 minutes) waits about 5 s and
+may not see the events section.
+1. In the script editor, click the clock icon (**Triggers**) in the left sidebar.
+2. **Add Trigger** (bottom right).
+3. Choose which function to run: `refreshEventsCache`. Choose which deployment should run:
+   **Head**. Select event source: **Time-driven**. Select type of time based trigger:
+   **Minutes timer**. Select minute interval: **Every 5 minutes**.
+4. **Save**. If Google asks for permission, allow it (same account, **Advanced** → **Go to
+   project (unsafe)** → **Allow**).
+5. Check: after about 6 minutes, open **Executions** (sidebar): a `refreshEventsCache` run
+   appears about every 5 minutes with status **Completed**. A **Failed** run: open it and read the
+   log; the site keeps working from the last cache or rebuilds on demand.
+If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). The
+last good answer is also kept in script properties and used for up to 20 minutes if Google drops
+the cache early, so a short outage does not empty the page. That copy fits while the event list is
+under about 9 KB (roughly 6 to 8 events with full-length texts); beyond that the run is reported
+as **Failed** with "last-good copy too large", and the cache keeps working without the fallback.
+After bumping `EVENTS_CACHE_VERSION` in `Events.js`, deploy a New version right away (section 5):
+the trigger fills the new keys at once while the deployed version still reads the old ones.
+Triggers run the **saved** code (Head), not the deployed version: after changing `Events.js`,
+saving is enough for the trigger, while visitors still need a **New version** (section 5).
+The automatic English translations are kept in script properties named `TR_<hash>` (one per
+changed text). They are not pruned; if the properties page ever fills up, they can all be deleted
+and are rebuilt on demand.
+Quota: about 290 runs a day of 5 to 10 s each, well inside the Workspace limits.
 
 ## 3. Deploy as a web app (first time)
 1. Editor → **Deploy** → **New deployment** → gear → **Web app**.
@@ -241,6 +280,7 @@ Common failures:
 Everything in [release-checklist.md §3b](release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)
 plus: production project updated by section 5, smoke request passes against the production URL,
 and the production build used the production URL.
+In each environment the section 2.6 trigger is installed (Executions shows it running).
 
 ## 10. Correct this runbook
 Record at the first deploy: the `clasp` version used, and what `clasp create` wrote into
