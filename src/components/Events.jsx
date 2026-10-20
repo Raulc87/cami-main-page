@@ -30,9 +30,10 @@ export default function Events({ events, sinpe, onRefetch }) {
   // depend on onClose (and steal focus). onStale (`onRefetch`) is stable too, from useEvents.
   const close = useCallback(() => {
     setSelectedEvent(null)
-    // Back to the card's button; when a refetch removed that card, to the section instead.
+    // Back to the card's button; when a refetch removed that card or disabled its button
+    // (closed or sold out), to the section instead (UX_UI_DIRECTION §13).
     const trigger = triggerRef.current
-    if (trigger?.isConnected) trigger.focus()
+    if (trigger?.isConnected && !trigger.disabled) trigger.focus()
     else document.getElementById('events')?.focus()
   }, [])
 
