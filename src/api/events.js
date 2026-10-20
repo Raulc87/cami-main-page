@@ -6,7 +6,7 @@
 
 const BASE_URL = (import.meta.env.VITE_EVENTS_API_URL || '').trim()
 
-const EVENTS_TIMEOUT_MS = 3000 // FFR-004: slower than this hides the section
+const EVENTS_TIMEOUT_MS = 5000 // FFR-004: slower than this hides the section (5 s, CMP-038)
 const POST_TIMEOUT_MS = 60000 // uploads of up to ~6.7 MB of base64 on a slow connection
 
 const serverError = () => ({ ok: false, data: null, error: { code: 'SERVER_ERROR' } })
