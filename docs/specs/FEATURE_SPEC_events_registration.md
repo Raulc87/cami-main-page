@@ -186,7 +186,7 @@ Payment screenshot check
   `unreadable`. A non-`ok` result sets `needsReview` and sends the participant the
   "payment not validated" email (FFR-026). The check never changes the status. The temporary
   OCR Google Doc is deleted right after reading. For a screenshot stored in its original format
-  (FFR-014) that Drive OCR cannot import, the result is `unreadable` at once, with no retries
+  (FFR-014) that Drive OCR cannot read (the import fails or finds no usable text), the result is `unreadable` at once, with no retries
   (not a service failure under FFR-032); it sets `needsReview` so Cami checks it by hand, and the
   participant gets **no** "payment not validated" email. Owner, 2026-10-20: "Cami checks by hand
   (Recommended)".
@@ -211,7 +211,8 @@ Participant emails
     (event, date/time, amount, reference; for paid events: "Cami will confirm your payment");
   - a **"registration received" email** instead of the confirmation for registrations stored and
     flagged under FFR-024: it does not promise a place and says Cami will contact them;
-  - a **"payment not validated" email** when the check result is `mismatch` or `unreadable`:
+  - a **"payment not validated" email** when the check result is `mismatch` or `unreadable`
+    (except an original-format screenshot OCR cannot read, FFR-017):
     "The payment for <event> could not be validated", with a short explanation that the SINPE
     screenshot does not show the expected account or exact amount, and a request to reply to
     camila@lifetoolscr.com with the correct proof (Q-3, Q-26).
@@ -321,7 +322,8 @@ Abuse metrics
 
 ## 10. Alternate Flows
 - Coupon refused: message, full price, the visitor can continue without it.
-- Check `mismatch`/`unreadable`: stored, `needsReview` TRUE, "not validated" email sent.
+- Check `mismatch`/`unreadable`: stored, `needsReview` TRUE, "not validated" email sent (except
+  an original-format screenshot OCR cannot read: no email, FFR-017).
 - Sold out / closed before the form opened: button disabled, no form.
 - Already registered with that email: message, nothing stored.
 - Refund or cancellation: Cami handles it outside the site and sets `refund/cancelled`.
