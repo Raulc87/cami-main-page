@@ -203,7 +203,10 @@ The human reviewer is the final approver.
   PR body.
 - CMP-033: the full contract §10 end-to-end list on `main` against staging; each email received
   in a Gmail and an Outlook inbox; layouts at 1280/900/375 px in EN and ES; regression of the
-  existing sections; the US-005 AC2 fallback with test data (not committed).
+  existing sections; the US-005 AC2 fallback with test data (not committed); the `events` and
+  `register` calls from a real browser to the Apps Script `/exec` URL (CORS and redirect path,
+  not exercised in PR #28); the ticker layout shift (CLS) while the events answer takes up to
+  5 s (FFR-004).
 - A story moves to `Done` only when all its ACs pass and the owner approves the evidence; the
   coordinator records it.
 
