@@ -81,7 +81,8 @@ scroll-reveal animation — `Nav` is still dynamic via `LanguageContext`, see be
 Each component owns its section: it imports what it needs from `constants/` and receives no
 content props from `App.jsx` (only `r`). **Exception (events):** `App.jsx` calls `useEvents()`
 once and passes `events` to `EventsTicker` and `events` and `sinpe` to `Events` (the ticker
-does not need the SINPE data), so the page makes one `events` request. That data comes from the backend at runtime, not from `constants/`.
+does not need the SINPE data), so the page makes one `events` request. That data comes from the
+backend at runtime, not from `constants/`.
 
 ### Global language (`LanguageContext`)
 
@@ -258,6 +259,9 @@ Events placeholders (CMP-029 on; each is a release gate in
   BR-E01) until Cami confirms them; never in the repo.
 - Privacy notice — the generic draft in
   [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3 until the lawyer review.
+- Participant email templates (confirmation, registration received, payment not validated) —
+  drafts in [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §1–§2, used by the
+  backend from CMP-028, until Cami approves them (BR-E11, US-025 AC4).
 
 ### When adding new content
 
