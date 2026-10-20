@@ -6,7 +6,7 @@
   v1.4: §11 script permissions — CMP-036; v1.5: §11 full Drive scope named — CMP-037)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved on
   merge of PR #21; v1.3 Approved on merge of PR #26; v1.4 Approved on merge of PR #30; v1.5 Approved (on
-  merge of PR #XX))
+  merge of PR #32))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment
