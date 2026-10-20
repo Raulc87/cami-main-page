@@ -151,11 +151,14 @@ function storeRegistration_(v, found, amountDue, screenshot) {
       createdFile = folder.createFile(screenshot.blob.setName(name));
       screenshotUrl = createdFile.getUrl();
     }
+    // A screenshot kept in its own format is noted for Cami; it is not a review flag (FFR-030).
+    var notes = decision.flags.slice();
+    if (screenshot && screenshot.extension !== 'jpg') notes.push('stored as original format: ' + screenshot.extension);
     var timestamp = crIso_(nowMs);
     var values = [
       "'" + timestamp, v.submissionId, reference, v.eventCode, neutralize(v.participantName), neutralize(v.email),
       neutralize(v.whatsapp), v.lang, neutralize(v.couponCode), '', amountDue, screenshotUrl,
-      screenshot ? 'pending' : 'not-required', decision.flags.join('; '), decision.flags.length > 0, 'new',
+      screenshot ? 'pending' : 'not-required', notes.join('; '), decision.flags.length > 0, 'new',
       "'" + timestamp, ''
     ];
     var row = sheet.getLastRow() + 1;
