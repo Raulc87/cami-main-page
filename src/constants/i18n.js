@@ -175,8 +175,8 @@ export const UI_TEXT = {
           es: 'Revisa los campos marcados.',
         },
         EVENT_NOT_FOUND: {
-          en: 'This event is no longer available. Please reload the page.',
-          es: 'Este evento ya no está disponible. Recarga la página.',
+          en: 'This event is no longer available.',
+          es: 'Este evento ya no está disponible.',
         },
         REGISTRATION_CLOSED: { en: 'Registration closed', es: 'Inscripciones cerradas' },
         SOLD_OUT: { en: 'Sold out', es: 'Agotado' },
