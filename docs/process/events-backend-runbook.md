@@ -44,6 +44,8 @@ Do this once for staging, and again for production when the release gates pass
 ([release-checklist.md §3b](release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)).
 
 ### 2.1 Data store
+Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a time shown as
+`6:30 PM` is treated as invalid and the event is not shown (it is listed in the alert email).
 1. In Google Drive (Workspace account), create the spreadsheet with the tabs from contract §6:
    `Events`, `Coupons`, `Metrics`, with the column headers exactly as listed there. Registration
    tabs (`<eventCode>`) are created by the script on the first registration.
@@ -165,6 +167,9 @@ may not see the events section.
    log; the site keeps working from the last cache or rebuilds on demand.
 Triggers run the **saved** code (Head), not the deployed version: after changing `Events.js`,
 saving is enough for the trigger, while visitors still need a **New version** (section 5).
+The automatic English translations are kept in script properties named `TR_<hash>` (one per
+changed text). They are not pruned; if the properties page ever fills up, they can all be deleted
+and are rebuilt on demand.
 Quota: about 290 runs a day of 5 to 10 s each, well inside the Workspace limits.
 
 ## 3. Deploy as a web app (first time)

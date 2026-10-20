@@ -79,8 +79,10 @@ var EVENTS_CACHE_PREFIX = 'EVENTS_';
 // `events` is read on every page load and reads several tabs, which takes seconds in Apps Script
 // (the site gives up after 3 s, FFR-004). The finished response is kept per language and
 // refreshed every 5 minutes by a trigger, so a change in the sheet shows within about 5 minutes
-// (owner decision, 2026-10-20). `register` clears the cache so a sold-out event shows at once
-// (CMP-026). Without the trigger a request that finds the cache empty rebuilds it (about 5 s).
+// (owner decision, 2026-10-20, FFR-033). A registration that changes availability rebuilds the
+// cache with `refreshEventsCache()` after the lock is released, so a sold-out event shows at once
+// and no visitor meets a cold cache (CMP-026). Without the trigger a request that finds the cache
+// empty rebuilds it (about 5 s).
 function handleEvents_(params) {
   var lang = params.lang === 'en' ? 'en' : 'es';
   var cache = CacheService.getScriptCache();
@@ -110,10 +112,6 @@ function refreshEventsCache() {
       console.error('refresh ' + lang + ' failed: ' + err.name); // one language failing must not stop the other
     }
   });
-}
-
-function clearEventsCache() {
-  CacheService.getScriptCache().removeAll([EVENTS_CACHE_PREFIX + 'es', EVENTS_CACHE_PREFIX + 'en']);
 }
 
 function buildEventsResponse_(lang) {
