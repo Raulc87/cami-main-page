@@ -34,7 +34,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
 | Requirement | Story | AC | Step | Test (manual, against staging — contract §10) |
 |---|---|---|---|---|
 | FFR-019, FFR-020, FFR-028 | US-023 | AC1–AC4; AC5 (row skipped and queued) | 4 | Edit staging `Events`/`Coupons`; reload; invalid rows hidden and queued |
-| FFR-019, FFR-029 | US-023 | AC5 (alert email lists the row) | 6 | Invalid `Coupons` row appears in the next alert email |
+| FFR-019, FFR-029 | US-023 | AC5 (alert email lists the row) | 6 | Invalid `Coupons` row triggers that day's alert email and appears in it (FFR-029) |
 | FFR-001..FFR-004, FFR-025, BR-E09 | US-017 | AC1–AC5 | 4, 9 | Cards at 1280/900/375 px, EN/ES; closed/sold-out buttons; backend down → hidden |
 | FFR-005, FFR-006 | US-018 | AC1–AC5 | 9 | Ticker moves, pauses on hover/focus, static with reduced motion, click scrolls |
 | FFR-007..FFR-011, FFR-018, FFR-022, FFR-023, FFR-027 | US-019 | AC1–AC8 | 5, 11 | Form validation cases, paid and free submits, retry, duplicate email |
@@ -119,10 +119,10 @@ Planning model: Opus — this plan sequences a new backend and three workstreams
 | 3 | — | Owner deploys the skeleton to staging with the runbook; the runbook is corrected from what happened | Owner + Agent 1 | — | — |
 | 4 | CMP-025 | US-023 and the `events` action: read and validate `Events`/`Coupons`, translation with overrides, `registrationOpen`/`soldOut`, `sinpe` object | Agent 1 | Sonnet | Specified |
 | 5 | CMP-026 | US-021: `register` — validation, lock, capacity and duplicate checks, BR-E13 flags, Drive file, row, idempotency | Agent 1 | Sonnet | Specified; the hardest backend step |
-| 6 | CMP-027 | US-020 (server) and US-024: `coupon` action, coupon at `register`, counting rule, `LIMIT_*` throttles, upload cap, honeypot, `Metrics`, alerts (including the invalid rows of US-023 AC5) | Agent 1 | Sonnet | Specified |
-| 7 | CMP-028 | US-022 and US-025: OCR check after the lock, `checkResult`/`checkDetails`/`needsReview`, the three participant emails from the drafts | Agent 1 | Sonnet | Specified |
+| 6 | CMP-027 | US-020 (server) and US-024: `coupon` action, coupon at `register`, counting rule, `LIMIT_*` throttles, upload cap, honeypot, `Metrics`, the alert email triggered by a threshold or an invalid sheet row (US-023 AC5), at most one per day (FFR-029) | Agent 1 | Sonnet | Specified |
+| 7 | CMP-028 | US-022 and US-025: OCR check after the lock, `checkResult`/`checkDetails`/`needsReview`, the three participant emails from the drafts; FFR-032 time-driven retry of `pending` checks (10 min, 24 h limit, alert), plus a runbook step to install the trigger | Agent 1 | Sonnet | Specified |
 | 8 | CMP-029 | Frontend foundation: API client, `useEvents`, `UI_TEXT.events` (section, ticker, statuses), `global.css` events block, `App.jsx` slots, logo placeholder, `.env.example` | Agent 2 | Sonnet | Shared files; must merge before steps 9 and 11 |
-| 9 | CMP-030 | US-017 and US-018: `Events.jsx`, `EventsTicker.jsx` | Agent 2 | Sonnet | Specified |
+| 9 | CMP-030 | US-017 and US-018: `Events.jsx`, `EventsTicker.jsx`, `eventsShared.js`; `useEvents.js` `refetch` and `App.jsx` wiring for the form's `onStale` (SPRINT_02_PLAN → Integration Contracts) | Agent 2 | Sonnet | Specified |
 | 10 | CMP-031 | US-002 AC2 fix: hover shift not overridden by the reveal transform, no change to other sections' reveal | Agent 2 | Sonnet | Browser debugging |
 | 11 | CMP-032 | US-019 and US-020 (client): `EventRegistration.jsx`, coupon field, SINPE instructions, validation, submit and retry, consent | Agent 3 | Sonnet | Specified; largest frontend step |
 | 12 | CMP-033 | Integration verification on staging: contract §10 end-to-end list, emails delivered to a Gmail and an Outlook inbox, 1280/900/375 px × EN/ES, US-005 AC2 check; results in `SPRINT_02_VERIFICATION.md` | Agent 3 | Sonnet | Running checks and recording evidence |

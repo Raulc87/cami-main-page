@@ -4,9 +4,13 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.1 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
-  CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035)
-- Status: Approved (v1.0 on merge of PR #21; v1.1 Approved (on merge of PR #26))
+- Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+  CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
+  decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
+  rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
+  CMP-036)
+- Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
+  PR #30))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -50,9 +54,9 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 | US-017 | Upcoming events section | FFR-001..FFR-004, FFR-025, FFR-028, BR-E09 |
 | US-018 | Upcoming-events ticker banner | FFR-005, FFR-006 |
 | US-019 | Event registration form with SINPE Móvil payment proof | FFR-007..FFR-011, FFR-018, FFR-022, FFR-023, FFR-027 |
-| US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), BR-E13 |
+| US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), FFR-031, BR-E13 |
 | US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024, FFR-025, FFR-030, BR-E13 |
-| US-022 | Automatic check of the payment screenshot | FFR-017 |
+| US-022 | Automatic check of the payment screenshot | FFR-017, FFR-032 |
 | US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020 |
 | US-024 | Abuse metrics and alerts | FFR-029 |
 | US-025 | Participant emails (confirmation, payment not validated) | FFR-026 |
@@ -70,12 +74,17 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 Events section
 - FFR-001: The page shows an "Upcoming Events" / "Próximos eventos" section with one card per
   published event that has not started (BR-E09), ordered by start ascending.
-- FFR-002: Each card shows the event name, date and time, brief description, price (or
-  "Gratis / Free") and the event art image; when an event has no image, the Lifetools logo.
+- FFR-002: Each card shows the event name, date and time (24-hour `HH:mm` in both languages),
+  brief description, price (or "Gratis / Free") and the event art image; when an event has no
+  image, the Lifetools logo.
 - FFR-003: Each card has a register button; it is disabled when registration is closed
   (12 h before start, BR-E09) or the event is sold out (FFR-025).
-- FFR-004: When there are no upcoming events, or the backend is unavailable, the section and
-  the ticker are hidden (Q-10) and the rest of the page renders normally.
+- FFR-004: When the page loads and there are no upcoming events, or the backend is unavailable
+  or slower than 3 s, the section and the ticker are hidden (Q-10) and the rest of the page
+  renders normally. A later refresh (language change, or a stale-event refresh from the form)
+  that fails keeps the events already shown, so an open registration form and its typed data
+  are not lost; the backend re-checks every registration anyway (BR-E13). Owner, 2026-10-20:
+  "(a)" (keep the events shown on a failed refresh).
 - FFR-025: Capacity: each event has a capacity in the `Events` tab. When the count of counting
   registrations (BR-E10) reaches it, the card shows "Agotado / Sold out" and the register button
   is disabled. At `register` time the server applies BR-E13: a ₡0 registration is refused
@@ -98,8 +107,9 @@ Ticker banner
 Registration
 - FFR-007: The register button opens the form for that event only (name, date, time, price at
   the top).
-- FFR-008: For paid events the form first shows the payment instructions: method "SINPE Móvil",
-  Cami's number and account name, and the amount to pay (after any coupon). No transfer
+- FFR-008: For paid events the form shows the payment instructions after the contact fields and
+  the coupon, and before the screenshot field: method "SINPE Móvil", Cami's number and account
+  name, and the amount to pay (after any coupon). No transfer
   description is required (Q-4: the screenshot is attached in the same form).
 - FFR-009: Fields: Participant name, Email, WhatsApp number (with country code), payment
   screenshot (paid events only), consent. All required. One registration = one participant = one
@@ -127,6 +137,9 @@ Coupons
 - FFR-012: Optional coupon field; applying it checks the code for **that event and that email**
   on the server and shows the discounted amount before payment. Checks are throttled globally
   (§12).
+- FFR-031: A coupon code typed but not applied blocks submit with a message asking the visitor to
+  apply the coupon or clear the field (EN/ES), so the amount paid always matches the amount shown
+  (owner, 2026-10-20).
 - FFR-013: A coupon is a percentage discount (1–100%) tied to one event, with a maximum number of
   uses set by Cami and **one use per email** (Q-24). Unknown, inactive, expired, exhausted or
   already-used coupons are refused with a message and the full price stays. A use counts while
@@ -166,6 +179,17 @@ Payment screenshot check
   `unreadable`. A non-`ok` result sets `needsReview` and sends the participant the
   "payment not validated" email (FFR-026). The check never changes the status. The temporary
   OCR Google Doc is deleted right after reading.
+- FFR-032: If the OCR call fails for a service reason (e.g. Google's per-user OCR rate limit)
+  after its in-execution retries, the row keeps check result `pending`. Only the "payment not
+  validated" email waits for the check; the confirmation or "registration received" email is
+  still sent when the row is saved (FFR-026). A time-driven trigger retries the `pending` rows
+  every 10 minutes; when a retry gets `ok`, `mismatch` or `unreadable`, it writes the result and
+  sends the "not validated" email if FFR-017 requires it. A row still `pending` 24 hours after
+  it was saved is no longer retried and triggers that day's alert email to camila@ (FFR-029),
+  which lists it for Cami to check by hand; its participant gets no "not validated" email. `pending` alone
+  never sets `needsReview` (FFR-030). Owner, 2026-10-20 (spike finding, CMP-024); the
+  10-minute interval and the 24-hour limit approved by the owner, 2026-10-20: "OK on the retry
+  proposal".
 
 Participant emails
 - FFR-026: The backend sends, in the participant's site language (`lang`), with reply-to
@@ -198,7 +222,12 @@ Abuse metrics
 - FFR-029: A `Metrics` tab gets one row per day (accepted registrations, honeypot hits,
   throttled requests, failed coupon checks, MB uploaded, rows marked `spam`). The backend emails
   camila@ when a day exceeds a threshold (initially: > 10 honeypot hits, > 20 throttled
-  requests, or the daily upload cap reached). **Captcha rule (Q-19):** no captcha at launch;
+  requests, or the daily upload cap reached), and also when there is something Cami must act
+  on: an invalid `Events`/`Coupons` row (FFR-019, US-023 AC5) or a check stuck `pending` past
+  its limit (FFR-032). At most one alert email per day: it is sent at the first trigger of the
+  day (Costa Rica time) and lists everything found so far; anything found after it goes into,
+  and triggers, the next day's email (owner, 2026-10-20: "OK on the retry proposal").
+  **Captcha rule (Q-19):** no captcha at launch;
   enable Cloudflare Turnstile (free, verified server side) if alerts fire on 3+ days in a week or
   Cami marks more than 2 `spam` rows in a week.
 
@@ -251,9 +280,10 @@ Abuse metrics
 1. The site loads and requests events in the active language.
 2. The ticker shows the closest events; the section shows one card each.
 3. The visitor selects "Register" (or a ticker item, then the card's button).
-4. Paid event: the form shows price and SINPE instructions; free event: no payment part.
-5. Optionally the visitor applies a coupon; the amount updates.
-6. Paid event: the visitor pays by SINPE Móvil, then fills the form and attaches the screenshot.
+4. The form shows the event and its price; the visitor fills in name, email and WhatsApp.
+5. Optionally the visitor applies a coupon (checked for that email); the amount updates.
+6. Paid event: the form shows the SINPE instructions with the amount to pay; the visitor pays by
+   SINPE Móvil and attaches the screenshot. Free event or ₡0: no payment part.
 7. The site validates and sends the registration.
 8. The backend re-validates; under a lock it checks capacity and duplicates and appends the row
    (`new`); it stores the file (paid), returns the reference, then runs the check and sends the
@@ -369,6 +399,13 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | #19 | Risk of false "not validated" emails accepted |
 | Spam status | Keep `spam` as a status Cami can set (frees the place and the coupon use; counted in `Metrics` for the captcha rule) — owner, 2026-10-19: "keep spam status" |
 | BR-E13 | Approved, including its trade-off — owner, 2026-10-19: "BR-E13 approved" |
+| Form order | The coupon comes before the SINPE instructions and the screenshot (§9 steps 5–6) — owner, 2026-10-20, answer 2 to "coupon before the screenshot?": "yes" |
+| Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
+| Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
+| Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
+| OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
+| OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |
+| Sender alias (FFR-026, #17) | Send from `no-reply@lifetoolscr.com`; the script gets the Gmail scope `gmail.settings.basic` (it can read and change the owning account's Gmail settings), accepted by the owner — 2026-10-20: "add the permission for no-reply@"; the spike's alias test confirmed it is enough (the test email arrived From no-reply@lifetoolscr.com). A broader scope (e.g. full mailbox) goes back to the owner before deploy (ARCHITECTURE §12, TECH_STACK §11) |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.
