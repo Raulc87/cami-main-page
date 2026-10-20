@@ -70,8 +70,35 @@ function queueInvalidRows_(key, tab, invalid) {
   }
 }
 
+var EVENTS_CACHE_SECONDS = 60;
+var EVENTS_CACHE_PREFIX = 'EVENTS_';
+
+// `events` is read on every page load and reads several tabs, which takes seconds in Apps Script
+// (the site gives up after 3 s, FFR-004). The finished response is kept for a minute per
+// language, so a change in the sheet shows within a minute and `register` clears it (CMP-026).
 function handleEvents_(params) {
   var lang = params.lang === 'en' ? 'en' : 'es';
+  var cache = CacheService.getScriptCache();
+  try {
+    var hit = cache.get(EVENTS_CACHE_PREFIX + lang);
+    if (hit) return rawJson(hit);
+  } catch (err) {
+    console.error('cache read failed: ' + err.name);
+  }
+  var response = buildEventsResponse_(lang);
+  try {
+    cache.put(EVENTS_CACHE_PREFIX + lang, JSON.stringify(response), EVENTS_CACHE_SECONDS);
+  } catch (err) {
+    console.error('cache write failed: ' + err.name);
+  }
+  return ok(response.data);
+}
+
+function clearEventsCache() {
+  CacheService.getScriptCache().removeAll([EVENTS_CACHE_PREFIX + 'es', EVENTS_CACHE_PREFIX + 'en']);
+}
+
+function buildEventsResponse_(lang) {
   var nowMs = Date.now();
 
   var events = readEvents();
@@ -83,15 +110,15 @@ function handleEvents_(params) {
     console.error('queue failed: ' + err.name); // the listing must not depend on the alert queue
   }
 
-  var cache = lang === 'en' ? PropertiesService.getScriptProperties().getProperties() : {};
+  var translations = lang === 'en' ? PropertiesService.getScriptProperties().getProperties() : {};
   var list = [];
   events.valid.forEach(function (ev) {
     if (ev.startsAtMs <= nowMs) return;
     var texts = lang === 'en'
-      ? { name: englishText_(ev.name, ev.nameEn, cache), description: englishText_(ev.description, ev.descriptionEn, cache) }
+      ? { name: englishText_(ev.name, ev.nameEn, translations), description: englishText_(ev.description, ev.descriptionEn, translations) }
       : { name: ev.name, description: ev.description };
     list.push(eventView_(ev, lang, countRegistrations(ev.eventCode), nowMs, texts));
   });
   list.sort(function (a, b) { return a.startsAt < b.startsAt ? -1 : a.startsAt > b.startsAt ? 1 : 0; });
-  return ok({ sinpe: getSinpe(), events: list });
+  return { ok: true, data: { sinpe: getSinpe(), events: list }, error: null };
 }

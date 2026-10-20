@@ -1,7 +1,11 @@
 // Spreadsheet helpers.
 
+var spreadsheetInRun_ = null;
+
+// Opened once per execution: every openById call costs hundreds of milliseconds.
 function getSpreadsheet() {
-  return SpreadsheetApp.openById(getProp('SPREADSHEET_ID'));
+  if (!spreadsheetInRun_) spreadsheetInRun_ = SpreadsheetApp.openById(getProp('SPREADSHEET_ID'));
+  return spreadsheetInRun_;
 }
 
 function getOrCreateSheet(name, headers) {
