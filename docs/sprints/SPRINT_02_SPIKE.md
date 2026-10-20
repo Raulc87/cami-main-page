@@ -27,7 +27,7 @@ ADR-008 → Validation holds on staging: events fetched and a `text/plain` POST 
 - The Drive file from step b and the temporary OCR Docs were not individually confirmed.
 - A production project must use the same manifest and authorize the `gmail.settings.basic` scope; the runbook (§2.5) says so, and without it sending from the alias fails.
 
-To clean up by the owner: the `SPIKE_TEST_RECIPIENT` script property, the test emails, any `spike_*` files in the staging root folder, the `SpikeLog` tab, and `ocr-tmp-*` Docs left in the Drive trash.
+Cleanup: the owner deleted the `SPIKE_TEST_RECIPIENT` script property and the test emails (2026-10-20). Still to check by the owner: any `spike_*` files in the staging root folder, the `SpikeLog` tab, and `ocr-tmp-*` Docs left in the Drive trash (the owner said the step b test data was cleaned up earlier).
 
 ## Findings
 
