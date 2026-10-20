@@ -8,9 +8,11 @@
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
-  CMP-036; v1.3: FFR-033 events cache refreshed every 5 minutes, owner 2026-10-20 — CMP-037)
+  CMP-036; v1.3: FFR-033 events cache refreshed every 5 minutes, owner 2026-10-20 — CMP-037;
+  v1.4: `events` client wait raised from 3 s to 5 s (FFR-004, FNFR-003), owner 2026-10-20 —
+  CMP-038)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
-  v1.3 Approved (on merge of PR #32))
+  v1.3 on merge of PR #32; v1.4 Approved (on merge of PR #XX))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -80,7 +82,7 @@ Events section
 - FFR-003: Each card has a register button; it is disabled when registration is closed
   (12 h before start, BR-E09) or the event is sold out (FFR-025).
 - FFR-004: When the page loads and there are no upcoming events, or the backend is unavailable
-  or slower than 3 s, the section and the ticker are hidden (Q-10) and the rest of the page
+  or slower than 5 s, the section and the ticker are hidden (Q-10) and the rest of the page
   renders normally. A later refresh (language change, or a stale-event refresh from the form)
   that fails keeps the events already shown, so an open registration form and its typed data
   are not lost; the backend re-checks every registration anyway (BR-E13). Owner, 2026-10-20:
@@ -217,7 +219,7 @@ Administration (Cami)
   (Q-2). Cami adds or edits rows; no deploy. Coupon codes are 8–20 characters, `A-Z` and `0-9`
   only (hard to guess, §12); rows with an invalid code, discount or max uses are ignored and
   listed in the alert email so Cami can fix them.
-- FFR-033: To answer within the 3 s limit (FNFR-003), the backend serves the `events` response
+- FFR-033: To answer within the 5 s limit (FNFR-003), the backend serves the `events` response
   from a cache that a time-driven trigger refreshes every 5 minutes (one entry per language).
   Changes Cami makes in the `Events`/`Coupons` tabs therefore show on the site within 5 minutes.
   A registration that changes an event's availability (e.g. sells it out) rebuilds the cache
@@ -348,8 +350,9 @@ Exact tabs, columns, codes and Drive layout: [EVENTS_API_CONTRACT.md §6](EVENTS
   repo.
 - FNFR-002 Secrets: script properties only; the public `/exec` URL is the only backend value in
   the client bundle.
-- FNFR-003 Performance: the events request never blocks first paint; > 3 s or failure hides the
-  section.
+- FNFR-003 Performance: the events request never blocks first paint; > 5 s or failure hides the
+  section. The limit was 3 s until 2026-10-20; the owner raised it to 5 s after CMP-025 staging
+  timing showed about 1 in 10 cached answers taking 3.4–4.6 s (Apps Script start-up).
 - FNFR-004 Accessibility: keyboard-usable cards and form, labelled fields, ticker pausable and
   `prefers-reduced-motion` aware.
 - FNFR-005 Bilingual: all UI strings EN/ES; event text per FFR-028; emails per `lang`.
@@ -414,6 +417,7 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Form order | The coupon comes before the SINPE instructions and the screenshot (§9 steps 5–6) — owner, 2026-10-20, answer 2 to "coupon before the screenshot?": "yes" |
 | Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
 | Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
+| Events wait (FFR-004, FNFR-003) | The site waits up to 5 s (was 3 s) for the `events` answer before hiding the section and the ticker; the page itself never waits — owner, 2026-10-20, asked "about 1 in 10 loads took longer than 3 s (3.4 s and 4.6 s) … How should we handle it?" (options: wait up to 5 s; accept for now; retry once; remember the last list): "Wait up to 5 s" |
 | Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
 | OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
 | OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |

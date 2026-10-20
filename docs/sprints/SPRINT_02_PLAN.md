@@ -283,4 +283,10 @@ The human reviewer is the final approver.
   cache until CMP-028, or (b) refresh the cache with a time-driven trigger every 5 minutes now,
   so sheet changes show within about 5 minutes? → **(b)** (FFR-033, US-023 AC1). The owner
   confirmed one staging deployment only.
+- CMP-025 retiming with the 5-minute trigger (2026-10-20): 18 of 20 `events` calls over 10
+  minutes took 0.9–2.2 s; 2 took 3.4 s and 4.6 s (Apps Script start-up), over the 3 s client
+  wait. Question as asked: "about 1 in 10 loads took longer than 3 s … How should we handle
+  it?" — options: wait up to 5 s; accept for now; retry once; remember the last list. Owner:
+  **"Wait up to 5 s"** (FFR-004, FNFR-003; CMP-038). Agent 2 changes the `events` timeout in
+  `src/api/events.js`.
 
