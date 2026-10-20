@@ -4,7 +4,7 @@
 - Version: 1.4 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
   §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022;
   v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035; v1.4: §7
-  scroll-reveal wrapper rule — CMP-036)
+  scroll-reveal wrapper rule, §12 script scopes — CMP-036)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
   merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved on merge of PR #26; v1.4
   Approved (on merge of PR #30))
@@ -291,6 +291,13 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
   backend, user text is written to Sheets as literal text (no formulas), file types are
   detected from content, and abuse is limited globally (FEATURE_SPEC_events_registration §12).
 - No secrets in the repo or the client bundle; backend configuration in script properties.
+- The script runs as the owning Workspace account behind an anonymous endpoint, so each scope it
+  holds is exposed if it is misused: the OAuth scopes are those in `apps-script/appsscript.json` (`oauthScopes`). Besides Sheets,
+  Drive, Docs, external requests and sending mail, the script holds a Gmail settings scope so it
+  can send as `no-reply@lifetoolscr.com` (owner, 2026-10-20); that scope lets it read and change
+  the owning account's Gmail settings. The exact scope is confirmed by the spike's alias test and
+  in CMP-028; any scope broader than the one the owner accepted (e.g. full mailbox
+  `https://mail.google.com/`) goes back to the owner before it is deployed.
 
 ## 13. Deployment and Environments
 - Local: `npm run dev` (port 5173). Production: `dist/` uploaded to GoDaddy `public_html/`.

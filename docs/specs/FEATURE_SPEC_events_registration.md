@@ -7,7 +7,8 @@
 - Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
-  rule, FFR-032 OCR retry, FFR-029 action alerts, owner 2026-10-20 — CMP-036)
+  rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
+  CMP-036)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
   PR #30))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
@@ -187,7 +188,8 @@ Payment screenshot check
   it was saved is no longer retried and triggers that day's alert email to camila@ (FFR-029),
   which lists it for Cami to check by hand; its participant gets no "not validated" email. `pending` alone
   never sets `needsReview` (FFR-030). Owner, 2026-10-20 (spike finding, CMP-024); the
-  10-minute interval and the 24-hour limit approved by the owner, 2026-10-20: "OK on the retry proposal, skip the raw HEIC test".
+  10-minute interval and the 24-hour limit approved by the owner, 2026-10-20: "OK on the retry
+  proposal".
 
 Participant emails
 - FFR-026: The backend sends, in the participant's site language (`lang`), with reply-to
@@ -403,7 +405,7 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
 | OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
 | OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |
-| Sender alias (FFR-026, #17) | Send from `no-reply@lifetoolscr.com`; the script gets the Gmail `gmail.settings.basic` scope for it (it can read and change the owning account's Gmail settings), accepted by the owner — 2026-10-20: "add the permission for no-reply@" |
+| Sender alias (FFR-026, #17) | Send from `no-reply@lifetoolscr.com`; the script gets the Gmail settings scope it needs for that (expected `gmail.settings.basic`, which can read and change the owning account's Gmail settings), accepted by the owner — 2026-10-20: "add the permission for no-reply@". The exact scope is confirmed by the spike's alias test and in CMP-028; a broader scope (e.g. full mailbox) goes back to the owner before deploy (ARCHITECTURE §12, TECH_STACK §11) |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.
