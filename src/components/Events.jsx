@@ -30,7 +30,10 @@ export default function Events({ events, sinpe, onRefetch }) {
   // depend on onClose (and steal focus). onStale (`onRefetch`) is stable too, from useEvents.
   const close = useCallback(() => {
     setSelectedEvent(null)
-    triggerRef.current?.focus()
+    // Back to the card's button; when a refetch removed that card, to the section instead.
+    const trigger = triggerRef.current
+    if (trigger?.isConnected) trigger.focus()
+    else document.getElementById('events')?.focus()
   }, [])
 
   // After a refetch with no events the section goes away, but an open form stays (see above).
@@ -40,7 +43,8 @@ export default function Events({ events, sinpe, onRefetch }) {
         <section
           id="events"
           className="section-pad"
-          style={{ padding: '80px 56px', background: C.bg, position: 'relative', zIndex: 1 }}
+          tabIndex={-1}
+          style={{ padding: '80px 56px', background: C.bg, position: 'relative', zIndex: 1, outline: 'none' }}
         >
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ marginBottom: 52 }}>
