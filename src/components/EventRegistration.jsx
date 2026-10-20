@@ -8,7 +8,8 @@ import { checkCoupon, register } from '../api/events'
 // Registration form for one event (US-019, US-020 client side).
 // Contract: docs/specs/EVENTS_API_CONTRACT.md (§3.2 coupon, §3.3 register, §7 errors, §8 fields).
 // Props: event (one item of the `events` response), sinpe ({ number, accountName, isPlaceholder }),
-// onClose (called when the visitor dismisses the dialog).
+// onClose (called when the visitor dismisses the dialog), onStale (optional: called after
+// EVENT_NOT_FOUND, REGISTRATION_CLOSED or SOLD_OUT so the page refetches the events).
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -17,6 +18,8 @@ const COUPON_RE = /^[A-Z0-9]{8,20}$/
 
 // Coupon codes whose server answer means "this code cannot be used"; the applied discount is dropped.
 const COUPON_ERRORS = ['COUPON_INVALID', 'COUPON_EXHAUSTED', 'COUPON_ALREADY_USED']
+// Answers that mean the event state changed since the list was fetched.
+const STALE_ERRORS = ['EVENT_NOT_FOUND', 'REGISTRATION_CLOSED', 'SOLD_OUT']
 // Server field names → form field names.
 const FIELD_KEYS = {
   participantName: 'name',
@@ -82,7 +85,7 @@ export default function EventRegistration(props) {
   return props.event ? <RegistrationDialog {...props} /> : null
 }
 
-function RegistrationDialog({ event, sinpe, onClose }) {
+function RegistrationDialog({ event, sinpe, onClose, onStale }) {
   const { lang } = useLanguage()
   const t = UI_TEXT.events.form
 
@@ -341,6 +344,8 @@ function RegistrationDialog({ event, sinpe, onClose }) {
       return
     }
     setFormError(t.errors[code] ? code : 'SERVER_ERROR')
+    // The events list is out of date: ask the page to refetch it (contract §7).
+    if (STALE_ERRORS.includes(code)) onStale?.()
   }
 
   const apiMessage = (code) => t.errors[code]?.[lang] || t.errors.SERVER_ERROR[lang]
