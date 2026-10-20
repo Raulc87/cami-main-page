@@ -2,11 +2,14 @@
 // findings are recorded in docs/sprints/SPRINT_02_SPIKE.md.
 
 // Drive OCR on one image file: returns the extracted text and deletes the temporary Doc.
+// The upload keeps the image's own MIME type; Drive converts it to a Doc when `ocr` is set.
+// (Declaring the Doc type on the upload makes Drive reject it: "OCR is not supported for files
+// of type application/vnd.google-apps.document".)
 function ocrText(fileId) {
   var blob = DriveApp.getFileById(fileId).getBlob();
   var t0 = Date.now();
   var doc = Drive.Files.insert(
-    { title: 'ocr-tmp-' + Date.now(), mimeType: 'application/vnd.google-apps.document' },
+    { title: 'ocr-tmp-' + Date.now(), mimeType: blob.getContentType() },
     blob,
     { ocr: true, ocrLanguage: 'es' }
   );
@@ -47,11 +50,19 @@ function runOcrSamples() {
   var results = [];
   while (files.hasNext()) {
     var f = files.next();
+    if (f.getMimeType().indexOf('image/') !== 0) {
+      results.push({ file: f.getName(), skipped: 'not an image (' + f.getMimeType() + ')' });
+      continue;
+    }
     var amount = amountFromFileName(f.getName());
     if (amount === null) { results.push({ file: f.getName(), error: 'name must be <name>_<amountCrc>.jpg' }); continue; }
-    var r = ocrText(f.getId());
-    var c = compareOcr(r.text, getProp('SINPE_NUMBER'), getProp('SINPE_ACCOUNT_NAME'), amount);
-    results.push({ file: f.getName(), ms: r.ms, checkResult: c.checkResult, accountFound: c.accountFound, amountFound: c.amountFound });
+    try {
+      var r = ocrText(f.getId());
+      var c = compareOcr(r.text, getProp('SINPE_NUMBER'), getProp('SINPE_ACCOUNT_NAME'), amount);
+      results.push({ file: f.getName(), ms: r.ms, checkResult: c.checkResult, accountFound: c.accountFound, amountFound: c.amountFound });
+    } catch (e) {
+      results.push({ file: f.getName(), error: String(e.message).slice(0, 160) });
+    }
   }
   console.log(JSON.stringify(results));
   return results;
