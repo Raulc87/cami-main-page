@@ -293,8 +293,8 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
   See [TECH_STACK.md](../../TECH_STACK.md) and
   [release-checklist.md](../process/release-checklist.md).
 - Events backend: two standalone Apps Script projects, **staging** (staging spreadsheet and
-  folder) and **production**, each with one web-app deployment (ADR-008); the site build points to one through `VITE_EVENTS_API_URL`. Deployed by the
-  owner per the deploy runbook.
+  folder) and **production**, each with one web-app deployment (ADR-008); the site build points
+  to one through `VITE_EVENTS_API_URL`. Deployed by the owner per the deploy runbook.
 
 ## 14. Configuration and Secrets
 - Frontend: `VITE_EVENTS_API_URL` (build time, public).

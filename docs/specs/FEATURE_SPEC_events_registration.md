@@ -4,9 +4,9 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.0 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
-  CMP-019)
-- Status: Approved (on merge of PR #21)
+- Version: 1.1 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+  CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035)
+- Status: Approved (v1.0 on merge of PR #21; v1.1 Approved (on merge of PR #26))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002

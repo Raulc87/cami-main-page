@@ -35,7 +35,7 @@ owning Google account.
 Pros:
 - Free; built-in `SpreadsheetApp`, `DriveApp` and Drive OCR (Advanced Drive Service) with no
   credentials to manage.
-- Data and code live next to each other in Cami's Google account.
+- Data and code live in the same `lifetoolscr.com` Workspace account.
 - No server to host or patch.
 Cons:
 - Web-app quirks: POST from the browser must avoid a CORS preflight (e.g. `text/plain` body
@@ -82,7 +82,8 @@ Cons:
 **Option A**, in the `lifetoolscr.com` Google Workspace (owner, 2026-10-19). The owner
 deploys the script, helped by the agents and a deploy runbook; the code lives in the repo.
 Two standalone projects with the same code, one for staging and one for production, because
-script properties belong to the project (owner, 2026-10-20, answering the CMP-023 questions:
+script properties belong to the project (owner, 2026-10-20, answers 1 and 2 to the CMP-023
+questions, recorded with the questions in SPRINT_02_PLAN → Sprint Review Notes:
 "1. Yes 2. Yes 3. Yes 4. Yes 5. no-reply@lifetoolscr.com"; procedure in
 [events-backend-runbook.md](../process/events-backend-runbook.md)). The site calls the web
 app over HTTPS; the contract is defined in `docs/specs/EVENTS_API_CONTRACT.md` before
