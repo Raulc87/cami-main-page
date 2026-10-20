@@ -81,7 +81,7 @@ email never appears in a URL (FNFR-001). Throttled globally.
 | `lang` | string | yes | `es` or `en` | — | `lang` |
 | `consent` | boolean | yes | must be `true` | — | `consentAt` (server time) |
 | `website` | string | yes | honeypot: must be `""` | — | not stored |
-| `file` | object/null | when amount due > ₡0 | image, ≤ 5 MB decoded; types JPEG, PNG, WebP, HEIC/HEIF (detected from content, not name) | stored as JPEG (`.jpg`), converted with `Blob.getAs` (spike); if conversion fails, the original is stored with its own extension (`.png`, `.webp`, `.heic`) and `checkDetails` gets the note `stored as original format: <ext>` (a note, not a flag: `needsReview` unchanged; owner, 2026-10-20) | Drive file → `screenshotUrl` |
+| `file` | object/null | when amount due > ₡0 | image, ≤ 5 MB decoded; types JPEG, PNG, WebP, HEIC/HEIF (detected from content, not name) | stored as JPEG (`.jpg`), converted with `Blob.getAs` (spike); if conversion fails, the original is stored with its own extension (`.png`, `.webp`, `.heic`) and `checkDetails` gets the note `stored as original format: <ext>` (a note, not a flag; if OCR then cannot read it, `checkResult` is `unreadable` with no retries and no "not validated" email, FFR-017; owner, 2026-10-20) | Drive file → `screenshotUrl` |
 
 Unknown fields: ignored. A request with a non-empty `website` returns `ok: true` with a fake
 reference and stores nothing (do not tell bots they were caught); it is counted in `Metrics`.
@@ -148,8 +148,9 @@ validated or listed, except that a code shared with a published row is reported 
 Counting rule (capacity and coupon uses): rows with status `new` or `confirmed`, flagged or not,
 count; `refund/cancelled` and `spam` do not.
 
-Drive: `<root folder>/<eventCode>/<ParticipantName>_<YYYY-MM-DD>_<eventCode>.jpg` (registration
-date; BR-E04 normalization; `_2`, `_3`… on collision).
+Drive: `<root folder>/<eventCode>/<ParticipantName>_<YYYY-MM-DD>_<eventCode>.<ext>` (`ext` = `jpg`,
+or the original extension when conversion fails, §3.3; registration date; BR-E04
+normalization; `_2`, `_3`… on collision).
 
 ## 7. Responses
 Same keys always:
@@ -191,7 +192,7 @@ shows the form for an event the last `events` response marked closed or sold out
 ## 8. Field error codes
 | Code | Meaning |
 |---|---|
-| `required` | Missing value; also a missing or malformed value the form never sends (`submissionId`, `eventCode`, `lang`, a name over its length limit) |
+| `required` | Missing value; also a missing or malformed value the form never sends (`submissionId`, `eventCode`, `lang`, `participantName` outside 2–80 characters) |
 | `invalid_email` | Not a valid email |
 | `invalid_phone` | Not E.164 (`+` and country code) |
 | `invalid_coupon_format` | Coupon not `A-Z0-9`, 8–20 chars |

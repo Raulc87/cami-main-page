@@ -290,9 +290,12 @@ The human reviewer is the final approver.
   itself is never slowed down; the events just load in after it. How should we handle it?" —
   options: wait up to 5 s; accept for now; retry once; remember the last list. Owner: **"Wait up to
   5 s"** (FFR-004, FNFR-003; CMP-038). Agent 2 changes the `events` timeout in `src/api/events.js`.
-- CMP-026 (2026-10-20), screenshot format: question as asked: "When someone pays and uploads
-  their SINPE screenshot, the backend saves it as a JPEG. If Google can't convert an unusual
-  image type (WebP or iPhone HEIC; most phones send JPEG anyway), what should happen?" — options:
-  save the original; refuse the upload. Owner: **"Save the original (Recommended)"** (FFR-014,
-  contract §3.3 v1.2; CMP-039).
+- CMP-026 (2026-10-20), screenshot format: question as asked: "When someone pays and uploads their
+  SINPE screenshot, the backend saves it as a JPEG. If Google can't convert an unusual image type
+  (WebP or iPhone HEIC; most phones send JPEG anyway), what should happen?" — options: save the
+  original; refuse the upload. Owner: **"Save the original (Recommended)"** (FFR-014, contract §3.3
+  v1.2; CMP-039). Follow-up question as asked: "Follow-up to 'Save the original': when a screenshot
+  is kept in its original format (rare WebP/HEIC), Google's automatic payment check may not be able
+  to read it. What should happen then?" — options: Cami checks by hand; normal "not validated"
+  email. Owner: **"Cami checks by hand (Recommended)"** (FFR-017).
 
