@@ -5,8 +5,8 @@
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
 - Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
-  CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031 and §20 form
-  decisions, owner 2026-10-20 — CMP-036)
+  CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
+  decisions, form order in FFR-008 and §9 steps 4–6, owner 2026-10-20 — CMP-036)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
   PR #30))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
@@ -100,8 +100,9 @@ Ticker banner
 Registration
 - FFR-007: The register button opens the form for that event only (name, date, time, price at
   the top).
-- FFR-008: For paid events the form first shows the payment instructions: method "SINPE Móvil",
-  Cami's number and account name, and the amount to pay (after any coupon). No transfer
+- FFR-008: For paid events the form shows the payment instructions after the contact fields and
+  the coupon, and before the screenshot field: method "SINPE Móvil", Cami's number and account
+  name, and the amount to pay (after any coupon). No transfer
   description is required (Q-4: the screenshot is attached in the same form).
 - FFR-009: Fields: Participant name, Email, WhatsApp number (with country code), payment
   screenshot (paid events only), consent. All required. One registration = one participant = one
@@ -256,9 +257,10 @@ Abuse metrics
 1. The site loads and requests events in the active language.
 2. The ticker shows the closest events; the section shows one card each.
 3. The visitor selects "Register" (or a ticker item, then the card's button).
-4. Paid event: the form shows price and SINPE instructions; free event: no payment part.
-5. Optionally the visitor applies a coupon; the amount updates.
-6. Paid event: the visitor pays by SINPE Móvil, then fills the form and attaches the screenshot.
+4. The form shows the event and its price; the visitor fills in name, email and WhatsApp.
+5. Optionally the visitor applies a coupon (checked for that email); the amount updates.
+6. Paid event: the form shows the SINPE instructions with the amount to pay; the visitor pays by
+   SINPE Móvil and attaches the screenshot. Free event or ₡0: no payment part.
 7. The site validates and sends the registration.
 8. The backend re-validates; under a lock it checks capacity and duplicates and appends the row
    (`new`); it stores the file (paid), returns the reference, then runs the check and sends the
