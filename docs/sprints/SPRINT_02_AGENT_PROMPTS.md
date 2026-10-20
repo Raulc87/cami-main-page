@@ -134,8 +134,10 @@ Order of work (each step one PR, in order; IMPLEMENTATION_PLAN §11 steps 1–7)
    neutralization, idempotent submissionId, ALREADY_REGISTERED.
 5. CMP-027-coupons-limits-metrics — US-020 server ACs and US-024: `coupon` action, coupon at
    register (incl. `coupon changed`), counting rule, every LIMIT_*/ALERT_* in contract §9,
-   honeypot fake success, Metrics row, one alert email per day, which also lists the invalid
-   rows queued by CMP-025 (US-023 AC5).
+   honeypot fake success, Metrics row, and the alert email (FFR-029 as revised 2026-10-20):
+   sent when a threshold is crossed OR an invalid sheet row is found (US-023 AC5), at most one
+   per day; items found after that day's email go into, and trigger, the next day's email.
+   CMP-028 adds pending-past-limit checks as a further trigger.
 6. CMP-028-payment-check-and-emails — US-022 and US-025: OCR after the lock is released,
    checkResult/checkDetails/needsReview (FFR-030), the confirmation, "registration received"
    and "payment not validated" emails from docs/ux/EVENTS_EMAILS_AND_PRIVACY.md in the

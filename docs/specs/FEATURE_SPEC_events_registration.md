@@ -222,8 +222,9 @@ Abuse metrics
   camila@ when a day exceeds a threshold (initially: > 10 honeypot hits, > 20 throttled
   requests, or the daily upload cap reached), and also when there is something Cami must act
   on: an invalid `Events`/`Coupons` row (FFR-019, US-023 AC5) or a check stuck `pending` past
-  its limit (FFR-032). At most one alert email per day, listing everything found that day
-  (proposed in CMP-036 for the owner's approval). **Captcha rule (Q-19):** no captcha at launch;
+  its limit (FFR-032). At most one alert email per day: it is sent at the first trigger of the
+  day (Costa Rica time) and lists everything found so far; anything found after it goes into,
+  and triggers, the next day's email (proposed in CMP-036 for the owner's approval). **Captcha rule (Q-19):** no captcha at launch;
   enable Cloudflare Turnstile (free, verified server side) if alerts fire on 3+ days in a week or
   Cami marks more than 2 `spam` rows in a week.
 
