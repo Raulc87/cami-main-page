@@ -221,7 +221,8 @@ Administration (Cami)
   from a cache that a time-driven trigger refreshes every 5 minutes (one entry per language).
   Changes Cami makes in the `Events`/`Coupons` tabs therefore show on the site within 5 minutes.
   A registration that changes an event's availability (e.g. sells it out) rebuilds the cache
-  before it answers, rather than clearing it, so the next visitor never waits for a cold
+  after the lock is released (like OCR and emails, FFR-025) and before it answers, rather than
+  clearing it, so the next visitor never waits for a cold
   request; the rebuild adds a few seconds to that registration's own request. The
   clock-based fields (`registrationOpen`, 12 h before start, BR-E09; an event dropped once it
   starts, contract §3.1) may lag by up to 5 minutes; a registration sent in that window is
