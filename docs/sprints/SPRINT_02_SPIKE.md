@@ -12,6 +12,8 @@ spreadsheet and folder and Cami's sample screenshots (owner). No result below is
 | e | Sending from a Workspace alias without a paid seat (fallback `camila@` already decided) | pending | |
 | f | Timing of each step against the 6-minute limit | pending | |
 
+Owner answers (2026-10-20, via the coordinator): two standalone projects (staging, production); samples in a non-shared `samples` subfolder of the staging folder, named `<name>_<amountCrc>.jpg`, plus one altered copy; step e tests the alias `no-reply@lifetoolscr.com`. Expected account and amount are read from the SINPE_* script properties and the file names, so no receipt data passes through chat or the repo.
+
 Any failed assumption is reported with options; no spec is worked around.
 
 ## Skeleton (this PR)
