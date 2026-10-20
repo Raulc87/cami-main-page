@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { C } from '../constants/colors'
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
@@ -26,10 +26,12 @@ export default function Events({ events, sinpe, onRefetch }) {
     triggerRef.current = e.currentTarget
     setSelectedEvent(ev)
   }
-  const close = () => {
+  // Stable identity: a new function on every render would re-run effects in the form that
+  // depend on onClose (and steal focus). onStale (`onRefetch`) is stable too, from useEvents.
+  const close = useCallback(() => {
     setSelectedEvent(null)
     triggerRef.current?.focus()
-  }
+  }, [])
 
   // After a refetch with no events the section goes away, but an open form stays (see above).
   return (
