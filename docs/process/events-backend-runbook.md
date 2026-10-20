@@ -111,7 +111,7 @@ and initial values are the contract (§9); do not rename them.
 | `DRIVE_ROOT_FOLDER_ID` | the folder ID for this environment |
 | `SINPE_NUMBER` | until Cami confirms (staging, and production before release): `0000-0000 (POR CONFIRMAR / TO BE CONFIRMED)` (BR-E01); then the real number |
 | `SINPE_ACCOUNT_NAME` | until Cami confirms: `Nombre por confirmar` (BR-E01); then the real name |
-| `MAIL_FROM_ALIAS` | `no-reply@lifetoolscr.com`; the account that owns the project must have it as a "Send mail as" alias in Gmail, (checked in the spike, step e); if sending from it fails, the fallback is `camila@lifetoolscr.com` |
+| `MAIL_FROM_ALIAS` | `no-reply@lifetoolscr.com`; the account that owns the project must have it as a verified "Send mail as" alias in Gmail (Settings → Accounts → Send mail as), (checked in the spike, step e); if sending from it fails, the fallback is `camila@lifetoolscr.com` |
 | `MAIL_REPLY_TO` | `camila@lifetoolscr.com` |
 | `LIMIT_REGISTER_PER_MIN` | `20` |
 | `LIMIT_COUPON_CHECKS_PER_MIN` | `30` |
@@ -134,6 +134,9 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
    (unsafe)** → **Allow**. The "unsafe" warning appears because the script is not verified by
    Google; it is your own script.
 3. Scopes are listed in `apps-script/appsscript.json` (`oauthScopes`, required from CMP-024).
+   `gmail.settings.basic` is there only so the script may send from the `MAIL_FROM_ALIAS` address
+   (Apps Script checks it against the account's "Send mail as" list); it also allows reading and
+   changing Gmail settings, so run only this repo's code in the project.
    If a later PR adds a
    scope, you will have to repeat this step and create a **new version** (section 5) for the web
    app to use it.
