@@ -146,6 +146,26 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
    scope, you will have to repeat this step and create a **new version** (section 5) for the web
    app to use it.
 
+### 2.6 Events cache trigger
+The `events` answer is kept in a cache and rebuilt every 5 minutes, so the page never waits for
+the spreadsheet (a rebuild takes about 5 s and the site gives up after 3 s). A change Cami makes
+in the sheet shows within about 5 minutes (owner decision 2026-10-20). Without the trigger the
+page still works, but the first visitor after the cache expires (6 minutes) waits about 5 s and
+may not see the events section.
+1. In the script editor, click the clock icon (**Triggers**) in the left sidebar.
+2. **Add Trigger** (bottom right).
+3. Choose which function to run: `refreshEventsCache`. Choose which deployment should run:
+   **Head**. Select event source: **Time-driven**. Select type of time based trigger:
+   **Minutes timer**. Select minute interval: **Every 5 minutes**.
+4. **Save**. If Google asks for permission, allow it (same account, **Advanced** → **Go to
+   project (unsafe)** → **Allow**).
+5. Check: after about 6 minutes, open **Executions** (sidebar): a `refreshEventsCache` run
+   appears about every 5 minutes with status **Completed**. A **Failed** run: open it and read the
+   log; the site keeps working from the last cache or rebuilds on demand.
+Triggers run the **saved** code (Head), not the deployed version: after changing `Events.js`,
+saving is enough for the trigger, while visitors still need a **New version** (section 5).
+Quota: about 290 runs a day of 5 to 10 s each, well inside the Workspace limits.
+
 ## 3. Deploy as a web app (first time)
 1. Editor → **Deploy** → **New deployment** → gear → **Web app**.
 2. Description: the version note (for example `staging – skeleton`).
@@ -247,6 +267,7 @@ Common failures:
 Everything in [release-checklist.md §3b](release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)
 plus: production project updated by section 5, smoke request passes against the production URL,
 and the production build used the production URL.
+In each environment the section 2.6 trigger is installed (Executions shows it running).
 
 ## 10. Correct this runbook
 Record at the first deploy: the `clasp` version used, and what `clasp create` wrote into

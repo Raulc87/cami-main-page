@@ -70,12 +70,17 @@ function queueInvalidRows_(key, tab, invalid) {
   }
 }
 
-var EVENTS_CACHE_SECONDS = 60;
+// The cache lives a little longer than the refresh interval, so with the time-driven trigger
+// installed (runbook, "Events cache trigger") every visitor is served from it.
+var EVENTS_CACHE_SECONDS = 360;
+var EVENTS_REFRESH_MINUTES = 5;
 var EVENTS_CACHE_PREFIX = 'EVENTS_';
 
 // `events` is read on every page load and reads several tabs, which takes seconds in Apps Script
-// (the site gives up after 3 s, FFR-004). The finished response is kept for a minute per
-// language, so a change in the sheet shows within a minute and `register` clears it (CMP-026).
+// (the site gives up after 3 s, FFR-004). The finished response is kept per language and
+// refreshed every 5 minutes by a trigger, so a change in the sheet shows within about 5 minutes
+// (owner decision, 2026-10-20). `register` clears the cache so a sold-out event shows at once
+// (CMP-026). Without the trigger a request that finds the cache empty rebuilds it (about 5 s).
 function handleEvents_(params) {
   var lang = params.lang === 'en' ? 'en' : 'es';
   var cache = CacheService.getScriptCache();
@@ -92,6 +97,14 @@ function handleEvents_(params) {
     console.error('cache write failed: ' + err.name);
   }
   return ok(response.data);
+}
+
+// Run by the time-driven trigger every 5 minutes: rebuilds both languages.
+function refreshEventsCache() {
+  var cache = CacheService.getScriptCache();
+  ['es', 'en'].forEach(function (lang) {
+    cache.put(EVENTS_CACHE_PREFIX + lang, JSON.stringify(buildEventsResponse_(lang)), EVENTS_CACHE_SECONDS);
+  });
 }
 
 function clearEventsCache() {
