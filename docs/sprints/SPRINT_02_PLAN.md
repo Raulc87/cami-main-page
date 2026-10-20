@@ -135,7 +135,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner.
 | `.gitignore` — the `.clasp.json` entry only (CMP-024) | Agent 1 (owner, 2026-10-20) |
 | `docs/process/events-backend-runbook.md`, `docs/sprints/SPRINT_02_SPIKE.md` | Agent 1 |
 | `src/api/**`, `src/hooks/useEvents.js` | Agent 2 |
-| `src/components/Events.jsx`, `src/components/EventsTicker.jsx`, `src/App.jsx` | Agent 2 |
+| `src/components/Events.jsx`, `src/components/EventsTicker.jsx`, `src/components/eventsShared.js`, `src/App.jsx` | Agent 2 |
 | `src/hooks/useReveal.js`, `src/components/Services.jsx` (CMP-031 only) | Agent 2 |
 | `public/images/lifetools-logo.*`, `.env.example` | Agent 2 |
 | `src/components/EventRegistration.jsx` | Agent 3 (Agent 2 creates the stub in CMP-029 only) |
@@ -156,7 +156,12 @@ Agents edit only files they own; changes elsewhere are requested from the owner.
   (`{ ok, data, error }`, with a network failure or timeout mapped to `SERVER_ERROR`). Agent 2
   owns this interface; Agent 3 consumes it.
 - Form mount: `Events.jsx` renders `<EventRegistration event={...} sinpe={...}
-  onClose={...} />` for the event whose register button was selected. CMP-029 creates
+  onClose={...} onStale={...} />` for the event whose register button was selected.
+  `useEvents()` also returns `refetch()`, passed as `onStale`; the form calls `onStale?.()` after
+  showing `EVENT_NOT_FOUND`, `REGISTRATION_CLOSED` or `SOLD_OUT`. A failed refetch keeps the last
+  good events (their text may stay in the previous language until the next successful load), and
+  the open form stays mounted until `onClose` even if a refetch drops its event (added during
+  CMP-030/CMP-032 review, 2026-10-20). CMP-029 creates
   `EventRegistration.jsx` as a stub that renders nothing; from CMP-029's merge the file belongs
   to Agent 3, who replaces the stub in CMP-032 and keeps these props.
 
@@ -236,3 +241,39 @@ The human reviewer is the final approver.
   6. The staging spreadsheet, folder, script properties and first deploy? → the owner asked
      for help; the coordinator guided the setup step by step from the runbook.
 - Agent 3 launched 2026-10-20 after CMP-029 (PR #25) merged.
+- Owner answers (2026-10-20), verbatim: "both OK, samples uploaded. 2. yes 3. a 4. 24h". The
+  questions, as asked: "both OK" — the staging `smokeCheck` log lines (properties, Drive service);
+  "samples uploaded" — Cami's samples in `samples`; 2. coupon before the screenshot? → **yes**;
+  3. a coupon typed but not applied: (a) block Submit or (b) submit without it? → **(a)**;
+  4. English event times: 24-hour or 12-hour? → **24h**. Recorded in FEATURE_SPEC v1.2 (FFR-031,
+  §20) and UX_UI_DIRECTION v1.2 (§13) in CMP-036.
+- Staging: the owner set up the staging project, spreadsheet and folder from the runbook, with
+  the coordinator's step-by-step guide, and deployed the CMP-024 skeleton (2026-10-20). Spike
+  steps a and §8 smoke passed (Agent 1).
+- Owner answers (2026-10-20), verbatim: "(a) for both, mapping confirmed". The questions, as
+  asked: FFR-004 — (a) keep the events shown when a later refresh fails, or (b) hide on any
+  failure? → **(a)**; OCR rate limit (spike finding: Google's per-user OCR limit) — (a) leave the
+  check `pending` and retry it with a time-driven trigger, or (b) mark it `unreadable` and send
+  the "not validated" email? → **(a)** (FFR-032, US-022 AC6). "mapping confirmed": the owner
+  confirms the question-to-answer mapping of "both OK, samples uploaded. 2. yes 3. a 4. 24h"
+  above.
+- Spike results (CMP-024, 2026-10-20, run by the owner on staging): OCR on Cami's samples — 3 `ok`,
+  the altered copy `mismatch` on amount; Google's per-user OCR rate limit hit, handled by
+  backoff (→ FFR-032). A `.heic` already converted to JPEG on upload reads fine; a raw HEIC was
+  not tested. The alias send failed for lack of a Gmail scope; the fallback sent from
+  camila@lifetoolscr.com.
+- Owner answers (2026-10-20), verbatim: "1. add the permission for no-reply@ 2. the fallback was
+  camila@lifetoolscr.com" — questions as asked: (1) sender alias: (a) add the Gmail permission
+  for no-reply@ or (b) send from the account as "Lifetools"? → **(a)**; (2) the From line of the
+  fallback test email → camila@lifetoolscr.com. Then: "OK on the retry proposal, skip the raw HEIC
+  test" — (1) the 10-minute retry, 24-hour limit and FFR-029 action alerts → **OK**; (2) a test
+  with an unconverted iPhone HEIC → **skipped**; iPhone uploads are checked with a real iPhone in
+  CMP-033 instead.
+- Alias test (owner, 2026-10-20, after adding `gmail.settings.basic`), verbatim: "1. yes it is
+  2. I did 3. permissions allowed 4. [log: Sent from alias no-reply@lifetoolscr.com to the running
+  account … Remaining daily email quota: 1484] 5. the from says no-reply@ now". The steps, as
+  asked: 1. no-reply@ listed and verified under Gmail "Send mail as"? → yes; 2. re-pasted
+  `appsscript.json` and `Spike.js`? → done; 3. ran `emailAliasTest` and allowed the permission?
+  → allowed; 4. the log lines → as quoted; 5. the From line of the test email → no-reply@.
+  Spike step e passes with that scope.
+

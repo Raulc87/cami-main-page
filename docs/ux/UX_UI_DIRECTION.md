@@ -1,10 +1,10 @@
 # UX_UI_DIRECTION
 
 ## Metadata
-- Version: 1.1 (homologated from `docs/specs/02-design-system.md` in CMP-014; v1.1 adds the events
-  UI — §4, §13 — in CMP-022)
-- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved (on
-  merge of PR #22))
+- Version: 1.2 (homologated from `docs/specs/02-design-system.md` in CMP-014; v1.1 adds the events
+  UI — §4, §13 — in CMP-022; v1.2: §13 form order and 24-hour times — CMP-036)
+- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
+  merge of PR #22; v1.2 Approved (on merge of PR #30))
 - Source: brand moodboard — *Elegance · Calm · Balance · Femininity*
 
 ## 1. Experience Goal
@@ -171,10 +171,15 @@ It reuses the palette, type and shapes above; no new colors or fonts.
   ("Inscripciones cerradas" / "Registration closed", "Agotado" / "Sold out") above a disabled
   button (reduced opacity, no hover, `disabled`).
 - **Form.** Opens as a modal dialog over the page (full screen at 640 px and below): focus moves
-  into it, Esc and a close button dismiss it, and focus returns to the card's button. Order:
-  event summary (name, date, time, amount), SINPE Móvil instructions (paid only), fields,
-  coupon, privacy notice, consent, submit. Labels sit above fields; errors appear under each
-  field in the active language and are announced to screen readers. The confirmation replaces
-  the form content and shows the reference.
+  into it, Esc and a close button dismiss it, and focus returns to the card's button, or to the
+  Events section when that button is gone or disabled after a refresh. Order:
+  event summary (name, date, time, price); name, email and WhatsApp fields; coupon (its check
+  needs the email, FFR-012); SINPE Móvil instructions with the amount after the coupon (paid
+  only); payment screenshot (paid only); privacy notice; consent; submit. The coupon comes
+  before the payment part so the visitor pays the discounted amount (FEATURE_SPEC §9 steps
+  5–6; owner, 2026-10-20). Labels sit above fields; errors appear under each field in the
+  active language and are announced to screen readers. The confirmation replaces the form
+  content and shows the reference. Times use the 24-hour format (`HH:mm`) in both languages
+  (owner, 2026-10-20).
 - **Placeholders.** The SINPE "placeholder / por confirmar" marker (BR-E01) and the draft
   privacy notice are visibly marked until the release gates pass (BR-002).
