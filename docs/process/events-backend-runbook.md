@@ -55,9 +55,7 @@ Do this once for staging, and again for production when the release gates pass
 ### 2.2 Create the Apps Script project
 Pick one of the two paths. The project is a **standalone** script (script.google.com → New
 project); it reaches the spreadsheet through `SPREADSHEET_ID`, so the same code works in both
-environments. ADR-008 Option A words it as a script "bound to" the spreadsheet; either works
-with contract §9, and the owner decides which (see the PR). If bound, create each project from
-its spreadsheet (Extensions → Apps Script).
+environments (owner decision 2026-10-20, recorded in ADR-008).
 
 **Path A — paste in the editor (no tooling)**
 1. Open <https://script.google.com> signed in as the Workspace account → **New project**, name it
@@ -113,7 +111,7 @@ and initial values are the contract (§9); do not rename them.
 | `DRIVE_ROOT_FOLDER_ID` | the folder ID for this environment |
 | `SINPE_NUMBER` | until Cami confirms (staging, and production before release): `0000-0000 (POR CONFIRMAR / TO BE CONFIRMED)` (BR-E01); then the real number |
 | `SINPE_ACCOUNT_NAME` | until Cami confirms: `Nombre por confirmar` (BR-E01); then the real name |
-| `MAIL_FROM_ALIAS` | the Workspace alias if available, else leave empty (fallback to the account) |
+| `MAIL_FROM_ALIAS` | `no-reply@lifetoolscr.com`; the account that owns the project must have it as a verified "Send mail as" alias in Gmail (Settings → Accounts → Send mail as), (checked in the spike, step e); if sending from it fails, the fallback is `camila@lifetoolscr.com` |
 | `MAIL_REPLY_TO` | `camila@lifetoolscr.com` |
 | `LIMIT_REGISTER_PER_MIN` | `20` |
 | `LIMIT_COUPON_CHECKS_PER_MIN` | `30` |
@@ -122,6 +120,11 @@ and initial values are the contract (§9); do not rename them.
 | `LIMIT_UPLOAD_MB_PER_DAY` | `300` |
 | `ALERT_HONEYPOT_PER_DAY` | `10` |
 | `ALERT_THROTTLED_PER_DAY` | `20` |
+
+The spike stub `register` (CMP-024 to CMP-026) accepts uploads only when the script property
+`SPIKE_ENABLED` is `true`. Set it on **staging only**, and never on production; CMP-026 removes it.
+**Create the production project only after CMP-026 and CMP-027 are merged** (validated `register`,
+throttling and daily caps); until then `main` holds a backend that must not be public.
 
 A placeholder SINPE value is shown to visitors with the placeholder marker
 (`isPlaceholder`, BR-E01). Production must never keep it
@@ -136,6 +139,9 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
    (unsafe)** → **Allow**. The "unsafe" warning appears because the script is not verified by
    Google; it is your own script.
 3. Scopes are listed in `apps-script/appsscript.json` (`oauthScopes`, required from CMP-024).
+   `gmail.settings.basic` is there only so the script may send from the `MAIL_FROM_ALIAS` address
+   (Apps Script checks it against the account's "Send mail as" list); it also allows reading and
+   changing Gmail settings, so run only this repo's code in the project.
    If a later PR adds a
    scope, you will have to repeat this step and create a **new version** (section 5) for the web
    app to use it.
