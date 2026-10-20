@@ -405,7 +405,7 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
 | OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
 | OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |
-| Sender alias (FFR-026, #17) | Send from `no-reply@lifetoolscr.com`; the script gets the Gmail settings scope it needs for that (expected `gmail.settings.basic`, which can read and change the owning account's Gmail settings), accepted by the owner — 2026-10-20: "add the permission for no-reply@". The exact scope is confirmed by the spike's alias test and in CMP-028; a broader scope (e.g. full mailbox) goes back to the owner before deploy (ARCHITECTURE §12, TECH_STACK §11) |
+| Sender alias (FFR-026, #17) | Send from `no-reply@lifetoolscr.com`; the script gets the Gmail scope `gmail.settings.basic` (it can read and change the owning account's Gmail settings), accepted by the owner — 2026-10-20: "add the permission for no-reply@"; the spike's alias test confirmed it is enough (the test email arrived From no-reply@lifetoolscr.com). A broader scope (e.g. full mailbox) goes back to the owner before deploy (ARCHITECTURE §12, TECH_STACK §11) |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.

@@ -112,8 +112,8 @@ npm run preview   # serves dist/ locally
 - Script permissions: the OAuth scopes are those in `apps-script/appsscript.json` (`oauthScopes`). Besides Sheets,
   Drive, Docs, external requests and sending mail, the script holds a Gmail settings scope so it
   can send as `no-reply@lifetoolscr.com` (owner, 2026-10-20); that scope lets it read and change
-  the owning account's Gmail settings. The exact scope is confirmed by the spike's alias test and
-  in CMP-028; any scope broader than the one the owner accepted (e.g. full mailbox
+  the owning account's Gmail settings. The spike's alias test confirmed `gmail.settings.basic` is
+  enough (2026-10-20); any scope broader than the one the owner accepted (e.g. full mailbox
   `https://mail.google.com/`) goes back to the owner before it is deployed.
 
 ## 12. Observability

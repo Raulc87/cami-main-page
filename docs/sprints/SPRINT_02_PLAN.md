@@ -269,4 +269,8 @@ The human reviewer is the final approver.
   test" — (1) the 10-minute retry, 24-hour limit and FFR-029 action alerts → **OK**; (2) a test
   with an unconverted iPhone HEIC → **skipped**; iPhone uploads are checked with a real iPhone in
   CMP-033 instead.
+- Alias test (owner, 2026-10-20, after adding `gmail.settings.basic` and re-authorizing): "1. yes
+  it is 2. I did 3. permissions allowed … 5. the from says no-reply@ now" — no-reply@ is a
+  verified "Send mail as" alias of the owning account; the test email arrived From
+  no-reply@lifetoolscr.com. Spike step e passes with that scope.
 
