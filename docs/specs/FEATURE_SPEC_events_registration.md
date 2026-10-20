@@ -13,7 +13,7 @@
   validated (FFR-019), owner 2026-10-20 — CMP-038; v1.5: FFR-014 original-format fallback,
   owner 2026-10-20 — CMP-039)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
-  v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 Approved (on merge of PR #XX))
+  v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 Approved (on merge of PR #35))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002

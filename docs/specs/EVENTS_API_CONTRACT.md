@@ -10,7 +10,7 @@ Change management: update this document first, bump the version, notify both own
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 Approved (on
-  merge of PR #XX))
+  merge of PR #35))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-033)
 - Related stories: US-017..US-025
