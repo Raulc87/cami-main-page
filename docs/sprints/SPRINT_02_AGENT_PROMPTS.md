@@ -134,13 +134,19 @@ Order of work (each step one PR, in order; IMPLEMENTATION_PLAN §11 steps 1–7)
    neutralization, idempotent submissionId, ALREADY_REGISTERED.
 5. CMP-027-coupons-limits-metrics — US-020 server ACs and US-024: `coupon` action, coupon at
    register (incl. `coupon changed`), counting rule, every LIMIT_*/ALERT_* in contract §9,
-   honeypot fake success, Metrics row, one alert email per day, which also lists the invalid
-   rows queued by CMP-025 (US-023 AC5).
+   honeypot fake success, Metrics row, and the alert email (FFR-029 as revised 2026-10-20):
+   sent when a threshold is crossed OR an invalid sheet row is found (US-023 AC5), at most one
+   per day; items found after that day's email go into, and trigger, the next day's email.
+   CMP-028 adds pending-past-limit checks as a further trigger.
 6. CMP-028-payment-check-and-emails — US-022 and US-025: OCR after the lock is released,
    checkResult/checkDetails/needsReview (FFR-030), the confirmation, "registration received"
    and "payment not validated" emails from docs/ux/EVENTS_EMAILS_AND_PRIVACY.md in the
-   participant's lang, reply-to camila@, `email failed` flag. Templates stay marked as drafts
-   (BR-E11 release gate).
+   participant's lang, reply-to camila@, `email failed` flag; FFR-032 (added 2026-10-20): an
+   OCR service failure after retries leaves `pending` (only the "not validated" email waits), a
+   time-driven trigger retries every 10 min, and rows pending 24 h stop and trigger the day's
+   alert email (FFR-029: at most one per day, also for invalid sheet rows); add the trigger
+   installation (and any new scope) to the runbook. Templates stay marked as drafts (BR-E11
+   release gate).
 
 Evidence per PR: every validation rule (one valid, one invalid case) and every error code you
 add, run against staging, with request, response and a screenshot of the row or file
@@ -161,7 +167,8 @@ Order of work:
      register(payload), per EVENTS_API_CONTRACT §2 (text/plain POST with a JSON string body,
      redirect "follow", no custom headers), each resolving to the §7 envelope; network failure
      or timeout → SERVER_ERROR; `events` times out at 3 s.
-   - src/hooks/useEvents.js: returns { status: "loading" | "ready" | "hidden", sinpe, events };
+   - src/hooks/useEvents.js: returns { status: "loading" | "ready" | "hidden", sinpe, events,
+     refetch } (refetch added 2026-10-20, SPRINT_02_PLAN → Integration Contracts);
      "hidden" when VITE_EVENTS_API_URL is empty, on error, timeout or zero events (FFR-004);
      refetches on language change.
    - UI_TEXT.events in src/constants/i18n.js (EN/ES): section title, price/free, statuses,
@@ -175,7 +182,8 @@ Order of work:
    - With VITE_EVENTS_API_URL empty, the page must be identical to today's (check it).
 2. CMP-030-events-section-and-ticker — US-017 (AC1–AC5) and US-018 (AC1–AC5):
    Events.jsx, EventsTicker.jsx. The register button mounts <EventRegistration event sinpe
-   onClose /> (sprint plan → Integration Contracts); until CMP-032 lands it shows nothing.
+   onClose onStale /> with onStale = useEvents' refetch (sprint plan → Integration Contracts,
+   updated 2026-10-20); until CMP-032 lands it shows nothing.
    Neither component uses the `r()` scroll-reveal helper: they mount after useReveal has
    scanned the page (ARCHITECTURE_SPEC §7).
    Verify against staging (after CMP-025 is deployed) at 1280/900/375 px, EN/ES, keyboard,
@@ -195,8 +203,9 @@ Start only when CMP-029 is merged. Layout: docs/ux/UX_UI_DIRECTION.md §13.
 
 Order of work:
 1. CMP-032-event-registration-form — US-019 (AC1–AC8) and the US-020 client side (AC1–AC3,
-   AC5–AC7 as seen by the visitor): src/components/EventRegistration.jsx (replace the stub,
-   keep its props event, sinpe, onClose), using
+   AC5–AC8 as seen by the visitor; AC8 added 2026-10-20, FFR-031):
+   src/components/EventRegistration.jsx (replace the stub, keep its props event, sinpe,
+   onClose, onStale), using
    src/api/events.js from CMP-029 and the `event`/`sinpe` props (do not edit Agent 2's files;
    request changes from Agent 2). SINPE instructions from the `sinpe` object with the placeholder marker; free and
    ₡0 forms without the payment part; client validation per contract §3.3/§8; submissionId
@@ -208,7 +217,9 @@ Order of work:
    and deployed to staging: run the EVENTS_API_CONTRACT §10 end-to-end list on main against
    staging; receive each email (confirmation, registration received, not validated) in a
    Gmail and an Outlook inbox; check layouts at 1280/900/375 px in EN and ES and the existing
-   sections for regressions; check US-005 AC2 with test data you do not commit. Write
+   sections for regressions; check US-005 AC2 with test data you do not commit; with the
+   owner, upload a screenshot from a real iPhone (default HEIC settings) through the form and
+   confirm it is stored as JPEG and checked (owner skipped the raw-HEIC spike test, 2026-10-20). Write
    docs/sprints/SPRINT_02_VERIFICATION.md (one table per story, AC × case, Pass/Fail/N/A) with
    JPEG evidence in docs/sprints/evidence/sprint-02/ (under 5 MB, personal data masked).
    A Fail is not fixed in this PR: classify it as AC wording or defect and propose a ticket.
