@@ -32,7 +32,7 @@ function readEvents() {
   var result = validateEventRows_(rows);
   var published = {};
   rows.forEach(function (r) { published[r.row] = r.published; });
-  var validCodes = {};
+  var validCodes = Object.create(null);
   validateEventRows_(rows.map(function (r) { return { row: r.row, raw: r.raw, published: true }; }))
     .valid.forEach(function (ev) { validCodes[ev.eventCode] = true; });
   return {
@@ -104,7 +104,11 @@ function handleEvents_(params) {
 function refreshEventsCache() {
   var cache = CacheService.getScriptCache();
   ['es', 'en'].forEach(function (lang) {
-    cache.put(EVENTS_CACHE_PREFIX + lang, JSON.stringify(buildEventsResponse_(lang)), EVENTS_CACHE_SECONDS);
+    try {
+      cache.put(EVENTS_CACHE_PREFIX + lang, JSON.stringify(buildEventsResponse_(lang)), EVENTS_CACHE_SECONDS);
+    } catch (err) {
+      console.error('refresh ' + lang + ' failed: ' + err.name); // one language failing must not stop the other
+    }
   });
 }
 

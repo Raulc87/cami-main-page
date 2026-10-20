@@ -36,9 +36,9 @@ function normalizeDate_(text) {
   return ok ? m[1] + '-' + m[2] + '-' + m[3] : null;
 }
 
-// `HH:mm` 24 h (`H:mm` accepted); null otherwise.
+// `HH:mm` 24 h (`H:mm` and `HH:mm:ss` accepted, seconds dropped); null otherwise.
 function normalizeTime_(text) {
-  var m = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec(String(text).trim());
+  var m = /^([01]?\d|2[0-3]):([0-5]\d)(?::[0-5]\d)?$/.exec(String(text).trim());
   return m ? pad2_(Number(m[1])) + ':' + m[2] : null;
 }
 
@@ -110,7 +110,7 @@ function validateEventRow_(raw) {
 // with a published one. `rows`: [{ row: sheet row number, raw: {...}, published: bool }].
 // Returns { valid: [event + published], invalid: [{ row, problems }] }.
 function validateEventRows_(rows) {
-  var byCode = {};
+  var byCode = Object.create(null); // codes are free text: no inherited keys such as `constructor`
   rows.forEach(function (r) {
     var code = String(r.raw.eventCode === undefined ? '' : r.raw.eventCode).trim();
     if (code) (byCode[code] = byCode[code] || []).push(r);
@@ -148,7 +148,7 @@ function parseDiscount_(display) {
 // `rows`: [{ row, raw: { eventCode, couponCode, discountDisplay, maxUses, active, expiresOnText } }].
 // Returns { valid: [coupon], invalid: [{ row, problems }] }.
 function validateCouponRows_(rows, validEventCodes) {
-  var seen = {};
+  var seen = Object.create(null);
   var valid = [];
   var invalid = [];
   rows.forEach(function (r) {
