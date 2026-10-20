@@ -172,7 +172,7 @@ Order of work:
    - src/api/events.js: getEvents(lang), checkCoupon({eventCode, couponCode, email}),
      register(payload), per EVENTS_API_CONTRACT §2 (text/plain POST with a JSON string body,
      redirect "follow", no custom headers), each resolving to the §7 envelope; network failure
-     or timeout → SERVER_ERROR; `events` times out at 3 s.
+     or timeout → SERVER_ERROR; `events` times out at 5 s (owner, 2026-10-20; was 3 s).
    - src/hooks/useEvents.js: returns { status: "loading" | "ready" | "hidden", sinpe, events,
      refetch } (refetch added 2026-10-20, SPRINT_02_PLAN → Integration Contracts);
      "hidden" when VITE_EVENTS_API_URL is empty, on error, timeout or zero events (FFR-004);
