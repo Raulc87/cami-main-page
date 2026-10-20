@@ -16,6 +16,11 @@ Owner answers (2026-10-20, via the coordinator): two standalone projects (stagin
 
 Any failed assumption is reported with options; no spec is worked around.
 
+## Findings so far
+
+- **OCR works on a real sample** (sample1: `ok`, account and amount found, 4.3 s). The three other files hit `User rate limit exceeded for OCR` when run back to back, so Drive limits OCR per user (the account that owns the script). The spike now retries with a pause of 5, 10, 20, 40 s and waits 3 s between files.
+- **Production implication (FFR-017 runs OCR per registration after the lock):** a burst of registrations can hit the same limit. In-execution backoff fits inside the 6-minute limit for small bursts. If the retries are exhausted, FFR-017 and the contract define only `ok`, `mismatch` and `unreadable`, and `pending`; marking such a row `unreadable` would send the participant a "payment not validated" email for a service limit. Leaving it `pending` and retrying later by a time trigger is not in the spec. This needs the owner's decision before CMP-028; it is not decided here.
+
 ## Skeleton (this PR)
 `apps-script/`: `appsscript.json` (V8, Drive v2 advanced service, web app executes as the owner,
 access anonymous), `Code.js` (router on `action`; `events` and `register` are spike stubs),

@@ -8,16 +8,33 @@
 function ocrText(fileId) {
   var blob = DriveApp.getFileById(fileId).getBlob();
   var t0 = Date.now();
-  var doc = Drive.Files.insert(
-    { title: 'ocr-tmp-' + Date.now(), mimeType: blob.getContentType() },
-    blob,
-    { ocr: true, ocrLanguage: 'es' }
-  );
+  var doc = insertWithBackoff_(blob);
   try {
     var text = DocumentApp.openById(doc.id).getBody().getText();
     return { text: text, ms: Date.now() - t0 };
   } finally {
     DriveApp.getFileById(doc.id).setTrashed(true);
+  }
+}
+
+// Drive limits OCR per user ("User rate limit exceeded for OCR"). Retry with a growing pause;
+// the number of attempts and the total wait are part of the spike's findings.
+function insertWithBackoff_(blob) {
+  var waits = [5000, 10000, 20000, 40000];
+  for (var attempt = 0; ; attempt++) {
+    try {
+      var doc = Drive.Files.insert(
+        { title: 'ocr-tmp-' + Date.now(), mimeType: blob.getContentType() },
+        blob,
+        { ocr: true, ocrLanguage: 'es' }
+      );
+      if (attempt) console.log('OCR succeeded after ' + attempt + ' retries');
+      return doc;
+    } catch (e) {
+      if (!/rate limit/i.test(String(e.message)) || attempt >= waits.length) throw e;
+      console.log('OCR rate limit, waiting ' + waits[attempt] / 1000 + ' s');
+      Utilities.sleep(waits[attempt]);
+    }
   }
 }
 
@@ -54,6 +71,10 @@ function runOcrSamples() {
       results.push({ file: f.getName(), skipped: 'not an image (' + f.getMimeType() + ')' });
       continue;
     }
+    if (/\.(heic|heif)$/i.test(f.getName())) {
+      results.push({ file: f.getName(), skipped: 'HEIC: use heicProbe' });
+      continue;
+    }
     var amount = amountFromFileName(f.getName());
     if (amount === null) { results.push({ file: f.getName(), error: 'name must be <name>_<amountCrc>.jpg' }); continue; }
     try {
@@ -63,6 +84,7 @@ function runOcrSamples() {
     } catch (e) {
       results.push({ file: f.getName(), error: String(e.message).slice(0, 160) });
     }
+    Utilities.sleep(3000);
   }
   console.log(JSON.stringify(results));
   return results;
@@ -72,7 +94,8 @@ function runOcrSamples() {
 // Check the inbox: the From line must show the alias. Falls back to a plain send if the alias
 // is not set up, and says so in the log.
 function emailAliasTest() {
-  var to = Session.getActiveUser().getEmail();
+  var to = Session.getEffectiveUser().getEmail() || getProp('SPIKE_TEST_RECIPIENT');
+  if (!to) throw new Error('No recipient: set the script property SPIKE_TEST_RECIPIENT to your own address');
   var alias = getProp('MAIL_FROM_ALIAS');
   var subject = 'Spike test: sender alias';
   var body = 'Test message from the events backend spike. You can delete it.';
