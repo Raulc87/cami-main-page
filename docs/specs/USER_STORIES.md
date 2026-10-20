@@ -524,8 +524,8 @@ So that I can choose one to attend
 1. Given published events that have not started (BR-E09)
    When the page loads
    Then an "Upcoming Events" / "Próximos eventos" section shows one card per event, ordered by
-   start, each with name, date and time, brief description, price (or "Gratis" / "Free") and a
-   register button.
+   start, each with name, date and time (24-hour `HH:mm` in both languages), brief description,
+   price (or "Gratis" / "Free") and a register button.
 2. Given an event with no image URL
    When its card renders
    Then the Lifetools logo is shown in place of the art.

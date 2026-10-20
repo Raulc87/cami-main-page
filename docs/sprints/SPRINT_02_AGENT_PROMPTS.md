@@ -161,7 +161,8 @@ Order of work:
      register(payload), per EVENTS_API_CONTRACT §2 (text/plain POST with a JSON string body,
      redirect "follow", no custom headers), each resolving to the §7 envelope; network failure
      or timeout → SERVER_ERROR; `events` times out at 3 s.
-   - src/hooks/useEvents.js: returns { status: "loading" | "ready" | "hidden", sinpe, events };
+   - src/hooks/useEvents.js: returns { status: "loading" | "ready" | "hidden", sinpe, events,
+     refetch } (refetch added 2026-10-20, SPRINT_02_PLAN → Integration Contracts);
      "hidden" when VITE_EVENTS_API_URL is empty, on error, timeout or zero events (FFR-004);
      refetches on language change.
    - UI_TEXT.events in src/constants/i18n.js (EN/ES): section title, price/free, statuses,
@@ -175,7 +176,8 @@ Order of work:
    - With VITE_EVENTS_API_URL empty, the page must be identical to today's (check it).
 2. CMP-030-events-section-and-ticker — US-017 (AC1–AC5) and US-018 (AC1–AC5):
    Events.jsx, EventsTicker.jsx. The register button mounts <EventRegistration event sinpe
-   onClose /> (sprint plan → Integration Contracts); until CMP-032 lands it shows nothing.
+   onClose onStale /> with onStale = useEvents' refetch (sprint plan → Integration Contracts,
+   updated 2026-10-20); until CMP-032 lands it shows nothing.
    Neither component uses the `r()` scroll-reveal helper: they mount after useReveal has
    scanned the page (ARCHITECTURE_SPEC §7).
    Verify against staging (after CMP-025 is deployed) at 1280/900/375 px, EN/ES, keyboard,
@@ -195,7 +197,7 @@ Start only when CMP-029 is merged. Layout: docs/ux/UX_UI_DIRECTION.md §13.
 
 Order of work:
 1. CMP-032-event-registration-form — US-019 (AC1–AC8) and the US-020 client side (AC1–AC3,
-   AC5–AC7 as seen by the visitor): src/components/EventRegistration.jsx (replace the stub,
+   AC5–AC8 as seen by the visitor; AC8 added 2026-10-20, FFR-031): src/components/EventRegistration.jsx (replace the stub,
    keep its props event, sinpe, onClose), using
    src/api/events.js from CMP-029 and the `event`/`sinpe` props (do not edit Agent 2's files;
    request changes from Agent 2). SINPE instructions from the `sinpe` object with the placeholder marker; free and

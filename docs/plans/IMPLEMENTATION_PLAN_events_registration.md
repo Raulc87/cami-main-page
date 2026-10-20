@@ -122,7 +122,7 @@ Planning model: Opus — this plan sequences a new backend and three workstreams
 | 6 | CMP-027 | US-020 (server) and US-024: `coupon` action, coupon at `register`, counting rule, `LIMIT_*` throttles, upload cap, honeypot, `Metrics`, alerts (including the invalid rows of US-023 AC5) | Agent 1 | Sonnet | Specified |
 | 7 | CMP-028 | US-022 and US-025: OCR check after the lock, `checkResult`/`checkDetails`/`needsReview`, the three participant emails from the drafts | Agent 1 | Sonnet | Specified |
 | 8 | CMP-029 | Frontend foundation: API client, `useEvents`, `UI_TEXT.events` (section, ticker, statuses), `global.css` events block, `App.jsx` slots, logo placeholder, `.env.example` | Agent 2 | Sonnet | Shared files; must merge before steps 9 and 11 |
-| 9 | CMP-030 | US-017 and US-018: `Events.jsx`, `EventsTicker.jsx` | Agent 2 | Sonnet | Specified |
+| 9 | CMP-030 | US-017 and US-018: `Events.jsx`, `EventsTicker.jsx`, `eventsShared.js`; `useEvents.js` `refetch` and `App.jsx` wiring for the form's `onStale` (SPRINT_02_PLAN → Integration Contracts) | Agent 2 | Sonnet | Specified |
 | 10 | CMP-031 | US-002 AC2 fix: hover shift not overridden by the reveal transform, no change to other sections' reveal | Agent 2 | Sonnet | Browser debugging |
 | 11 | CMP-032 | US-019 and US-020 (client): `EventRegistration.jsx`, coupon field, SINPE instructions, validation, submit and retry, consent | Agent 3 | Sonnet | Specified; largest frontend step |
 | 12 | CMP-033 | Integration verification on staging: contract §10 end-to-end list, emails delivered to a Gmail and an Outlook inbox, 1280/900/375 px × EN/ES, US-005 AC2 check; results in `SPRINT_02_VERIFICATION.md` | Agent 3 | Sonnet | Running checks and recording evidence |

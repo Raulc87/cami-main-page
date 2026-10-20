@@ -1,7 +1,7 @@
 # ARCHITECTURE_SPEC
 
 ## Metadata
-- Version: 1.3 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
+- Version: 1.4 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
   §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022;
   v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035; v1.4: §7
   scroll-reveal wrapper rule — CMP-036)

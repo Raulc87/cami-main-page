@@ -6,7 +6,8 @@
   participant emails, events ticker
 - Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
-  decisions, form order in FFR-008 and §9 steps 4–6, owner 2026-10-20 — CMP-036)
+  decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
+  rule, owner 2026-10-20 — CMP-036)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
   PR #30))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
@@ -72,12 +73,17 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 Events section
 - FFR-001: The page shows an "Upcoming Events" / "Próximos eventos" section with one card per
   published event that has not started (BR-E09), ordered by start ascending.
-- FFR-002: Each card shows the event name, date and time, brief description, price (or
-  "Gratis / Free") and the event art image; when an event has no image, the Lifetools logo.
+- FFR-002: Each card shows the event name, date and time (24-hour `HH:mm` in both languages),
+  brief description, price (or "Gratis / Free") and the event art image; when an event has no
+  image, the Lifetools logo.
 - FFR-003: Each card has a register button; it is disabled when registration is closed
   (12 h before start, BR-E09) or the event is sold out (FFR-025).
-- FFR-004: When there are no upcoming events, or the backend is unavailable, the section and
-  the ticker are hidden (Q-10) and the rest of the page renders normally.
+- FFR-004: When the page loads and there are no upcoming events, or the backend is unavailable
+  or slower than 3 s, the section and the ticker are hidden (Q-10) and the rest of the page
+  renders normally. A later refresh (language change, or a stale-event refresh from the form)
+  that fails keeps the events already shown, so an open registration form and its typed data
+  are not lost; the backend re-checks every registration anyway (BR-E13). Proposed in CMP-036,
+  approved by the owner on merge of PR #30.
 - FFR-025: Capacity: each event has a capacity in the `Events` tab. When the count of counting
   registrations (BR-E10) reaches it, the card shows "Agotado / Sold out" and the register button
   is disabled. At `register` time the server applies BR-E13: a ₡0 registration is refused

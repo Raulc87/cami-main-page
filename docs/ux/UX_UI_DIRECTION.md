@@ -171,7 +171,8 @@ It reuses the palette, type and shapes above; no new colors or fonts.
   ("Inscripciones cerradas" / "Registration closed", "Agotado" / "Sold out") above a disabled
   button (reduced opacity, no hover, `disabled`).
 - **Form.** Opens as a modal dialog over the page (full screen at 640 px and below): focus moves
-  into it, Esc and a close button dismiss it, and focus returns to the card's button. Order:
+  into it, Esc and a close button dismiss it, and focus returns to the card's button, or to the
+  Events section when that button is gone or disabled after a refresh. Order:
   event summary (name, date, time, price); name, email and WhatsApp fields; coupon (its check
   needs the email, FFR-012); SINPE Móvil instructions with the amount after the coupon (paid
   only); payment screenshot (paid only); privacy notice; consent; submit. The coupon comes
