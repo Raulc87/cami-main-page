@@ -1,7 +1,7 @@
 # TECH_STACK
 
 ## Metadata
-- Version: 1.3 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
+- Version: 1.4 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
   §1, §5–7, §10–14 — in CMP-021; v1.3: §10 two Apps Script projects — CMP-035;
   v1.4: §11 script permissions — CMP-036)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved on

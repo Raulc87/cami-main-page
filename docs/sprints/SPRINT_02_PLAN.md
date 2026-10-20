@@ -269,8 +269,11 @@ The human reviewer is the final approver.
   test" — (1) the 10-minute retry, 24-hour limit and FFR-029 action alerts → **OK**; (2) a test
   with an unconverted iPhone HEIC → **skipped**; iPhone uploads are checked with a real iPhone in
   CMP-033 instead.
-- Alias test (owner, 2026-10-20, after adding `gmail.settings.basic` and re-authorizing): "1. yes
-  it is 2. I did 3. permissions allowed … 5. the from says no-reply@ now" — no-reply@ is a
-  verified "Send mail as" alias of the owning account; the test email arrived From
-  no-reply@lifetoolscr.com. Spike step e passes with that scope.
+- Alias test (owner, 2026-10-20, after adding `gmail.settings.basic`), verbatim: "1. yes it is
+  2. I did 3. permissions allowed 4. [log: Sent from alias no-reply@lifetoolscr.com to the running
+  account … Remaining daily email quota: 1484] 5. the from says no-reply@ now". The steps, as
+  asked: 1. no-reply@ listed and verified under Gmail "Send mail as"? → yes; 2. re-pasted
+  `appsscript.json` and `Spike.js`? → done; 3. ran `emailAliasTest` and allowed the permission?
+  → allowed; 4. the log lines → as quoted; 5. the From line of the test email → no-reply@.
+  Spike step e passes with that scope.
 
