@@ -34,7 +34,8 @@ function readRows(name) {
 // Prefix values that start a formula so Sheets stores them as text (contract §6, FFR-014).
 function neutralize(value) {
   var s = String(value);
-  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+  // Also digits-only text, so Sheets keeps it as text instead of a number.
+  return /^[=+\-@\t\r]/.test(s) || /^\d[\d.,]*$/.test(s) ? "'" + s : s;
 }
 
 // A tab as rows of { row: sheet row number, v: {header: value}, d: {header: displayed text} }.

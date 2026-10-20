@@ -123,8 +123,9 @@ and initial values are the contract (§9); do not rename them.
 | `ALERT_HONEYPOT_PER_DAY` | `10` |
 | `ALERT_THROTTLED_PER_DAY` | `20` |
 
-The spike stub `register` (CMP-024 to CMP-026) accepts uploads only when the script property
-`SPIKE_ENABLED` is `true`. Set it on **staging only**, and never on production; CMP-026 removes it.
+The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
+delete it from the staging project if it is still there. The limits above are enforced from
+CMP-027; until then `register` has no throttle or daily cap.
 **Create the production project only after CMP-026 and CMP-027 are merged** (validated `register`,
 throttling and daily caps); until then `main` holds a backend that must not be public.
 
