@@ -538,7 +538,7 @@ So that I can choose one to attend
    When the cards render
    Then name and description are in English (`nameEn`/`descriptionEn` if filled, otherwise the
    automatic translation).
-5. Given no upcoming events, or the backend slow (> 3 s) or down
+5. Given no upcoming events, or the backend slow (> 5 s) or down
    When the page loads
    Then the section and the ticker are hidden and the rest of the page renders normally.
 
