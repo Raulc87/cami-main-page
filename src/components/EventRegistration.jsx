@@ -427,33 +427,6 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
   } else {
     body = (
       <form onSubmit={onSubmit} noValidate>
-        {needsPayment && (
-          <section className="evt-form-pay" aria-labelledby="evt-form-pay-title">
-            <h3 id="evt-form-pay-title" className="evt-form-section-title">
-              {t.payTitle[lang]}
-            </h3>
-            <p className="evt-form-hint">{t.payIntro[lang]}</p>
-            <dl className="evt-form-pay-list">
-              <div>
-                <dt>{t.payNumber[lang]}</dt>
-                <dd>{sinpe?.number ?? '—'}</dd>
-              </div>
-              <div>
-                <dt>{t.payAccount[lang]}</dt>
-                <dd>{sinpe?.accountName ?? '—'}</dd>
-              </div>
-              <div>
-                <dt>{t.payAmount[lang]}</dt>
-                <dd className="evt-form-amount">
-                  {formatCrc(amountDue, lang)}
-                  {coupon && <span className="evt-form-discount"> −{coupon.discountPercent}%</span>}
-                </dd>
-              </div>
-            </dl>
-            {sinpe?.isPlaceholder && <p className="evt-form-placeholder">{t.placeholderMarker[lang]}</p>}
-          </section>
-        )}
-
         {field(
           'name',
           'evt-name',
@@ -573,6 +546,33 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
                   : null}
             </p>
           </div>
+        )}
+
+        {needsPayment && (
+          <section className="evt-form-pay" aria-labelledby="evt-form-pay-title">
+            <h3 id="evt-form-pay-title" className="evt-form-section-title">
+              {t.payTitle[lang]}
+            </h3>
+            <p className="evt-form-hint">{t.payIntro[lang]}</p>
+            <dl className="evt-form-pay-list">
+              <div>
+                <dt>{t.payNumber[lang]}</dt>
+                <dd>{sinpe?.number ?? '—'}</dd>
+              </div>
+              <div>
+                <dt>{t.payAccount[lang]}</dt>
+                <dd>{sinpe?.accountName ?? '—'}</dd>
+              </div>
+              <div>
+                <dt>{t.payAmount[lang]}</dt>
+                <dd className="evt-form-amount">
+                  {formatCrc(amountDue, lang)}
+                  {coupon && <span className="evt-form-discount"> −{coupon.discountPercent}%</span>}
+                </dd>
+              </div>
+            </dl>
+            {sinpe?.isPlaceholder && <p className="evt-form-placeholder">{t.placeholderMarker[lang]}</p>}
+          </section>
         )}
 
         {needsPayment &&
