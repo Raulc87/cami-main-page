@@ -47,15 +47,20 @@ const newSubmissionId = () => {
 const ascii = (bytes, from, to) => String.fromCharCode(...bytes.slice(from, to))
 
 // Image type from the file content, not its name or the browser-reported type (contract §3.3).
+const HEIC_BRANDS = ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'hevm', 'hevs']
 async function sniffImage(file) {
-  const bytes = new Uint8Array(await file.slice(0, 32).arrayBuffer())
+  const bytes = new Uint8Array(await file.slice(0, 64).arrayBuffer())
   if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return 'image/jpeg'
   if (ascii(bytes, 0, 8) === '\x89PNG\r\n\x1a\n') return 'image/png'
   if (ascii(bytes, 0, 4) === 'RIFF' && ascii(bytes, 8, 12) === 'WEBP') return 'image/webp'
   if (ascii(bytes, 4, 8) === 'ftyp') {
-    const brand = ascii(bytes, 8, 12)
-    if (['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'hevm', 'hevs'].includes(brand)) return 'image/heic'
-    if (['mif1', 'msf1', 'heif'].includes(brand)) return 'image/heif'
+    // Major brand plus the compatible brands that fit in the slice. mif1/msf1 are also used by AVIF,
+    // so they only count as HEIF when a HEIC brand is listed and no AVIF brand is.
+    const brands = [ascii(bytes, 8, 12)]
+    for (let i = 16; i + 4 <= bytes.length; i += 4) brands.push(ascii(bytes, i, i + 4))
+    if (brands.includes('avif') || brands.includes('avis')) return null
+    if (brands.some((x) => HEIC_BRANDS.includes(x))) return 'image/heic'
+    if (brands[0] === 'heif') return 'image/heif'
   }
   return null
 }
@@ -509,6 +514,23 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
           t.whatsappHint[lang],
         )}
 
+        {needsPayment &&
+          field(
+            'file',
+            'evt-file',
+            t.file[lang],
+            <input
+              id="evt-file"
+              className="evt-form-input evt-form-file"
+              type="file"
+              accept="image/*,.heic,.heif"
+              aria-invalid={!!errors.file}
+              aria-describedby={describedBy('file', 'evt-file', true)}
+              onChange={onFileChange}
+            />,
+            file ? `${t.fileSelected[lang]}: ${file.file.name}` : t.fileHint[lang],
+          )}
+
         {price > 0 && (
           <div className="evt-form-field">
             <label htmlFor="evt-coupon" className="evt-form-label">
@@ -569,23 +591,6 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
             </p>
           </div>
         )}
-
-        {needsPayment &&
-          field(
-            'file',
-            'evt-file',
-            t.file[lang],
-            <input
-              id="evt-file"
-              className="evt-form-input evt-form-file"
-              type="file"
-              accept="image/*,.heic,.heif"
-              aria-invalid={!!errors.file}
-              aria-describedby={describedBy('file', 'evt-file', true)}
-              onChange={onFileChange}
-            />,
-            file ? `${t.fileSelected[lang]}: ${file.file.name}` : t.fileHint[lang],
-          )}
 
         {/* Honeypot (contract §3.3): hidden from people and assistive tech, bots fill it in. */}
         <div className="evt-form-hp" aria-hidden="true">
