@@ -19,7 +19,7 @@ export default function App() {
   const r = useReveal()
   // One `events` request for the page; the ticker and the section hide themselves when
   // status is not 'ready' (FFR-004).
-  const { status, sinpe, events } = useEvents()
+  const { status, sinpe, events, refetch } = useEvents()
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden' }}>
@@ -41,7 +41,7 @@ export default function App() {
       {status === 'ready' && <EventsTicker events={events} />}
       <Nav />
       <Hero r={r} />
-      {status === 'ready' && <Events events={events} sinpe={sinpe} />}
+      {status === 'ready' && <Events events={events} sinpe={sinpe} onRefetch={refetch} />}
       <Services r={r} />
       <Gallery r={r} />
       <Process r={r} />

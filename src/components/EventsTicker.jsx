@@ -14,10 +14,28 @@ function goToCard(eventCode) {
   ;(card.querySelector('button:not([disabled])') ?? card).focus({ preventScroll: true })
 }
 
+// Keyboard focus lands on an item of the first set, which the animation may have moved out of
+// view. Restart both tracks (they stay paused while focused) and scroll the clipped bar so the
+// focused item is visible; undo the scroll on blur so the loop resumes in place.
+function revealFocused(e) {
+  const bar = e.currentTarget.closest('.evt-ticker')
+  bar.querySelectorAll('.evt-ticker-track').forEach((track) => {
+    track.style.animation = 'none'
+    void track.offsetWidth
+    track.style.animation = ''
+  })
+  e.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+}
+
+function resetBar(e) {
+  e.currentTarget.closest('.evt-ticker').scrollLeft = 0
+}
+
 // No `r()` scroll-reveal: mounts after useReveal has scanned the page (ARCHITECTURE_SPEC §7).
 export default function EventsTicker({ events }) {
   const { lang } = useLanguage()
   const t = UI_TEXT.events
+  if (events.length === 0) return null
   const items = events.slice(0, TICKER_EVENTS)
   const repeats = Math.ceil(MIN_ITEMS_PER_TRACK / items.length)
 
@@ -43,6 +61,8 @@ export default function EventsTicker({ events }) {
                     className={primary ? 'evt-ticker-item' : 'evt-ticker-item evt-ticker-item-copy'}
                     tabIndex={primary ? 0 : -1}
                     onClick={() => goToCard(ev.eventCode)}
+                    onFocus={primary ? revealFocused : undefined}
+                    onBlur={primary ? resetBar : undefined}
                   >
                     {ev.name} · {formatEventDate(ev.date, lang)}
                   </button>
