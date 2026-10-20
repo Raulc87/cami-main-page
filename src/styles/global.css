@@ -126,9 +126,124 @@ body::before {
   z-index: 1;
 }
 
+/* ── Events (US-017, US-018; UX_UI_DIRECTION §13) ──────── */
+.evt-ticker {
+  position: relative;
+  z-index: 60;
+  height: 40px;
+  background: #1e2d42;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+}
+.evt-ticker-track {
+  /* CMP-030 renders two identical tracks side by side; each moves one full width, so the loop
+     is seamless. */
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 100%;
+  white-space: nowrap;
+  animation: evt-ticker-scroll 30s linear infinite;
+}
+.evt-ticker:hover .evt-ticker-track,
+.evt-ticker:focus-within .evt-ticker-track {
+  animation-play-state: paused;
+}
+.evt-ticker-item {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.evt-ticker-item:focus-visible {
+  outline: 2px solid #c9a4ab;
+  outline-offset: 2px;
+}
+.evt-ticker-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c9a4ab;
+  margin: 0 28px;
+}
+@keyframes evt-ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+.evt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+.evt-card {
+  background: white;
+  border: 1px solid #e8d4d8;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.evt-card-img {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  object-fit: cover;
+  display: block;
+}
+.evt-card-img-logo {
+  object-fit: contain;
+  background: #f5ede8;
+  padding: 12px;
+}
+.evt-card-body {
+  padding: 22px 24px 26px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.evt-price {
+  display: inline-block;
+  align-self: flex-start;
+  background: #c9a4ab;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+.evt-status {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c9a4ab;
+  font-weight: 700;
+}
+.cta-btn:disabled,
+.cta-btn:disabled:hover {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 8px 32px rgba(30, 45, 66, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evt-ticker { overflow-x: auto; scrollbar-width: none; }
+  .evt-ticker::-webkit-scrollbar { display: none; }
+  .evt-ticker-track { animation: none; }
+}
+
 /* ── Responsive ────────────────────────────────────────── */
 @media (max-width: 900px) {
   .svc-grid { grid-template-columns: 1fr 1fr !important; }
+  .evt-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 640px) {
@@ -137,6 +252,7 @@ body::before {
   .hero-img-frame  { height: 300px !important; }
   .stats-grid      { grid-template-columns: 1fr 1fr !important; }
   .svc-grid        { grid-template-columns: 1fr !important; }
+  .evt-grid        { grid-template-columns: 1fr; }
   .steps-flex      { flex-direction: column !important; gap: 36px !important; }
   .vals-flex       { flex-wrap: wrap !important; justify-content: center !important; }
   .tests-grid      { grid-template-columns: 1fr !important; }
