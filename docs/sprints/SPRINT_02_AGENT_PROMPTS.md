@@ -197,8 +197,9 @@ Start only when CMP-029 is merged. Layout: docs/ux/UX_UI_DIRECTION.md §13.
 
 Order of work:
 1. CMP-032-event-registration-form — US-019 (AC1–AC8) and the US-020 client side (AC1–AC3,
-   AC5–AC8 as seen by the visitor; AC8 added 2026-10-20, FFR-031): src/components/EventRegistration.jsx (replace the stub,
-   keep its props event, sinpe, onClose), using
+   AC5–AC8 as seen by the visitor; AC8 added 2026-10-20, FFR-031):
+   src/components/EventRegistration.jsx (replace the stub, keep its props event, sinpe,
+   onClose, onStale), using
    src/api/events.js from CMP-029 and the `event`/`sinpe` props (do not edit Agent 2's files;
    request changes from Agent 2). SINPE instructions from the `sinpe` object with the placeholder marker; free and
    ₡0 forms without the payment part; client validation per contract §3.3/§8; submissionId
