@@ -118,9 +118,13 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
   const amountDue = coupon ? coupon.amountDueCrc : price
   const needsPayment = amountDue > 0
 
+  // The parent may pass a new onClose on every render; the open/close effect below must not re-run
+  // for that (it would pull focus out of the field being typed in).
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
   const close = useCallback(() => {
-    if (!submittingRef.current) onClose?.()
-  }, [onClose])
+    if (!submittingRef.current) onCloseRef.current?.()
+  }, [])
 
   // Focus moves into the dialog on open and returns to the card's button on close; the page behind
   // does not scroll; Esc dismisses; Tab stays inside the dialog.
@@ -640,12 +644,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
   }
 
   return createPortal(
-    <div
-      className="evt-form-overlay"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) close()
-      }}
-    >
+    <div className="evt-form-overlay">
       <div
         ref={dialogRef}
         className="evt-form-dialog"
