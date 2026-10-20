@@ -5,10 +5,11 @@
   §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022;
   v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035; v1.4: §7
   scroll-reveal wrapper rule, §12 script scopes — CMP-036; v1.5: §12 full Drive scope named,
-  §18 events cache — CMP-037)
+  §18 events cache — CMP-037; v1.6: §18 events wait 5 s — CMP-038)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
   merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved on merge of PR #26; v1.4
-  Approved on merge of PR #30; v1.5 Approved (on merge of PR #32))
+  Approved on merge of PR #30; v1.5 Approved on merge of PR #32; v1.6 Approved (on merge of
+  PR #34))
 - Owner: Raul Casanas
 
 ## 1. Purpose
@@ -327,10 +328,10 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 
 ## 18. Resilience
 - No runtime dependencies other than the static host and Google Fonts (text falls back to
-  system fonts if the CDN fails), and the events backend: if it is slow (> 3 s) or down, the
+  system fonts if the CDN fails), and the events backend: if it is slow (> 5 s) or down, the
   events section and ticker are hidden and the rest of the page is unaffected.
 - The `events` response is cached and refreshed every 5 minutes by a time-driven trigger, so it
-  answers well within 3 s (FFR-033). A registration that changes availability rebuilds it
+  answers well within 5 s (FFR-033). A registration that changes availability rebuilds it
   rather than clearing it, so no visitor gets a cold request.
 
 ## 19. Compatibility / Migration

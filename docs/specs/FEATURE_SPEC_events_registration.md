@@ -8,9 +8,11 @@
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
-  CMP-036; v1.3: FFR-033 events cache refreshed every 5 minutes, owner 2026-10-20 — CMP-037)
+  CMP-036; v1.3: FFR-033 events cache refreshed every 5 minutes, owner 2026-10-20 — CMP-037;
+  v1.4: `events` client wait raised from 3 s to 5 s (FFR-004, FNFR-003) and drafts not
+  validated (FFR-019), owner 2026-10-20 — CMP-038)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
-  v1.3 Approved (on merge of PR #32))
+  v1.3 on merge of PR #32; v1.4 Approved (on merge of PR #34))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -80,7 +82,7 @@ Events section
 - FFR-003: Each card has a register button; it is disabled when registration is closed
   (12 h before start, BR-E09) or the event is sold out (FFR-025).
 - FFR-004: When the page loads and there are no upcoming events, or the backend is unavailable
-  or slower than 3 s, the section and the ticker are hidden (Q-10) and the rest of the page
+  or slower than 5 s, the section and the ticker are hidden (Q-10) and the rest of the page
   renders normally. A later refresh (language change, or a stale-event refresh from the form)
   that fails keeps the events already shown, so an open registration form and its typed data
   are not lost; the backend re-checks every registration anyway (BR-E13). Owner, 2026-10-20:
@@ -212,12 +214,15 @@ Administration (Cami)
 - FFR-019: `Events` tab: code, name, description, optional `nameEn`/`descriptionEn`, date, time
   (required), price CRC (0 = free), capacity, image URL, published. Codes unique,
   `[A-Z0-9-]{2,20}`; rows with a duplicated code are unpublished, and a registration that
-  arrives for one is stored and flagged (`checkDetails`: `duplicate event code`).
+  arrives for one is stored and flagged (`checkDetails`: `duplicate event code`). Only published
+  rows are validated and queued for the alert email; drafts (published unchecked) are ignored
+  until published, except that a code shared with a published row is still reported as
+  duplicated (contract §6, v1.1). Owner, 2026-10-20: "No, only published".
 - FFR-020: `Coupons` tab: event code, coupon code, discount %, max uses, active, optional expiry
   (Q-2). Cami adds or edits rows; no deploy. Coupon codes are 8–20 characters, `A-Z` and `0-9`
   only (hard to guess, §12); rows with an invalid code, discount or max uses are ignored and
   listed in the alert email so Cami can fix them.
-- FFR-033: To answer within the 3 s limit (FNFR-003), the backend serves the `events` response
+- FFR-033: To answer within the 5 s limit (FNFR-003), the backend serves the `events` response
   from a cache that a time-driven trigger refreshes every 5 minutes (one entry per language).
   Changes Cami makes in the `Events`/`Coupons` tabs therefore show on the site within 5 minutes.
   A registration that changes an event's availability (e.g. sells it out) rebuilds the cache
@@ -228,7 +233,8 @@ Administration (Cami)
   starts, contract §3.1) may lag by up to 5 minutes; a registration sent in that window is
   handled by BR-E13 on the server. Tests (CMP-025, CMP-033) check these boundaries against a
   5-minute tolerance. Owner, 2026-10-20 (spike and CMP-025 timing: a cold `events` request
-  took about 5 s).
+  took about 5 s). If a refresh fails, the last good answer is served for up to 20 minutes (the
+  failed run shows in Executions); the backend still re-checks every registration (BR-E13).
 
 Abuse metrics
 - FFR-029: A `Metrics` tab gets one row per day (accepted registrations, honeypot hits,
@@ -348,8 +354,9 @@ Exact tabs, columns, codes and Drive layout: [EVENTS_API_CONTRACT.md §6](EVENTS
   repo.
 - FNFR-002 Secrets: script properties only; the public `/exec` URL is the only backend value in
   the client bundle.
-- FNFR-003 Performance: the events request never blocks first paint; > 3 s or failure hides the
-  section.
+- FNFR-003 Performance: the events request never blocks first paint; > 5 s or failure hides the
+  section. The limit was 3 s until 2026-10-20; the owner raised it to 5 s after CMP-025 staging
+  timing showed about 1 in 10 cached answers taking 3.4–4.6 s (Apps Script start-up).
 - FNFR-004 Accessibility: keyboard-usable cards and form, labelled fields, ticker pausable and
   `prefers-reduced-motion` aware.
 - FNFR-005 Bilingual: all UI strings EN/ES; event text per FFR-028; emails per `lang`.
@@ -414,6 +421,8 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Form order | The coupon comes before the SINPE instructions and the screenshot (§9 steps 5–6) — owner, 2026-10-20, answer 2 to "coupon before the screenshot?": "yes" |
 | Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
 | Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
+| Events wait (FFR-004, FNFR-003) | The site waits up to 5 s (was 3 s) for the `events` answer before hiding the section and the ticker; the page itself never waits — owner, 2026-10-20, asked "On staging, about 1 in 10 loads of the event list took longer than the site's 3-second wait (3.4 s and 4.6 s), so for those visitors the events section and ticker stay hidden. The page itself is never slowed down; the events just load in after it. How should we handle it?" (options: wait up to 5 s; accept for now; retry once; remember the last list): "Wait up to 5 s" |
+| Draft rows (FFR-019) | Only published `Events` rows are validated and queued for the alert email; drafts are ignored (a code shared with a published row is still reported) — owner, 2026-10-20, asked "Should the daily alert email also flag mistakes in event rows Cami hasn't published yet …?": "No, only published" |
 | Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
 | OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
 | OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |
