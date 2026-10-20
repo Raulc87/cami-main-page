@@ -1,10 +1,11 @@
 # ARCHITECTURE_SPEC
 
 ## Metadata
-- Version: 1.2 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
-  §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022)
+- Version: 1.3 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
+  §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022;
+  v1.3: §7 ticker props, §9 events placeholders — CMP-035)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
-  merge of PR #21; v1.2 Approved (on merge of PR #22))
+  merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved (on merge of PR #26))
 - Owner: Raul Casanas
 
 ## 1. Purpose
@@ -79,8 +80,8 @@ scroll-reveal animation — `Nav` is still dynamic via `LanguageContext`, see be
 
 Each component owns its section: it imports what it needs from `constants/` and receives no
 content props from `App.jsx` (only `r`). **Exception (events):** `App.jsx` calls `useEvents()`
-once and passes its result (`events`, `sinpe`) to `EventsTicker` and `Events`, so the page makes
-one `events` request. That data comes from the backend at runtime, not from `constants/`.
+once and passes `events` to `EventsTicker` and `events` and `sinpe` to `Events` (the ticker
+does not need the SINPE data), so the page makes one `events` request. That data comes from the backend at runtime, not from `constants/`.
 
 ### Global language (`LanguageContext`)
 
@@ -249,6 +250,14 @@ wired.
 Real today: hero photo, all 5 gallery photos, all 4 testimonials, stats (CMP-011). Still
 pending: two of three services say `Catalog coming soon`. Do not assume any other data is real
 when building new features on top of it (PROJECT_SPEC BR-002).
+
+Events placeholders (CMP-029 on; each is a release gate in
+[release-checklist.md §3b](../process/release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)):
+- `public/images/lifetools-logo.svg` — marked placeholder until Cami provides the Lifetools logo.
+- SINPE Móvil number and account name — placeholders in script properties (`isPlaceholder`,
+  BR-E01) until Cami confirms them; never in the repo.
+- Privacy notice — the generic draft in
+  [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3 until the lawyer review.
 
 ### When adding new content
 

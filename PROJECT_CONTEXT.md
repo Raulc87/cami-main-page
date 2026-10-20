@@ -40,10 +40,11 @@
 - Content (visitor-facing copy): `src/constants/i18n.js` (`UI_TEXT`) and
   `src/constants/data.jsx` (ARCHITECTURE_SPEC §9); no `CONTENT.md`
 - Runbooks: release and deployment —
-  [release-checklist.md](docs/process/release-checklist.md); local development —
-  [README.md](README.md)
+  [release-checklist.md](docs/process/release-checklist.md); events backend (Apps Script)
+  deploy — [events-backend-runbook.md](docs/process/events-backend-runbook.md); local
+  development — [README.md](README.md)
 - Process: [docs/process/](docs/process/) — pr-precheck, pr-workflow, model-cost-policy,
-  release-checklist
+  release-checklist, events-backend-runbook
 - Branching and release model:
   [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) (Accepted)
 - Templates: [docs/templates/](docs/templates/)
@@ -74,7 +75,7 @@ they are not active paths.
   automated reviewers on every PR
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-034
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-035
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
