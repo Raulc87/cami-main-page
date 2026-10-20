@@ -125,7 +125,13 @@ function heicProbe() {
     var f = files.next();
     if (!/\.(heic|heif)$/i.test(f.getName())) continue;
     found++;
-    var res = { file: f.getName(), mime: f.getMimeType() };
+    var head = f.getBlob().getBytes().slice(0, 12);
+    var res = {
+      file: f.getName(), mime: f.getMimeType(), size: head.length && f.getSize(),
+      // HEIC/HEIF files carry `ftyp` plus a brand such as heic at bytes 4-11; JPEG starts ff d8.
+      signature: String.fromCharCode.apply(null, head.slice(4, 12).map(function (b) { return b >= 32 && b < 127 ? b : 46; })),
+      startsWithJpegMarker: head[0] === 255 && head[1] === 216
+    };
     try { res.getAsJpeg = f.getBlob().getAs('image/jpeg').getBytes().length > 0; } catch (e) { res.getAsJpeg = 'FAILED: ' + e.message; }
     try { var o = ocrText(f.getId()); res.directOcr = o.text.length > 0 ? 'text found (' + o.ms + ' ms)' : 'no text'; } catch (e) { res.directOcr = 'FAILED: ' + e.message; }
     console.log(JSON.stringify(res));
