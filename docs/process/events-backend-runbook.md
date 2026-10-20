@@ -167,7 +167,11 @@ may not see the events section.
    log; the site keeps working from the last cache or rebuilds on demand.
 If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). The
 last good answer is also kept in script properties and used for up to 20 minutes if Google drops
-the cache early, so a short outage does not empty the page.
+the cache early, so a short outage does not empty the page. That copy fits while the event list is
+under about 9 KB (roughly 6 to 8 events with full-length texts); beyond that the run is reported
+as **Failed** with "last-good copy too large", and the cache keeps working without the fallback.
+After bumping `EVENTS_CACHE_VERSION` in `Events.js`, deploy a New version right away (section 5):
+the trigger fills the new keys at once while the deployed version still reads the old ones.
 Triggers run the **saved** code (Head), not the deployed version: after changing `Events.js`,
 saving is enough for the trigger, while visitors still need a **New version** (section 5).
 The automatic English translations are kept in script properties named `TR_<hash>` (one per

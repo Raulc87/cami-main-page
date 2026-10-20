@@ -89,7 +89,7 @@ var EVENTS_LAST_PREFIX = 'EVENTS_LAST_' + EVENTS_CACHE_VERSION + '_';
 var EVENTS_LAST_MAX_AGE_MS = 20 * 60000;
 
 // `events` is read on every page load and reads several tabs, which takes seconds in Apps Script
-// (the site gives up after 3 s, FFR-004). The finished response is kept per language and
+// (the client gives up after its `events` timeout, FFR-004). The finished response is kept per language and
 // refreshed every 5 minutes by a trigger, so a change in the sheet shows within about 5 minutes
 // (owner decision, 2026-10-20, FFR-033). A registration that changes availability rebuilds the
 // cache with `refreshEventsCache()` after the lock is released, so a sold-out event shows at once
@@ -111,17 +111,24 @@ function handleEvents_(params) {
   return ok(response.data);
 }
 
+// Returns { cache: bool, last: bool }. A script property holds about 9 KB, so the last-good copy
+// stops fitting when the list has roughly 6 to 8 full-length events; the cache still works then,
+// and the trigger run is reported as Failed so the owner sees that the fallback is gone.
 function storeEvents_(lang, body) {
+  var stored = { cache: true, last: true };
   try {
     CacheService.getScriptCache().put(EVENTS_CACHE_PREFIX + lang, body, EVENTS_CACHE_SECONDS);
   } catch (err) {
     console.error('cache write failed: ' + err.name);
+    stored.cache = false;
   }
   try {
     PropertiesService.getScriptProperties().setProperty(EVENTS_LAST_PREFIX + lang, JSON.stringify({ at: Date.now(), body: body }));
   } catch (err) {
-    console.error('last answer write failed: ' + err.name); // too large or quota: the cache still works
+    console.error('last answer write failed: ' + err.name);
+    stored.last = false;
   }
+  return stored;
 }
 
 function readLastEvents_(lang) {
@@ -142,7 +149,9 @@ function refreshEventsCache() {
   var failed = [];
   ['es', 'en'].forEach(function (lang) {
     try {
-      storeEvents_(lang, JSON.stringify(buildEventsResponse_(lang)));
+      var stored = storeEvents_(lang, JSON.stringify(buildEventsResponse_(lang)));
+      if (!stored.cache) failed.push(lang + ' (cache)');
+      if (!stored.last) failed.push(lang + ' (last-good copy too large or not saved)');
     } catch (err) {
       console.error('refresh ' + lang + ' failed: ' + err.name);
       failed.push(lang);
