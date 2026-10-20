@@ -4,7 +4,7 @@
 - Version: 1.0 (CMP-022)
 - Status: Approved (on merge of PR #22)
 - Related specs: [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md)
-  (v1.0), [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) (v1.0, locked),
+  (v1.0), [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) (v1.1, locked),
   [ARCHITECTURE_SPEC.md](../specs/ARCHITECTURE_SPEC.md) (v1.2),
   [UX_UI_DIRECTION.md](../ux/UX_UI_DIRECTION.md) (v1.1), [TECH_STACK.md](../../TECH_STACK.md)
   (v1.2), [ADR-008](../decisions/ADR-008-events-backend-google-apps-script.md)
@@ -100,7 +100,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
   owner creates them; the runbook says how.
 
 ## 9. API / Integration Changes
-- New: the events web app, per [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.0.
+- New: the events web app, per [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.1.
   Any change follows the contract's change rule (spec first, version bump, both owners told).
 
 ## 10. Configuration / Secrets
