@@ -514,23 +514,6 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
           t.whatsappHint[lang],
         )}
 
-        {needsPayment &&
-          field(
-            'file',
-            'evt-file',
-            t.file[lang],
-            <input
-              id="evt-file"
-              className="evt-form-input evt-form-file"
-              type="file"
-              accept="image/*,.heic,.heif"
-              aria-invalid={!!errors.file}
-              aria-describedby={describedBy('file', 'evt-file', true)}
-              onChange={onFileChange}
-            />,
-            file ? `${t.fileSelected[lang]}: ${file.file.name}` : t.fileHint[lang],
-          )}
-
         {price > 0 && (
           <div className="evt-form-field">
             <label htmlFor="evt-coupon" className="evt-form-label">
@@ -591,6 +574,23 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
             </p>
           </div>
         )}
+
+        {needsPayment &&
+          field(
+            'file',
+            'evt-file',
+            t.file[lang],
+            <input
+              id="evt-file"
+              className="evt-form-input evt-form-file"
+              type="file"
+              accept="image/*,.heic,.heif"
+              aria-invalid={!!errors.file}
+              aria-describedby={describedBy('file', 'evt-file', true)}
+              onChange={onFileChange}
+            />,
+            file ? `${t.fileSelected[lang]}: ${file.file.name}` : t.fileHint[lang],
+          )}
 
         {/* Honeypot (contract §3.3): hidden from people and assistive tech, bots fill it in. */}
         <div className="evt-form-hp" aria-hidden="true">
