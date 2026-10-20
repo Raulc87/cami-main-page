@@ -147,7 +147,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner.
 | `src/constants/data.jsx`, `colors.js`, every other existing component | Nobody this sprint |
 
 ## Integration Contracts
-- [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.1, locked: Agent 1 is the provider,
+- [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.2, locked: Agent 1 is the provider,
   Agents 2 and 3 the consumers. A change follows its change rule (coordinator docs PR first,
   version bump, both sides told) before any code relies on it.
 - Inside the frontend: `useEvents()` returns `{ status: "loading" | "ready" | "hidden", sinpe,
@@ -290,4 +290,9 @@ The human reviewer is the final approver.
   itself is never slowed down; the events just load in after it. How should we handle it?" —
   options: wait up to 5 s; accept for now; retry once; remember the last list. Owner: **"Wait up to
   5 s"** (FFR-004, FNFR-003; CMP-038). Agent 2 changes the `events` timeout in `src/api/events.js`.
+- CMP-026 (2026-10-20), screenshot format: question as asked: "When someone pays and uploads
+  their SINPE screenshot, the backend saves it as a JPEG. If Google can't convert an unusual
+  image type (WebP or iPhone HEIC; most phones send JPEG anyway), what should happen?" — options:
+  save the original; refuse the upload. Owner: **"Save the original (Recommended)"** (FFR-014,
+  contract §3.3 v1.2; CMP-039).
 

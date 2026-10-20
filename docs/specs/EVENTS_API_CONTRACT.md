@@ -6,11 +6,13 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.1 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
-  — CMP-038)
-- Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 Approved (on merge of PR #34))
+- Version: 1.2 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+  — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
+  scope of `required` — CMP-039)
+- Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 Approved (on
+  merge of PR #XX))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
-  (FFR-001..FFR-030)
+  (FFR-001..FFR-033)
 - Related stories: US-017..US-025
 - Related ADRs: ADR-008
 - Consumer (owner): frontend workstream (Sprint 02 plan)
@@ -79,7 +81,7 @@ email never appears in a URL (FNFR-001). Throttled globally.
 | `lang` | string | yes | `es` or `en` | — | `lang` |
 | `consent` | boolean | yes | must be `true` | — | `consentAt` (server time) |
 | `website` | string | yes | honeypot: must be `""` | — | not stored |
-| `file` | object/null | when amount due > ₡0 | image, ≤ 5 MB decoded; types JPEG, PNG, WebP, HEIC/HEIF (detected from content, not name) | stored as JPEG (`.jpg`) — conversion method decided in the spike | Drive file → `screenshotUrl` |
+| `file` | object/null | when amount due > ₡0 | image, ≤ 5 MB decoded; types JPEG, PNG, WebP, HEIC/HEIF (detected from content, not name) | stored as JPEG (`.jpg`), converted with `Blob.getAs` (spike); if conversion fails, the original is stored with its own extension (`.png`, `.webp`, `.heic`) and `checkDetails` gets the note `stored as original format: <ext>` (a note, not a flag: `needsReview` unchanged; owner, 2026-10-20) | Drive file → `screenshotUrl` |
 
 Unknown fields: ignored. A request with a non-empty `website` returns `ok: true` with a fake
 reference and stores nothing (do not tell bots they were caught); it is counted in `Metrics`.
@@ -189,7 +191,7 @@ shows the form for an event the last `events` response marked closed or sold out
 ## 8. Field error codes
 | Code | Meaning |
 |---|---|
-| `required` | Missing value |
+| `required` | Missing value; also a missing or malformed value the form never sends (`submissionId`, `eventCode`, `lang`, a name over its length limit) |
 | `invalid_email` | Not a valid email |
 | `invalid_phone` | Not E.164 (`+` and country code) |
 | `invalid_coupon_format` | Coupon not `A-Z0-9`, 8–20 chars |
