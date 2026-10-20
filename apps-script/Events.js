@@ -99,7 +99,8 @@ function handleEvents_(params) {
   return ok(response.data);
 }
 
-// Run by the time-driven trigger every 5 minutes: rebuilds both languages.
+// Run by the time-driven trigger every 5 minutes (FFR-033): rebuilds both languages. CMP-026's
+// `register` calls it too when a registration changes availability.
 function refreshEventsCache() {
   var cache = CacheService.getScriptCache();
   ['es', 'en'].forEach(function (lang) {

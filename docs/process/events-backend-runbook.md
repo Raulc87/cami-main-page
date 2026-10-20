@@ -147,6 +147,7 @@ The first run asks for the permissions the code needs (Sheets, Drive, mail, exte
    app to use it.
 
 ### 2.6 Events cache trigger
+Do this once in **each** environment: staging, and production before it is released.
 The `events` answer is kept in a cache and rebuilt every 5 minutes, so the page never waits for
 the spreadsheet (a rebuild takes about 5 s and the site gives up after 3 s). A change Cami makes
 in the sheet shows within about 5 minutes (owner decision 2026-10-20). Without the trigger the
