@@ -774,8 +774,10 @@ So that I spot wrong payments before confirming
    Then it returns `ok` for valid ones and `mismatch` for an altered amount.
 6. Given the OCR service refuses the call (e.g. the per-user rate limit) after the retries
    When the check runs
-   Then the row stays `pending`, no email is sent, and a time-driven retry later writes the
-   final result and sends the emails (FFR-032, owner 2026-10-20).
+   Then the row stays `pending` and no "payment not validated" email is sent yet (the
+   confirmation is still sent at save time); a retry every 10 minutes writes the final result
+   and sends that email if needed; after 24 hours still `pending`, retries stop and the row is
+   listed in the next alert email to camila@ (FFR-032, owner 2026-10-20).
 
 **Dependencies**
 - US-021; Cami's samples (spike).

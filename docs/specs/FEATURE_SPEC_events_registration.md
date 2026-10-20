@@ -179,10 +179,15 @@ Payment screenshot check
   "payment not validated" email (FFR-026). The check never changes the status. The temporary
   OCR Google Doc is deleted right after reading.
 - FFR-032: If the OCR call fails for a service reason (e.g. Google's per-user OCR rate limit)
-  after its in-execution retries, the row keeps check result `pending` and no email is sent; a
-  time-driven trigger retries the `pending` rows every few minutes until each gets `ok`,
-  `mismatch` or `unreadable`, then sends the emails FFR-017/FFR-026 require. `pending` alone
-  never sets `needsReview` (FFR-030). Owner, 2026-10-20 (spike finding, CMP-024).
+  after its in-execution retries, the row keeps check result `pending`. Only the "payment not
+  validated" email waits for the check; the confirmation or "registration received" email is
+  still sent when the row is saved (FFR-026). A time-driven trigger retries the `pending` rows
+  every 10 minutes; when a retry gets `ok`, `mismatch` or `unreadable`, it writes the result and
+  sends the "not validated" email if FFR-017 requires it. A row still `pending` 24 hours after
+  it was saved is no longer retried and is listed in the next alert email to camila@ (FFR-029)
+  for Cami to check by hand; its participant gets no "not validated" email. `pending` alone
+  never sets `needsReview` (FFR-030). Owner, 2026-10-20 (spike finding, CMP-024); the
+  10-minute interval and the 24-hour limit are proposed in CMP-036 for the owner's approval.
 
 Participant emails
 - FFR-026: The backend sends, in the participant's site language (`lang`), with reply-to
