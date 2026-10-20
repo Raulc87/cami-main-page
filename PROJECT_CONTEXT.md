@@ -29,8 +29,8 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md) (Planned, waiting
-  for the owner's go-ahead); Sprint 01 is closed
+- Active sprint plan: [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md) (Active since the
+  owner's go-ahead, 2026-10-19); Sprint 01 is closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md), kept for its review)
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
@@ -56,23 +56,25 @@ they are not active paths.
 - Sprint: 02 — events feature (US-017..US-025, 31 points) plus the US-002 fix and US-005 check.
   Sprint 01 closed 2026-10-19 (review in its plan).
 - Goal: the events feature works end to end on staging
-- Start: 2026-10-20, or the first business day after the go-ahead
+- Start: 2026-10-20
 - End: 2026-10-28 (if the start moves: the 7th business day from the actual start)
 - Agent prompts: [docs/sprints/SPRINT_02_AGENT_PROMPTS.md](docs/sprints/SPRINT_02_AGENT_PROMPTS.md)
 - Deliverable: staging demo of the contract §10 end-to-end list, with evidence
   (`SPRINT_02_VERIFICATION.md`); no production release until the release-checklist §3b gates
   pass
-- Status: Planned — waiting for the owner's go-ahead (Entry Gate 4)
+- Status: Active — owner's go-ahead 2026-10-19: "merged, go ahead with Sprint 02"
 
 ## Agent allocation
-- Implementation Agent 1: events backend — CMP-023..CMP-028 (Sprint 02, after the go-ahead)
+- Implementation Agent 1: events backend — CMP-023..CMP-028 (session launched 2026-10-19)
 - Implementation Agent 2: events section, ticker, frontend foundation, US-002 fix — CMP-029..CMP-031
+  (session launched 2026-10-19)
 - Implementation Agent 3: registration form, integration verification — CMP-032, CMP-033
+  (launched when CMP-029 is merged)
 - Review-only Agent: dedicated Claude Code reviewer session (Opus); Copilot and Codex run as
   automated reviewers on every PR
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-022
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-034
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
