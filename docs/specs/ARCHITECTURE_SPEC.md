@@ -6,7 +6,8 @@
   v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035; v1.4: §7
   scroll-reveal wrapper rule — CMP-036)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
-  merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved on merge of PR #26; v1.4 Approved (on merge of PR #30))
+  merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved on merge of PR #26; v1.4
+  Approved (on merge of PR #30))
 - Owner: Raul Casanas
 
 ## 1. Purpose

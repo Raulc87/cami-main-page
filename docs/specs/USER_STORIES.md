@@ -604,9 +604,11 @@ So that my place is reserved
 
 1. Given I select a paid event's register button
    When the form opens
-   Then it shows the event's name, date, time and price, then the SINPE Móvil instructions
-   (number, account name, amount to pay) before the fields; while the SINPE values are
-   placeholders they carry a visible "placeholder / por confirmar" marker (BR-E01).
+   Then it shows the event's name, date, time and price at the top, and the SINPE Móvil
+   instructions (number, account name, amount to pay after any coupon) before the screenshot
+   field; while the SINPE values are placeholders they carry a visible "placeholder / por
+   confirmar" marker (BR-E01). (Reworded 2026-10-20, CMP-036: the coupon, which needs the email,
+   comes before the payment part; UX_UI_DIRECTION §13.)
 2. Given a free event, or an amount due of ₡0 after a coupon
    When the form shows
    Then the payment instructions and the screenshot field are hidden and I can submit without a

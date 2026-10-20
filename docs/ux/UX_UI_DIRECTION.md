@@ -172,12 +172,13 @@ It reuses the palette, type and shapes above; no new colors or fonts.
   button (reduced opacity, no hover, `disabled`).
 - **Form.** Opens as a modal dialog over the page (full screen at 640 px and below): focus moves
   into it, Esc and a close button dismiss it, and focus returns to the card's button. Order:
-  event summary (name, date, time, amount), coupon, SINPE Móvil instructions with the amount
-  after the coupon (paid only), name, email and WhatsApp fields, payment screenshot (paid only),
-  privacy notice, consent, submit. The coupon comes before the payment part so the visitor pays
-  the discounted amount (FEATURE_SPEC §9 steps 5–6; owner, 2026-10-20). Labels sit above fields; errors appear under each
-  field in the active language and are announced to screen readers. The confirmation replaces
-  the form content and shows the reference. Dates and times use the 24-hour format in both
-  languages (owner, 2026-10-20).
+  event summary (name, date, time, price); name, email and WhatsApp fields; coupon (its check
+  needs the email, FFR-012); SINPE Móvil instructions with the amount after the coupon (paid
+  only); payment screenshot (paid only); privacy notice; consent; submit. The coupon comes
+  before the payment part so the visitor pays the discounted amount (FEATURE_SPEC §9 steps
+  5–6; owner, 2026-10-20). Labels sit above fields; errors appear under each field in the
+  active language and are announced to screen readers. The confirmation replaces the form
+  content and shows the reference. Times use the 24-hour format (`HH:mm`) in both languages
+  (owner, 2026-10-20).
 - **Placeholders.** The SINPE "placeholder / por confirmar" marker (BR-E01) and the draft
   privacy notice are visibly marked until the release gates pass (BR-002).
