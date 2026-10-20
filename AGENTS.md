@@ -64,6 +64,7 @@ their paths. This repo's locations (where they differ from the Starter Kit, see
 | Agent prompts | `docs/sprints/SPRINT_<NN>_AGENT_PROMPTS.md` | Sprints that use agent sessions |
 | Readiness checklist | `docs/checklists/SPRINT_READINESS_CHECKLIST.md` | Before every sprint |
 | Release / deployment runbook | `docs/process/release-checklist.md` | Always (the site is live) |
+| Events backend deploy runbook | `docs/process/events-backend-runbook.md` | While the events backend exists (ADR-008) |
 | Branching and release ADR | `docs/decisions/ADR-007-branching-and-release-model.md` | Always (the site is live) |
 | Local development | `README.md` | Always |
 | Templates | `docs/templates/*_TEMPLATE.md` | — |
@@ -383,7 +384,8 @@ This file follows the [SDD Starter Kit](https://github.com/Raulc87/sdd_starter_k
   `src/constants/i18n.js` and `src/constants/data.jsx` (ARCHITECTURE_SPEC §9).
 - **Runbooks.** `docs/process/release-checklist.md` is the release and deployment runbook
   (manual GoDaddy deploy, [ADR-002](docs/decisions/ADR-002-godaddy-static-hosting.md));
-  `README.md` covers local development. No `docs/runbooks/`. The branching and release model
+  `README.md` covers local development; `docs/process/events-backend-runbook.md` covers the
+  Apps Script deploy. No `docs/runbooks/`. The branching and release model
   is [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md).
 - **PR body.** No `.github/pull_request_template.md`; the five mandatory sections in
   [pr-workflow.md §2](docs/process/pr-workflow.md#2-create-the-pr-with-gh) apply. Ownership
