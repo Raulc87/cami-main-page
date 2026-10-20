@@ -9,8 +9,8 @@
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
   CMP-036; v1.3: FFR-033 events cache refreshed every 5 minutes, owner 2026-10-20 — CMP-037;
-  v1.4: `events` client wait raised from 3 s to 5 s (FFR-004, FNFR-003), owner 2026-10-20 —
-  CMP-038)
+  v1.4: `events` client wait raised from 3 s to 5 s (FFR-004, FNFR-003) and drafts not
+  validated (FFR-019), owner 2026-10-20 — CMP-038)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 Approved (on merge of PR #34))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
@@ -214,7 +214,10 @@ Administration (Cami)
 - FFR-019: `Events` tab: code, name, description, optional `nameEn`/`descriptionEn`, date, time
   (required), price CRC (0 = free), capacity, image URL, published. Codes unique,
   `[A-Z0-9-]{2,20}`; rows with a duplicated code are unpublished, and a registration that
-  arrives for one is stored and flagged (`checkDetails`: `duplicate event code`).
+  arrives for one is stored and flagged (`checkDetails`: `duplicate event code`). Only published
+  rows are validated and queued for the alert email; drafts (published unchecked) are ignored
+  until published, except that a code shared with a published row is still reported as
+  duplicated. Owner, 2026-10-20: "No, only published".
 - FFR-020: `Coupons` tab: event code, coupon code, discount %, max uses, active, optional expiry
   (Q-2). Cami adds or edits rows; no deploy. Coupon codes are 8–20 characters, `A-Z` and `0-9`
   only (hard to guess, §12); rows with an invalid code, discount or max uses are ignored and
@@ -418,6 +421,7 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
 | Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
 | Events wait (FFR-004, FNFR-003) | The site waits up to 5 s (was 3 s) for the `events` answer before hiding the section and the ticker; the page itself never waits — owner, 2026-10-20, asked "about 1 in 10 loads took longer than 3 s (3.4 s and 4.6 s) … How should we handle it?" (options: wait up to 5 s; accept for now; retry once; remember the last list): "Wait up to 5 s" |
+| Draft rows (FFR-019) | Only published `Events` rows are validated and queued for the alert email; drafts are ignored (a code shared with a published row is still reported) — owner, 2026-10-20, asked "Should the daily alert email also flag mistakes in event rows Cami hasn't published yet …?": "No, only published" |
 | Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
 | OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
 | OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |
