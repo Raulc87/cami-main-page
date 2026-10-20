@@ -84,7 +84,143 @@ export const UI_TEXT = {
     register: { en: 'Register', es: 'Inscribirme' },
     tickerLabel: { en: 'Upcoming events', es: 'Próximos eventos' },
     logoAlt: { en: 'Lifetools logo', es: 'Logo de Lifetools' },
-    // Registration form copy (US-019/US-020): Agent 3 adds keys here in CMP-032.
-    form: {},
+    // Registration form copy (US-019/US-020, CMP-032). Verbatim from the spec/stories:
+    // alreadyRegistered, the placeholder marker, the privacy notice and consent (EVENTS_EMAILS_AND_PRIVACY §3,
+    // draft), and the "invalid coupon" / "try again" wording. Every other label is a draft
+    // listed in the CMP-032 PR for the owner's approval.
+    form: {
+      close: { en: 'Close', es: 'Cerrar' },
+      closeLabel: { en: 'Close registration form', es: 'Cerrar el formulario de inscripción' },
+      summaryDate: { en: 'Date', es: 'Fecha' },
+      summaryTime: { en: 'Time', es: 'Hora' },
+      summaryPrice: { en: 'Price', es: 'Precio' },
+      // SINPE Móvil instructions (BR-E01: placeholder marker while the values are placeholders)
+      payTitle: { en: 'Pay with SINPE Móvil', es: 'Paga con SINPE Móvil' },
+      payIntro: {
+        en: 'Make the transfer first, then attach the screenshot below.',
+        es: 'Haz primero la transferencia y luego adjunta la captura abajo.',
+      },
+      payNumber: { en: 'SINPE Móvil number', es: 'Número SINPE Móvil' },
+      payAccount: { en: 'Account name', es: 'Nombre de la cuenta' },
+      payAmount: { en: 'Amount to pay', es: 'Monto a pagar' },
+      placeholderMarker: { en: 'placeholder / por confirmar', es: 'placeholder / por confirmar' },
+      // Fields
+      name: { en: 'Participant name', es: 'Nombre del participante' },
+      email: { en: 'Email', es: 'Correo electrónico' },
+      whatsapp: { en: 'WhatsApp number (with country code)', es: 'Número de WhatsApp (con código de país)' },
+      whatsappHint: { en: 'Example: +50684104791', es: 'Ejemplo: +50684104791' },
+      file: { en: 'Payment screenshot', es: 'Captura del comprobante de pago' },
+      fileHint: {
+        en: 'JPEG, PNG, WebP or HEIC image, up to 5 MB.',
+        es: 'Imagen JPEG, PNG, WebP o HEIC, hasta 5 MB.',
+      },
+      fileSelected: { en: 'Selected file', es: 'Archivo seleccionado' },
+      // Coupon (US-020)
+      coupon: { en: 'Coupon (optional)', es: 'Cupón (opcional)' },
+      couponApply: { en: 'Apply', es: 'Aplicar' },
+      couponChecking: { en: 'Checking…', es: 'Verificando…' },
+      couponRemove: { en: 'Remove coupon', es: 'Quitar cupón' },
+      couponApplied: { en: 'Coupon applied', es: 'Cupón aplicado' },
+      couponNeedsEmail: {
+        en: 'Enter a valid email first: the coupon is checked for your email.',
+        es: 'Primero escribe un correo válido: el cupón se verifica para tu correo.',
+      },
+      couponPending: {
+        en: 'Apply the coupon or clear the field.',
+        es: 'Aplica el cupón o borra el campo.',
+      },
+      // Privacy notice (draft, BR-E11) and consent: verbatim from EVENTS_EMAILS_AND_PRIVACY §3
+      privacyDraft: { en: 'Draft', es: 'Borrador' },
+      privacyTitle: { en: 'Privacy notice', es: 'Aviso de privacidad' },
+      privacyNotice: {
+        en: 'Cami Hernandez (Lifetools, camila@lifetoolscr.com) collects your name, email, WhatsApp number and, when applicable, your payment receipt only to manage your registration for this event and to contact you about it. Your data is stored in Google Workspace and is not shared with third parties or used for advertising without your consent. You can request access, correction or deletion of your data by writing to camila@lifetoolscr.com, under Costa Rica’s Law No. 8968.',
+        es: 'Cami Hernandez (Lifetools, camila@lifetoolscr.com) recopila tu nombre, correo, número de WhatsApp y, si aplica, el comprobante de pago, únicamente para gestionar tu inscripción a este evento y comunicarse contigo sobre él. Tus datos se guardan en Google Workspace y no se comparten con terceros ni se usan para publicidad sin tu consentimiento. Puedes pedir acceso, corrección o eliminación de tus datos escribiendo a camila@lifetoolscr.com, conforme a la Ley N.° 8968 de Costa Rica.',
+      },
+      consent: {
+        en: 'I accept the privacy notice and authorize the use of my data for this registration.',
+        es: 'Acepto el aviso de privacidad y autorizo el uso de mis datos para esta inscripción.',
+      },
+      submit: { en: 'Register', es: 'Inscribirme' },
+      submitting: { en: 'Sending…', es: 'Enviando…' },
+      // Field errors (contract §8 codes, plus client-only name_invalid)
+      fieldErrors: {
+        required: { en: 'This field is required.', es: 'Este campo es obligatorio.' },
+        name_invalid: {
+          en: 'Enter a name of 2 to 80 characters.',
+          es: 'Escribe un nombre de 2 a 80 caracteres.',
+        },
+        invalid_email: { en: 'Enter a valid email address.', es: 'Escribe un correo electrónico válido.' },
+        invalid_phone: {
+          en: 'Use the format +<country code><number>, e.g. +50684104791.',
+          es: 'Usa el formato +<código de país><número>, por ejemplo +50684104791.',
+        },
+        invalid_coupon_format: {
+          en: 'The coupon must be 8 to 20 letters and numbers.',
+          es: 'El cupón debe tener de 8 a 20 letras y números.',
+        },
+        invalid_file_type: {
+          en: 'The file must be a JPEG, PNG, WebP or HEIC image.',
+          es: 'El archivo debe ser una imagen JPEG, PNG, WebP o HEIC.',
+        },
+        file_too_large: { en: 'The file is over 5 MB.', es: 'El archivo pesa más de 5 MB.' },
+        consent_required: {
+          en: 'You must accept the privacy notice to register.',
+          es: 'Debes aceptar el aviso de privacidad para inscribirte.',
+        },
+      },
+      // Backend error codes (contract §7)
+      errors: {
+        VALIDATION_ERROR: {
+          en: 'Please check the highlighted fields.',
+          es: 'Revisa los campos marcados.',
+        },
+        EVENT_NOT_FOUND: {
+          en: 'This event is no longer available. Please reload the page.',
+          es: 'Este evento ya no está disponible. Recarga la página.',
+        },
+        REGISTRATION_CLOSED: { en: 'Registration closed', es: 'Inscripciones cerradas' },
+        SOLD_OUT: { en: 'Sold out', es: 'Agotado' },
+        ALREADY_REGISTERED: {
+          en: 'You are already registered for this event',
+          es: 'Ya existe una inscripción con este correo para este evento',
+        },
+        COUPON_INVALID: { en: 'Invalid coupon', es: 'Cupón no válido' },
+        COUPON_EXHAUSTED: {
+          en: 'This coupon has reached its maximum number of uses.',
+          es: 'Este cupón alcanzó su máximo de usos.',
+        },
+        COUPON_ALREADY_USED: {
+          en: 'This email has already used this coupon.',
+          es: 'Este correo ya usó este cupón.',
+        },
+        RATE_LIMITED: {
+          en: 'Try again in a few minutes.',
+          es: 'Inténtalo de nuevo en unos minutos.',
+        },
+        UPLOAD_CAP_REACHED: {
+          en: 'We cannot receive more screenshots right now. Try again later or contact Cami at camila@lifetoolscr.com.',
+          es: 'No podemos recibir más capturas por ahora. Inténtalo más tarde o escribe a Cami a camila@lifetoolscr.com.',
+        },
+        SERVER_ERROR: {
+          en: 'Something went wrong. Your data is kept: please try again.',
+          es: 'Algo salió mal. Tus datos se conservan: inténtalo de nuevo.',
+        },
+      },
+      // Confirmation (FFR-011, FFR-024)
+      doneTitle: { en: 'Registration received', es: 'Inscripción recibida' },
+      doneReference: { en: 'Your reference', es: 'Tu referencia' },
+      doneBody: {
+        en: 'We sent you an email with the details. Cami will confirm your payment.',
+        es: 'Te enviamos un correo con los detalles. Cami confirmará tu pago.',
+      },
+      doneBodyFree: {
+        en: 'We sent you an email with the details.',
+        es: 'Te enviamos un correo con los detalles.',
+      },
+      doneFlagged: {
+        en: 'Your registration was received, but we need to review it. Cami will contact you.',
+        es: 'Recibimos tu inscripción, pero necesitamos revisarla. Cami se pondrá en contacto contigo.',
+      },
+    },
   },
 }
