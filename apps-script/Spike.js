@@ -56,3 +56,42 @@ function runOcrSamples() {
   console.log(JSON.stringify(results));
   return results;
 }
+
+// Spike step e: sends one test email to the account that runs the script, from MAIL_FROM_ALIAS.
+// Check the inbox: the From line must show the alias. Falls back to a plain send if the alias
+// is not set up, and says so in the log.
+function emailAliasTest() {
+  var to = Session.getActiveUser().getEmail();
+  var alias = getProp('MAIL_FROM_ALIAS');
+  var subject = 'Spike test: sender alias';
+  var body = 'Test message from the events backend spike. You can delete it.';
+  try {
+    GmailApp.sendEmail(to, subject, body, { from: alias, name: 'Lifetools', replyTo: getProp('MAIL_REPLY_TO') || '' });
+    console.log('Sent from alias ' + alias + ' to the running account. Check the From line in the inbox.');
+  } catch (err) {
+    console.log('Alias send FAILED: ' + err.message);
+    GmailApp.sendEmail(to, subject + ' (fallback)', body, { replyTo: getProp('MAIL_REPLY_TO') || '' });
+    console.log('Sent a fallback message from the account itself.');
+  }
+  console.log('Remaining daily email quota: ' + MailApp.getRemainingDailyQuota());
+}
+
+// Spike step d: tries to turn each .heic/.heif file in `samples` into JPEG on the server and to
+// run OCR on it directly. Logs which method works; no image content is logged.
+function heicProbe() {
+  var root = DriveApp.getFolderById(getProp('DRIVE_ROOT_FOLDER_ID'));
+  var folders = root.getFoldersByName('samples');
+  if (!folders.hasNext()) throw new Error('No `samples` subfolder in the staging root folder');
+  var files = folders.next().getFiles();
+  var found = 0;
+  while (files.hasNext()) {
+    var f = files.next();
+    if (!/\.(heic|heif)$/i.test(f.getName())) continue;
+    found++;
+    var res = { file: f.getName(), mime: f.getMimeType() };
+    try { res.getAsJpeg = f.getBlob().getAs('image/jpeg').getBytes().length > 0; } catch (e) { res.getAsJpeg = 'FAILED: ' + e.message; }
+    try { var o = ocrText(f.getId()); res.directOcr = o.text.length > 0 ? 'text found (' + o.ms + ' ms)' : 'no text'; } catch (e) { res.directOcr = 'FAILED: ' + e.message; }
+    console.log(JSON.stringify(res));
+  }
+  if (!found) console.log('No .heic/.heif file in `samples`.');
+}
