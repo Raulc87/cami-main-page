@@ -22,16 +22,19 @@ export function cardId(eventCode) {
 export default function Events({ events, sinpe }) {
   const { lang } = useLanguage()
   const t = UI_TEXT.events
-  const [selected, setSelected] = useState(null)
+  const [selectedCode, setSelectedCode] = useState(null)
   const [imgFailed, setImgFailed] = useState({})
   const triggerRef = useRef(null)
 
+  // Derived from `events` so a language refetch updates the open form's event.
+  const selected = events.find((ev) => ev.eventCode === selectedCode)
+
   const open = (ev, e) => {
     triggerRef.current = e.currentTarget
-    setSelected(ev)
+    setSelectedCode(ev.eventCode)
   }
   const close = () => {
-    setSelected(null)
+    setSelectedCode(null)
     triggerRef.current?.focus()
   }
 
@@ -60,7 +63,7 @@ export default function Events({ events, sinpe }) {
               ? t.free[lang]
               : `₡${ev.priceCrc.toLocaleString(lang === 'es' ? 'es-CR' : 'en-US')}`
             return (
-              <article key={ev.eventCode} id={cardId(ev.eventCode)} className="evt-card">
+              <article key={ev.eventCode} id={cardId(ev.eventCode)} className="evt-card" tabIndex={-1}>
                 <img
                   className={hasImage ? 'evt-card-img' : 'evt-card-img evt-card-img-logo'}
                   src={hasImage ? ev.imageUrl : LOGO}
