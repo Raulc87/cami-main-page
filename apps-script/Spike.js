@@ -94,7 +94,10 @@ function runOcrSamples() {
 // Check the inbox: the From line must show the alias. Falls back to a plain send if the alias
 // is not set up, and says so in the log.
 function emailAliasTest() {
-  var to = Session.getEffectiveUser().getEmail() || getProp('SPIKE_TEST_RECIPIENT');
+  var to = getProp('SPIKE_TEST_RECIPIENT');
+  if (!to) {
+    try { to = Session.getEffectiveUser().getEmail(); } catch (e) { to = ''; }
+  }
   if (!to) throw new Error('No recipient: set the script property SPIKE_TEST_RECIPIENT to your own address');
   var alias = getProp('MAIL_FROM_ALIAS');
   var subject = 'Spike test: sender alias';
