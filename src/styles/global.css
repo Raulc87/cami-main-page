@@ -238,6 +238,9 @@ body::before {
   .evt-ticker { overflow-x: auto; scrollbar-width: none; }
   .evt-ticker::-webkit-scrollbar { display: none; }
   .evt-ticker-track { animation: none; }
+  .evt-ticker-dup,
+  .evt-ticker-item-copy,
+  .evt-ticker-item-copy + .evt-ticker-dot { display: none; }
 }
 
 /* ── Responsive ────────────────────────────────────────── */
