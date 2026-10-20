@@ -7,7 +7,7 @@
 - Version: 1.2 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
-  rule, owner 2026-10-20 — CMP-036)
+  rule, FFR-032 OCR retry, owner 2026-10-20 — CMP-036)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 Approved (on merge of
   PR #30))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
@@ -55,7 +55,7 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 | US-019 | Event registration form with SINPE Móvil payment proof | FFR-007..FFR-011, FFR-018, FFR-022, FFR-023, FFR-027 |
 | US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), FFR-031, BR-E13 |
 | US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024, FFR-025, FFR-030, BR-E13 |
-| US-022 | Automatic check of the payment screenshot | FFR-017 |
+| US-022 | Automatic check of the payment screenshot | FFR-017, FFR-032 |
 | US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020 |
 | US-024 | Abuse metrics and alerts | FFR-029 |
 | US-025 | Participant emails (confirmation, payment not validated) | FFR-026 |
@@ -82,8 +82,8 @@ Events section
   or slower than 3 s, the section and the ticker are hidden (Q-10) and the rest of the page
   renders normally. A later refresh (language change, or a stale-event refresh from the form)
   that fails keeps the events already shown, so an open registration form and its typed data
-  are not lost; the backend re-checks every registration anyway (BR-E13). Proposed in CMP-036,
-  approved by the owner on merge of PR #30.
+  are not lost; the backend re-checks every registration anyway (BR-E13). Owner, 2026-10-20:
+  "(a)" (keep the events shown on a failed refresh).
 - FFR-025: Capacity: each event has a capacity in the `Events` tab. When the count of counting
   registrations (BR-E10) reaches it, the card shows "Agotado / Sold out" and the register button
   is disabled. At `register` time the server applies BR-E13: a ₡0 registration is refused
@@ -178,6 +178,11 @@ Payment screenshot check
   `unreadable`. A non-`ok` result sets `needsReview` and sends the participant the
   "payment not validated" email (FFR-026). The check never changes the status. The temporary
   OCR Google Doc is deleted right after reading.
+- FFR-032: If the OCR call fails for a service reason (e.g. Google's per-user OCR rate limit)
+  after its in-execution retries, the row keeps check result `pending` and no email is sent; a
+  time-driven trigger retries the `pending` rows every few minutes until each gets `ok`,
+  `mismatch` or `unreadable`, then sends the emails FFR-017/FFR-026 require. `pending` alone
+  never sets `needsReview` (FFR-030). Owner, 2026-10-20 (spike finding, CMP-024).
 
 Participant emails
 - FFR-026: The backend sends, in the participant's site language (`lang`), with reply-to
@@ -385,6 +390,8 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Form order | The coupon comes before the SINPE instructions and the screenshot (§9 steps 5–6) — owner, 2026-10-20, answer 2 to "coupon before the screenshot?": "yes" |
 | Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
 | Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
+| Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
+| OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; no email until checked — owner, 2026-10-20: "(a)" |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.

@@ -250,3 +250,11 @@ The human reviewer is the final approver.
 - Staging: the owner set up the staging project, spreadsheet and folder from the runbook, with
   the coordinator's step-by-step guide, and deployed the CMP-024 skeleton (2026-10-20). Spike
   steps a and §8 smoke passed (Agent 1).
+- Owner answers (2026-10-20), verbatim: "(a) for both, mapping confirmed". The questions, as
+  asked: FFR-004 — (a) keep the events shown when a later refresh fails, or (b) hide on any
+  failure? → **(a)**; OCR rate limit (spike finding: Google's per-user OCR limit) — (a) leave the
+  check `pending` and retry it with a time-driven trigger, or (b) mark it `unreadable` and send
+  the "not validated" email? → **(a)** (FFR-032, US-022 AC6). "mapping confirmed": the owner
+  confirms the question-to-answer mapping of "both OK, samples uploaded. 2. yes 3. a 4. 24h"
+  above.
+

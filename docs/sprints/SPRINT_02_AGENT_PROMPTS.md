@@ -139,7 +139,9 @@ Order of work (each step one PR, in order; IMPLEMENTATION_PLAN §11 steps 1–7)
 6. CMP-028-payment-check-and-emails — US-022 and US-025: OCR after the lock is released,
    checkResult/checkDetails/needsReview (FFR-030), the confirmation, "registration received"
    and "payment not validated" emails from docs/ux/EVENTS_EMAILS_AND_PRIVACY.md in the
-   participant's lang, reply-to camila@, `email failed` flag. Templates stay marked as drafts
+   participant's lang, reply-to camila@, `email failed` flag; FFR-032 (added 2026-10-20): an
+   OCR service failure after retries leaves `pending`, no email, and a time-driven trigger
+   retries the pending rows. Templates stay marked as drafts
    (BR-E11 release gate).
 
 Evidence per PR: every validation rule (one valid, one invalid case) and every error code you

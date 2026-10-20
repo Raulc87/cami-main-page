@@ -744,7 +744,7 @@ So that I can manage participants and payments in one place
 - Priority: Medium
 - Story Points: 5
 - Status: Ready
-- Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-030), BR-E06
+- Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-032, FFR-030), BR-E06
 - Related Requirements: FR-011
 
 **User Story**
@@ -772,6 +772,10 @@ So that I spot wrong payments before confirming
 5. Given Cami's sample screenshots (2–3 banks)
    When the check runs on them in the spike
    Then it returns `ok` for valid ones and `mismatch` for an altered amount.
+6. Given the OCR service refuses the call (e.g. the per-user rate limit) after the retries
+   When the check runs
+   Then the row stays `pending`, no email is sent, and a time-driven retry later writes the
+   final result and sends the emails (FFR-032, owner 2026-10-20).
 
 **Dependencies**
 - US-021; Cami's samples (spike).
