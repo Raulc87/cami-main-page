@@ -132,6 +132,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner.
 | Path | Owner |
 |---|---|
 | `apps-script/**` | Agent 1 |
+| `.gitignore` — the `.clasp.json` entry only (CMP-024) | Agent 1 (owner, 2026-10-20) |
 | `docs/process/events-backend-runbook.md`, `docs/sprints/SPRINT_02_SPIKE.md` | Agent 1 |
 | `src/api/**`, `src/hooks/useEvents.js` | Agent 2 |
 | `src/components/Events.jsx`, `src/components/EventsTicker.jsx`, `src/App.jsx` | Agent 2 |
@@ -221,3 +222,11 @@ The human reviewer is the final approver.
   [SPRINT_02_AGENT_PROMPTS.md](SPRINT_02_AGENT_PROMPTS.md), the review-only session (Opus) and
   Agents 1 and 2 (Sonnet), tagged `cmp-sprint-02`. Agent 3 starts when CMP-029 is merged
   (launch order). The Sprint 01 reviewer session is archived.
+- Owner answers (2026-10-20) to the CMP-023/CMP-024 questions: "1. Yes 2. Yes 3. Yes 4. Yes 5. no-reply@lifetoolscr.com" (plus "6. I need help to
+  do this" for the staging setup, which the coordinator guides from the runbook). Recorded as:
+  two standalone Apps Script projects (staging, production), ADR-008 and ARCHITECTURE §13 /
+  TECH_STACK §10 updated in CMP-035; the root `.gitignore` `.clasp.json` entry assigned to
+  Agent 1 in CMP-024 (ownership map); Cami's samples in a non-shared `samples` subfolder of the
+  staging folder, named `<name>_<amountCrc>.jpg`, plus one copy with the amount altered; mail
+  alias to test in the spike: `no-reply@lifetoolscr.com` (FEATURE_SPEC §20 #17).
+- Agent 3 launched 2026-10-20 after CMP-029 (PR #25) merged.

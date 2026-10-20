@@ -3,7 +3,7 @@
 ## Metadata
 - Version: 1.3 (homologated in CMP-014; v1.1 adds the events backend — §5, §10–15, §18, §21,
   §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022;
-  v1.3: §7 ticker props, §9 events placeholders — CMP-035)
+  v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
   merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved (on merge of PR #26))
 - Owner: Raul Casanas
@@ -292,8 +292,8 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 - Local: `npm run dev` (port 5173). Production: `dist/` uploaded to GoDaddy `public_html/`.
   See [TECH_STACK.md](../../TECH_STACK.md) and
   [release-checklist.md](../process/release-checklist.md).
-- Events backend: Apps Script deployments for **staging** (staging spreadsheet and folder) and
-  **production**; the site build points to one through `VITE_EVENTS_API_URL`. Deployed by the
+- Events backend: two standalone Apps Script projects, **staging** (staging spreadsheet and
+  folder) and **production**, each with one web-app deployment (ADR-008); the site build points to one through `VITE_EVENTS_API_URL`. Deployed by the
   owner per the deploy runbook.
 
 ## 14. Configuration and Secrets

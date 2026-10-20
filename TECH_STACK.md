@@ -1,10 +1,10 @@
 # TECH_STACK
 
 ## Metadata
-- Version: 1.2 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
-  §1, §5–7, §10–14 — in CMP-021)
-- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved (on
-  merge of PR #21))
+- Version: 1.3 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
+  §1, §5–7, §10–14 — in CMP-021; v1.3: §10 two Apps Script projects — CMP-035)
+- Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved on
+  merge of PR #21; v1.3 Approved (on merge of PR #26))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment
@@ -98,8 +98,9 @@ npm run preview   # serves dist/ locally
 
 ## 10. Hosting / Deployment
 - `npm run build` generates `dist/`; its contents are uploaded manually to `public_html/`.
-- The events backend is deployed separately (Apps Script deployment, staging and production),
-  by the owner, per the deploy runbook.
+- The events backend is deployed separately: two standalone Apps Script projects (staging and
+  production), each with one web-app deployment, by the owner, per
+  [events-backend-runbook.md](docs/process/events-backend-runbook.md) (ADR-008).
 - Full release process (versioning, upload, tag + GitHub Release):
   [release-checklist.md](docs/process/release-checklist.md).
 

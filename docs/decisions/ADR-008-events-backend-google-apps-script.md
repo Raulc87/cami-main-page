@@ -28,7 +28,8 @@ and read text from the image. What runs that code?
 ## Options Considered
 
 ### Option A — Google Apps Script web app (recommended)
-A script bound to the events spreadsheet, deployed as a web app (`doGet` for events,
+A standalone script that reaches the events spreadsheet through `SPREADSHEET_ID` (owner,
+2026-10-20; originally worded as a script bound to it), deployed as a web app (`doGet` for events,
 `doPost` for the coupon check and registrations — EVENTS_API_CONTRACT §2), running as the
 owning Google account.
 Pros:
@@ -79,7 +80,11 @@ Cons:
 
 ## Decision
 **Option A**, in the `lifetoolscr.com` Google Workspace (owner, 2026-10-19). The owner
-deploys the script, helped by the agents and a deploy runbook; the code lives in the repo. The site calls the web
+deploys the script, helped by the agents and a deploy runbook; the code lives in the repo.
+Two standalone projects with the same code, one for staging and one for production, because
+script properties belong to the project (owner, 2026-10-20, answering the CMP-023 questions:
+"1. Yes 2. Yes 3. Yes 4. Yes 5. no-reply@lifetoolscr.com"; procedure in
+[events-backend-runbook.md](../process/events-backend-runbook.md)). The site calls the web
 app over HTTPS; the contract is defined in `docs/specs/EVENTS_API_CONTRACT.md` before
 implementation.
 

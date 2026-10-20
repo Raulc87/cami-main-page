@@ -364,7 +364,7 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Q-27 | Not now; revisit with more/expensive events |
 | #14/#15 | Counting rule BR-E10; status renamed `refund/cancelled` |
 | #16 | Unreadable → also emailed and flagged |
-| #17 | Sender alias if free, else camila@ in Cami's voice |
+| #17 | Sender alias if free, else camila@ in Cami's voice. Alias to test: `no-reply@lifetoolscr.com` (owner, 2026-10-20) |
 | #18 | Automatic translation with overrides |
 | #19 | Risk of false "not validated" emails accepted |
 | Spam status | Keep `spam` as a status Cami can set (frees the place and the coupon use; counted in `Metrics` for the captcha rule) — owner, 2026-10-19: "keep spam status" |
