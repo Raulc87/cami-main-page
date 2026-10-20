@@ -217,7 +217,9 @@ Order of work:
    and deployed to staging: run the EVENTS_API_CONTRACT §10 end-to-end list on main against
    staging; receive each email (confirmation, registration received, not validated) in a
    Gmail and an Outlook inbox; check layouts at 1280/900/375 px in EN and ES and the existing
-   sections for regressions; check US-005 AC2 with test data you do not commit. Write
+   sections for regressions; check US-005 AC2 with test data you do not commit; with the
+   owner, upload a screenshot from a real iPhone (default HEIC settings) through the form and
+   confirm it is stored as JPEG and checked (owner skipped the raw-HEIC spike test, 2026-10-20). Write
    docs/sprints/SPRINT_02_VERIFICATION.md (one table per story, AC × case, Pass/Fail/N/A) with
    JPEG evidence in docs/sprints/evidence/sprint-02/ (under 5 MB, personal data masked).
    A Fail is not fixed in this PR: classify it as AC wording or defect and propose a ticket.

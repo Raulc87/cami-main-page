@@ -257,4 +257,16 @@ The human reviewer is the final approver.
   the "not validated" email? → **(a)** (FFR-032, US-022 AC6). "mapping confirmed": the owner
   confirms the question-to-answer mapping of "both OK, samples uploaded. 2. yes 3. a 4. 24h"
   above.
+- Spike results (CMP-024, 2026-10-20, run by the owner on staging): OCR on Cami's samples — 3 `ok`,
+  the altered copy `mismatch` on amount; Google's per-user OCR rate limit hit, handled by
+  backoff (→ FFR-032). A `.heic` already converted to JPEG on upload reads fine; a raw HEIC was
+  not tested. The alias send failed for lack of a Gmail scope; the fallback sent from
+  camila@lifetoolscr.com.
+- Owner answers (2026-10-20), verbatim: "1. add the permission for no-reply@ 2. the fallback was
+  camila@lifetoolscr.com" — questions as asked: (1) sender alias: (a) add the Gmail permission
+  for no-reply@ or (b) send from the account as "Lifetools"? → **(a)**; (2) the From line of the
+  fallback test email → camila@lifetoolscr.com. Then: "OK on the retry proposal, skip the raw HEIC
+  test" — (1) the 10-minute retry, 24-hour limit and FFR-029 action alerts → **OK**; (2) a test
+  with an unconverted iPhone HEIC → **skipped**; iPhone uploads are checked with a real iPhone in
+  CMP-033 instead.
 

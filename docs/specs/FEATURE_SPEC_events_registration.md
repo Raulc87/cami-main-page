@@ -187,7 +187,7 @@ Payment screenshot check
   it was saved is no longer retried and triggers that day's alert email to camila@ (FFR-029),
   which lists it for Cami to check by hand; its participant gets no "not validated" email. `pending` alone
   never sets `needsReview` (FFR-030). Owner, 2026-10-20 (spike finding, CMP-024); the
-  10-minute interval and the 24-hour limit are proposed in CMP-036 for the owner's approval.
+  10-minute interval and the 24-hour limit approved by the owner, 2026-10-20: "OK on the retry proposal, skip the raw HEIC test".
 
 Participant emails
 - FFR-026: The backend sends, in the participant's site language (`lang`), with reply-to
@@ -224,7 +224,8 @@ Abuse metrics
   on: an invalid `Events`/`Coupons` row (FFR-019, US-023 AC5) or a check stuck `pending` past
   its limit (FFR-032). At most one alert email per day: it is sent at the first trigger of the
   day (Costa Rica time) and lists everything found so far; anything found after it goes into,
-  and triggers, the next day's email (proposed in CMP-036 for the owner's approval). **Captcha rule (Q-19):** no captcha at launch;
+  and triggers, the next day's email (owner, 2026-10-20: "OK on the retry proposal").
+  **Captcha rule (Q-19):** no captcha at launch;
   enable Cloudflare Turnstile (free, verified server side) if alerts fire on 3+ days in a week or
   Cami marks more than 2 `spam` rows in a week.
 
@@ -400,7 +401,9 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
 | Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
 | Failed refresh (FFR-004) | Keep the events already shown when a later refresh fails; hide only at page load — owner, 2026-10-20: "(a)" |
-| OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; no email until checked — owner, 2026-10-20: "(a)" |
+| OCR rate limit (FFR-032) | Leave the check `pending` and retry it with a time-driven trigger; only the "not validated" email waits — owner, 2026-10-20: "(a)" |
+| OCR retry bound and action alerts (FFR-032, FFR-029) | Retry every 10 minutes; after 24 h still `pending`, stop and list the row in the alert email; invalid sheet rows and limit-reached checks trigger the alert email, at most one per day, sent at the first trigger — owner, 2026-10-20: "OK on the retry proposal" |
+| Sender alias (FFR-026, #17) | Send from `no-reply@lifetoolscr.com`; the script gets the Gmail `gmail.settings.basic` scope for it (it can read and change the owning account's Gmail settings), accepted by the owner — 2026-10-20: "add the permission for no-reply@" |
 
 ## 21. Approval
 - Approved by: Raul Casanas (product owner), on merge of PR #21.
