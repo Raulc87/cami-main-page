@@ -191,7 +191,7 @@ Triggers run the **saved** code (Head), not the deployed version: after changing
 saving is enough for the trigger, while visitors still need a **New version** (section 5).
 The automatic English translations are kept in the `Translations` tab (created by the script;
 columns `hash` and `text`, one row per translated text). The 5-minute run deletes the rows no
-published event uses any more, so the tab stays as small as the event list. To change a
+published event uses any more (the translation of a draft event is dropped on each run and made again when it is published), so the tab stays as small as the event list. To change a
 translation by hand, fill the `nameEn`/`descriptionEn` columns of the event instead (they win), or
 delete its row from `Translations` to have it translated again. Earlier versions kept them as
 `TR_<hash>` script properties; see "Script properties page is read-only" below.
