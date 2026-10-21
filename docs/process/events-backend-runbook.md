@@ -194,6 +194,25 @@ changed text). They are not pruned; if the properties page ever fills up, they c
 and are rebuilt on demand.
 Quota: about 290 runs a day of 5 to 10 s each, well inside the Workspace limits.
 
+### 2.7 Pending payment checks trigger
+Do this once in **each** environment (staging, and production before release), after the Events cache
+trigger (2.6). The payment screenshot is read with Drive OCR right after a registration is saved. If
+Google refuses the call (for example its per-user OCR rate limit) the row keeps the check result
+`pending`; this trigger tries those rows again every 10 minutes and writes the result (and sends the
+"payment not validated" email when it applies). A row still `pending` 24 hours after it was saved is
+no longer retried and is listed in that day's alert email (at most one per day).
+1. **Triggers** (clock icon) → **Add Trigger**.
+2. Function: `retryPendingChecks`. Deployment: **Head**. Event source: **Time-driven**. Type:
+   **Minutes timer**. Interval: **Every 10 minutes**. **Save** (allow the permissions if asked).
+3. Check: after about 10 minutes **Executions** shows a `retryPendingChecks` run with status
+   **Completed** (it ends at once when no row is `pending`).
+The check needs `SINPE_NUMBER` and/or `SINPE_ACCOUNT_NAME` in the script properties (2.4). While
+`SINPE_NUMBER` still holds the placeholder and no account name is set, no check runs and rows stay
+`pending`. Participant emails go from `MAIL_FROM_ALIAS` (or the account itself if the alias fails)
+with reply-to `MAIL_REPLY_TO`; while testing, set `MAIL_REPLY_TO` to your own address, and use test
+registrations with your own email address, so that no real participant is written to.
+Triggers run the saved code (Head); visitors need a **New version** (section 5).
+
 ## 3. Deploy as a web app (first time)
 1. Editor → **Deploy** → **New deployment** → gear → **Web app**.
 2. Description: the version note (for example `staging – skeleton`).

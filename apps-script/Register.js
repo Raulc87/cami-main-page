@@ -1,5 +1,5 @@
 // `register` action (EVENTS_API_CONTRACT §3.3, §5-§7; US-021, US-020, US-024). Coupons, abuse limits and
-// metrics live in Coupons.js, Limits.js and Alerts.js; the payment check and the participant emails are CMP-028.
+// metrics live in Coupons.js, Limits.js and Alerts.js; the payment check and the participant emails are Payment.js and Mail.js (CMP-028).
 
 var REGISTRATION_HEADERS = [
   'timestamp', 'submissionId', 'reference', 'eventCode', 'participantName', 'email', 'whatsapp', 'lang',
@@ -114,7 +114,7 @@ function handleRegister_(body) {
   try {
     outcome = storeRegistration_(v, found, coupon, amountDue, screenshot);
   } finally {
-    lock.releaseLock();
+    releaseAfterFlush_(lock);
   }
   if (outcome.error) {
     if (outcome.error.indexOf('COUPON_') === 0) bumpMetric_('couponFailures', 1);
@@ -135,7 +135,29 @@ function handleRegister_(body) {
       console.error('events refresh after registration failed: ' + err.name);
     }
   }
+  if (!outcome.duplicateSubmission) afterStore_(v, found, amountDue, coupon, outcome);
   return ok({ reference: outcome.reference, flagged: outcome.flagged, duplicateSubmission: outcome.duplicateSubmission });
+}
+
+// After the registration is stored and the lock is released: the participant email, then the
+// payment check and, if it fails, the "not validated" email (US-025, US-022). Nothing here may
+// fail the registration; problems are written to the row.
+function afterStore_(v, found, amountDue, coupon, outcome) {
+  try {
+    var row = {
+      participantName: v.participantName, email: v.email, lang: v.lang, reference: outcome.reference,
+      amountDueCrc: amountDue, couponCode: v.couponCode, submissionId: v.submissionId
+    };
+    var kind = outcome.flags.length ? 'received' : 'confirmation';
+    sendParticipantMail_(kind, row, found.event, v.eventCode, { reasons: outcome.flags });
+    if (!outcome.fileId) return;
+    var result = runPaymentCheck_(outcome.fileId, amountDue, outcome.originalFormat, OCR_WAITS_REQUEST);
+    if (result.pending) return; // the trigger tries again (FFR-032)
+    if (!applyCheckResult_(v.eventCode, v.submissionId, result)) return;
+    if (result.email) sendParticipantMail_('notValidated', row, found.event, v.eventCode);
+  } catch (err) {
+    console.error('after-store steps failed: ' + (err && err.name));
+  }
 }
 
 // The answer for a submissionId already stored in the event's tab, or null. Creates no tab.
@@ -245,6 +267,8 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
   }
   return {
     reference: reference, flagged: flags.length > 0, duplicateSubmission: false, bytes: bytes,
+    flags: flags, fileId: createdFile ? createdFile.getId() : '',
+    originalFormat: !!screenshot && screenshot.extension !== 'jpg',
     capReached: !!screenshot && uploadCapReached_(today, 0),
     // Only the registration that takes the last place changes what visitors see (FFR-033).
     soldOutNow: counting.length < ev.capacity && counting.length + 1 >= ev.capacity
