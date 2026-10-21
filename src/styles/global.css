@@ -445,3 +445,4 @@ body::before {
   .evt-form-coupon-row { flex-direction: column; }
   .evt-form-btn-ghost { padding: 12px 18px; }
 }
+.evt-form-sending { text-align: center; margin-top: 12px; }

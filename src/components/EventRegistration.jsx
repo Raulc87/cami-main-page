@@ -644,6 +644,11 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
         <button type="submit" className="cta-btn evt-form-submit" disabled={submitting}>
           {submitting ? t.submitting[lang] : t.submit[lang]}
         </button>
+        {submitting && (
+          <p className="evt-form-hint evt-form-sending" role="status">
+            {t.sendingNote[lang]}
+          </p>
+        )}
       </form>
     )
   }

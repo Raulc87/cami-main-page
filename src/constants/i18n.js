@@ -142,6 +142,10 @@ export const UI_TEXT = {
       },
       submit: { en: 'Register', es: 'Inscribirme' },
       submitting: { en: 'Sending…', es: 'Enviando…' },
+      sendingNote: {
+        en: 'Sending your registration. This can take up to a minute: please keep this window open.',
+        es: 'Enviando tu inscripción. Puede tardar hasta un minuto: mantén esta ventana abierta.',
+      },
       // Field errors (contract §8 codes, plus client-only name_invalid)
       fieldErrors: {
         required: { en: 'This field is required.', es: 'Este campo es obligatorio.' },
