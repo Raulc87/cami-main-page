@@ -8,7 +8,7 @@ Change management: update this document first, bump the version, notify both own
 ## Metadata
 - Version: 1.2 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
-  scope of `required` — CMP-039; v1.3: §6 reserved event codes and ₡0 on a duplicated code —
+  scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0 on a duplicated code —
   CMP-040)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 Approved (on merge of PR #XX))
@@ -130,7 +130,7 @@ validated or listed, except that a code shared with a published row is reported 
 
 | Tab.column | Rule |
 |---|---|
-| `Events.eventCode` | required, `^[A-Z0-9-]{2,20}$`, unique (duplicates: all rows skipped, FFR-019); not a system tab name (`EVENTS`, `COUPONS`, `METRICS`; tab names match case-insensitively); at least one letter, so Sheets cannot read it as a number or date (e.g. `2026-11`) |
+| `Events.eventCode` | required, `^[A-Z0-9-]{2,20}$`, unique (duplicates: all rows skipped, FFR-019); not a system tab name (`EVENTS`, `COUPONS`, `METRICS`; tab names match case-insensitively); written to registration cells as text, so Sheets never reads a code like `2026-11` or `1E5` as a date or number |
 | `Events.name`, `Events.description` | required text, ≤ 120 / ≤ 600 characters |
 | `Events.nameEn`, `Events.descriptionEn` | optional, same limits |
 | `Events.date` | required, a valid date (Sheets date or `YYYY-MM-DD`) |
