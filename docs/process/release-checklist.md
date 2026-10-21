@@ -62,6 +62,9 @@ upload; if one is not, do not release:
 - [ ] Email templates (confirmation, registration received with its reason phrases, payment not
       validated, and the internal alert email; amount format confirmed) approved by Cami and in
       use by the production script.
+- [ ] Registration form wording (EN/ES labels and messages in `UI_TEXT.events.form`, including
+      the sending note and the "event no longer available" message) reviewed by the owner and
+      Cami (BR-E11).
 - [ ] Lifetools logo in place for events without art.
 - [ ] Production Apps Script deployment updated per
       [events-backend-runbook.md](events-backend-runbook.md), and the site build points
