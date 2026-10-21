@@ -34,7 +34,9 @@ function readRows(name) {
 // Prefix values that start a formula so Sheets stores them as text (contract §6, FFR-014).
 function neutralize(value) {
   var s = String(value);
-  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+  // Also anything that starts with a digit (2026-11, 1/2, 1E5, 12.5), which Sheets would turn
+  // into a date or a number; the apostrophe is the text marker and is not part of the value.
+  return /^[=+\-@\t\r]/.test(s) || /^\d/.test(s) ? "'" + s : s;
 }
 
 // A tab as rows of { row: sheet row number, v: {header: value}, d: {header: displayed text} }.

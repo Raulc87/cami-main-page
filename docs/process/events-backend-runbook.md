@@ -44,6 +44,11 @@ Do this once for staging, and again for production when the release gates pass
 ([release-checklist.md §3b](release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)).
 
 ### 2.1 Data store
+Format the `eventCode` column of `Events` and the `eventCode` and `couponCode` columns of
+`Coupons` as plain text (select the column, Format → Number → Plain text), so that a code such as
+`2026-11` or `1E5` stays text and is not turned into a date or a number. Event codes cannot be
+`EVENTS`, `COUPONS` or `METRICS` (the names of system tabs): such a row is ignored and listed in
+the alert email.
 Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a time shown as
 `6:30 PM` is treated as invalid and the event is not shown (it is listed in the alert email).
 1. In Google Drive (Workspace account), create the spreadsheet with the tabs from contract §6:
@@ -123,8 +128,9 @@ and initial values are the contract (§9); do not rename them.
 | `ALERT_HONEYPOT_PER_DAY` | `10` |
 | `ALERT_THROTTLED_PER_DAY` | `20` |
 
-The spike stub `register` (CMP-024 to CMP-026) accepts uploads only when the script property
-`SPIKE_ENABLED` is `true`. Set it on **staging only**, and never on production; CMP-026 removes it.
+The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
+delete it from the staging project if it is still there. The limits above are enforced from
+CMP-027; until then `register` has no throttle or daily cap.
 **Create the production project only after CMP-026 and CMP-027 are merged** (validated `register`,
 throttling and daily caps); until then `main` holds a backend that must not be public.
 

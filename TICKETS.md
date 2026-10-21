@@ -58,7 +58,7 @@ it can be migrated to Linear (it has a free tier) by importing these same rows.
 | CMP-023 | Events backend deploy runbook (staging and production) | — | done | `CMP-023-events-backend-runbook` | 2026-10-19 | Sprint 02, Agent 1. Ordered before the first staging deploy (readiness checklist §6). |
 | CMP-024 | Events backend spike (ADR-008 validation) and backend skeleton | — | done | `CMP-024-events-backend-spike` | 2026-10-19 | Sprint 02, Agent 1. Findings in `docs/sprints/SPRINT_02_SPIKE.md` (steps a–f measured on staging; raw HEIC carried to CMP-033 by owner decision). Adds `.clasp.json` to the root `.gitignore` (assigned by the owner via the coordinator). |
 | CMP-025 | Events read and sheet validation (`events` action) | US-023, US-017 (server) | done | `CMP-025-events-read-and-sheet-validation` | 2026-10-19 | Sprint 02, Agent 1. |
-| CMP-026 | Registration storage in Sheets and Drive (`register` action) | US-021 | todo | `CMP-026-registration-storage` | 2026-10-19 | Sprint 02, Agent 1. |
+| CMP-026 | Registration storage in Sheets and Drive (`register` action) | US-021 | done | `CMP-026-registration-storage` | 2026-10-19 | Sprint 02, Agent 1. |
 | CMP-027 | Coupons (server), abuse limits and metrics | US-020 (server), US-024 | todo | `CMP-027-coupons-limits-metrics` | 2026-10-19 | Sprint 02, Agent 1. |
 | CMP-028 | Payment screenshot check and participant emails | US-022, US-025 | todo | `CMP-028-payment-check-and-emails` | 2026-10-19 | Sprint 02, Agent 1. First to move to Sprint 03 if the backend falls behind. |
 | CMP-029 | Events frontend foundation (API client, `useEvents`, `UI_TEXT.events`, styles, `App.jsx` slots) | — | done | `CMP-029-events-frontend-foundation` | 2026-10-19 | Sprint 02, Agent 2. Merges before CMP-030..CMP-032. |
