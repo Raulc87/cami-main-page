@@ -76,6 +76,22 @@ If you have any questions, just reply to this email.
 
 Cami
 
+### Reason phrases (both languages)
+The `{…}` reason is one or more of these, joined by "and" / "y" when several flags apply (code:
+`apps-script/Mail.js`, CMP-028):
+
+| Flag (`checkDetails`) | ES | EN |
+|---|---|---|
+| `sold out at submit` | estaba lleno | was full |
+| `event closed at submit` | había cerrado inscripciones | had closed registrations |
+| `coupon changed` | el cupón ya no estaba disponible | the coupon was no longer available |
+| `duplicate event code` | tenía un problema en su configuración | had a setup problem |
+| (no known flag) | necesitaba una revisión | needed a review |
+
+For Cami: the coupon phrase reads awkwardly after "llegó cuando el evento ya …" / "arrived after
+the event …" (e.g. "arrived after the event the coupon was no longer available"). She can
+approve it as is or give new wording; a wording change is a small code change.
+
 ## 2. "Payment not validated" email
 
 ### ES
@@ -107,6 +123,34 @@ check.
 
 Thanks,
 Cami
+
+## 2b. Alert email to Cami (internal, FFR-029)
+
+Sent to `MAIL_REPLY_TO` (camila@), at most once a day, only when there is something to act on.
+Current text (code: `apps-script/Alerts.js`, CMP-027); one message in both languages:
+
+**Asunto / Subject:** Eventos: avisos del {fecha} / Events alerts for {date}
+
+Hola Cami,
+
+Hay cosas que revisar en el sistema de eventos:
+
+- {one line per finding, e.g. an invalid `Events`/`Coupons` row, honeypot or throttled counts
+  over the limit, the daily upload cap reached, or a payment check still pending after 24 h}
+
+Las filas inválidas de las hojas Events y Coupons se ignoran hasta que las corrijas.
+
+Hi Cami,
+
+These need a look in the events system (above). Invalid rows of the Events and Coupons tabs are
+ignored until fixed.
+
+Lifetools
+
+## Amount format
+Emails show amounts as `₡15.000` (dot as thousands separator, the usual Costa Rican style); the
+site shows `₡15 000`. Cami chooses one style when she approves the texts; aligning them is a
+small code change.
 
 ## 3. Privacy notice (form) — generic draft
 
