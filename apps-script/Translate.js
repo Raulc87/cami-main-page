@@ -12,10 +12,34 @@ function textHash_(text) {
   return bytes.map(function (b) { return ((b < 0 ? b + 256 : b) + 256).toString(16).slice(1); }).join('');
 }
 
+// The translations tab, created with plain-text columns so that no value needs a text marker
+// (a hash like 00123 or 12e45, or a text starting with a digit or a sign, stays as written).
+// Returns null when no tab exists and `create` is false, or when a tab of that name holds
+// something else (for example the registrations of an old event coded TRANSLATIONS): it is never
+// written to or read from then.
+function translationsSheet_(create) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName(TRANSLATIONS_SHEET);
+  if (!sheet) {
+    if (!create) return null;
+    sheet = ss.insertSheet(TRANSLATIONS_SHEET);
+    sheet.getRange('A:B').setNumberFormat('@');
+    sheet.appendRow(TRANSLATIONS_HEADERS);
+    return sheet;
+  }
+  var header = sheet.getLastRow() > 0 ? sheet.getRange(1, 1, 1, 2).getValues()[0] : [];
+  if (String(header[0]).trim() !== TRANSLATIONS_HEADERS[0] || String(header[1]).trim() !== TRANSLATIONS_HEADERS[1]) {
+    console.error('Translations tab holds other data: not used');
+    return null;
+  }
+  return sheet;
+}
+
 // The stored translations as { hash: text }. A missing tab gives {}. A read error is thrown: an
 // empty map after a failed read would translate (and store) every text again.
 function loadTranslations_() {
   var map = {};
+  if (!translationsSheet_(false)) return map;
   readTable(TRANSLATIONS_SHEET).forEach(function (r) {
     var hash = String(r.v.hash).replace(/^'/, ''); // the text marker is not part of the hash
     if (hash && !(hash in map)) map[hash] = String(r.v.text);
@@ -35,7 +59,8 @@ function englishText_(spanish, override, cache) {
     if (translated) {
       cache[key] = translated;
       try {
-        getOrCreateSheet(TRANSLATIONS_SHEET, TRANSLATIONS_HEADERS).appendRow([neutralize(key), neutralize(translated)]); // a hash like 00123 or 12e45 must stay text
+        var sheet = translationsSheet_(true);
+        if (sheet) sheet.appendRow([key, translated]);
       } catch (err) {
         console.error('translation not stored: ' + err.name); // still used for this answer
       }
@@ -50,7 +75,7 @@ function englishText_(spanish, override, cache) {
 // Housekeeping (5-minute trigger): drops the stored translations that no valid event uses any
 // more, and repeated rows of one text. The tab stays as small as the event list.
 function pruneTranslations_() {
-  var sheet = getSpreadsheet().getSheetByName(TRANSLATIONS_SHEET);
+  var sheet = translationsSheet_(false);
   if (!sheet || sheet.getLastRow() < 2) return;
   var events = readEvents();
   // A row Cami is editing may be invalid for a moment: keep every translation until all rows are valid.
