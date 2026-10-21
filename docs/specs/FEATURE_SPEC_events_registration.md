@@ -4,7 +4,7 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.6 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+- Version: 1.7 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
@@ -12,10 +12,11 @@
   v1.4: `events` client wait raised from 3 s to 5 s (FFR-004, FNFR-003) and drafts not
   validated (FFR-019), owner 2026-10-20 — CMP-038; v1.5: FFR-014 original-format fallback
   and its FFR-017 payment check, owner 2026-10-20 — CMP-039; v1.6: FFR-019 reserved codes,
-  codes as text, ₡0 on a duplicated code — CMP-040)
+  codes as text, ₡0 on a duplicated code — CMP-040; v1.7: BR-E11 names the alert email and
+  reason phrases — CMP-041)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
-  v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 Approved (on
-  merge of PR #37))
+  v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
+  PR #37; v1.7 Approved (on merge of PR #40))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -291,7 +292,8 @@ Abuse metrics
   `new` or `confirmed`, flagged or not; `refund/cancelled` and `spam` free the place and the
   coupon use (#14, #15).
 - BR-E11: Release gates (checked in the release checklist): real SINPE values configured
-  (BR-E01); privacy notice reviewed by a lawyer (Q-11/Q-25); email templates approved by Cami;
+  (BR-E01); privacy notice reviewed by a lawyer (Q-11/Q-25); email templates approved by Cami
+  (the three participant emails with their reason phrases and the internal alert email);
   Lifetools logo in place.
 - BR-E12: Minors are not handled specially; Cami deals with any case herself (Q-23).
 - BR-E13: When state changes between the visitor seeing the form and `register` arriving (event
