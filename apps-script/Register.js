@@ -107,8 +107,7 @@ function handleRegister_(body) {
 function storeRegistration_(v, found, amountDue, screenshot) {
   var ev = found.event;
   var nowMs = Date.now();
-  var sheet = getOrCreateSheet(v.eventCode, REGISTRATION_HEADERS);
-  var rows = readTable(v.eventCode);
+  var rows = readTable(v.eventCode); // [] while the event has no tab yet: a refused request creates none
 
   for (var i = 0; i < rows.length; i++) {
     if (str_(rows[i].v.submissionId) === v.submissionId) {
@@ -161,6 +160,7 @@ function storeRegistration_(v, found, amountDue, screenshot) {
       screenshot ? 'pending' : 'not-required', notes.join('; '), decision.flags.length > 0, 'new',
       "'" + timestamp, ''
     ];
+    var sheet = getOrCreateSheet(v.eventCode, REGISTRATION_HEADERS);
     var row = sheet.getLastRow() + 1;
     sheet.getRange(row, 1, 1, values.length).setValues([values]);
   } catch (err) {
@@ -169,6 +169,7 @@ function storeRegistration_(v, found, amountDue, screenshot) {
   }
   return {
     reference: reference, flagged: decision.flags.length > 0, duplicateSubmission: false,
-    soldOutNow: counting.length + 1 >= ev.capacity
+    // Only the registration that takes the last place changes what visitors see (FFR-033).
+    soldOutNow: counting.length < ev.capacity && counting.length + 1 >= ev.capacity
   };
 }
