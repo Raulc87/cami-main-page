@@ -233,7 +233,7 @@ Administration (Cami)
   BR-E13 a paid registration that arrives for one is stored and flagged (`checkDetails`:
   `duplicate event code`) and a ₡0 one is refused (`REGISTRATION_CLOSED`). The stored row,
   the amount due, the payment check and the emails use the first valid published row of that
-  code (top-most in the tab); if no row of that code is valid, `EVENT_NOT_FOUND`. Only published
+  code (top-most in the tab), or, if none is published, the first valid row; if no row of that code is valid, `EVENT_NOT_FOUND`. Only published
   rows are validated and queued for the alert email; drafts (published unchecked) are ignored
   until published, except that a code shared with a published row is still reported as
   duplicated (contract §6, v1.1). Owner, 2026-10-20: "No, only published".
