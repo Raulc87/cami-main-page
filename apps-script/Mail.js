@@ -10,13 +10,14 @@ var MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
 function sendMail_(to, subject, body) {
   var replyTo = getProp('MAIL_REPLY_TO') || '';
   var alias = getProp('MAIL_FROM_ALIAS');
-  var options = { name: 'Lifetools', replyTo: replyTo };
+  var options = { name: 'Lifetools' };
+  if (replyTo) options.replyTo = replyTo;
   if (alias) {
     try {
-      GmailApp.sendEmail(to, subject, body, { name: 'Lifetools', replyTo: replyTo, from: alias });
+      GmailApp.sendEmail(to, subject, body, Object.assign({ from: alias }, options));
       return;
     } catch (err) {
-      console.error('mail from alias failed: ' + err.name);
+      console.error('mail from alias failed, sending from the account: ' + String(err && err.message).slice(0, 80));
     }
   }
   GmailApp.sendEmail(to, subject, body, options);
@@ -131,13 +132,13 @@ function sendParticipantMail_(kind, row, ev, eventCode, extra) {
   try {
     var lang = str_(row.lang) === 'en' ? 'en' : 'es';
     var ctx = {
-      kind: kind, lang: lang, name: str_(row.participantName), eventName: ev ? eventNameFor_(ev, lang) : eventCode,
+      kind: kind, lang: lang, name: str_(row.participantName).replace(/^'/, ''), eventName: ev ? eventNameFor_(ev, lang) : eventCode,
       startsAtMs: ev ? ev.startsAtMs : Date.now(), reference: str_(row.reference),
       amountDueCrc: Number(row.amountDueCrc) || 0, couponCode: str_(row.couponCode).replace(/^'/, ''),
       paid: (Number(row.amountDueCrc) || 0) > 0, reasons: (extra && extra.reasons) || []
     };
     var mail = buildParticipantMail_(ctx);
-    sendMail_(str_(row.email), mail.subject, mail.body);
+    sendMail_(str_(row.email).replace(/^'/, ''), mail.subject, mail.body); // a sheet cell may carry the text marker
     return true;
   } catch (err) {
     console.error('participant email failed: ' + (err && err.name));

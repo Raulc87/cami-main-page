@@ -7,7 +7,7 @@
 var CHECK_REVIEW_FLAGS = ['event closed at submit', 'sold out at submit', 'coupon changed', 'duplicate event code', 'email failed'];
 var PENDING_MAX_AGE_MS = 24 * 3600000;
 var PENDING_STUCK_KEY = 'PENDING_STUCK';
-var OCR_WAITS_REQUEST = [5000];                // in a visitor's request: one retry, then `pending`
+var OCR_WAITS_REQUEST = [];                    // in a visitor's request: no waiting, a refused call stays `pending`
 var OCR_WAITS_TRIGGER = [5000, 10000, 20000];
 var RETRY_RUN_MS = 4.5 * 60000;                // stay inside the 6-minute limit
 
@@ -24,8 +24,8 @@ function appendDetail_(details, extra) {
 }
 
 // OCR of one stored file: { text } or { service: true } when Google refuses for a service reason
-// (per-user OCR rate limit, quota, backend trouble) or { failed: true } when the file cannot be
-// imported. The temporary Doc is always trashed.
+// (per-user OCR rate limit, quota, backend trouble), { failed: true } when the file cannot be
+// imported, or { unknown: true } for any other error. The temporary Doc is always trashed.
 function ocrFileText_(fileId, waits) {
   var doc = null;
   try {
@@ -35,8 +35,9 @@ function ocrFileText_(fileId, waits) {
   } catch (err) {
     var message = String(err && err.message);
     console.error('ocr failed: ' + (err && err.name));
-    if (/rate limit|quota|too many|backend|timed? ?out|try again|internal error|unavailable/i.test(message)) return { service: true };
-    return { failed: true };
+    if (/rate limit|quota|too many|backend|timed? ?out|try again|internal error|unavailable|service error|unexpected error/i.test(message)) return { service: true };
+    if (/invalid|unsupported|not supported|corrupt|cannot be (read|processed|converted)|could not be (read|processed|converted)|media|mime/i.test(message)) return { failed: true };
+    return { unknown: true }; // not a known import problem: treated as a service problem, except for an original-format file
   } finally {
     if (doc) {
       try { DriveApp.getFileById(doc.id).setTrashed(true); } catch (err) { console.error('ocr doc cleanup failed'); }
@@ -91,6 +92,7 @@ function compareOcr(text, accountNumber, accountName, amountCrc) {
 // participant gets the "payment not validated" email (not for an original-format file that OCR
 // cannot read, US-022 AC7).
 function runPaymentCheck_(fileId, amountDueCrc, originalFormat, waits) {
+  if (!(amountDueCrc > 0)) return { pending: true }; // a screenshot only exists for a paid registration
   var sinpe = getSinpe();
   if (sinpe.isPlaceholder || (!sinpe.number && !sinpe.accountName)) {
     console.error('payment check skipped: SINPE properties not set');
@@ -98,7 +100,8 @@ function runPaymentCheck_(fileId, amountDueCrc, originalFormat, waits) {
   }
   var ocr = ocrFileText_(fileId, waits);
   if (ocr.service) return { pending: true };
-  if (ocr.failed || !/\S/.test(ocr.text)) {
+  if (ocr.unknown && !originalFormat) return { pending: true }; // do not tell a payer their payment failed over an unknown error
+  if (ocr.failed || ocr.unknown || !/\S/.test(ocr.text)) {
     return { checkResult: 'unreadable', details: originalFormat ? 'unreadable original format' : 'no text found', email: !originalFormat };
   }
   var c = compareOcr(ocr.text, sinpe.number, sinpe.accountName, amountDueCrc);
@@ -109,7 +112,8 @@ function runPaymentCheck_(fileId, amountDueCrc, originalFormat, waits) {
   return { checkResult: 'mismatch', details: failing.join(', '), email: true };
 }
 
-// Writes a check result into the registration row (under the script lock). Returns true if written.
+// Writes a check result into the registration row (under the script lock) if the row is still
+// `pending`. Returns true if written; the caller sends the email only then.
 function applyCheckResult_(eventCode, submissionId, result) {
   var release = takeShortLock_(20000);
   if (!release) return false;
@@ -119,9 +123,12 @@ function applyCheckResult_(eventCode, submissionId, result) {
     var rows = readTable(eventCode);
     for (var i = 0; i < rows.length; i++) {
       if (str_(rows[i].v.submissionId) !== submissionId) continue;
+      // Only a row still `pending` takes a result: the request and the trigger can reach the same row.
+      if (str_(rows[i].v.checkResult).trim() !== 'pending') return false;
       var details = result.details ? appendDetail_(rows[i].v.checkDetails, result.details) : str_(rows[i].v.checkDetails);
+      var review = needsReviewFor_(result.checkResult, details) || rows[i].v.needsReview === true || str_(rows[i].v.needsReview).toUpperCase() === 'TRUE';
       var col = REGISTRATION_HEADERS.indexOf('checkResult') + 1;
-      sheet.getRange(rows[i].row, col, 1, 3).setValues([[result.checkResult, details, needsReviewFor_(result.checkResult, details)]]);
+      sheet.getRange(rows[i].row, col, 1, 3).setValues([[result.checkResult, details, review]]);
       return true;
     }
     return false;
