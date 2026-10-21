@@ -180,7 +180,9 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
   // the discount and is flagged, a ₡0 one is refused with the coupon message (US-020 AC5).
   var flags = decision.flags.slice();
   if (coupon) {
-    var problem = couponProblem_(coupon, usesOf_(counting, coupon.couponCode).length, false, nowMs);
+    // Read again: Cami may have changed the coupon since the check, while this request waited for the lock.
+    var currentCoupon = findCoupon_(v.eventCode, coupon.couponCode);
+    var problem = currentCoupon ? couponProblem_(currentCoupon, usesOf_(counting, coupon.couponCode).length, false, nowMs) : 'COUPON_INVALID';
     if (problem) {
       if (!screenshot) return { error: problem };
       flags.push('coupon changed');
@@ -188,7 +190,10 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
   }
 
   // Daily upload caps, exact now that registrations are serialized (₡0 ones are unaffected).
-  if (screenshot && uploadCapReached_(today, screenshot.blob.getBytes().length)) return { error: 'UPLOAD_CAP_REACHED' };
+  if (screenshot && uploadCapReached_(today, screenshot.blob.getBytes().length)) {
+    addDaily_(DAILY_CAPHIT_PREFIX, today, 1); // the alert sees a refused upload even when the stored total is below the cap
+    return { error: 'UPLOAD_CAP_REACHED' };
+  }
 
   var used = {};
   rows.forEach(function (r) { used[str_(r.v.reference)] = true; });
@@ -225,13 +230,18 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
     var sheet = getOrCreateSheet(v.eventCode, REGISTRATION_HEADERS);
     var row = sheet.getLastRow() + 1;
     sheet.getRange(row, 1, 1, values.length).setValues([values]);
-    if (screenshot) {
-      addDaily_(DAILY_UPLOADS_PREFIX, today, 1);
-      addDaily_(DAILY_BYTES_PREFIX, today, bytes);
-    }
   } catch (err) {
     if (createdFile) createdFile.setTrashed(true); // no orphan file when the row could not be written
     throw err;
+  }
+  // The registration is stored; a counter that cannot be updated must not undo it or trash its file.
+  if (screenshot) {
+    try {
+      addDaily_(DAILY_UPLOADS_PREFIX, today, 1);
+      addDaily_(DAILY_BYTES_PREFIX, today, bytes);
+    } catch (err) {
+      console.error('upload counters failed: ' + (err && err.name));
+    }
   }
   return {
     reference: reference, flagged: flags.length > 0, duplicateSubmission: false, bytes: bytes,

@@ -175,7 +175,7 @@ function refreshEventsCache() {
   } catch (err) {
     console.error('housekeeping failed: ' + err.name);
   }
-  checkAlertsSafely_();
+  checkAlertsSafely_(true);
   if (error) throw error;
 }
 

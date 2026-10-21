@@ -4,6 +4,7 @@
 var METRIC_HEADERS = ['date', 'accepted', 'honeypotHits', 'throttled', 'couponFailures', 'uploadedMb', 'spamMarked'];
 var DAILY_UPLOADS_PREFIX = 'DAILY_UPLOADS_';
 var DAILY_BYTES_PREFIX = 'DAILY_BYTES_';
+var DAILY_CAPHIT_PREFIX = 'DAILY_CAPHIT_';
 
 // Costa Rica calendar day, `YYYY-MM-DD`.
 function crDate_(epochMs) {
@@ -75,7 +76,7 @@ function pruneDaily_(todayDate) {
   var keep = [todayDate];
   for (var i = 1; i <= 3; i++) keep.push(crDate_(Date.now() - i * 86400000));
   Object.keys(props.getProperties()).forEach(function (k) {
-    [DAILY_UPLOADS_PREFIX, DAILY_BYTES_PREFIX].forEach(function (p) {
+    [DAILY_UPLOADS_PREFIX, DAILY_BYTES_PREFIX, DAILY_CAPHIT_PREFIX].forEach(function (p) {
       if (k.indexOf(p) === 0 && keep.indexOf(k.slice(p.length)) < 0) props.deleteProperty(k);
     });
   });
@@ -148,8 +149,11 @@ function updateSpamMetrics_() {
   var dates = sheet.getRange(2, 1, n, 1).getValues();
   var counts = sheet.getRange(2, col, n, 1).getValues();
   var changed = false;
+  var written = {}; // a date with several Metrics rows (concurrent first events) carries the total once
   for (var i = 0; i < dates.length; i++) {
-    var count = perDay[plainDate_(dates[i][0])] || 0;
+    var day = plainDate_(dates[i][0]);
+    var count = written[day] ? 0 : (perDay[day] || 0);
+    written[day] = true;
     if (Number(counts[i][0] || 0) !== count) { counts[i][0] = count; changed = true; }
   }
   if (changed) sheet.getRange(2, col, n, 1).setValues(counts);
