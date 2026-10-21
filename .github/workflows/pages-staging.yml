@@ -1,0 +1,83 @@
+# Temporary staging test site on GitHub Pages (CMP-043).
+#
+# Purpose: let a real iPhone open a build of the site that talks to the STAGING events backend
+# (CMP-033 verification). Manual trigger only: it never runs on push or pull request.
+#
+# The staging /exec URL comes from the repo Actions secret STAGING_EVENTS_API_URL; it is never
+# written in the repository. It is compiled into the built JavaScript, so anyone who opens the
+# test site can read it (owner decision, 2026-10-21). While the site is up, anyone can also USE
+# staging (register, trigger emails, fill the sheet and Drive), so run it only for the test window
+# and unpublish right after (steps in the PR body of CMP-043). The workflow file stays in the
+# repo for reuse; with the site unpublished and the secret removed it does nothing.
+#
+# Production builds are unaffected: vite.config.js is unchanged, and the Pages base path and the
+# noindex tag are applied here only.
+name: Staging test site (GitHub Pages)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-staging
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the staging secret is set
+        env:
+          VITE_EVENTS_API_URL: ${{ secrets.STAGING_EVENTS_API_URL }}
+        run: |
+          if [ -z "$VITE_EVENTS_API_URL" ]; then
+            echo "Repository secret STAGING_EVENTS_API_URL is not set."
+            exit 1
+          fi
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build for /cami-main-page/
+        env:
+          VITE_EVENTS_API_URL: ${{ secrets.STAGING_EVENTS_API_URL }}
+        run: npm run build -- --base=/cami-main-page/
+
+      - name: Pages-only adjustments
+        run: |
+          # Keep the test site out of search engines.
+          sed -i -E 's|<head[^>]*>|&<meta name="robots" content="noindex, nofollow" />|' dist/index.html
+          # The code refers to images with absolute paths ("/images/..."), which Vite does not
+          # rewrite for a sub-path base; point them at the project path (Pages build only).
+          find dist/assets -name '*.js' -exec sed -i -E "s#([\"'\`])/images/#\1/cami-main-page/images/#g" {} +
+          grep -q 'name="robots"' dist/index.html
+          # Fail if a root-absolute image path is left over.
+          if grep -rqE "[\"'\`]/images/" dist/assets; then
+            echo "Unrewritten /images/ path left in the build."
+            exit 1
+          fi
+
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
