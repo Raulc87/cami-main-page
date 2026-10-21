@@ -266,3 +266,183 @@ body::before {
   .gallery-grid    { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 140px) !important; gap: 10px !important; }
   .gallery-tall    { grid-row: auto !important; }
 }
+
+/* ── Event registration form (US-019, US-020; UX_UI_DIRECTION §13) ── */
+.evt-form-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(30, 45, 66, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 40px 20px;
+}
+.evt-form-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background: white;
+  border-radius: 20px;
+  padding: 36px 36px 40px;
+  box-shadow: 0 24px 80px rgba(30, 45, 66, 0.28);
+  font-family: 'Outfit', sans-serif;
+}
+.evt-form-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #f5ede8;
+  color: #1e2d42;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.evt-form-close:focus-visible,
+.evt-form-btn-ghost:focus-visible,
+.evt-form-input:focus-visible,
+.evt-form-consent input:focus-visible {
+  outline: 2px solid #c9a4ab;
+  outline-offset: 2px;
+}
+.evt-form-summary { margin-bottom: 24px; padding-right: 36px; }
+.evt-form-title {
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: #1e2d42;
+  margin-bottom: 14px;
+  outline: none;
+}
+.evt-form-facts { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.evt-form-facts dt,
+.evt-form-pay-list dt {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a9aaa;
+  font-weight: 700;
+}
+.evt-form-facts dd { font-size: 15px; color: #4a6178; }
+.evt-form-pay {
+  background: #f5ede8;
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin-bottom: 24px;
+}
+.evt-form-section-title {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #1e2d42;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.evt-form-pay-list { display: grid; gap: 10px; margin-top: 12px; }
+.evt-form-pay-list dd { font-size: 16px; font-weight: 600; color: #1e2d42; }
+.evt-form-amount { font-size: 20px !important; }
+.evt-form-discount { font-size: 13px; color: #c9a4ab; font-weight: 700; }
+.evt-form-placeholder {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 4px 12px;
+  border: 1px dashed #c9a4ab;
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #4a6178;
+}
+.evt-form-field { margin-bottom: 18px; }
+.evt-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e2d42;
+  margin-bottom: 6px;
+}
+.evt-form-input {
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  color: #1e2d42;
+  background: white;
+  border: 1.5px solid #e8d4d8;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.evt-form-input[aria-invalid='true'] { border-color: #1e2d42; }
+.evt-form-input[readonly] { background: #f9f4f2; }
+.evt-form-file { padding: 10px 12px; font-size: 13px; }
+.evt-form-hint { font-size: 12px; color: #8a9aaa; margin-top: 6px; line-height: 1.5; }
+.evt-form-error { font-size: 13px; color: #1e2d42; font-weight: 600; margin-top: 6px; line-height: 1.5; }
+.evt-form-error::before { content: '! '; color: #c9a4ab; font-weight: 800; }
+.evt-form-error:empty,
+.evt-form-ok:empty { display: none; }
+.evt-form-error-box {
+  background: #f5ede8;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 0 0 16px;
+}
+.evt-form-ok { font-size: 13px; color: #4a6178; font-weight: 600; margin-top: 6px; }
+.evt-form-coupon-row { display: flex; gap: 10px; }
+.evt-form-btn-ghost {
+  flex-shrink: 0;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1e2d42;
+  background: white;
+  border: 1.5px solid #1e2d42;
+  border-radius: 10px;
+  padding: 0 18px;
+  cursor: pointer;
+}
+.evt-form-btn-ghost:disabled { opacity: 0.45; cursor: not-allowed; }
+.evt-form-privacy { margin: 24px 0 14px; }
+.evt-form-draft {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 10px;
+  border: 1px dashed #c9a4ab;
+  border-radius: 100px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #c9a4ab;
+}
+.evt-form-notice { font-size: 12.5px; line-height: 1.65; color: #4a6178; }
+.evt-form-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.55; color: #1e2d42; cursor: pointer; }
+.evt-form-consent input { margin-top: 3px; width: 18px; height: 18px; flex-shrink: 0; accent-color: #1e2d42; }
+.evt-form-submit { width: 100%; padding: 18px 24px; margin-top: 6px; }
+.evt-form-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.evt-form-done { text-align: center; padding: 12px 0 4px; }
+.evt-form-done-title { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: #1e2d42; margin-bottom: 16px; }
+.evt-form-ref {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 500;
+  color: #1e2d42;
+  background: #f5ede8;
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: inline-block;
+  margin: 8px 0 18px;
+  user-select: all;
+}
+.evt-form-body { font-size: 15px; line-height: 1.7; color: #4a6178; margin-bottom: 24px; }
+
+@media (max-width: 640px) {
+  .evt-form-overlay { padding: 0; }
+  .evt-form-dialog { max-width: none; min-height: 100%; border-radius: 0; padding: 28px 20px 36px; }
+  .evt-form-coupon-row { flex-direction: column; }
+  .evt-form-btn-ghost { padding: 12px 18px; }
+}
+.evt-form-sending { text-align: center; margin-top: 12px; }
