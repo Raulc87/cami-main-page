@@ -7,7 +7,7 @@ var REGISTRATION_CLOSES_HOURS = 12; // BR-E09
 var EVENT_CODE_RE = /^[A-Z0-9-]{2,20}$/;
 // A registration tab is named by the event code, so a code must not be the name of a system tab
 // (tab names match without regard to case): contract v1.3 §6.
-var RESERVED_EVENT_CODES = ['EVENTS', 'COUPONS', 'METRICS', 'SPIKELOG'];
+var RESERVED_EVENT_CODES = ['EVENTS', 'COUPONS', 'METRICS', 'TRANSLATIONS', 'SPIKELOG'];
 var COUPON_CODE_RE = /^[A-Z0-9]{8,20}$/;
 
 function isBlank_(v) {

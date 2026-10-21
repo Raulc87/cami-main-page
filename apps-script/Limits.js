@@ -81,11 +81,11 @@ function addDaily_(prefix, date, amount) {
   PropertiesService.getScriptProperties().setProperty(prefix + date, String(readDaily_(prefix, date) + amount));
 }
 
-// Drops daily counters older than three days.
+// Drops daily counters older than yesterday (the alert looks at today and yesterday).
 function pruneDaily_(todayDate) {
   var props = PropertiesService.getScriptProperties();
   var keep = [todayDate];
-  for (var i = 1; i <= 3; i++) keep.push(crDate_(Date.now() - i * 86400000));
+  keep.push(crDate_(Date.now() - 86400000));
   Object.keys(props.getProperties()).forEach(function (k) {
     [DAILY_UPLOADS_PREFIX, DAILY_BYTES_PREFIX, DAILY_CAPHIT_PREFIX].forEach(function (p) {
       if (k.indexOf(p) === 0 && keep.indexOf(k.slice(p.length)) < 0) props.deleteProperty(k);

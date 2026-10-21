@@ -124,7 +124,7 @@ function buildParticipantMail_(ctx) {
 // The event name in the participant's language (Cami's `nameEn`, else the cached translation).
 function eventNameFor_(ev, lang) {
   if (lang !== 'en') return ev.name;
-  return englishText_(ev.name, ev.nameEn, PropertiesService.getScriptProperties().getProperties());
+  return englishText_(ev.name, ev.nameEn, loadTranslations_());
 }
 
 // Sends one participant email. Returns true when sent. On failure marks the row `email failed`.

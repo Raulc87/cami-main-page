@@ -47,7 +47,7 @@ Do this once for staging, and again for production when the release gates pass
 Format the `eventCode` column of `Events` and the `eventCode` and `couponCode` columns of
 `Coupons` as plain text (select the column, Format → Number → Plain text), so that a code such as
 `2026-11` or `1E5` stays text and is not turned into a date or a number. Event codes cannot be
-`EVENTS`, `COUPONS` or `METRICS` (the names of system tabs): such a row is ignored and listed in
+`EVENTS`, `COUPONS`, `METRICS` or `TRANSLATIONS` (the names of system tabs): such a row is ignored and listed in
 the alert email.
 Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a time shown as
 `6:30 PM` is treated as invalid and the event is not shown (it is listed in the alert email).
@@ -189,9 +189,12 @@ After bumping `EVENTS_CACHE_VERSION` in `Events.js`, deploy a New version right 
 the trigger fills the new keys at once while the deployed version still reads the old ones.
 Triggers run the **saved** code (Head), not the deployed version: after changing `Events.js`,
 saving is enough for the trigger, while visitors still need a **New version** (section 5).
-The automatic English translations are kept in script properties named `TR_<hash>` (one per
-changed text). They are not pruned; if the properties page ever fills up, they can all be deleted
-and are rebuilt on demand.
+The automatic English translations are kept in the `Translations` tab (created by the script;
+columns `hash` and `text`, one row per translated text). The 5-minute run deletes the rows no
+published event uses any more, so the tab stays as small as the event list. To change a
+translation by hand, fill the `nameEn`/`descriptionEn` columns of the event instead (they win), or
+delete its row from `Translations` to have it translated again. Earlier versions kept them as
+`TR_<hash>` script properties; see "Script properties page is read-only" below.
 Quota: about 290 runs a day of 5 to 10 s each, well inside the Workspace limits.
 
 ### 2.7 Pending payment checks trigger
@@ -212,6 +215,18 @@ The check needs `SINPE_NUMBER` and/or `SINPE_ACCOUNT_NAME` in the script propert
 with reply-to `MAIL_REPLY_TO`; while testing, set `MAIL_REPLY_TO` to your own address, and use test
 registrations with your own email address, so that no real participant is written to.
 Triggers run the saved code (Head); visitors need a **New version** (section 5).
+
+### 2.8 Script properties page is read-only (more than 50 properties)
+The Apps Script settings page lets you edit script properties only while there are 50 or fewer.
+The script itself keeps about 30 (the settings in 2.4 plus the cache copy, alert state and the
+counters of today and yesterday), so it normally stays well below. If the page ever says the
+properties are read-only:
+1. In the editor run `showPropertyUsage`: the log shows how many properties exist and which kinds
+   (names only, no values).
+2. If many are `TR_<hash>` (left by an earlier version), run `deleteTranslationProperties`. The
+   translations now live in the `Translations` tab and are rebuilt by themselves.
+3. Open the settings page again. Do this in each environment, and before editing `SINPE_*` or
+   `MAIL_REPLY_TO` when the page is read-only.
 
 ## 3. Deploy as a web app (first time)
 1. Editor → **Deploy** → **New deployment** → gear → **Web app**.
