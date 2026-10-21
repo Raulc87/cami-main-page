@@ -60,7 +60,10 @@ function englishText_(spanish, override, cache) {
       cache[key] = translated;
       try {
         var sheet = translationsSheet_(true);
-        if (sheet) sheet.appendRow([key, translated]);
+        if (sheet) {
+          sheet.getRange('A:B').setNumberFormat('@'); // also for a tab created by an earlier version without it
+          sheet.appendRow([key, translated]);
+        }
       } catch (err) {
         console.error('translation not stored: ' + err.name); // still used for this answer
       }

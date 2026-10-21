@@ -225,6 +225,7 @@ properties are read-only:
    (names only, no values).
 2. If many are `TR_<hash>` (left by an earlier version), run `deleteTranslationProperties`. The
    translations now live in the `Translations` tab and are rebuilt by themselves.
+   If a tab named `Translations` holds anything but the `hash` and `text` columns, the script leaves it alone and translates without storing (one translation call per text on every 5-minute run): rename that tab.
 3. Open the settings page again. Do this in each environment, and before editing `SINPE_*` or
    `MAIL_REPLY_TO` when the page is read-only.
 
