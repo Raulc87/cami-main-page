@@ -4,7 +4,7 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.8 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+- Version: 1.9 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
@@ -13,10 +13,11 @@
   validated (FFR-019), owner 2026-10-20 — CMP-038; v1.5: FFR-014 original-format fallback
   and its FFR-017 payment check, owner 2026-10-20 — CMP-039; v1.6: FFR-019 reserved codes,
   codes as text, ₡0 on a duplicated code — CMP-040; v1.7: BR-E11 names the alert email and
-  reason phrases — CMP-041; v1.8: BR-E11 adds the form wording, owner 2026-10-21 — CMP-042)
+  reason phrases — CMP-041; v1.8: BR-E11 adds the form wording, owner 2026-10-21 — CMP-042;
+  v1.9: FFR-028 translations in a sheet tab, FFR-019 reserved name — CMP-046)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
-  PR #37; v1.7 on merge of PR #40; v1.8 Approved (on merge of PR #41))
+  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 Approved (on merge of PR #XX))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -100,8 +101,9 @@ Events section
 - FFR-028: Event name and description are written in Spanish by Cami (Q-1). When the site is in
   English, the backend returns an English version: the optional `nameEn`/`descriptionEn` columns
   if filled, otherwise an automatic translation (Apps Script `LanguageApp`, free), stored in
-  script properties keyed by a hash of the Spanish text, so it is recomputed only when that text
-  changes.
+  the `Translations` tab keyed by a hash of the Spanish text, so it is recomputed only when that
+  text changes; rows no valid event uses are pruned (CMP-045: script properties hit the
+  Apps Script settings page's 50-entry limit).
 
 Ticker banner
 - FFR-005: A banner at the top of the page scrolls right-to-left continuously, showing up to the
@@ -226,7 +228,7 @@ Participant emails
 Administration (Cami)
 - FFR-019: `Events` tab: code, name, description, optional `nameEn`/`descriptionEn`, date, time
   (required), price CRC (0 = free), capacity, image URL, published. Codes unique,
-  `[A-Z0-9-]{2,20}`, not the name of any non-event tab (currently `Events`, `Coupons`,
+  `[A-Z0-9-]{2,20}`, not the name of any non-event tab (currently `Events`, `Coupons`, `Translations`,
   `Metrics`, case-insensitive), and always written to registration cells as text so Sheets
   never turns one into a date or number (contract §6). The code columns of the `Events` and
   `Coupons` tabs are formatted as plain text (runbook §2.1), so a code Cami types, like
