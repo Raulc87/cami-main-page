@@ -114,7 +114,7 @@ function handleRegister_(body) {
   try {
     outcome = storeRegistration_(v, found, coupon, amountDue, screenshot);
   } finally {
-    lock.releaseLock();
+    releaseAfterFlush_(lock);
   }
   if (outcome.error) {
     if (outcome.error.indexOf('COUPON_') === 0) bumpMetric_('couponFailures', 1);

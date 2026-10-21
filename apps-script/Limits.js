@@ -16,13 +16,24 @@ function plainDate_(value) {
   return String(value).replace(/^'/, '');
 }
 
+// Sheet writes are buffered: they must reach the spreadsheet before the lock is released, or the
+// next holder can read the row as it was before (two runs then both act on the same row).
+function releaseAfterFlush_(lock) {
+  try {
+    SpreadsheetApp.flush();
+  } catch (err) {
+    console.error('flush before unlock failed: ' + (err && err.name));
+  }
+  lock.releaseLock();
+}
+
 // Briefly takes the script lock; returns a function that releases it (a no-op if it was busy:
 // a limit that is slightly off is better than a request that fails).
 function tryShortLock_(waitMs) {
   var lock = LockService.getScriptLock();
   try {
     lock.waitLock(waitMs);
-    return function () { lock.releaseLock(); };
+    return function () { releaseAfterFlush_(lock); };
   } catch (err) {
     return function () {};
   }
@@ -33,7 +44,7 @@ function takeShortLock_(waitMs) {
   var lock = LockService.getScriptLock();
   try {
     lock.waitLock(waitMs);
-    return function () { lock.releaseLock(); };
+    return function () { releaseAfterFlush_(lock); };
   } catch (err) {
     return null;
   }
