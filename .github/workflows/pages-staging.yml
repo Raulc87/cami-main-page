@@ -1,0 +1,82 @@
+# Temporary staging test site on GitHub Pages (CMP-043).
+#
+# Purpose: let a real iPhone open a build of the site that talks to the STAGING events backend
+# (CMP-033 verification). Manual trigger only: it never runs on push or pull request.
+#
+# The staging /exec URL comes from the repo Actions secret STAGING_EVENTS_API_URL; it is never
+# written in the repository. It is compiled into the built JavaScript, so anyone who opens the
+# test site can read it (owner decision, 2026-10-21). Take the site down when the test is done:
+# see the steps in the PR body of CMP-043.
+#
+# Production builds are unaffected: vite.config.js is unchanged, and the Pages base path and the
+# noindex tag are applied here only.
+name: Staging test site (GitHub Pages)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-staging
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the staging secret is set
+        env:
+          VITE_EVENTS_API_URL: ${{ secrets.STAGING_EVENTS_API_URL }}
+        run: |
+          if [ -z "$VITE_EVENTS_API_URL" ]; then
+            echo "Repository secret STAGING_EVENTS_API_URL is not set."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build for /cami-main-page/
+        env:
+          VITE_EVENTS_API_URL: ${{ secrets.STAGING_EVENTS_API_URL }}
+        run: npm run build -- --base=/cami-main-page/
+
+      - name: Pages-only adjustments
+        run: |
+          # Keep the test site out of search engines.
+          sed -i -E 's|<head[^>]*>|&<meta name="robots" content="noindex, nofollow" />|' dist/index.html
+          # The code refers to images with absolute paths ("/images/..."), which Vite does not
+          # rewrite for a sub-path base; point them at the project path (Pages build only).
+          find dist/assets -name '*.js' -exec sed -i -E "s#([\"'\`])/images/#\1/cami-main-page/images/#g" {} +
+          grep -q 'name="robots"' dist/index.html
+          # Fail if a root-absolute image path is left over.
+          if grep -rqE "[\"'\`]/images/" dist/assets; then
+            echo "Unrewritten /images/ path left in the build."
+            exit 1
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
