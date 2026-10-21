@@ -66,7 +66,7 @@ function normalizeBase64_(text) {
   return str_(text).replace(/^data:[^,]*,/, '').replace(/\s+/g, '');
 }
 
-var HEIF_BRANDS = ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1'];
+var HEIF_BRANDS = ['1pic', 'heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1'];
 
 // Image type from the first bytes (signed or unsigned), not from the name or declared type:
 // 'jpeg', 'png', 'webp', 'heic' or null. The generic HEIF brands mif1 and msf1 may also be an
