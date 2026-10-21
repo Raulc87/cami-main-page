@@ -21,6 +21,7 @@ function needsReviewFor_(checkResult, details) {
 
 function appendDetail_(details, extra) {
   var current = str_(details).trim();
+  if (current.split('; ').indexOf(extra) !== -1) return current; // the same detail is never written twice
   return current ? current + '; ' + extra : extra;
 }
 
