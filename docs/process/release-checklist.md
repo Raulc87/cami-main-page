@@ -60,7 +60,7 @@ upload; if one is not, do not release:
       ([EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3), and the reviewed
       text is what the site shows.
 - [ ] Email templates (confirmation, registration received with its reason phrases, payment not
-      validated, and the internal alert email; amount format chosen) approved by Cami and in
+      validated, and the internal alert email; amount format confirmed) approved by Cami and in
       use by the production script.
 - [ ] Lifetools logo in place for events without art.
 - [ ] Production Apps Script deployment updated per

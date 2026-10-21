@@ -148,9 +148,8 @@ ignored until fixed.
 Lifetools
 
 ## Amount format
-Emails show amounts as `₡15.000` (dot as thousands separator, the usual Costa Rican style); the
-site shows `₡15 000`. Cami chooses one style when she approves the texts; aligning them is a
-small code change.
+Spanish emails show amounts as `₡15 000`, like the site; English emails show `₡15,000`
+(CMP-028). Cami confirms the style when she approves the texts; a change is a small code change.
 
 ## 3. Privacy notice (form) — generic draft
 
