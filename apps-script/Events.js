@@ -92,7 +92,7 @@ var EVENTS_LAST_MAX_AGE_MS = 20 * 60000;
 // (the client gives up after its `events` timeout, FFR-004). The finished response is kept per language and
 // refreshed every 5 minutes by a trigger, so a change in the sheet shows within about 5 minutes
 // (owner decision, 2026-10-20, FFR-033). A registration that changes availability rebuilds the
-// cache with `refreshEventsCache()` after the lock is released, so a sold-out event shows at once
+// cache with `rebuildEventsCache_()` after the lock is released, so a sold-out event shows at once
 // and no visitor meets a cold cache (CMP-026). Without the trigger a request that finds the cache
 // empty rebuilds it (about 5 s).
 function handleEvents_(params) {
@@ -142,10 +142,9 @@ function readLastEvents_(lang) {
   }
 }
 
-// Run by the time-driven trigger every 5 minutes (FFR-033): rebuilds both languages. CMP-026's
-// `register` calls it too when a registration changes availability.
-// Both languages are attempted; if any fails the run ends as Failed so the owner sees it.
-function refreshEventsCache() {
+// Rebuilds both languages (FFR-033). `register` calls it when a registration takes the last
+// place. Both languages are attempted; if any fails it throws, so a trigger run shows as Failed.
+function rebuildEventsCache_() {
   var failed = [];
   ['es', 'en'].forEach(function (lang) {
     try {
@@ -157,7 +156,27 @@ function refreshEventsCache() {
       failed.push(lang);
     }
   });
-  if (failed.length) throw new Error('refreshEventsCache failed for: ' + failed.join(', '));
+  if (failed.length) throw new Error('rebuildEventsCache_ failed for: ' + failed.join(', '));
+}
+
+// Run by the time-driven trigger every 5 minutes: rebuilds the cache, recounts the `spam`
+// metric, prunes old daily counters and sends the day's alert email when there is something new.
+function refreshEventsCache() {
+  var error = null;
+  try {
+    rebuildEventsCache_();
+  } catch (err) {
+    error = err;
+  }
+  // Housekeeping must not hide a failed rebuild, nor fail the run by itself.
+  try {
+    updateSpamMetrics_();
+    pruneDaily_(crDate_(Date.now()));
+  } catch (err) {
+    console.error('housekeeping failed: ' + err.name);
+  }
+  checkAlertsSafely_(true);
+  if (error) throw error;
 }
 
 function buildEventsResponse_(lang) {

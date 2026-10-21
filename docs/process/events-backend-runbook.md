@@ -130,7 +130,10 @@ and initial values are the contract (§9); do not rename them.
 
 The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
 delete it from the staging project if it is still there. The limits above are enforced from
-CMP-027; until then `register` has no throttle or daily cap.
+CMP-027: over a per-minute limit the answer is `RATE_LIMITED`, over the daily screenshot count or
+MB cap a paid registration gets `UPLOAD_CAP_REACHED` (₡0 ones are unaffected). The `ALERT_*`
+values decide when the day's alert email is sent. All of them can be changed here without a
+deploy.
 **Create the production project only after CMP-026 and CMP-027 are merged** (validated `register`,
 throttling and daily caps); until then `main` holds a backend that must not be public.
 
@@ -171,6 +174,12 @@ may not see the events section.
 5. Check: after about 6 minutes, open **Executions** (sidebar): a `refreshEventsCache` run
    appears about every 5 minutes with status **Completed**. A **Failed** run: open it and read the
    log; the site keeps working from the last cache or rebuilds on demand.
+The same run also recounts the registrations Cami has marked `spam` in the `Metrics` tab, drops
+old daily counters, and sends the **daily alert email** to `MAIL_REPLY_TO` when something new
+needs Cami's attention (an invalid `Events` or `Coupons` row, or a daily threshold crossed); at
+most one per day, and findings made after it go into the next day's email. While testing, point
+`MAIL_REPLY_TO` at your own address so that Cami does not receive test alerts, and set it back
+afterwards.
 If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). The
 last good answer is also kept in script properties and used for up to 20 minutes if Google drops
 the cache early, so a short outage does not empty the page. That copy fits while the event list is

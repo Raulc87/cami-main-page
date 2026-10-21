@@ -16,6 +16,7 @@ function doPost(e) {
   try {
     var body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     if (body.action === 'register') return handleRegister_(body);
+    if (body.action === 'coupon') return handleCoupon_(body);
     return fail('SERVER_ERROR');
   } catch (err) {
     // Fixed message: error text can echo request content (personal data must stay out of logs).
