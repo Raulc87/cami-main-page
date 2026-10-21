@@ -34,7 +34,7 @@ function outstandingAlertItems_(nowMs) {
     if (m.throttled > maxThrottled) {
       items.push({ key: 'throttled:' + day, text: day + ' Throttled requests / solicitudes limitadas: ' + m.throttled + ' (' + maxThrottled + ')' });
     }
-    if (readDaily_(DAILY_UPLOADS_PREFIX, day) >= getNumberProp('LIMIT_UPLOADS_PER_DAY') ||
+    if (readDaily_(DAILY_CAPHIT_PREFIX, day) > 0 || readDaily_(DAILY_UPLOADS_PREFIX, day) >= getNumberProp('LIMIT_UPLOADS_PER_DAY') ||
         readDaily_(DAILY_BYTES_PREFIX, day) >= getNumberProp('LIMIT_UPLOAD_MB_PER_DAY') * 1024 * 1024) {
       items.push({ key: 'uploadcap:' + day, text: day + ' Daily upload cap reached / límite diario de capturas alcanzado' });
     }
@@ -55,9 +55,11 @@ function sendAlertEmail_(items, date) {
 
 // Sends the day's alert email when there is something new and none has gone out today.
 // Returns true when an email was sent.
-function checkAlerts_(nowMs) {
+// `full` is the 5-minute trigger: it always refreshes which findings are still present. A request
+// (rejected or capped) skips that work once today's email has gone out.
+function checkAlerts_(nowMs, full) {
   var date = crDate_(nowMs);
-  if (getProp(ALERT_LAST_SENT_KEY) === date) return false; // cheap exit: this runs on every rejected request
+  if (!full && getProp(ALERT_LAST_SENT_KEY) === date) return false;
   var items = outstandingAlertItems_(nowMs);
   var current = {};
   items.forEach(function (i) { current[i.key] = true; });
@@ -66,7 +68,7 @@ function checkAlerts_(nowMs) {
   var fresh = items.filter(function (i) { return reported.indexOf(i.key) < 0; });
   var props = PropertiesService.getScriptProperties();
   if (reported.length !== reportedBefore.length) props.setProperty(ALERT_REPORTED_KEY, JSON.stringify(reported));
-  if (!fresh.length) return false;
+  if (!fresh.length || getProp(ALERT_LAST_SENT_KEY) === date) return false;
 
   // Without the lock two requests could both send; a busy lock just means the next check sends.
   var release = takeShortLock_(5000);
@@ -82,9 +84,9 @@ function checkAlerts_(nowMs) {
   }
 }
 
-function checkAlertsSafely_() {
+function checkAlertsSafely_(full) {
   try {
-    checkAlerts_(Date.now());
+    checkAlerts_(Date.now(), !!full);
   } catch (err) {
     console.error('alert check failed: ' + err.name);
   }
