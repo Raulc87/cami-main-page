@@ -4,7 +4,7 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.7 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+- Version: 1.8 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
@@ -13,10 +13,10 @@
   validated (FFR-019), owner 2026-10-20 — CMP-038; v1.5: FFR-014 original-format fallback
   and its FFR-017 payment check, owner 2026-10-20 — CMP-039; v1.6: FFR-019 reserved codes,
   codes as text, ₡0 on a duplicated code — CMP-040; v1.7: BR-E11 names the alert email and
-  reason phrases — CMP-041)
+  reason phrases — CMP-041; v1.8: BR-E11 adds the form wording, owner 2026-10-21 — CMP-042)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
-  PR #37; v1.7 Approved (on merge of PR #40))
+  PR #37; v1.7 on merge of PR #40; v1.8 Approved (on merge of PR #41))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -293,8 +293,9 @@ Abuse metrics
   coupon use (#14, #15).
 - BR-E11: Release gates (checked in the release checklist): real SINPE values configured
   (BR-E01); privacy notice reviewed by a lawyer (Q-11/Q-25); email templates approved by Cami
-  (the three participant emails with their reason phrases and the internal alert email);
-  Lifetools logo in place.
+  (the three participant emails with their reason phrases and the internal alert email); the
+  registration form's wording (EN/ES labels and messages, PR #29) reviewed by the owner and
+  Cami; Lifetools logo in place.
 - BR-E12: Minors are not handled specially; Cami deals with any case herself (Q-23).
 - BR-E13: When state changes between the visitor seeing the form and `register` arriving (event
   closed, unpublished or sold out; coupon no longer valid): if a payment screenshot is attached
@@ -446,6 +447,7 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | Form order | The coupon comes before the SINPE instructions and the screenshot (§9 steps 5–6) — owner, 2026-10-20, answer 2 to "coupon before the screenshot?": "yes" |
 | Unapplied coupon | Submit is blocked until the coupon is applied or cleared (FFR-031) — owner, 2026-10-20, answer 3: "a" |
 | Time format | 24-hour times in both languages — owner, 2026-10-20, answer 4: "24h" |
+| Form wording (BR-E11) | Merge the registration form (PR #29) with its draft EN/ES wording; the owner and Cami review it before release, as a release gate — owner, 2026-10-21, asked "How do you want to handle the sign-up form's wording (labels, messages, the two new texts above)?" (options: merge now, review later; approve it now; review before merging): "Merge now, review later (Recommended)" |
 | Events wait (FFR-004, FNFR-003) | The site waits up to 5 s (was 3 s) for the `events` answer before hiding the section and the ticker; the page itself never waits — owner, 2026-10-20, asked "On staging, about 1 in 10 loads of the event list took longer than the site's 3-second wait (3.4 s and 4.6 s), so for those visitors the events section and ticker stay hidden. The page itself is never slowed down; the events just load in after it. How should we handle it?" (options: wait up to 5 s; accept for now; retry once; remember the last list): "Wait up to 5 s" |
 | Screenshot format (FFR-014) | If conversion to JPEG fails, store the original with its own extension and a `checkDetails` note; never refuse the registration for it — owner, 2026-10-20, asked "When someone pays and uploads their SINPE screenshot, the backend saves it as a JPEG. If Google can't convert an unusual image type (WebP or iPhone HEIC; most phones send JPEG anyway), what should happen?" (options: save the original; refuse the upload): "Save the original (Recommended)" |
 | Original-format payment check (FFR-017) | A screenshot kept in its original format that OCR cannot read → `unreadable`, no retries, flagged for Cami, no "not validated" email — owner, 2026-10-20, asked "Follow-up to 'Save the original': when a screenshot is kept in its original format (rare WebP/HEIC), Google's automatic payment check may not be able to read it. What should happen then?" (options: Cami checks by hand; normal "not validated" email): "Cami checks by hand (Recommended)" |
