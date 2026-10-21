@@ -17,7 +17,7 @@ function sendMail_(to, subject, body) {
       GmailApp.sendEmail(to, subject, body, Object.assign({ from: alias }, options));
       return;
     } catch (err) {
-      console.error('mail from alias failed, sending from the account: ' + String(err && err.message).slice(0, 80));
+      console.error('mail from alias failed, sending from the account: ' + (err && err.name));
     }
   }
   GmailApp.sendEmail(to, subject, body, options);
@@ -36,7 +36,7 @@ function formatEventDate_(startsAtMs, lang) {
 
 function formatAmount_(amountCrc, lang) {
   if (!amountCrc) return lang === 'en' ? 'Free' : 'Gratis';
-  var grouped = String(amountCrc).replace(/\B(?=(\d{3})+(?!\d))/g, lang === 'en' ? ',' : '.');
+  var grouped = String(amountCrc).replace(/\B(?=(\d{3})+(?!\d))/g, lang === 'en' ? ',' : ' ');
   return '₡' + grouped;
 }
 

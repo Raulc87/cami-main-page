@@ -96,11 +96,11 @@ function runPaymentCheck_(fileId, amountDueCrc, originalFormat, waits) {
   var sinpe = getSinpe();
   if (sinpe.isPlaceholder || (!sinpe.number && !sinpe.accountName)) {
     console.error('payment check skipped: SINPE properties not set');
-    return { pending: true };
+    return { pending: true, service: true }; // nothing can be checked until this is fixed
   }
   var ocr = ocrFileText_(fileId, waits);
-  if (ocr.service) return { pending: true };
-  if (ocr.unknown && !originalFormat) return { pending: true }; // do not tell a payer their payment failed over an unknown error
+  if (ocr.service) return { pending: true, service: true }; // refused for every file: the run stops
+  if (ocr.unknown && !originalFormat) return { pending: true, unknown: true }; // this file only: no false "not validated" email, the run goes on
   if (ocr.failed || ocr.unknown || !/\S/.test(ocr.text)) {
     return { checkResult: 'unreadable', details: originalFormat ? 'unreadable original format' : 'no text found', email: !originalFormat };
   }
@@ -187,7 +187,7 @@ function retryPendingChecks() {
       if (!fileId) return;
       var original = str_(r.v.checkDetails).indexOf('stored as original format') !== -1;
       var result = runPaymentCheck_(fileId, Number(r.v.amountDueCrc), original, OCR_WAITS_TRIGGER);
-      if (result.pending) { serviceBusy = true; return; } // the limit still holds: try again in 10 minutes
+      if (result.pending) { if (result.service) serviceBusy = true; return; } // a refusal hits every file: try again in 10 minutes
       if (!applyCheckResult_(name, str_(r.v.submissionId), result)) return;
       if (result.email) sendNotValidatedEmail_(name, r.v);
       Utilities.sleep(3000);
