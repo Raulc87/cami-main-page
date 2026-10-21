@@ -5,8 +5,10 @@
 #
 # The staging /exec URL comes from the repo Actions secret STAGING_EVENTS_API_URL; it is never
 # written in the repository. It is compiled into the built JavaScript, so anyone who opens the
-# test site can read it (owner decision, 2026-10-21). Take the site down when the test is done:
-# see the steps in the PR body of CMP-043.
+# test site can read it (owner decision, 2026-10-21). While the site is up, anyone can also USE
+# staging (register, trigger emails, fill the sheet and Drive), so run it only for the test window
+# and unpublish right after (steps in the PR body of CMP-043). The workflow file stays in the
+# repo for reuse; with the site unpublished and the secret removed it does nothing.
 #
 # Production builds are unaffected: vite.config.js is unchanged, and the Pages base path and the
 # noindex tag are applied here only.
@@ -17,8 +19,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages-staging
@@ -37,9 +37,9 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
           cache: npm
@@ -65,18 +65,19 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: dist
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
