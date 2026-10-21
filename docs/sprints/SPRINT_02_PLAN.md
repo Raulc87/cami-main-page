@@ -147,7 +147,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner.
 | `src/constants/data.jsx`, `colors.js`, every other existing component | Nobody this sprint |
 
 ## Integration Contracts
-- [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.3, locked: Agent 1 is the provider,
+- [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md) v1.4, locked: Agent 1 is the provider,
   Agents 2 and 3 the consumers. A change follows its change rule (coordinator docs PR first,
   version bump, both sides told) before any code relies on it.
 - Inside the frontend: `useEvents()` returns `{ status: "loading" | "ready" | "hidden", sinpe,
@@ -301,4 +301,11 @@ The human reviewer is the final approver.
   is kept in its original format (rare WebP/HEIC), Google's automatic payment check may not be able
   to read it. What should happen then?" — options: Cami checks by hand; normal "not validated"
   email. Owner: **"Cami checks by hand (Recommended)"** (FFR-017).
-
+- CMP-033 (2026-10-21), iPhone test route: the owner proposed GitHub Pages; question as asked:
+  "GitHub Pages works (the repo is public, so it's free). The catch: the test site's code is public, so the staging backend address becomes visible to anyone who looks at it, for as long as the test site is up. Staging only holds test data and has the abuse limits, and we take the test site down right after the check. OK?" — options: yes, temporary Pages site; no, keep staging private. Owner: **"Yes,
+  temporary Pages site (Recommended)"** (TECH_STACK v1.6 §9/§10; workflow in CMP-043, PR #42).
+  Published only for the iPhone test window (while up, anyone can use staging, including its
+  emails, within the abuse limits); takedown right after: unpublish Pages, delete the
+  `STAGING_EVENTS_API_URL` secret.
+- CMP-033 note for Cami's sheet guide: an event shows on the site only when `published` is TRUE;
+  an empty `published` cell is a draft and is hidden (FFR-019).
