@@ -1,7 +1,7 @@
 // The daily alert email to Cami (FFR-029, US-024 AC2): at most one per day, sent at the first
 // trigger of the day, listing everything outstanding; what is found after it triggers the next
 // day's email. Triggers: a threshold crossed, an invalid Events/Coupons row (US-023 AC5).
-// CMP-028 adds checks that stay pending past their limit.
+// A payment check still `pending` past its 24-hour limit is a trigger too (FFR-032).
 
 var ALERT_REPORTED_KEY = 'ALERT_REPORTED';
 var ALERT_LAST_SENT_KEY = 'ALERT_LAST_SENT_DATE';
@@ -17,6 +17,10 @@ function outstandingAlertItems_(nowMs) {
     var queue = JSON.parse(raw);
     (queue.entries || []).forEach(function (entry) { items.push({ key: entry, text: entry }); });
     if (queue.more) items.push({ key: key + ':more', text: '… +' + queue.more + ' / and ' + queue.more + ' more' });
+  });
+  var stuck = JSON.parse(getProp(PENDING_STUCK_KEY) || '[]');
+  stuck.forEach(function (ref) {
+    items.push({ key: 'pending:' + ref, text: 'Pago sin verificar tras 24 h / payment check still pending after 24 h: ' + ref });
   });
   var m = readMetrics_(date);
   var maxHoney = getNumberProp('ALERT_HONEYPOT_PER_DAY');
@@ -42,13 +46,7 @@ function sendAlertEmail_(items, date) {
     '\n\nLas filas inválidas de las hojas Events y Coupons se ignoran hasta que las corrijas.\n\n' +
     'Hi Cami,\n\nThese need a look in the events system (above). Invalid rows of the Events and ' +
     'Coupons tabs are ignored until fixed.\n\nLifetools';
-  var alias = getProp('MAIL_FROM_ALIAS');
-  try {
-    GmailApp.sendEmail(to, subject, body, alias ? { from: alias, name: 'Lifetools' } : { name: 'Lifetools' });
-  } catch (err) {
-    console.error('alert email from alias failed: ' + err.name);
-    GmailApp.sendEmail(to, subject, body, { name: 'Lifetools' });
-  }
+  sendMail_(to, subject, body);
 }
 
 // Sends the day's alert email when there is something new and none has gone out today.

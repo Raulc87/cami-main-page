@@ -130,11 +130,8 @@ function readMetrics_(date) {
 // `spamMarked` per registration day: registrations Cami has marked `spam`. Cami marks them by
 // hand, so this is recounted from the event tabs (run with the events refresh).
 function updateSpamMetrics_() {
-  var reserved = { Events: true, Coupons: true, Metrics: true };
   var perDay = {};
-  getSpreadsheet().getSheets().forEach(function (sheet) {
-    var name = sheet.getName();
-    if (reserved[name]) return;
+  registrationSheetNames_().forEach(function (name) {
     readTable(name).forEach(function (r) {
       if (str_(r.v.status).trim().toLowerCase() !== 'spam') return;
       var day = str_(r.v.timestamp).replace(/^'/, '').slice(0, 10);
