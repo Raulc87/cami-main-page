@@ -13,22 +13,26 @@ var REGISTRATION_HEADERS = [
 function lookupEventForRegister_(eventCode) {
   var rows = readTable('Events').filter(function (r) { return str_(r.v.eventCode).trim() === eventCode; });
   if (!rows.length) return null;
+  var best = null;
   for (var i = 0; i < rows.length; i++) {
     var res = validateEventRow_(rawEventFrom_(rows[i]));
-    if (!res.problems.length) {
-      return { event: res.event, published: isTrue_(rows[i].v.published), duplicated: rows.length > 1 };
+    if (res.problems.length) continue;
+    var published = isTrue_(rows[i].v.published);
+    if (!best || (published && !best.published)) { // a published row wins over a draft of the same code
+      best = { event: res.event, published: published, duplicated: rows.length > 1 };
     }
   }
-  return null;
+  return best;
 }
 
 // Decodes and checks the screenshot, and converts it to JPEG when the platform can. A type that
 // cannot be converted is kept as it is with its own extension. Returns { error } or
-// { blob, extension, converted }.
+// { blob, extension }.
 function prepareScreenshot_(file) {
   var bytes;
   try {
-    bytes = Utilities.base64Decode(str_(file.base64));
+    // Tolerate a `data:image/...;base64,` prefix and line breaks from the client.
+    bytes = Utilities.base64Decode(str_(file.base64).replace(/^data:[^,]*,/, '').replace(/\s+/g, ''));
   } catch (err) {
     return { error: 'invalid_file_type' };
   }
@@ -37,14 +41,14 @@ function prepareScreenshot_(file) {
   if (!type) return { error: 'invalid_file_type' };
   var mime = { jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic' }[type];
   var blob = Utilities.newBlob(bytes, mime, 'screenshot');
-  if (type === 'jpeg') return { blob: blob, extension: 'jpg', converted: false };
+  if (type === 'jpeg') return { blob: blob, extension: 'jpg' };
   try {
     var jpeg = blob.getAs('image/jpeg');
-    if (jpeg.getBytes().length > 0) return { blob: jpeg, extension: 'jpg', converted: true };
+    if (jpeg.getBytes().length > 0) return { blob: jpeg, extension: 'jpg' };
   } catch (err) {
     console.error('jpeg conversion failed for ' + type);
   }
-  return { blob: blob, extension: type === 'heic' ? 'heic' : type, converted: false };
+  return { blob: blob, extension: type };
 }
 
 function eventFolder_(eventCode) {
