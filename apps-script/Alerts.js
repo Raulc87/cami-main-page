@@ -22,19 +22,23 @@ function outstandingAlertItems_(nowMs) {
   stuck.forEach(function (ref) {
     items.push({ key: 'pending:' + ref, text: 'Pago sin verificar tras 24 h / payment check still pending after 24 h: ' + ref });
   });
-  var m = readMetrics_(date);
-  var maxHoney = getNumberProp('ALERT_HONEYPOT_PER_DAY');
-  var maxThrottled = getNumberProp('ALERT_THROTTLED_PER_DAY');
-  if (m.honeypotHits > maxHoney) {
-    items.push({ key: 'honeypot:' + date, text: 'Honeypot: ' + m.honeypotHits + ' (límite / limit ' + maxHoney + ')' });
-  }
-  if (m.throttled > maxThrottled) {
-    items.push({ key: 'throttled:' + date, text: 'Throttled requests / solicitudes limitadas: ' + m.throttled + ' (' + maxThrottled + ')' });
-  }
-  if (readDaily_(DAILY_UPLOADS_PREFIX, date) >= getNumberProp('LIMIT_UPLOADS_PER_DAY') ||
-      readDaily_(DAILY_BYTES_PREFIX, date) >= getNumberProp('LIMIT_UPLOAD_MB_PER_DAY') * 1024 * 1024) {
-    items.push({ key: 'uploadcap:' + date, text: 'Daily upload cap reached / límite diario de capturas alcanzado' });
-  }
+  // Threshold findings of today and yesterday: one made after a day's email waits for the next
+  // day's email (FFR-029). The key carries the date, so a finding is reported once.
+  [date, crDate_(nowMs - 86400000)].forEach(function (day) {
+    var m = readMetrics_(day);
+    var maxHoney = getNumberProp('ALERT_HONEYPOT_PER_DAY');
+    var maxThrottled = getNumberProp('ALERT_THROTTLED_PER_DAY');
+    if (m.honeypotHits > maxHoney) {
+      items.push({ key: 'honeypot:' + day, text: day + ' Honeypot: ' + m.honeypotHits + ' (límite / limit ' + maxHoney + ')' });
+    }
+    if (m.throttled > maxThrottled) {
+      items.push({ key: 'throttled:' + day, text: day + ' Throttled requests / solicitudes limitadas: ' + m.throttled + ' (' + maxThrottled + ')' });
+    }
+    if (readDaily_(DAILY_UPLOADS_PREFIX, day) >= getNumberProp('LIMIT_UPLOADS_PER_DAY') ||
+        readDaily_(DAILY_BYTES_PREFIX, day) >= getNumberProp('LIMIT_UPLOAD_MB_PER_DAY') * 1024 * 1024) {
+      items.push({ key: 'uploadcap:' + day, text: day + ' Daily upload cap reached / límite diario de capturas alcanzado' });
+    }
+  });
   return items;
 }
 
