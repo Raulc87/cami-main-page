@@ -301,4 +301,9 @@ The human reviewer is the final approver.
   is kept in its original format (rare WebP/HEIC), Google's automatic payment check may not be able
   to read it. What should happen then?" — options: Cami checks by hand; normal "not validated"
   email. Owner: **"Cami checks by hand (Recommended)"** (FFR-017).
-
+- CMP-033 (2026-10-21), iPhone test route: the owner proposed GitHub Pages; question as asked:
+  "GitHub Pages works (the repo is public, so it's free). The catch: the test site's code is public, so the staging backend address becomes visible to anyone who looks at it, for as long as the test site is up. Staging only holds test data and has the abuse limits, and we take the test site down right after the check. OK?" — options: yes, temporary Pages site; no, keep staging private. Owner: **"Yes,
+  temporary Pages site (Recommended)"** (TECH_STACK v1.6 §9/§10; workflow in CMP-043, PR #42).
+  Takedown after CMP-033: unpublish Pages, delete the `STAGING_EVENTS_API_URL` secret.
+- CMP-033 note for Cami's sheet guide: an event shows on the site only when `published` is TRUE;
+  an empty `published` cell is a draft and is hidden (FFR-019).

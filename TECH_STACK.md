@@ -3,10 +3,11 @@
 ## Metadata
 - Version: 1.5 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
   §1, §5–7, §10–14 — in CMP-021; v1.3: §10 two Apps Script projects — CMP-035;
-  v1.4: §11 script permissions — CMP-036; v1.5: §11 full Drive scope named — CMP-037)
+  v1.4: §11 script permissions — CMP-036; v1.5: §11 full Drive scope named — CMP-037;
+  v1.6: §9/§10 temporary GitHub Pages test site — CMP-044)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved on
   merge of PR #21; v1.3 Approved on merge of PR #26; v1.4 Approved on merge of PR #30;
-  v1.5 Approved (on merge of PR #32))
+  v1.5 Approved on merge of PR #32; v1.6 Approved (on merge of PR #XX))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment
@@ -92,7 +93,9 @@ npm run preview   # serves dist/ locally
   until a test runner is adopted (that adoption requires an ADR).
 
 ## 9. CI/CD
-- No CI. Code review: a dedicated Claude Code review-only session (owner decision
+- No CI on push. One manual-only workflow, `.github/workflows/pages-staging.yml`
+  (`workflow_dispatch`, CMP-043), builds `main` against the staging backend for the temporary
+  test site in §10. Code review: a dedicated Claude Code review-only session (owner decision
   2026-10-18, CMP-016), plus GitHub Copilot code review and Codex as automated reviewers on
   every PR, plus `/code-review` before opening a PR (see
   [pr-workflow.md](docs/process/pr-workflow.md) and
@@ -103,6 +106,15 @@ npm run preview   # serves dist/ locally
 - The events backend is deployed separately: two standalone Apps Script projects (staging and
   production), each with one web-app deployment, by the owner, per
   [events-backend-runbook.md](docs/process/events-backend-runbook.md) (ADR-008).
+- Temporary test site (owner decision, 2026-10-21, CMP-033): GitHub Pages
+  (`raulc87.github.io/cami-main-page/`, `noindex`), deployed only by running the manual workflow
+  in §9, so a real phone can test the full flow against **staging**. The staging `/exec` URL is
+  a repository Actions secret (`STAGING_EVENTS_API_URL`), never in a file; while the site is up
+  it is visible in the public test bundle (accepted by the owner: staging holds test data and
+  has the abuse limits). After CMP-033 the owner unpublishes Pages and deletes the secret
+  (optionally redeploys staging under a new URL). Production stays on GoDaddy only. Question as
+  asked: "GitHub Pages works (the repo is public, so it's free). The catch: the test site's code is public, so the staging backend address becomes visible to anyone who looks at it, for as long as the test site is up. Staging only holds test data and has the abuse limits, and we take the test site down right after the check. OK?" — options: yes, temporary Pages site; no, keep staging private. Owner:
+  "Yes, temporary Pages site (Recommended)".
 - Full release process (versioning, upload, tag + GitHub Release):
   [release-checklist.md](docs/process/release-checklist.md).
 
