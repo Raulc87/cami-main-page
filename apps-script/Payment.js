@@ -7,6 +7,7 @@
 var CHECK_REVIEW_FLAGS = ['event closed at submit', 'sold out at submit', 'coupon changed', 'duplicate event code', 'email failed'];
 var PENDING_MAX_AGE_MS = 24 * 3600000;
 var PENDING_STUCK_KEY = 'PENDING_STUCK';
+var EMAIL_FAILED_KEY = 'EMAIL_FAILED_QUEUE';
 var OCR_WAITS_REQUEST = [];                    // in a visitor's request: no waiting, a refused call stays `pending`
 var OCR_WAITS_TRIGGER = [5000, 10000, 20000];
 var RETRY_RUN_MS = 4.5 * 60000;                // stay inside the 6-minute limit
@@ -82,8 +83,13 @@ function compareOcr(text, accountNumber, accountName, amountCrc) {
   var amountFound = new RegExp(before + grouped + after).test(plain);
   var squash = function (v) { return String(v).replace(/[\s-]/g, '').toLowerCase(); };
   var haystack = squash(plain);
-  var accountFound = (!!accountNumber && haystack.indexOf(squash(accountNumber)) !== -1) ||
-    (!!accountName && haystack.indexOf(squash(accountName)) !== -1);
+  // The SINPE number must stand alone as a digit sequence (not inside a longer number); the
+  // country code 506 may precede it and spaces or hyphens may separate its digits.
+  var digits = String(accountNumber || '').replace(/\D/g, '');
+  if (digits.length === 11 && digits.indexOf('506') === 0) digits = digits.slice(3);
+  var numberFound = digits.length >= 7 &&
+    new RegExp('(?<!\\d)(?:506[\\s-]*)?' + digits.split('').join('[\\s-]*') + '(?!\\d)').test(plain);
+  var accountFound = numberFound || (!!accountName && haystack.indexOf(squash(accountName)) !== -1);
   return { checkResult: amountFound && accountFound ? 'ok' : 'mismatch', accountFound: accountFound, amountFound: amountFound };
 }
 
@@ -94,7 +100,8 @@ function compareOcr(text, accountNumber, accountName, amountCrc) {
 function runPaymentCheck_(fileId, amountDueCrc, originalFormat, waits) {
   if (!(amountDueCrc > 0)) return { pending: true }; // a screenshot only exists for a paid registration
   var sinpe = getSinpe();
-  if (sinpe.isPlaceholder || (!sinpe.number && !sinpe.accountName)) {
+  var number = sinpe.isPlaceholder ? '' : sinpe.number; // the placeholder is not a number to look for
+  if (!number && !sinpe.accountName) {
     console.error('payment check skipped: SINPE properties not set');
     return { pending: true, service: true }; // nothing can be checked until this is fixed
   }
@@ -104,7 +111,7 @@ function runPaymentCheck_(fileId, amountDueCrc, originalFormat, waits) {
   if (ocr.failed || ocr.unknown || !/\S/.test(ocr.text)) {
     return { checkResult: 'unreadable', details: originalFormat ? 'unreadable original format' : 'no text found', email: !originalFormat };
   }
-  var c = compareOcr(ocr.text, sinpe.number, sinpe.accountName, amountDueCrc);
+  var c = compareOcr(ocr.text, number, sinpe.accountName, amountDueCrc);
   if (c.checkResult === 'ok') return { checkResult: 'ok', details: '', email: false };
   var failing = [];
   if (!c.accountFound) failing.push('account not found');
@@ -138,9 +145,18 @@ function applyCheckResult_(eventCode, submissionId, result) {
 }
 
 // Notes that an email could not be sent: `email failed` in the details and needsReview TRUE (US-025 AC3).
+// When the lock stays busy the note is queued and the 10-minute trigger writes it.
 function markEmailFailed_(eventCode, submissionId) {
+  if (applyEmailFailed_(eventCode, submissionId)) return;
+  var props = PropertiesService.getScriptProperties();
+  var queue = JSON.parse(props.getProperty(EMAIL_FAILED_KEY) || '[]');
+  if (queue.length < 200) queue.push([eventCode, submissionId]);
+  props.setProperty(EMAIL_FAILED_KEY, JSON.stringify(queue));
+}
+
+function applyEmailFailed_(eventCode, submissionId) {
   var release = takeShortLock_(20000);
-  if (!release) return;
+  if (!release) return false;
   try {
     var sheet = getSpreadsheet().getSheetByName(eventCode);
     var rows = readTable(eventCode);
@@ -150,11 +166,21 @@ function markEmailFailed_(eventCode, submissionId) {
       if (details.indexOf('email failed') === -1) details = appendDetail_(details, 'email failed');
       var col = REGISTRATION_HEADERS.indexOf('checkDetails') + 1;
       sheet.getRange(rows[i].row, col, 1, 2).setValues([[details, true]]);
-      return;
+      return true;
     }
+    return true; // no such row any more: nothing to note
   } finally {
     release();
   }
+}
+
+// Writes the notes that could not be written when the email failed (called by the trigger).
+function drainEmailFailedQueue_() {
+  var props = PropertiesService.getScriptProperties();
+  var queue = JSON.parse(props.getProperty(EMAIL_FAILED_KEY) || '[]');
+  if (!queue.length) return;
+  var left = queue.filter(function (item) { return !applyEmailFailed_(item[0], item[1]); });
+  props.setProperty(EMAIL_FAILED_KEY, JSON.stringify(left));
 }
 
 // Names of the registration tabs (everything that is not a system tab).
@@ -172,6 +198,7 @@ function fileIdFromUrl_(url) {
 // Time-driven trigger (every 10 minutes): runs the check again for rows still `pending`
 // (FFR-032). A row older than 24 hours is no longer retried; it is listed for the day's alert email.
 function retryPendingChecks() {
+  drainEmailFailedQueue_();
   var started = Date.now();
   var stuck = [];
   var outOfTime = false;
@@ -193,5 +220,6 @@ function retryPendingChecks() {
       Utilities.sleep(3000);
     });
   });
-  PropertiesService.getScriptProperties().setProperty(PENDING_STUCK_KEY, JSON.stringify(stuck.slice(0, 50)));
+  // The alert lists the first 50; the rest is counted so none is dropped silently.
+  PropertiesService.getScriptProperties().setProperty(PENDING_STUCK_KEY, JSON.stringify({ refs: stuck.slice(0, 50), more: Math.max(0, stuck.length - 50) }));
 }

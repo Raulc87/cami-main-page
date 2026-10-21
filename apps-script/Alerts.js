@@ -18,8 +18,9 @@ function outstandingAlertItems_(nowMs) {
     (queue.entries || []).forEach(function (entry) { items.push({ key: entry, text: entry }); });
     if (queue.more) items.push({ key: key + ':more', text: '… +' + queue.more + ' / and ' + queue.more + ' more' });
   });
-  var stuck = JSON.parse(getProp(PENDING_STUCK_KEY) || '[]');
-  stuck.forEach(function (ref) {
+  var stuck = JSON.parse(getProp(PENDING_STUCK_KEY) || '{"refs":[],"more":0}');
+  if (stuck.more) items.push({ key: 'pending:more', text: '… +' + stuck.more + ' / and ' + stuck.more + ' more payment checks pending after 24 h' });
+  (stuck.refs || []).forEach(function (ref) {
     items.push({ key: 'pending:' + ref, text: 'Pago sin verificar tras 24 h / payment check still pending after 24 h: ' + ref });
   });
   // Threshold findings of today and yesterday: one made after a day's email waits for the next
