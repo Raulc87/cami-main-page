@@ -11,9 +11,11 @@
   CMP-036; v1.3: FFR-033 events cache refreshed every 5 minutes, owner 2026-10-20 — CMP-037;
   v1.4: `events` client wait raised from 3 s to 5 s (FFR-004, FNFR-003) and drafts not
   validated (FFR-019), owner 2026-10-20 — CMP-038; v1.5: FFR-014 original-format fallback
-  and its FFR-017 payment check, owner 2026-10-20 — CMP-039)
+  and its FFR-017 payment check, owner 2026-10-20 — CMP-039; v1.6: FFR-019 reserved and
+  date-like codes, ₡0 on a duplicated code — CMP-040)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
-  v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 Approved (on merge of PR #35))
+  v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 Approved (on
+  merge of PR #XX))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -223,8 +225,10 @@ Participant emails
 Administration (Cami)
 - FFR-019: `Events` tab: code, name, description, optional `nameEn`/`descriptionEn`, date, time
   (required), price CRC (0 = free), capacity, image URL, published. Codes unique,
-  `[A-Z0-9-]{2,20}`; rows with a duplicated code are unpublished, and a registration that
-  arrives for one is stored and flagged (`checkDetails`: `duplicate event code`). Only published
+  `[A-Z0-9-]{2,20}`, with at least one letter and not a system tab name (`Events`, `Coupons`,
+  `Metrics`, case-insensitive; contract §6). Rows with a duplicated code are unpublished; under
+  BR-E13 a paid registration that arrives for one is stored and flagged (`checkDetails`:
+  `duplicate event code`) and a ₡0 one is refused (`REGISTRATION_CLOSED`). Only published
   rows are validated and queued for the alert email; drafts (published unchecked) are ignored
   until published, except that a code shared with a published row is still reported as
   duplicated (contract §6, v1.1). Owner, 2026-10-20: "No, only published".
