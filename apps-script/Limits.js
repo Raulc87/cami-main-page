@@ -27,6 +27,17 @@ function tryShortLock_(waitMs) {
   }
 }
 
+// Like tryShortLock_ but returns null when the lock stayed busy.
+function takeShortLock_(waitMs) {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(waitMs);
+    return function () { lock.releaseLock(); };
+  } catch (err) {
+    return null;
+  }
+}
+
 function windowKey_(name, epochMs) {
   return 'RL_' + name + '_' + Math.floor(epochMs / 60000);
 }
@@ -109,8 +120,8 @@ function readMetrics_(date) {
   var rows = readTable('Metrics');
   for (var i = 0; i < rows.length; i++) {
     if (plainDate_(rows[i].v.date) === date) {
-      METRIC_HEADERS.slice(1).forEach(function (h) { out[h] = Number(rows[i].v[h] || 0); });
-      break;
+      // A row created twice by concurrent first events of the day counts once, summed.
+      METRIC_HEADERS.slice(1).forEach(function (h) { out[h] += Number(rows[i].v[h] || 0); });
     }
   }
   return out;
@@ -133,10 +144,13 @@ function updateSpamMetrics_() {
   var sheet = getSpreadsheet().getSheetByName('Metrics');
   if (!sheet || sheet.getLastRow() < 2) return;
   var col = METRIC_HEADERS.indexOf('spamMarked') + 1;
-  var dates = sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getValues();
+  var n = sheet.getLastRow() - 1;
+  var dates = sheet.getRange(2, 1, n, 1).getValues();
+  var counts = sheet.getRange(2, col, n, 1).getValues();
+  var changed = false;
   for (var i = 0; i < dates.length; i++) {
     var count = perDay[plainDate_(dates[i][0])] || 0;
-    var cell = sheet.getRange(i + 2, col);
-    if (Number(cell.getValue() || 0) !== count) cell.setValue(count);
+    if (Number(counts[i][0] || 0) !== count) { counts[i][0] = count; changed = true; }
   }
+  if (changed) sheet.getRange(2, col, n, 1).setValues(counts);
 }

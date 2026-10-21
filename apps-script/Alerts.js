@@ -16,7 +16,7 @@ function outstandingAlertItems_(nowMs) {
     if (!raw) return;
     var queue = JSON.parse(raw);
     (queue.entries || []).forEach(function (entry) { items.push({ key: entry, text: entry }); });
-    if (queue.more) items.push({ key: key + ':more:' + queue.more, text: '… +' + queue.more + ' / and ' + queue.more + ' more' });
+    if (queue.more) items.push({ key: key + ':more', text: '… +' + queue.more + ' / and ' + queue.more + ' more' });
   });
   var m = readMetrics_(date);
   var maxHoney = getNumberProp('ALERT_HONEYPOT_PER_DAY');
@@ -27,7 +27,8 @@ function outstandingAlertItems_(nowMs) {
   if (m.throttled > maxThrottled) {
     items.push({ key: 'throttled:' + date, text: 'Throttled requests / solicitudes limitadas: ' + m.throttled + ' (' + maxThrottled + ')' });
   }
-  if (uploadCapReached_(date, 0) || readDaily_(DAILY_BYTES_PREFIX, date) >= getNumberProp('LIMIT_UPLOAD_MB_PER_DAY') * 1024 * 1024) {
+  if (readDaily_(DAILY_UPLOADS_PREFIX, date) >= getNumberProp('LIMIT_UPLOADS_PER_DAY') ||
+      readDaily_(DAILY_BYTES_PREFIX, date) >= getNumberProp('LIMIT_UPLOAD_MB_PER_DAY') * 1024 * 1024) {
     items.push({ key: 'uploadcap:' + date, text: 'Daily upload cap reached / límite diario de capturas alcanzado' });
   }
   return items;
@@ -54,6 +55,7 @@ function sendAlertEmail_(items, date) {
 // Returns true when an email was sent.
 function checkAlerts_(nowMs) {
   var date = crDate_(nowMs);
+  if (getProp(ALERT_LAST_SENT_KEY) === date) return false; // cheap exit: this runs on every rejected request
   var items = outstandingAlertItems_(nowMs);
   var current = {};
   items.forEach(function (i) { current[i.key] = true; });
@@ -62,9 +64,11 @@ function checkAlerts_(nowMs) {
   var fresh = items.filter(function (i) { return reported.indexOf(i.key) < 0; });
   var props = PropertiesService.getScriptProperties();
   if (reported.length !== reportedBefore.length) props.setProperty(ALERT_REPORTED_KEY, JSON.stringify(reported));
-  if (!fresh.length || getProp(ALERT_LAST_SENT_KEY) === date) return false;
+  if (!fresh.length) return false;
 
-  var release = tryShortLock_(5000);
+  // Without the lock two requests could both send; a busy lock just means the next check sends.
+  var release = takeShortLock_(5000);
+  if (!release) return false;
   try {
     if (getProp(ALERT_LAST_SENT_KEY) === date) return false; // another request sent it meanwhile
     sendAlertEmail_(items, date);

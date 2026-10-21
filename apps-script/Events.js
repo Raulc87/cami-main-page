@@ -92,7 +92,7 @@ var EVENTS_LAST_MAX_AGE_MS = 20 * 60000;
 // (the client gives up after its `events` timeout, FFR-004). The finished response is kept per language and
 // refreshed every 5 minutes by a trigger, so a change in the sheet shows within about 5 minutes
 // (owner decision, 2026-10-20, FFR-033). A registration that changes availability rebuilds the
-// cache with `refreshEventsCache()` after the lock is released, so a sold-out event shows at once
+// cache with `rebuildEventsCache_()` after the lock is released, so a sold-out event shows at once
 // and no visitor meets a cold cache (CMP-026). Without the trigger a request that finds the cache
 // empty rebuilds it (about 5 s).
 function handleEvents_(params) {
@@ -156,7 +156,7 @@ function rebuildEventsCache_() {
       failed.push(lang);
     }
   });
-  if (failed.length) throw new Error('refreshEventsCache failed for: ' + failed.join(', '));
+  if (failed.length) throw new Error('rebuildEventsCache_ failed for: ' + failed.join(', '));
 }
 
 // Run by the time-driven trigger every 5 minutes: rebuilds the cache, recounts the `spam`
