@@ -5,6 +5,9 @@ var CR_OFFSET_HOURS = 6;            // America/Costa_Rica is UTC-6 all year (no 
 var REGISTRATION_CLOSES_HOURS = 12; // BR-E09
 
 var EVENT_CODE_RE = /^[A-Z0-9-]{2,20}$/;
+// A registration tab is named by the event code, so a code must not be the name of a system tab
+// (tab names match without regard to case): contract v1.3 §6.
+var RESERVED_EVENT_CODES = ['EVENTS', 'COUPONS', 'METRICS', 'SPIKELOG'];
 var COUPON_CODE_RE = /^[A-Z0-9]{8,20}$/;
 
 function isBlank_(v) {
@@ -67,7 +70,7 @@ function crEndOfDay_(dateText) {
 function validateEventRow_(raw) {
   var problems = [];
   var code = String(raw.eventCode === undefined ? '' : raw.eventCode).trim();
-  if (!EVENT_CODE_RE.test(code)) problems.push('eventCode');
+  if (!EVENT_CODE_RE.test(code) || RESERVED_EVENT_CODES.indexOf(code.toUpperCase()) >= 0) problems.push('eventCode');
 
   var name = String(raw.name === undefined ? '' : raw.name).trim();
   if (!name || name.length > 120) problems.push('name');

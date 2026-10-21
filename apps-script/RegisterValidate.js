@@ -61,7 +61,8 @@ function validateRegisterInput_(body) {
 }
 
 // Image type from the first bytes (signed or unsigned), not from the name or declared type:
-// 'jpeg', 'png', 'webp', 'heic' or null.
+// 'jpeg', 'png', 'webp', 'heic' or null. The generic HEIF brands mif1 and msf1 may also be an
+// AVIF file; it is then stored as `.heic`, which is harmless (stored in its own format).
 function detectImageType_(bytes) {
   var b = Array.prototype.slice.call(bytes, 0, 16).map(function (x) { return x < 0 ? x + 256 : x; });
   if (b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'jpeg';
@@ -106,10 +107,11 @@ function registrationDecision_(state, hasFile) {
   if (!state.published || state.closed) flags.push('event closed at submit');
   if (state.soldOut) flags.push('sold out at submit');
   if (!hasFile) {
-    // Nothing was paid: refuse with the matching error (BR-E13).
-    if (!state.published || state.closed) return { refuse: 'REGISTRATION_CLOSED', flags: [] };
+    // Nothing was paid: refuse with the matching error (BR-E13). A duplicated code counts as
+    // unpublished (FFR-019), so a ₡0 registration for it is refused as closed.
+    if (state.duplicateCode || !state.published || state.closed) return { refuse: 'REGISTRATION_CLOSED', flags: [] };
     if (state.soldOut) return { refuse: 'SOLD_OUT', flags: [] };
-    return { refuse: null, flags: state.duplicateCode ? ['duplicate event code'] : [] };
+    return { refuse: null, flags: [] };
   }
   return { refuse: null, flags: flags };
 }

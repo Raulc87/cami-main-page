@@ -159,7 +159,7 @@ function storeRegistration_(v, found, amountDue, screenshot) {
     if (screenshot && screenshot.extension !== 'jpg') notes.push('stored as original format: ' + screenshot.extension);
     var timestamp = crIso_(nowMs);
     var values = [
-      "'" + timestamp, v.submissionId, reference, v.eventCode, neutralize(v.participantName), neutralize(v.email),
+      "'" + timestamp, v.submissionId, reference, "'" + v.eventCode, neutralize(v.participantName), neutralize(v.email),
       neutralize(v.whatsapp), v.lang, neutralize(v.couponCode), '', amountDue, screenshotUrl,
       screenshot ? 'pending' : 'not-required', notes.join('; '), decision.flags.length > 0, 'new',
       "'" + timestamp, ''
