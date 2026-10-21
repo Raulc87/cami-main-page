@@ -1,5 +1,5 @@
-// `register` action (EVENTS_API_CONTRACT §3.3, §5-§7; US-021). Coupons, abuse limits and
-// metrics are CMP-027; the payment check and the participant emails are CMP-028.
+// `register` action (EVENTS_API_CONTRACT §3.3, §5-§7; US-021, US-020, US-024). Coupons, abuse limits and
+// metrics live in Coupons.js, Limits.js and Alerts.js; the payment check and the participant emails are CMP-028.
 
 var REGISTRATION_HEADERS = [
   'timestamp', 'submissionId', 'reference', 'eventCode', 'participantName', 'email', 'whatsapp', 'lang',
@@ -58,10 +58,18 @@ function eventFolder_(eventCode) {
 }
 
 function handleRegister_(body) {
+  // Global throttle first: it applies to every write, flagged or not (FEATURE_SPEC §12).
+  if (bumpWindow_('register') > getNumberProp('LIMIT_REGISTER_PER_MIN')) {
+    bumpMetric_('throttled', 1);
+    checkAlertsSafely_();
+    return fail('RATE_LIMITED');
+  }
   var input = validateRegisterInput_(body);
   if (input.honeypot) {
     // A bot filled the hidden field: answer as if it worked and store nothing (contract §3.3).
     var code = EVENT_CODE_RE.test(str_(body.eventCode).trim().toUpperCase()) ? str_(body.eventCode).trim().toUpperCase() : 'EV';
+    bumpMetric_('honeypotHits', 1);
+    checkAlertsSafely_();
     return ok({ reference: makeReference_(code, Date.now(), Math.random), flagged: false, duplicateSubmission: false });
   }
   if (Object.keys(input.fields).length) return fail('VALIDATION_ERROR', input.fields);
@@ -70,13 +78,23 @@ function handleRegister_(body) {
   var found = lookupEventForRegister_(v.eventCode);
   if (!found) return fail('EVENT_NOT_FOUND');
   var ev = found.event;
-  // Coupons are CMP-027: until then a code is not accepted and the visitor pays the full price.
-  if (v.couponCode) return fail('COUPON_INVALID');
 
-  var amountDue = ev.priceCrc;
+  // The coupon must exist for this event (any request); whether it is still usable is decided
+  // under the lock, because that depends on the registrations at that moment (BR-E13).
+  var coupon = null;
+  if (v.couponCode) {
+    coupon = findCoupon_(v.eventCode, v.couponCode);
+    if (!coupon) {
+      bumpMetric_('couponFailures', 1);
+      return fail('COUPON_INVALID');
+    }
+  }
+
+  var amountDue = coupon ? amountDue_(ev.priceCrc, coupon.discountPercent) : ev.priceCrc;
   var screenshot = null;
   if (amountDue > 0) {
     if (!input.hasFile) return fail('VALIDATION_ERROR', { file: 'required' });
+    if (uploadCapReached_(crDate_(Date.now()), 0)) return fail('UPLOAD_CAP_REACHED');
     screenshot = prepareScreenshot_(body.file);
     if (screenshot.error) return fail('VALIDATION_ERROR', { file: screenshot.error });
   }
@@ -89,16 +107,25 @@ function handleRegister_(body) {
   }
   var outcome;
   try {
-    outcome = storeRegistration_(v, found, amountDue, screenshot);
+    outcome = storeRegistration_(v, found, coupon, amountDue, screenshot);
   } finally {
     lock.releaseLock();
   }
-  if (outcome.error) return fail(outcome.error);
+  if (outcome.error) {
+    if (outcome.error.indexOf('COUPON_') === 0) bumpMetric_('couponFailures', 1);
+    if (outcome.error === 'UPLOAD_CAP_REACHED') checkAlertsSafely_();
+    return fail(outcome.error);
+  }
 
+  if (!outcome.duplicateSubmission) {
+    bumpMetric_('accepted', 1);
+    if (outcome.bytes) bumpMetric_('uploadedMb', outcome.bytes / (1024 * 1024));
+    if (outcome.capReached) checkAlertsSafely_();
+  }
   // The registration took the last place: rebuild the events answer before replying (FFR-033).
   if (outcome.soldOutNow) {
     try {
-      refreshEventsCache();
+      rebuildEventsCache_();
     } catch (err) {
       console.error('events refresh after registration failed: ' + err.name);
     }
@@ -106,11 +133,12 @@ function handleRegister_(body) {
   return ok({ reference: outcome.reference, flagged: outcome.flagged, duplicateSubmission: outcome.duplicateSubmission });
 }
 
-// Everything that must not interleave between two registrations: the duplicate and capacity
-// checks, the file and the row. Runs with the script lock held.
-function storeRegistration_(v, found, amountDue, screenshot) {
+// Everything that must not interleave between two registrations: the duplicate, capacity,
+// coupon and upload-cap checks, the file and the row. Runs with the script lock held.
+function storeRegistration_(v, found, coupon, amountDue, screenshot) {
   var ev = found.event;
   var nowMs = Date.now();
+  var today = crDate_(nowMs);
   var rows = readTable(v.eventCode); // [] while the event has no tab yet: a refused request creates none
 
   for (var i = 0; i < rows.length; i++) {
@@ -118,10 +146,7 @@ function storeRegistration_(v, found, amountDue, screenshot) {
       return { reference: str_(rows[i].v.reference), flagged: rows[i].v.needsReview === true || str_(rows[i].v.needsReview).toUpperCase() === 'TRUE', duplicateSubmission: true };
     }
   }
-  var counting = rows.filter(function (r) {
-    var s = str_(r.v.status).trim().toLowerCase();
-    return s === 'new' || s === 'confirmed';
-  });
+  var counting = countingRows_(rows);
   var already = counting.some(function (r) { return str_(r.v.email).trim().toLowerCase() === v.email; });
   if (already) return { error: 'ALREADY_REGISTERED' };
 
@@ -132,6 +157,20 @@ function storeRegistration_(v, found, amountDue, screenshot) {
     duplicateCode: found.duplicated
   }, !!screenshot);
   if (decision.refuse) return { error: decision.refuse };
+
+  // A coupon that stopped being usable after the visitor applied it: a paid registration keeps
+  // the discount and is flagged, a ₡0 one is refused with the coupon message (US-020 AC5).
+  var flags = decision.flags.slice();
+  if (coupon) {
+    var problem = couponProblem_(coupon, usesOf_(counting, coupon.couponCode).length, false, nowMs);
+    if (problem) {
+      if (!screenshot) return { error: problem };
+      flags.push('coupon changed');
+    }
+  }
+
+  // Daily upload caps, exact now that registrations are serialized (₡0 ones are unaffected).
+  if (screenshot && uploadCapReached_(today, screenshot.blob.getBytes().length)) return { error: 'UPLOAD_CAP_REACHED' };
 
   var used = {};
   rows.forEach(function (r) { used[str_(r.v.reference)] = true; });
@@ -144,35 +183,41 @@ function storeRegistration_(v, found, amountDue, screenshot) {
 
   var createdFile = null;
   var screenshotUrl = '';
+  var bytes = 0;
   try {
     if (screenshot) {
       var folder = eventFolder_(v.eventCode);
-      var dateText = crIso_(nowMs).slice(0, 10);
-      var name = uniqueFileName_(v.participantName, dateText, v.eventCode, screenshot.extension, function (n) {
+      var name = uniqueFileName_(v.participantName, today, v.eventCode, screenshot.extension, function (n) {
         return folder.getFilesByName(n).hasNext();
       });
+      bytes = screenshot.blob.getBytes().length;
       createdFile = folder.createFile(screenshot.blob.setName(name));
       screenshotUrl = createdFile.getUrl();
     }
     // A screenshot kept in its own format is noted for Cami; it is not a review flag (FFR-030).
-    var notes = decision.flags.slice();
+    var notes = flags.slice();
     if (screenshot && screenshot.extension !== 'jpg') notes.push('stored as original format: ' + screenshot.extension);
     var timestamp = crIso_(nowMs);
     var values = [
       "'" + timestamp, v.submissionId, reference, v.eventCode, neutralize(v.participantName), neutralize(v.email),
-      neutralize(v.whatsapp), v.lang, neutralize(v.couponCode), '', amountDue, screenshotUrl,
-      screenshot ? 'pending' : 'not-required', notes.join('; '), decision.flags.length > 0, 'new',
+      neutralize(v.whatsapp), v.lang, neutralize(v.couponCode), coupon ? coupon.discountPercent : '', amountDue, screenshotUrl,
+      screenshot ? 'pending' : 'not-required', notes.join('; '), flags.length > 0, 'new',
       "'" + timestamp, ''
     ];
     var sheet = getOrCreateSheet(v.eventCode, REGISTRATION_HEADERS);
     var row = sheet.getLastRow() + 1;
     sheet.getRange(row, 1, 1, values.length).setValues([values]);
+    if (screenshot) {
+      addDaily_(DAILY_UPLOADS_PREFIX, today, 1);
+      addDaily_(DAILY_BYTES_PREFIX, today, bytes);
+    }
   } catch (err) {
     if (createdFile) createdFile.setTrashed(true); // no orphan file when the row could not be written
     throw err;
   }
   return {
-    reference: reference, flagged: decision.flags.length > 0, duplicateSubmission: false,
+    reference: reference, flagged: flags.length > 0, duplicateSubmission: false, bytes: bytes,
+    capReached: !!screenshot && uploadCapReached_(today, 0),
     // Only the registration that takes the last place changes what visitors see (FFR-033).
     soldOutNow: counting.length < ev.capacity && counting.length + 1 >= ev.capacity
   };

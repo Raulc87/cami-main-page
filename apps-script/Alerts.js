@@ -1,0 +1,85 @@
+// The daily alert email to Cami (FFR-029, US-024 AC2): at most one per day, sent at the first
+// trigger of the day, listing everything outstanding; what is found after it triggers the next
+// day's email. Triggers: a threshold crossed, an invalid Events/Coupons row (US-023 AC5).
+// CMP-028 adds checks that stay pending past their limit.
+
+var ALERT_REPORTED_KEY = 'ALERT_REPORTED';
+var ALERT_LAST_SENT_KEY = 'ALERT_LAST_SENT_DATE';
+
+// Everything Cami should look at now: [{ key, text }]. A key identifies one finding, so a
+// finding already reported does not trigger another email.
+function outstandingAlertItems_(nowMs) {
+  var items = [];
+  var date = crDate_(nowMs);
+  [INVALID_EVENTS_KEY, INVALID_COUPONS_KEY].forEach(function (key) {
+    var raw = getProp(key);
+    if (!raw) return;
+    var queue = JSON.parse(raw);
+    (queue.entries || []).forEach(function (entry) { items.push({ key: entry, text: entry }); });
+    if (queue.more) items.push({ key: key + ':more:' + queue.more, text: '… +' + queue.more + ' / and ' + queue.more + ' more' });
+  });
+  var m = readMetrics_(date);
+  var maxHoney = getNumberProp('ALERT_HONEYPOT_PER_DAY');
+  var maxThrottled = getNumberProp('ALERT_THROTTLED_PER_DAY');
+  if (m.honeypotHits > maxHoney) {
+    items.push({ key: 'honeypot:' + date, text: 'Honeypot: ' + m.honeypotHits + ' (límite / limit ' + maxHoney + ')' });
+  }
+  if (m.throttled > maxThrottled) {
+    items.push({ key: 'throttled:' + date, text: 'Throttled requests / solicitudes limitadas: ' + m.throttled + ' (' + maxThrottled + ')' });
+  }
+  if (uploadCapReached_(date, 0) || readDaily_(DAILY_BYTES_PREFIX, date) >= getNumberProp('LIMIT_UPLOAD_MB_PER_DAY') * 1024 * 1024) {
+    items.push({ key: 'uploadcap:' + date, text: 'Daily upload cap reached / límite diario de capturas alcanzado' });
+  }
+  return items;
+}
+
+function sendAlertEmail_(items, date) {
+  var to = getProp('MAIL_REPLY_TO');
+  var subject = 'Eventos: avisos del ' + date + ' / Events alerts for ' + date;
+  var lines = items.map(function (i) { return '- ' + i.text; }).join('\n');
+  var body = 'Hola Cami,\n\nHay cosas que revisar en el sistema de eventos:\n\n' + lines +
+    '\n\nLas filas inválidas de las hojas Events y Coupons se ignoran hasta que las corrijas.\n\n' +
+    'Hi Cami,\n\nThese need a look in the events system (above). Invalid rows of the Events and ' +
+    'Coupons tabs are ignored until fixed.\n\nLifetools';
+  var alias = getProp('MAIL_FROM_ALIAS');
+  try {
+    GmailApp.sendEmail(to, subject, body, alias ? { from: alias, name: 'Lifetools' } : { name: 'Lifetools' });
+  } catch (err) {
+    console.error('alert email from alias failed: ' + err.name);
+    GmailApp.sendEmail(to, subject, body, { name: 'Lifetools' });
+  }
+}
+
+// Sends the day's alert email when there is something new and none has gone out today.
+// Returns true when an email was sent.
+function checkAlerts_(nowMs) {
+  var date = crDate_(nowMs);
+  var items = outstandingAlertItems_(nowMs);
+  var current = {};
+  items.forEach(function (i) { current[i.key] = true; });
+  var reportedBefore = JSON.parse(getProp(ALERT_REPORTED_KEY) || '[]');
+  var reported = reportedBefore.filter(function (k) { return current[k]; }); // a fixed finding can come back
+  var fresh = items.filter(function (i) { return reported.indexOf(i.key) < 0; });
+  var props = PropertiesService.getScriptProperties();
+  if (reported.length !== reportedBefore.length) props.setProperty(ALERT_REPORTED_KEY, JSON.stringify(reported));
+  if (!fresh.length || getProp(ALERT_LAST_SENT_KEY) === date) return false;
+
+  var release = tryShortLock_(5000);
+  try {
+    if (getProp(ALERT_LAST_SENT_KEY) === date) return false; // another request sent it meanwhile
+    sendAlertEmail_(items, date);
+    props.setProperty(ALERT_LAST_SENT_KEY, date);
+    props.setProperty(ALERT_REPORTED_KEY, JSON.stringify(items.map(function (i) { return i.key; })));
+    return true;
+  } finally {
+    release();
+  }
+}
+
+function checkAlertsSafely_() {
+  try {
+    checkAlerts_(Date.now());
+  } catch (err) {
+    console.error('alert check failed: ' + err.name);
+  }
+}

@@ -142,10 +142,9 @@ function readLastEvents_(lang) {
   }
 }
 
-// Run by the time-driven trigger every 5 minutes (FFR-033): rebuilds both languages. CMP-026's
-// `register` calls it too when a registration changes availability.
-// Both languages are attempted; if any fails the run ends as Failed so the owner sees it.
-function refreshEventsCache() {
+// Rebuilds both languages (FFR-033). `register` calls it when a registration takes the last
+// place. Both languages are attempted; if any fails it throws, so a trigger run shows as Failed.
+function rebuildEventsCache_() {
   var failed = [];
   ['es', 'en'].forEach(function (lang) {
     try {
@@ -158,6 +157,26 @@ function refreshEventsCache() {
     }
   });
   if (failed.length) throw new Error('refreshEventsCache failed for: ' + failed.join(', '));
+}
+
+// Run by the time-driven trigger every 5 minutes: rebuilds the cache, recounts the `spam`
+// metric, prunes old daily counters and sends the day's alert email when there is something new.
+function refreshEventsCache() {
+  var error = null;
+  try {
+    rebuildEventsCache_();
+  } catch (err) {
+    error = err;
+  }
+  // Housekeeping must not hide a failed rebuild, nor fail the run by itself.
+  try {
+    updateSpamMetrics_();
+    pruneDaily_(crDate_(Date.now()));
+  } catch (err) {
+    console.error('housekeeping failed: ' + err.name);
+  }
+  checkAlertsSafely_();
+  if (error) throw error;
 }
 
 function buildEventsResponse_(lang) {
