@@ -111,8 +111,11 @@ npm run preview   # serves dist/ locally
   in §9, so a real phone can test the full flow against **staging**. The staging `/exec` URL is
   a repository Actions secret (`STAGING_EVENTS_API_URL`), never in a file; while the site is up
   it is visible in the public test bundle (accepted by the owner: staging holds test data and
-  has the abuse limits). After CMP-033 the owner unpublishes Pages and deletes the secret
-  (optionally redeploys staging under a new URL). Production stays on GoDaddy only. Question as
+  has the abuse limits). While the site is up anyone can also use staging: register, make it
+  send confirmation or "not validated" emails from the alias to any address, and fill the
+  sheet and Drive, within the §9 limits; so the site is published only for the iPhone test
+  window and unpublished right after it, and the secret is deleted (optionally staging is
+  redeployed under a new URL). The workflow file stays for reuse; it does nothing until run. Production stays on GoDaddy only. Question as
   asked: "GitHub Pages works (the repo is public, so it's free). The catch: the test site's code is public, so the staging backend address becomes visible to anyone who looks at it, for as long as the test site is up. Staging only holds test data and has the abuse limits, and we take the test site down right after the check. OK?" — options: yes, temporary Pages site; no, keep staging private. Owner:
   "Yes, temporary Pages site (Recommended)".
 - Full release process (versioning, upload, tag + GitHub Release):
