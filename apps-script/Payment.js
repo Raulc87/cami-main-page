@@ -1,0 +1,226 @@
+// Payment screenshot check (EVENTS_API_CONTRACT §5; FEATURE_SPEC FFR-017, FFR-030, FFR-032; US-022).
+// Drive OCR reads the stored screenshot; the text must show Cami's SINPE number or account name and
+// exactly the amount due. The result goes to the registration row; the participant email for a
+// failed check is in Mail.js. A check that cannot run for a service reason stays `pending` and the
+// 10-minute trigger `retryPendingChecks` runs it again until it is 24 hours old.
+
+var CHECK_REVIEW_FLAGS = ['event closed at submit', 'sold out at submit', 'coupon changed', 'duplicate event code', 'email failed'];
+var PENDING_MAX_AGE_MS = 24 * 3600000;
+var PENDING_STUCK_KEY = 'PENDING_STUCK';
+var EMAIL_FAILED_KEY = 'EMAIL_FAILED_QUEUE';
+var OCR_WAITS_REQUEST = [];                    // in a visitor's request: no waiting, a refused call stays `pending`
+var OCR_WAITS_TRIGGER = [5000, 10000, 20000];
+var RETRY_RUN_MS = 4.5 * 60000;                // stay inside the 6-minute limit
+
+// `needsReview` (FFR-030): TRUE for a `mismatch` or `unreadable` result or any flag in the details.
+function needsReviewFor_(checkResult, details) {
+  if (checkResult === 'mismatch' || checkResult === 'unreadable') return true;
+  var text = str_(details);
+  return CHECK_REVIEW_FLAGS.some(function (flag) { return text.indexOf(flag) !== -1; });
+}
+
+function appendDetail_(details, extra) {
+  var current = str_(details).trim();
+  if (current.split('; ').indexOf(extra) !== -1) return current; // the same detail is never written twice
+  return current ? current + '; ' + extra : extra;
+}
+
+// OCR of one stored file: { text } or { service: true } when Google refuses for a service reason
+// (per-user OCR rate limit, quota, backend trouble), { failed: true } when the file cannot be
+// imported, or { unknown: true } for any other error. The temporary Doc is always trashed.
+function ocrFileText_(fileId, waits) {
+  var doc = null;
+  try {
+    var blob = DriveApp.getFileById(fileId).getBlob();
+    doc = insertWithBackoff_(blob, waits);
+    return { text: DocumentApp.openById(doc.id).getBody().getText() };
+  } catch (err) {
+    var message = String(err && err.message);
+    console.error('ocr failed: ' + (err && err.name));
+    if (/rate limit|quota|too many|backend|timed? ?out|try again|internal error|unavailable|service error|unexpected error/i.test(message)) return { service: true };
+    if (/invalid|unsupported|not supported|corrupt|cannot be (read|processed|converted)|could not be (read|processed|converted)|media|mime/i.test(message)) return { failed: true };
+    return { unknown: true }; // not a known import problem: treated as a service problem, except for an original-format file
+  } finally {
+    if (doc) {
+      try { DriveApp.getFileById(doc.id).setTrashed(true); } catch (err) { console.error('ocr doc cleanup failed'); }
+    }
+  }
+}
+
+// Drive limits OCR per user. Retries with the given pauses, then rethrows.
+function insertWithBackoff_(blob, waits) {
+  for (var attempt = 0; ; attempt++) {
+    try {
+      return Drive.Files.insert(
+        { title: 'ocr-tmp-' + Date.now(), mimeType: blob.getContentType() },
+        blob,
+        { ocr: true, ocrLanguage: 'es' }
+      );
+    } catch (e) {
+      if (!/rate limit/i.test(String(e.message)) || attempt >= waits.length) throw e;
+      Utilities.sleep(waits[attempt]);
+    }
+  }
+}
+
+// The text a spike or test run needs: { text, ms } (throws on failure).
+function ocrText(fileId) {
+  var t0 = Date.now();
+  var r = ocrFileText_(fileId, OCR_WAITS_TRIGGER);
+  if (r.text === undefined) throw new Error('OCR failed');
+  return { text: r.text, ms: Date.now() - t0 };
+}
+
+// Compares OCR text against the account and an exact amount. The amount must appear as a whole
+// number: thousands separators `.`, `,`, space and non-breaking space are allowed inside it, and
+// the same separators make a match inside a larger number impossible. No match inside `3,500`,
+// `3 500`, `500,000` or `500 000` when the amount is 500; a decimal part like `500,00` is fine.
+// Test data: docs/sprints/SPRINT_02_SPIKE.md. A line break between digit groups is not a separator.
+function compareOcr(text, accountNumber, accountName, amountCrc) {
+  var plain = String(text).replace(/[\u00a0\u202f]/g, ' ');
+  var grouped = String(amountCrc).replace(/\B(?=(\d{3})+(?!\d))/g, '[., ]?');
+  var before = '(?<!\\d)(?<!(?<!\\d)\\d{1,3}[., ])';
+  var after = '(?!\\d)(?![., ]\\d{3}(?!\\d))';
+  var amountFound = new RegExp(before + grouped + after).test(plain);
+  var squash = function (v) { return String(v).replace(/[\s-]/g, '').toLowerCase(); };
+  var haystack = squash(plain);
+  // The SINPE number must stand alone as a digit sequence (not inside a longer number); the
+  // country code 506 may precede it and spaces or hyphens may separate its digits.
+  var digits = String(accountNumber || '').replace(/\D/g, '');
+  if (digits.length === 11 && digits.indexOf('506') === 0) digits = digits.slice(3);
+  var numberFound = digits.length >= 7 &&
+    new RegExp('(?<!\\d)(?:506[\\s-]*)?' + digits.split('').join('[\\s-]*') + '(?!\\d)').test(plain);
+  var accountFound = numberFound || (!!accountName && haystack.indexOf(squash(accountName)) !== -1);
+  return { checkResult: amountFound && accountFound ? 'ok' : 'mismatch', accountFound: accountFound, amountFound: amountFound };
+}
+
+// Runs the check for one stored screenshot.
+// Returns { pending: true } or { checkResult, details, email } where `email` says whether the
+// participant gets the "payment not validated" email (not for an original-format file that OCR
+// cannot read, US-022 AC7).
+function runPaymentCheck_(fileId, amountDueCrc, originalFormat, waits) {
+  if (!(amountDueCrc > 0)) return { pending: true }; // a screenshot only exists for a paid registration
+  var sinpe = getSinpe();
+  var number = sinpe.isPlaceholder ? '' : sinpe.number; // the placeholder is not a number to look for
+  if (!number && !sinpe.accountName) {
+    console.error('payment check skipped: SINPE properties not set');
+    return { pending: true, service: true }; // nothing can be checked until this is fixed
+  }
+  var ocr = ocrFileText_(fileId, waits);
+  if (ocr.service) return { pending: true, service: true }; // refused for every file: the run stops
+  if (ocr.unknown && !originalFormat) return { pending: true, unknown: true }; // this file only: no false "not validated" email, the run goes on
+  if (ocr.failed || ocr.unknown || !/\S/.test(ocr.text)) {
+    return { checkResult: 'unreadable', details: originalFormat ? 'unreadable original format' : 'no text found', email: !originalFormat };
+  }
+  var c = compareOcr(ocr.text, number, sinpe.accountName, amountDueCrc);
+  if (c.checkResult === 'ok') return { checkResult: 'ok', details: '', email: false };
+  var failing = [];
+  if (!c.accountFound) failing.push('account not found');
+  if (!c.amountFound) failing.push('amount not found');
+  return { checkResult: 'mismatch', details: failing.join(', '), email: true };
+}
+
+// Writes a check result into the registration row (under the script lock) if the row is still
+// `pending`. Returns true if written; the caller sends the email only then.
+function applyCheckResult_(eventCode, submissionId, result) {
+  var release = takeShortLock_(20000);
+  if (!release) return false;
+  try {
+    var sheet = getSpreadsheet().getSheetByName(eventCode);
+    if (!sheet) return false;
+    var rows = readTable(eventCode);
+    for (var i = 0; i < rows.length; i++) {
+      if (str_(rows[i].v.submissionId) !== submissionId) continue;
+      // Only a row still `pending` takes a result: the request and the trigger can reach the same row.
+      if (str_(rows[i].v.checkResult).trim() !== 'pending') return false;
+      var details = result.details ? appendDetail_(rows[i].v.checkDetails, result.details) : str_(rows[i].v.checkDetails);
+      var review = needsReviewFor_(result.checkResult, details) || rows[i].v.needsReview === true || str_(rows[i].v.needsReview).toUpperCase() === 'TRUE';
+      var col = REGISTRATION_HEADERS.indexOf('checkResult') + 1;
+      sheet.getRange(rows[i].row, col, 1, 3).setValues([[result.checkResult, details, review]]);
+      return true;
+    }
+    return false;
+  } finally {
+    release();
+  }
+}
+
+// Notes that an email could not be sent: `email failed` in the details and needsReview TRUE (US-025 AC3).
+// When the lock stays busy the note is queued and the 10-minute trigger writes it.
+function markEmailFailed_(eventCode, submissionId) {
+  if (applyEmailFailed_(eventCode, submissionId)) return;
+  var props = PropertiesService.getScriptProperties();
+  var queue = JSON.parse(props.getProperty(EMAIL_FAILED_KEY) || '[]');
+  if (queue.length < 200) queue.push([eventCode, submissionId]);
+  props.setProperty(EMAIL_FAILED_KEY, JSON.stringify(queue));
+}
+
+function applyEmailFailed_(eventCode, submissionId) {
+  var release = takeShortLock_(20000);
+  if (!release) return false;
+  try {
+    var sheet = getSpreadsheet().getSheetByName(eventCode);
+    var rows = readTable(eventCode);
+    for (var i = 0; sheet && i < rows.length; i++) {
+      if (str_(rows[i].v.submissionId) !== submissionId) continue;
+      var details = str_(rows[i].v.checkDetails);
+      if (details.indexOf('email failed') === -1) details = appendDetail_(details, 'email failed');
+      var col = REGISTRATION_HEADERS.indexOf('checkDetails') + 1;
+      sheet.getRange(rows[i].row, col, 1, 2).setValues([[details, true]]);
+      return true;
+    }
+    return true; // no such row any more: nothing to note
+  } finally {
+    release();
+  }
+}
+
+// Writes the notes that could not be written when the email failed (called by the trigger).
+function drainEmailFailedQueue_() {
+  var props = PropertiesService.getScriptProperties();
+  var queue = JSON.parse(props.getProperty(EMAIL_FAILED_KEY) || '[]');
+  if (!queue.length) return;
+  var left = queue.filter(function (item) { return !applyEmailFailed_(item[0], item[1]); });
+  props.setProperty(EMAIL_FAILED_KEY, JSON.stringify(left));
+}
+
+// Names of the registration tabs (everything that is not a system tab).
+function registrationSheetNames_() {
+  return getSpreadsheet().getSheets().map(function (s) { return s.getName(); }).filter(function (name) {
+    return RESERVED_EVENT_CODES.indexOf(name.toUpperCase()) === -1;
+  });
+}
+
+function fileIdFromUrl_(url) {
+  var m = /\/d\/([\w-]+)/.exec(str_(url));
+  return m ? m[1] : '';
+}
+
+// Time-driven trigger (every 10 minutes): runs the check again for rows still `pending`
+// (FFR-032). A row older than 24 hours is no longer retried; it is listed for the day's alert email.
+function retryPendingChecks() {
+  drainEmailFailedQueue_();
+  var started = Date.now();
+  var stuck = [];
+  var outOfTime = false;
+  var serviceBusy = false;
+  registrationSheetNames_().forEach(function (name) {
+    readTable(name).forEach(function (r) {
+      if (str_(r.v.checkResult).trim() !== 'pending' || !str_(r.v.screenshotUrl)) return;
+      var savedMs = Date.parse(str_(r.v.timestamp).replace(/^'/, ''));
+      if (isFinite(savedMs) && started - savedMs > PENDING_MAX_AGE_MS) { stuck.push(str_(r.v.reference)); return; }
+      if (outOfTime || serviceBusy) return;
+      if (Date.now() - started > RETRY_RUN_MS) { outOfTime = true; return; }
+      var fileId = fileIdFromUrl_(r.v.screenshotUrl);
+      if (!fileId) return;
+      var original = str_(r.v.checkDetails).indexOf('stored as original format') !== -1;
+      var result = runPaymentCheck_(fileId, Number(r.v.amountDueCrc), original, OCR_WAITS_TRIGGER);
+      if (result.pending) { if (result.service) serviceBusy = true; return; } // a refusal hits every file: try again in 10 minutes
+      if (!applyCheckResult_(name, str_(r.v.submissionId), result)) return;
+      if (result.email) sendNotValidatedEmail_(name, r.v);
+      Utilities.sleep(3000);
+    });
+  });
+  // The alert lists the first 50; the rest is counted so none is dropped silently.
+  PropertiesService.getScriptProperties().setProperty(PENDING_STUCK_KEY, JSON.stringify({ refs: stuck.slice(0, 50), more: Math.max(0, stuck.length - 50) }));
+}

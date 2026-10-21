@@ -44,6 +44,11 @@ Do this once for staging, and again for production when the release gates pass
 ([release-checklist.md §3b](release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)).
 
 ### 2.1 Data store
+Format the `eventCode` column of `Events` and the `eventCode` and `couponCode` columns of
+`Coupons` as plain text (select the column, Format → Number → Plain text), so that a code such as
+`2026-11` or `1E5` stays text and is not turned into a date or a number. Event codes cannot be
+`EVENTS`, `COUPONS` or `METRICS` (the names of system tabs): such a row is ignored and listed in
+the alert email.
 Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a time shown as
 `6:30 PM` is treated as invalid and the event is not shown (it is listed in the alert email).
 1. In Google Drive (Workspace account), create the spreadsheet with the tabs from contract §6:
@@ -123,8 +128,12 @@ and initial values are the contract (§9); do not rename them.
 | `ALERT_HONEYPOT_PER_DAY` | `10` |
 | `ALERT_THROTTLED_PER_DAY` | `20` |
 
-The spike stub `register` (CMP-024 to CMP-026) accepts uploads only when the script property
-`SPIKE_ENABLED` is `true`. Set it on **staging only**, and never on production; CMP-026 removes it.
+The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
+delete it from the staging project if it is still there. The limits above are enforced from
+CMP-027: over a per-minute limit the answer is `RATE_LIMITED`, over the daily screenshot count or
+MB cap a paid registration gets `UPLOAD_CAP_REACHED` (₡0 ones are unaffected). The `ALERT_*`
+values decide when the day's alert email is sent. All of them can be changed here without a
+deploy.
 **Create the production project only after CMP-026 and CMP-027 are merged** (validated `register`,
 throttling and daily caps); until then `main` holds a backend that must not be public.
 
@@ -165,6 +174,12 @@ may not see the events section.
 5. Check: after about 6 minutes, open **Executions** (sidebar): a `refreshEventsCache` run
    appears about every 5 minutes with status **Completed**. A **Failed** run: open it and read the
    log; the site keeps working from the last cache or rebuilds on demand.
+The same run also recounts the registrations Cami has marked `spam` in the `Metrics` tab, drops
+old daily counters, and sends the **daily alert email** to `MAIL_REPLY_TO` when something new
+needs Cami's attention (an invalid `Events` or `Coupons` row, or a daily threshold crossed); at
+most one per day, and findings made after it go into the next day's email. While testing, point
+`MAIL_REPLY_TO` at your own address so that Cami does not receive test alerts, and set it back
+afterwards.
 If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). The
 last good answer is also kept in script properties and used for up to 20 minutes if Google drops
 the cache early, so a short outage does not empty the page. That copy fits while the event list is
@@ -178,6 +193,25 @@ The automatic English translations are kept in script properties named `TR_<hash
 changed text). They are not pruned; if the properties page ever fills up, they can all be deleted
 and are rebuilt on demand.
 Quota: about 290 runs a day of 5 to 10 s each, well inside the Workspace limits.
+
+### 2.7 Pending payment checks trigger
+Do this once in **each** environment (staging, and production before release), after the Events cache
+trigger (2.6). The payment screenshot is read with Drive OCR right after a registration is saved. If
+Google refuses the call (for example its per-user OCR rate limit) the row keeps the check result
+`pending`; this trigger tries those rows again every 10 minutes and writes the result (and sends the
+"payment not validated" email when it applies). A row still `pending` 24 hours after it was saved is
+no longer retried and is listed in that day's alert email (at most one per day).
+1. **Triggers** (clock icon) → **Add Trigger**.
+2. Function: `retryPendingChecks`. Deployment: **Head**. Event source: **Time-driven**. Type:
+   **Minutes timer**. Interval: **Every 10 minutes**. **Save** (allow the permissions if asked).
+3. Check: after about 10 minutes **Executions** shows a `retryPendingChecks` run with status
+   **Completed** (it ends at once when no row is `pending`).
+The check needs `SINPE_NUMBER` and/or `SINPE_ACCOUNT_NAME` in the script properties (2.4). While
+`SINPE_NUMBER` still holds the placeholder and no account name is set, no check runs and rows stay
+`pending`. Participant emails go from `MAIL_FROM_ALIAS` (or the account itself if the alias fails)
+with reply-to `MAIL_REPLY_TO`; while testing, set `MAIL_REPLY_TO` to your own address, and use test
+registrations with your own email address, so that no real participant is written to.
+Triggers run the saved code (Head); visitors need a **New version** (section 5).
 
 ## 3. Deploy as a web app (first time)
 1. Editor → **Deploy** → **New deployment** → gear → **Web app**.

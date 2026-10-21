@@ -1,60 +1,6 @@
-// Spike helpers (CMP-024), run from the editor. Remove or keep out of production use once the
-// findings are recorded in docs/sprints/SPRINT_02_SPIKE.md.
-
-// Drive OCR on one image file: returns the extracted text and deletes the temporary Doc.
-// The upload keeps the image's own MIME type; Drive converts it to a Doc when `ocr` is set.
-// (Declaring the Doc type on the upload makes Drive reject it: "OCR is not supported for files
-// of type application/vnd.google-apps.document".)
-function ocrText(fileId) {
-  var blob = DriveApp.getFileById(fileId).getBlob();
-  var t0 = Date.now();
-  var doc = insertWithBackoff_(blob);
-  try {
-    var text = DocumentApp.openById(doc.id).getBody().getText();
-    return { text: text, ms: Date.now() - t0 };
-  } finally {
-    DriveApp.getFileById(doc.id).setTrashed(true);
-  }
-}
-
-// Drive limits OCR per user ("User rate limit exceeded for OCR"). Retry with a growing pause;
-// the number of attempts and the total wait are part of the spike's findings.
-function insertWithBackoff_(blob) {
-  var waits = [5000, 10000, 20000, 40000];
-  for (var attempt = 0; ; attempt++) {
-    try {
-      var doc = Drive.Files.insert(
-        { title: 'ocr-tmp-' + Date.now(), mimeType: blob.getContentType() },
-        blob,
-        { ocr: true, ocrLanguage: 'es' }
-      );
-      if (attempt) console.log('OCR succeeded after ' + attempt + ' retries');
-      return doc;
-    } catch (e) {
-      if (!/rate limit/i.test(String(e.message)) || attempt >= waits.length) throw e;
-      console.log('OCR rate limit, waiting ' + waits[attempt] / 1000 + ' s');
-      Utilities.sleep(waits[attempt]);
-    }
-  }
-}
-
-// Compares OCR text against the account and an exact amount. The amount must appear as a whole
-// number: thousands separators `.`, `,`, space and non-breaking space are allowed inside it, and
-// the same separators make a match inside a larger number impossible. No match inside `3,500`,
-// `3 500`, `500,000` or `500 000` when the amount is 500; a decimal part like `500,00` is fine.
-// The same rule is a CMP-028 requirement (test data: see docs/sprints/SPRINT_02_SPIKE.md).
-function compareOcr(text, accountNumber, accountName, amountCrc) {
-  var plain = String(text).replace(/[\u00a0\u202f]/g, ' ');
-  var grouped = String(amountCrc).replace(/\B(?=(\d{3})+(?!\d))/g, '[., ]?');
-  var before = '(?<!\\d)(?<!(?<!\\d)\\d{1,3}[., ])';
-  var after = '(?!\\d)(?![., ]\\d{3}(?!\\d))';
-  var amountFound = new RegExp(before + grouped + after).test(plain);
-  var squash = function (v) { return String(v).replace(/[\s-]/g, '').toLowerCase(); };
-  var haystack = squash(plain);
-  var accountFound = (!!accountNumber && haystack.indexOf(squash(accountNumber)) !== -1) ||
-    (!!accountName && haystack.indexOf(squash(accountName)) !== -1);
-  return { checkResult: amountFound && accountFound ? 'ok' : 'mismatch', accountFound: accountFound, amountFound: amountFound };
-}
+// Editor-run helpers from the CMP-024 spike, kept to re-check new bank screenshot formats
+// (`runOcrSamples`) and to test a raw HEIC file (`heicProbe`, CMP-033). The OCR and the amount
+// comparison they call live in Payment.js. Never called by the web app.
 
 // Expected amount from a sample file name `<name>_<amountCrc>.jpg`; null if it does not match.
 function amountFromFileName(name) {
@@ -94,26 +40,6 @@ function runOcrSamples() {
   }
   console.log(JSON.stringify(results));
   return results;
-}
-
-// Spike step e: sends one test email to the account that runs the script, from MAIL_FROM_ALIAS.
-// Check the inbox: the From line must show the alias. Falls back to a plain send if the alias
-// is not set up, and says so in the log.
-function emailAliasTest() {
-  var to = getProp('SPIKE_TEST_RECIPIENT');
-  if (!to) throw new Error('No recipient: set the script property SPIKE_TEST_RECIPIENT to your own address');
-  var alias = getProp('MAIL_FROM_ALIAS');
-  var subject = 'Spike test: sender alias';
-  var body = 'Test message from the events backend spike. You can delete it.';
-  try {
-    GmailApp.sendEmail(to, subject, body, { from: alias, name: 'Lifetools', replyTo: getProp('MAIL_REPLY_TO') || '' });
-    console.log('Sent from alias ' + alias + ' to the running account. Check the From line in the inbox.');
-  } catch (err) {
-    console.log('Alias send FAILED: ' + err.message);
-    GmailApp.sendEmail(to, subject + ' (fallback)', body, { replyTo: getProp('MAIL_REPLY_TO') || '' });
-    console.log('Sent a fallback message from the account itself.');
-  }
-  console.log('Remaining daily email quota: ' + MailApp.getRemainingDailyQuota());
 }
 
 // Spike step d: tries to turn each .heic/.heif file in `samples` into JPEG on the server and to
