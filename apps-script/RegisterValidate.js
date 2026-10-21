@@ -46,7 +46,8 @@ function validateRegisterInput_(body) {
 
   var file = body.file;
   var hasFile = !!(file && typeof file === 'object' && str_(file.base64) !== '');
-  if (hasFile && str_(file.base64).length > MAX_BASE64_CHARS) fields.file = 'file_too_large';
+  // Measured after removing a data-URL prefix and whitespace, as prepareScreenshot_ will decode it.
+  if (hasFile && normalizeBase64_(file.base64).length > MAX_BASE64_CHARS) fields.file = 'file_too_large';
 
   var hasErrors = Object.keys(fields).length > 0;
   return {
@@ -60,16 +61,33 @@ function validateRegisterInput_(body) {
   };
 }
 
+// The base64 text as it is decoded: without a `data:...;base64,` prefix or whitespace.
+function normalizeBase64_(text) {
+  return str_(text).replace(/^data:[^,]*,/, '').replace(/\s+/g, '');
+}
+
+var HEIF_BRANDS = ['1pic', 'heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1'];
+
 // Image type from the first bytes (signed or unsigned), not from the name or declared type:
 // 'jpeg', 'png', 'webp', 'heic' or null. The generic HEIF brands mif1 and msf1 may also be an
 // AVIF file; it is then stored as `.heic`, which is harmless (stored in its own format).
+// HEIF is accepted when the major brand or any compatible brand in the ftyp box is one of
+// HEIF_BRANDS (some files declare e.g. `heic` only as a compatible brand).
 function detectImageType_(bytes) {
-  var b = Array.prototype.slice.call(bytes, 0, 16).map(function (x) { return x < 0 ? x + 256 : x; });
+  var b = Array.prototype.slice.call(bytes, 0, 64).map(function (x) { return x < 0 ? x + 256 : x; });
   if (b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'jpeg';
-  if (b.length >= 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return 'png';
+  var pngSignature = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+  if (b.length >= 8 && pngSignature.every(function (x, i) { return b[i] === x; })) return 'png';
   var ascii = b.map(function (x) { return String.fromCharCode(x); }).join('');
   if (ascii.slice(0, 4) === 'RIFF' && ascii.slice(8, 12) === 'WEBP') return 'webp';
-  if (ascii.slice(4, 8) === 'ftyp' && /^(heic|heix|hevc|hevx|heim|heis|mif1|msf1)/.test(ascii.slice(8, 12))) return 'heic';
+  if (ascii.slice(4, 8) === 'ftyp') {
+    var boxSize = b[0] * 16777216 + b[1] * 65536 + b[2] * 256 + b[3];
+    var end = Math.min(b.length, boxSize >= 16 ? boxSize : 16);
+    if (HEIF_BRANDS.indexOf(ascii.slice(8, 12)) !== -1) return 'heic';
+    for (var i = 16; i + 4 <= end; i += 4) { // 8-byte header, major brand, minor version, then compatible brands
+      if (HEIF_BRANDS.indexOf(ascii.slice(i, i + 4)) !== -1) return 'heic';
+    }
+  }
   return null;
 }
 

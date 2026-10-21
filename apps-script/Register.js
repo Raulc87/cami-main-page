@@ -32,7 +32,7 @@ function prepareScreenshot_(file) {
   var bytes;
   try {
     // Tolerate a `data:image/...;base64,` prefix and line breaks from the client.
-    bytes = Utilities.base64Decode(str_(file.base64).replace(/^data:[^,]*,/, '').replace(/\s+/g, ''));
+    bytes = Utilities.base64Decode(normalizeBase64_(file.base64));
   } catch (err) {
     return { error: 'invalid_file_type' };
   }
@@ -74,6 +74,11 @@ function handleRegister_(body) {
   }
   if (Object.keys(input.fields).length) return fail('VALIDATION_ERROR', input.fields);
   var v = input.value;
+
+  // A retry of a stored registration returns its original reference even if the event row has
+  // since been removed or become invalid (FFR-022, US-021 AC6).
+  var stored = findStoredSubmission_(v.eventCode, v.submissionId);
+  if (stored) return ok(stored);
 
   var found = lookupEventForRegister_(v.eventCode);
   if (!found) return fail('EVENT_NOT_FOUND');
@@ -131,6 +136,19 @@ function handleRegister_(body) {
     }
   }
   return ok({ reference: outcome.reference, flagged: outcome.flagged, duplicateSubmission: outcome.duplicateSubmission });
+}
+
+// The answer for a submissionId already stored in the event's tab, or null. Creates no tab.
+function findStoredSubmission_(eventCode, submissionId) {
+  if (RESERVED_EVENT_CODES.indexOf(eventCode) !== -1) return null;
+  var rows = readTable(eventCode);
+  for (var i = 0; i < rows.length; i++) {
+    if (str_(rows[i].v.submissionId) === submissionId) {
+      var nr = rows[i].v.needsReview;
+      return { reference: str_(rows[i].v.reference), flagged: nr === true || str_(nr).toUpperCase() === 'TRUE', duplicateSubmission: true };
+    }
+  }
+  return null;
 }
 
 // Everything that must not interleave between two registrations: the duplicate, capacity,
