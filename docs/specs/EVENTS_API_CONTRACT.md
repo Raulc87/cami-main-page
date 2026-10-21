@@ -130,7 +130,7 @@ validated or listed, except that a code shared with a published row is reported 
 
 | Tab.column | Rule |
 |---|---|
-| `Events.eventCode` | required, `^[A-Z0-9-]{2,20}$`, unique (duplicates: all rows skipped, FFR-019); not the name of any non-event tab (currently `EVENTS`, `COUPONS`, `METRICS`; tab names match case-insensitively); written to registration cells as text, so Sheets never reads a code like `2026-11` or `1E5` as a date or number |
+| `Events.eventCode` | required, `^[A-Z0-9-]{2,20}$`, unique (duplicates: all rows skipped, FFR-019); not the name of any non-event tab (currently `EVENTS`, `COUPONS`, `METRICS`; tab names match case-insensitively); written to registration cells as text, so Sheets never reads a code like `2026-11` or `1E5` as a date or number; the code columns of `Events` and `Coupons` are formatted as plain text. A paid registration for a duplicated code uses the first valid published row of that code (FFR-019) |
 | `Events.name`, `Events.description` | required text, ≤ 120 / ≤ 600 characters |
 | `Events.nameEn`, `Events.descriptionEn` | optional, same limits |
 | `Events.date` | required, a valid date (Sheets date or `YYYY-MM-DD`) |
