@@ -124,7 +124,13 @@ function buildParticipantMail_(ctx) {
 // The event name in the participant's language (Cami's `nameEn`, else the cached translation).
 function eventNameFor_(ev, lang) {
   if (lang !== 'en') return ev.name;
-  return englishText_(ev.name, ev.nameEn, loadTranslations_());
+  if (ev.nameEn) return ev.nameEn;
+  try {
+    return englishText_(ev.name, ev.nameEn, loadTranslations_());
+  } catch (err) {
+    console.error('translations unavailable for the email: ' + (err && err.name));
+    return ev.name; // the Spanish name is better than a failed or repeated translation
+  }
 }
 
 // Sends one participant email. Returns true when sent. On failure marks the row `email failed`.

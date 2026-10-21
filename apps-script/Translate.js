@@ -12,17 +12,14 @@ function textHash_(text) {
   return bytes.map(function (b) { return ((b < 0 ? b + 256 : b) + 256).toString(16).slice(1); }).join('');
 }
 
-// The stored translations as { hash: text }. A missing tab or a read problem gives {}.
+// The stored translations as { hash: text }. A missing tab gives {}. A read error is thrown: an
+// empty map after a failed read would translate (and store) every text again.
 function loadTranslations_() {
   var map = {};
-  try {
-    readTable(TRANSLATIONS_SHEET).forEach(function (r) {
-      var hash = String(r.v.hash);
-      if (hash && !(hash in map)) map[hash] = String(r.v.text);
-    });
-  } catch (err) {
-    console.error('translations read failed: ' + err.name);
-  }
+  readTable(TRANSLATIONS_SHEET).forEach(function (r) {
+    var hash = String(r.v.hash).replace(/^'/, ''); // the text marker is not part of the hash
+    if (hash && !(hash in map)) map[hash] = String(r.v.text);
+  });
   return map;
 }
 
@@ -38,7 +35,7 @@ function englishText_(spanish, override, cache) {
     if (translated) {
       cache[key] = translated;
       try {
-        getOrCreateSheet(TRANSLATIONS_SHEET, TRANSLATIONS_HEADERS).appendRow([key, neutralize(translated)]);
+        getOrCreateSheet(TRANSLATIONS_SHEET, TRANSLATIONS_HEADERS).appendRow([neutralize(key), neutralize(translated)]); // a hash like 00123 or 12e45 must stay text
       } catch (err) {
         console.error('translation not stored: ' + err.name); // still used for this answer
       }
@@ -55,8 +52,11 @@ function englishText_(spanish, override, cache) {
 function pruneTranslations_() {
   var sheet = getSpreadsheet().getSheetByName(TRANSLATIONS_SHEET);
   if (!sheet || sheet.getLastRow() < 2) return;
+  var events = readEvents();
+  // A row Cami is editing may be invalid for a moment: keep every translation until all rows are valid.
+  if (events.invalid.length) return;
   var needed = {};
-  readEvents().valid.forEach(function (ev) {
+  events.valid.forEach(function (ev) {
     needed[textHash_(ev.name)] = true;
     needed[textHash_(ev.description)] = true;
   });
@@ -64,7 +64,7 @@ function pruneTranslations_() {
   var seen = {};
   var drop = [];
   rows.forEach(function (r) {
-    var hash = String(r.v.hash);
+    var hash = String(r.v.hash).replace(/^'/, '');
     if (!needed[hash] || seen[hash]) drop.push(r.row);
     seen[hash] = true;
   });
