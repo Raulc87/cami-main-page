@@ -11,7 +11,7 @@ Change management: update this document first, bump the version, notify both own
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0 on a duplicated code —
   CMP-040)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
-  PR #35; v1.3 Approved (on merge of PR #XX))
+  PR #35; v1.3 Approved (on merge of PR #37))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-033)
 - Related stories: US-017..US-025
