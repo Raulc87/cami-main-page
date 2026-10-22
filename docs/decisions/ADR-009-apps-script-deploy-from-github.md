@@ -41,7 +41,13 @@ then one command uploads all files exactly." The login token stays on the owner'
 "Deploys after each merge; your Google login token stored in GitHub. More setup, more risk."
 
 ## Decision
-**C — automatic from GitHub** (owner, 2026-10-22: "C: automatic from GitHub"). A GitHub Actions
+**C — automatic from GitHub** (owner, 2026-10-22: "C: automatic from GitHub"). Re-confirmed after the
+token's full reach was explained (owner, 2026-10-22), question as asked: "Before Agent 1 builds
+the GitHub deploy: the reviewer clarified the token's reach. The Google login stored in GitHub
+can change ANY Apps Script project you can edit (not just these two), and code pushed with it
+can send email as you and read/write all of your Google Drive. Mitigations stay: production
+needs your approval click, secrets only usable from main, 2FA, revoke anytime. Still go with
+C?" — options: yes, keep C; switch to B. Owner: "Yes, keep C". A GitHub Actions
 workflow runs Google's `clasp` tool (exact version pinned in `package-lock.json`):
 
 - **Staging** deploys automatically on a push to `main` that changes `apps-script/**` (and on
