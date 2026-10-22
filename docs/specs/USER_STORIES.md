@@ -87,8 +87,10 @@ So that I trust her enough to keep reading
 ### US-002 — Service pillars overview
 - Priority: Critical
 - Story Points: — (retroactive)
-- Status: Review — AC2 defect: hover shift overridden by the scroll-reveal inline transform
-  (CMP-017); fix ticket pending owner approval
+- Status: Done (AC2 defect from CMP-017 fixed in CMP-031, PR #27; AC2 measured on `main`
+  e3a46cf at 1280/900/640/375 px in the PR #50 review: 5 px lift, border-left and shadow change
+  on hover; owner accepted that as the evidence, 2026-10-22, see SPRINT_02_PLAN → Sprint Review
+  Notes; recorded in CMP-051)
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-003
 - Tickets: (initial build, before CMP-001)
@@ -591,7 +593,8 @@ So that I notice them right away
 - Priority: High
 - Story Points: 5
 - Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
-  CMP-051; the real-iPhone picker check and the form wording review are release gates (release-checklist §3b))
+  CMP-051; the real-iPhone picker check and the form wording review are release gates
+  (release-checklist §3b))
 - Related Spec: FEATURE_SPEC_events_registration (FFR-007..FFR-011, FFR-018, FFR-022, FFR-023,
   FFR-027), BR-E01..BR-E03, BR-E09
 - Related Requirements: FR-011, FR-009
@@ -749,7 +752,8 @@ So that I can manage participants and payments in one place
 - Priority: Medium
 - Story Points: 5
 - Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
-  CMP-051; a raw iPhone HEIC photo is stored in its original format and checked by hand (FFR-017), revisit after the real-iPhone check)
+  CMP-051; a raw iPhone HEIC photo is stored in its original format and checked by hand
+  (FFR-017), revisit after the real-iPhone check)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-032, FFR-030), BR-E06
 - Related Requirements: FR-011
 
@@ -843,7 +847,9 @@ So that the site reflects them without waiting for a developer
 - Priority: Medium
 - Story Points: 2
 - Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
-  CMP-051; the `throttled` counter undercounts under parallel load (CMP-053))
+  CMP-051;
+  AC1 accepted by the owner with a known defect: the `throttled` counter undercounts under
+  parallel load (CMP-053), see SPRINT_02_PLAN → Sprint Review Notes)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-029, §12)
 - Related Requirements: FR-011, NFR-003
 

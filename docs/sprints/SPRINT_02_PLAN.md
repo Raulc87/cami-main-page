@@ -316,3 +316,12 @@ The human reviewer is the final approver.
   review of the privacy notice, and the production setup (release-checklist §3b). Owner's
   suggestion recorded as CMP-052 (alert email to the owner as well as Cami); CMP-053 (counter
   undercount) and CMP-054 (favicon) come from the verification's observations.
+- Owner answers (2026-10-22, CMP-051), questions as asked: "US-002 (service-card hover): the fix
+  was merged earlier (PR #27), and the reviewer has now measured it on the live code at all four
+  screen widths: on hover the card lifts 5 px, the left border turns dark blue, and a soft shadow
+  appears, exactly as specified. Accept that measurement as the evidence and mark US-002 Done?" —
+  options: yes, mark Done; no, I'll look myself. Owner: **"Yes, mark Done (Recommended)"**.
+  "US-024 (abuse metrics and alerts): everything passed, but the 'throttled' counter came out a
+  little low under a burst (23 instead of 30). The limit was still crossed and the alert still
+  went out. Accept US-024 as Done with that known bug tracked as ticket CMP-053 for next sprint?"
+  — options: yes, Done + CMP-053; no, fix first. Owner: **"Yes, Done + CMP-053 (Recommended)"**.
