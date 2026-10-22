@@ -88,9 +88,9 @@ So that I trust her enough to keep reading
 - Priority: Critical
 - Story Points: — (retroactive)
 - Status: Done (AC2 defect from CMP-017 fixed in CMP-031, PR #27; AC2 measured on `main`
-  e3a46cf at 1280/900/640/375 px in the PR #50 review: 5 px lift, border-left and shadow change
-  on hover; owner accepted that as the evidence, 2026-10-22, see SPRINT_02_PLAN → Sprint Review
-  Notes; recorded in CMP-051)
+  e3a46cf, served locally, at 1280/900/640/375 px in the PR #50 review: 5 px shift right,
+  border-left and shadow change on hover; owner accepted that as the evidence, 2026-10-22, see
+  SPRINT_02_PLAN → Sprint Review Notes; recorded in CMP-051)
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-003
 - Tickets: (initial build, before CMP-001)
@@ -847,9 +847,8 @@ So that the site reflects them without waiting for a developer
 - Priority: Medium
 - Story Points: 2
 - Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
-  CMP-051;
-  AC1 accepted by the owner with a known defect: the `throttled` counter undercounts under
-  parallel load (CMP-053), see SPRINT_02_PLAN → Sprint Review Notes)
+  CMP-051; AC1 accepted by the owner with a known defect: the `throttled` counter undercounts
+  under parallel load (CMP-053), see SPRINT_02_PLAN → Sprint Review Notes)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-029, §12)
 - Related Requirements: FR-011, NFR-003
 
