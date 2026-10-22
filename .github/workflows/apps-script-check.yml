@@ -6,6 +6,7 @@ on:
     paths:
       - 'apps-script/**'
       - '.github/scripts/**'
+      - '.github/clasp/**'
       - '.github/workflows/deploy-apps-script.yml'
       - '.github/workflows/apps-script-check.yml'
 

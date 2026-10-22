@@ -16,7 +16,7 @@ export async function accessToken(authFile) {
     stop('CLASP_CREDENTIALS is not valid JSON. Paste the whole contents of the clasp login file.');
   }
   if (!credential || !credential.refresh_token || !credential.client_id || !credential.client_secret) {
-    stop('CLASP_CREDENTIALS has no usable login. Run "npx clasp login" again and replace the secret.');
+    stop('CLASP_CREDENTIALS has no usable login. Run "clasp login" again (runbook section 5.1) and replace the secret.');
   }
   // A fresh access token from the refresh token (the stored access token is usually expired).
   const response = await fetch('https://oauth2.googleapis.com/token', {
@@ -30,7 +30,7 @@ export async function accessToken(authFile) {
     })
   });
   if (!response.ok) {
-    stop('Google rejected the login token (revoked or expired). Run "npx clasp login" and replace CLASP_CREDENTIALS in this environment.');
+    stop('Google rejected the login token (revoked or expired). Run "clasp login" (runbook section 5.1) and replace CLASP_CREDENTIALS in this environment.');
   }
   return (await response.json()).access_token;
 }

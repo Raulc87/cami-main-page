@@ -269,6 +269,11 @@ missing or wrong), puts it on the **existing** deployment (the `/exec` URL does 
 then sends a smoke request. Anything edited by hand in the online editor is overwritten at the next
 deploy, so do not edit there.
 
+The job installs **only** `clasp`, locked, from its own `.github/clasp/package-lock.json` and
+without install scripts, never the site's dependencies. The Google login is written to a file only
+inside `.github/scripts/deploy-apps-script.sh` and removed when that script ends, whatever happens;
+nothing prints it.
+
 **What the workflow does** (`.github/workflows/deploy-apps-script.yml`)
 1. Reads the three secrets of the environment (below). Nothing prints them.
 2. Asks Google for the project's title and stops unless it contains `staging` (or `production`)
@@ -282,21 +287,24 @@ deploy, so do not edit there.
    registration limit is hit at that moment). Neither writes to the sheet, Drive or email; the
    second adds one request to the register counters, also in production.
    If the smoke request fails, the deployment is put back on the version it served before and the
-   job still ends red. The saved code (which the time triggers run) stays as pushed: revert the
-   change in the repository and deploy again.
+   job still ends red. **Rolling back the version does not roll back the time triggers: they run
+   the saved code, which stays as pushed.** Revert the change in the repository and deploy the
+   reverted code.
 5. If the permissions (`oauthScopes` in `appsscript.json`) differ from the project's, the job
    summary says so: the owner must approve the new permissions (open the project, run any
    function once, allow) before the web app and the triggers work again.
 A `dry_run` option (manual run) does the checks (it still needs the real secrets: it logs in and
 reads the project) and lists the files, and pushes nothing. A change to `apps-script/`, to the
-scripts under `.github/scripts/`, to the workflow or to `package-lock.json` on `main` deploys
-staging.
+scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `main` deploys staging.
 
 **One-time setup (owner, plain words)**
 1. Turn on the **Google Apps Script API** for the Workspace account that owns the projects:
    <https://script.google.com/home/usersettings>. A Workspace admin may have to allow it.
-2. On your computer, in the repo folder: `npm ci`, then `npx clasp login` (a browser sign-in as that
-   account). This writes the login file `~/.clasprc.json`. Treat it like a password.
+2. On your computer, in the repo folder: `cd .github/clasp`, `npm ci --ignore-scripts`, then
+   `./node_modules/.bin/clasp login` (a browser sign-in as that account). This writes the login file
+   `~/.clasprc.json`. Treat it like a password. **On Google's consent screen, write down every
+   permission it lists** (tick-by-tick, or a screenshot) and send the list to the coordinator, who
+   records it in ADR-009: it is the full reach of this token.
 3. GitHub → repo **Settings → Environments**: create `staging` and `production`. For both, under
    *Deployment branches* choose **Selected branches → main**. For `production` also tick
    **Required reviewers** and add the owner.
@@ -310,8 +318,10 @@ staging.
    The production project and its first web-app deployment are created by hand once (sections 2 and 3);
    then add the production secrets.
 5. **Settings → Actions → General**: *Workflow permissions* = **Read repository contents**; *Fork pull
-   request workflows* = require approval for outside collaborators. Strongly recommended: protect
-   `main` (pull request and your approval required), because a merge to `main` now deploys staging.
+   request workflows* = require approval for outside collaborators. **Protect `main`** (**Settings →
+   Branches**: pull request required, with your approval), because a merge to `main` now deploys
+   staging. Turn on two-factor sign-in for the GitHub account (**Settings → Password and
+   authentication**).
 6. First run: **Actions → Deploy Apps Script → Run workflow** with environment `staging` and
    **dry run** on, then once without dry run. Read the printed project title and the smoke result.
 
@@ -322,7 +332,7 @@ click lets a production run start. No workflow that runs on pull requests can re
 - The login token can change code that runs as the Workspace owner (Drive, Sheets and Gmail
   settings). Keep the GitHub account protected with two-factor sign-in.
 - If anything looks wrong, or when a person with access to the repository settings leaves: revoke
-  it at <https://myaccount.google.com/permissions> (the clasp app), run `npx clasp login` again and
+  it at <https://myaccount.google.com/permissions> (the clasp app), run `clasp login` again (runbook 5.1) and
   replace `CLASP_CREDENTIALS` in **both** environments. Do the same every 6 months, and after changing
   the Google account password.
 - When the token has expired or been revoked the deploy stops at step 2 with
@@ -331,8 +341,9 @@ click lets a production run start. No workflow that runs on pull requests can re
   Apps Script scopes (`clasp login --creds ...`).
 
 **Local alternative**: with the login file on your computer and a `.clasp.json` made from
-`.clasp.example.json` (never committed), `npx clasp push` and `npx clasp deploy --deploymentId ...`
-do by hand what the workflow does. Do not use both for the same change.
+`.clasp.example.json` (never committed), `.github/clasp/node_modules/.bin/clasp push` and
+`... clasp deploy --deploymentId ...` do by hand what the workflow does. Do not use both for the
+same change.
 
 ## 6. Roll back to a previous version
 The deployment keeps its URL; only the version it serves changes.
