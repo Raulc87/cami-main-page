@@ -67,7 +67,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 1 | Coupon expiring today is still valid (inclusive) | Pass | API case C07a |
 | 2 | Unknown, inactive, expired, other-event coupon: "Cupón no válido", full price stays | Pass | scripted check, API cases C06/C08 |
 | 3 | Exhausted coupon, coupon already used by the email: matching message, full price stays | Pass | scripted check |
-| 4 | A registration marked `refund/cancelled` or `spam` frees the coupon use | Pending (owner): live edit |  |
+| 4 | A registration marked `spam` frees the coupon use: a one-use coupon answered `COUPON_EXHAUSTED` for another email; after the owner set the registration that held it to `spam`, the next check answered 20% and ₡20 000 (no cache) | Pass | live edit 4 |
 | 5 | Coupon deactivated after apply, then a paid registration: stored with the discount, flagged `coupon changed`; the visitor sees the review message | Pass (visitor side); row **Pending (owner)** | `form-es-1280-flagged-coupon-changed.jpg` |
 | 6 | Many failed coupon checks: refusal "try again later" | Pending: abuse burst |  |
 | 7 | No coupon list is sent to the browser | Pass | the `events` response carries no coupon data |
@@ -79,6 +79,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 1 | Paid registration: JPEG named `<Name>_<date>_<eventCode>.jpg` in `<root>/<eventCode>/`, `_2` on collision, subfolder created if new; ₡0 stores no file | Pending (owner) | Drive listing |
 | 2 | Row with the §6 columns, status `new`, check result `pending`/`not-required`, values stored as text (a name starting `=` stays text) | Pending (owner) | sheet screenshot |
 | 3 | At capacity, a ₡0 registration is refused `SOLD_OUT`; two simultaneous ₡0 registrations for the last place never both succeed | Pass | API case R18: one `ok`, the other `SERVER_ERROR` (busy lock); a retry then gave `SOLD_OUT` |
+| 3 | A registration set to `refund/cancelled` frees the place (BR-E10): the event stopped showing as sold out within about 3 minutes (events cache); a new ₡0 registration was accepted and the next one was refused `SOLD_OUT` again | Pass | live edit 3 |
 | 4 | Closed, unpublished or full event with a paid registration: stored, flagged, the visitor is told Cami will contact them | Pass (visitor side); rows **Pending (owner)** | `form-es-1280-flagged-event-unpublished.jpg` |
 | 5 | Invalid data or unknown event code rejected, nothing stored | Pass (responses); nothing stored: **Pending (owner)** | API cases R01–R16 |
 | 6 | Retry with a stored `submissionId` returns the original reference, nothing new | Pass | scripted check; one row per participant: **Pending (owner)** |
@@ -99,10 +100,11 @@ Form-side runs on staging (CMP-032 pass and this run).
 |---|---|---|---|
 | 1 | A new published event appears within 5 minutes (TNEW) | Pass. First attempt: not listed after 7 minutes because the owner's row was incomplete (owner: "I missed it before"). After the owner completed it, it was listed 2.3 minutes after my first check (name, date, time, price and `registrationOpen` correct); the owner's exact save time was not recorded, so this is an upper bound of about 2.3 minutes plus the owner's delay | listing poll |
 | 2 | Invalid row (blank name, invalid time) and a duplicated code are not shown; the others still are | Pass | listing before and after the owner's fixes; the duplicated code stayed hidden throughout |
-| 3 | A changed coupon discount applies on the next check (no cache) | Pending: live edit |  |
+| 3 | A changed coupon discount applies on the next check (no cache): PROMO10AB changed from 10% to 20% answered 20% and ₡20 000 on the first check after the owner's saved edit. The first attempt answered 10% only because the owner had edited another coupon by mistake (owner confirmed); the code reads the sheet on every coupon check | Pass | live edit 2 |
 | 4 | `nameEn`/`descriptionEn` override the automatic translation | Pass | `events?lang=en` for TART |
 | 5 | Coupon row with an invalid code, discount or max uses is ignored | Pass (ignored: `COUPON_INVALID`); alert email **Pending (owner)** | API cases C04/C06 |
-| — | A past event (started) is not listed (BR-E09) | Pass | listing |
+| — | A past event (started) is not listed (BR-E09); the two closed test events disappeared from the listing after their start time passed | Pass | listing |
+| — | A deleted event (TNEW) leaves the listing within about 6 minutes of the owner's delete (events cache up to 5 minutes) | Pass | live edit 1 restore |
 
 ### US-024 — Abuse metrics and alerts
 | AC | Case | Result | Evidence |
