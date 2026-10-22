@@ -69,7 +69,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | AC | Case | Result | Evidence |
 |---|---|---|---|
 | 1 | 10% coupon: amount to pay becomes ₡22 500 and the coupon is saved with the registration | Pass | scripted check |
-| 1 | Rounding to the nearest colón: 15% on ₡12 345 gives ₡10 493 | Pass (server answer); stored amount **Pending (owner)** | API case C07b |
+| 1 | Rounding to the nearest colón: 15% on ₡12 345 gives ₡10 493 | Pass (server answer and stored amount `10493`, owner-checked in the sheet) | API case C07b |
 | 1 | Coupon expiring today is still valid (inclusive) | Pass | API case C07a |
 | 2 | Unknown, inactive, expired, other-event coupon: "Cupón no válido", full price stays | Pass | scripted check, API cases C06/C08 |
 | 3 | Exhausted coupon, coupon already used by the email: matching message, full price stays | Pass | scripted check |
@@ -83,20 +83,20 @@ Form-side runs on staging (CMP-032 pass and this run).
 | AC | Case | Result | Evidence |
 |---|---|---|---|
 | 1 | Paid registration: JPEG named `<Name>_<date>_<eventCode>.jpg` in `<root>/<eventCode>/`, `_2` on collision, subfolder created if new; ₡0 stores no file | Pending (owner) | Drive listing |
-| 2 | Row with the §6 columns, status `new`, check result `pending`/`not-required`, values stored as text (a name starting `=` stays text) | Pending (owner) | sheet screenshot |
+| 2 | Row with the §6 columns, status `new`, check result `not-required` for ₡0, values stored as text (a name starting `=` stays text) | Pass (owner-checked in the sheet: TFREE rows `not-required`, no file; the `=1+1 …` name shows as text) | owner, sheet rows |
 | 3 | At capacity, a ₡0 registration is refused `SOLD_OUT`; two simultaneous ₡0 registrations for the last place never both succeed | Pass | API case R18: one `ok`, the other `SERVER_ERROR` (busy lock); a retry then gave `SOLD_OUT` |
 | 3 | A registration set to `refund/cancelled` frees the place (BR-E10): the event stopped showing as sold out within about 3 minutes (events cache); a new ₡0 registration was accepted and the next one was refused `SOLD_OUT` again | Pass | live edit 3 |
-| 4 | Closed, unpublished or full event with a paid registration: stored, flagged, the visitor is told Cami will contact them | Pass (visitor side); rows **Pending (owner)** | `form-es-1280-flagged-event-unpublished.jpg` |
+| 4 | Closed, unpublished or full event with a paid registration: stored, flagged, the visitor is told Cami will contact them | Pass (visitor side). Rows for a full event: owner-checked (`sold out at submit`, needsReview TRUE, file stored); rows for the unpublished event and the changed coupon from the form run: **Pending (owner)** | `form-es-1280-flagged-event-unpublished.jpg` |
 | 5 | Invalid data or unknown event code rejected, nothing stored | Pass (responses); nothing stored: **Pending (owner)** | API cases R01–R16 |
 | 6 | Retry with a stored `submissionId` returns the original reference, nothing new | Pass | scripted check; one row per participant: **Pending (owner)** |
 
 ### US-022 — Automatic check of the payment screenshot
 | AC | Case | Result | Evidence |
 |---|---|---|---|
-| 1 | Receipt with the real account and the exact amount: `ok`, `needsReview` FALSE | Pending (owner) | rows from the `okES` and `roundOK` registrations |
-| 2 | Wrong account or amount: `mismatch`, failing fields in `checkDetails`, review flag, "not validated" email | Pending (owner) | `mismES` registrations |
-| 3 | Unreadable image: `unreadable`, review flag, email | Pending (owner) | `unreadEN` registrations |
-| 4 | Status stays `new`; temporary OCR Doc deleted | Pending (owner) | sheet and Drive |
+| 1 | Receipt with the real account and the exact amount: `ok`, `needsReview` FALSE | Pass (owner-checked: `okES` ok with ₡25 000, `roundOK` ok with ₡10 493) | owner, sheet rows |
+| 2 | Wrong account or amount: `mismatch`, failing fields in `checkDetails`, review flag, "not validated" email | Pass for the row (owner-checked: `mismES` mismatch, needsReview TRUE); the email is under US-025 AC2 (**Pending (owner)**) | owner, sheet rows |
+| 3 | Unreadable image: `unreadable`, review flag, email | Pass for the row (owner-checked: `unreadEN` unreadable, needsReview TRUE); the email is under US-025 AC2 (**Pending (owner)**) | owner, sheet rows |
+| 4 | Status stays `new`; temporary OCR Doc deleted | Status `new` on the checked rows: Pass (owner-checked); temporary Doc deleted: **Pending (owner, Drive)** | owner |
 | 5 | Cami's sample screenshots in the spike | N/A here (done in CMP-024, `SPRINT_02_SPIKE.md`) |  |
 | 6 | OCR service refuses the call (rate limit): the row stays `pending`, no "not validated" email yet, the retry trigger writes the result and email later | Pass, shown live on staging in PR #39's Verification (two checks hit the per-user OCR limit and were finished by the trigger about 9 minutes later); not repeated here | PR #39 |
 | 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Pending (owner): depends on the HEIC result |  |
