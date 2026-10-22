@@ -5,8 +5,8 @@ backend. Written by Implementation Agent 3 (CMP-033). A Fail is not fixed in thi
 classified (AC wording or defect) and a ticket is proposed. Story statuses are not changed here;
 the coordinator does that after the owner approves the evidence.
 
-**Status of this document: complete, for the owner's review.** Every line is now Pass, N/A with a reason, or the deferred
-real-iPhone check; `Pending (owner)` is kept in the legend only.
+**Status of this document: complete, for the owner's review.** Every line is now Pass, N/A with a
+reason, or the deferred real-iPhone check; `Pending (owner)` is kept in the legend only.
 
 ## 1. Method
 
@@ -207,6 +207,12 @@ iPhone 13 emulation: both accepted, sent as `image/heic` and `image/png`, refere
 Stored: the HEIC files in their original `.heic` format (the conversion fell back, FFR-014) and `unreadable` with the note, the PNG converted to `.jpg` (owner-checked in Drive and the sheet). No "not validated" email for the HEIC rows (US-022 AC7).
 **Real-iPhone Safari picker/HEIC check deferred to a pre-release check (owner, no device available).**
 
+### 3.7 Checks for PR #44 (CMP-045), owner-checked
+Merged with these checks pending; the owner confirmed them after the staging re-paste:
+- the English listing and the English confirmation email for the free test event read "Free trial workshop" (automatic translation, the `Translations` entries used);
+- the `Translations` tab holds one row per text with `hash` and `text` as plain text;
+- the removed TNEW event's text is no longer in the tab (one pruning cycle seen).
+
 ### 3.8 Abuse burst (US-020 AC6, US-024 AC2/AC3, `RATE_LIMITED`, `UPLOAD_CAP_REACHED`)
 Run last, against the staging backend with `MAIL_REPLY_TO` on the owner's test address and
 `LIMIT_UPLOADS_PER_DAY` lowered to 2 by the owner (so no test alert reaches camila@), one fresh
@@ -222,17 +228,10 @@ In the form the cap answer reads "No podemos recibir más capturas por ahora. In
 Alert email (US-024 AC2): the thresholds were crossed, and the backend sent its one alert email for the Costa Rica day after midnight (a finding made after that day's email waits for the next day's, FFR-029; the email already sent that day had listed the invalid sheet rows). Owner decision (2026-10-22), asked whether to keep the test settings until the alert arrives or restore them now: "Keep until the alert (Recommended)". The owner-checked email lists, in Spanish and English: the invalid Events rows (a name, a time and the duplicated event code), the invalid Coupons rows (a code, a discount and a max uses), `2026-10-21 Honeypot: 12 (límite / limit 10)`, `2026-10-21 Throttled requests / solicitudes limitadas: 23 (20)` and `2026-10-21 Daily upload cap reached / límite diario de capturas alcanzado`, with the footer that invalid rows are ignored until fixed. The owner then restored `MAIL_REPLY_TO` (camila@) and `LIMIT_UPLOADS_PER_DAY` (100) and read the Metrics row: accepted 39, honeypotHits 12, throttled 23, couponFailures 39, uploadedMb 1.3, spamMarked 1.
 Counter check: the honeypot count is exact (11 sequential posts plus the earlier one: 12). `throttled` is 23 where the burst should have produced 30 (25 `RATE_LIMITED` answers to `register` plus 5 to `coupon`); see observation 7 in §5.
 
-### 3.7 Checks for PR #44 (CMP-045), owner-checked
-Merged with these checks pending; the owner confirmed them after the staging re-paste:
-- the English listing and the English confirmation email for the free test event read "Free trial workshop" (automatic translation, the `Translations` entries used);
-- the `Translations` tab holds one row per text with `hash` and `text` as plain text;
-- the removed TNEW event's text is no longer in the tab (one pruning cycle seen).
-
 ## 4. Evidence index
 All files are in `docs/sprints/evidence/sprint-02/` (JPEG, masked, under 5 MB in total):
 `form-es-1280-upload-cap.jpg` (the upload-cap answer in the form), `page-*` (layout and regression; `page-events-art-*` shows the event with an image, in EN with the `nameEn`/`descriptionEn` override), `form-*` (form states; the SINPE blocks show test values and registration references are masked), `mobile-iphone13-heic-*` (test values shown, reference masked),
-`us005-ac2-featured-expanded-es.jpg`. Sheet, Drive and inbox screenshots from the owner are added
-here when received. 
+`us005-ac2-featured-expanded-es.jpg`. Sheet, Drive and inbox results were checked by the owner and are recorded in the tables; no screenshots of them are committed. Every image that can show the payment block or a reference was checked on a contact sheet before the last push: the SINPE blocks show test values or are masked, references are masked, and no email address or participant name appears.
 
 Note: `form-es-1280-flagged-event-unpublished.jpg` and `form-es-1280-flagged-coupon-changed.jpg` look the same on purpose: the visitor sees the same message whichever flag the backend sets (event closed/unpublished, or coupon changed); the difference is only in the sheet row.
 
@@ -245,4 +244,4 @@ Note: `form-es-1280-flagged-event-unpublished.jpg` and `form-es-1280-flagged-cou
 | 4 | Intermittent 30 s hangs on staging (§3.4) | Observation | keep watching; no ticket yet |
 | 5 | Staging script properties reached the 50-property UI limit (reported by Agent 1) | Observation | PR #44 (CMP-045) is the lasting fix |
 | 6 | Raw HEIC uploads are stored in their original `.heic` format (the server's JPEG conversion falls back): this is the first raw-HEIC test (the spike did not run one). US-021 AC1 allows the fallback, so it is not a Fail, but a payment photo taken with an iPhone camera is then not readable by the OCR check (needs manual review), while an iPhone screenshot (PNG) is converted and checked | AC wording is satisfied; user-impact observation | decide whether a ticket is needed: client-side conversion needs a library (TECH_STACK + ADR), or tell visitors to upload a screenshot; the real-iPhone picker may already convert to JPEG (deferred check) |
-| 7 | The `throttled` counter of the `Metrics` row is lower than the number of `RATE_LIMITED` answers: 23 recorded for a burst that produced 30 (25 for `register`, 5 for `coupon`). From the code (not reproduced, so as not to send another alert to camila@): `bumpMetric_` adds to the cell by reading it and writing it back under `tryShortLock_(5000)`, which, when the script lock stays busy for 5 s, silently carries on WITHOUT the lock (the comment says a slightly wrong limit is better than a failing request). The `register` wave sent 15 requests at once, so several increments collide and one is lost; the sequential honeypot count is exact. The 23 still crossed the threshold of 20 and the alert went out, but under a burst the counters can read low and an alert near its threshold could be missed. Not a Fail of US-024 (AC1 does not promise exact counts) | Observation / low-severity defect | ticket: make the daily counters robust under parallel requests (for example keep them in a script property updated under a longer lock wait, or retry, or write them from the 5-minute trigger), or document the tolerance and set the thresholds with a margin |
+| 7 | The `throttled` counter of the `Metrics` row is lower than the number of `RATE_LIMITED` answers: 23 recorded for a burst that produced 30 (25 for `register`, 5 for `coupon`). From the code (not reproduced, so as not to send another alert to camila@): `bumpMetric_` adds to the cell by reading it and writing it back under `tryShortLock_(5000)`, which, when the script lock stays busy for 5 s, silently carries on WITHOUT the lock (the comment says a slightly wrong limit is better than a failing request). The `register` wave sent 15 requests at once, so several increments collide and one is lost; the sequential honeypot count is exact. The 23 still crossed the threshold of 20 and the alert went out, but under a burst the counters can read low and an alert near its threshold could be missed. Not a Fail of US-024 (AC1 does not promise exact counts) | Observation / low-severity defect | ticket: make the daily counters robust under parallel requests (for example keep them in a script property updated under a longer lock wait, or retry, or write them from the 5-minute trigger), or document the tolerance and set the thresholds with a margin. `bumpWindow_` (the per-minute limit counters) uses the same pattern with a 3 s wait (`tryShortLock_(3000)`), so the per-minute limiters could drift under the same parallel load too; the burst's limits were exact (20/25, 30/2), so this is not a finding here, but the ticket should cover it |
