@@ -227,8 +227,9 @@ deployment for an environment that already has one: a new deployment gets a new 
 
 **Emergency only**, when the workflow cannot be used (for example the token has to be renewed
 first), the same can be done by hand from the owner's computer, with the login file and a
-`.clasp.json` (section 5.1, "Local alternative"). The other use of `clasp` from the computer is
-the one-time first upload of a new project (section 2.2). Routine deploys are never made by hand:
+`.clasp.json` (section 5.1, "Local use"). The other use of `clasp` from the computer is the
+one-time first upload of a new project (section 2.2). Routine deploys are never made by hand. The
+emergency commands:
 ```bash
 .github/clasp/node_modules/.bin/clasp push --force
 .github/clasp/node_modules/.bin/clasp deploy --deploymentId <DEPLOYMENT_ID> --description "CMP-025 events read"
