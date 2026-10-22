@@ -99,7 +99,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 4 | Status stays `new`; temporary OCR Doc deleted | Status `new` on the checked rows: Pass (owner-checked); temporary Docs deleted: Pass (owner-checked: no leftover OCR Docs in Drive) | owner |
 | 5 | Cami's sample screenshots in the spike | N/A here (done in CMP-024, `SPRINT_02_SPIKE.md`) |  |
 | 6 | OCR service refuses the call (rate limit): the row stays `pending`, no "not validated" email yet, the retry trigger writes the result and email later | Pass, shown live on staging in PR #39's Verification (two checks hit the per-user OCR limit and were finished by the trigger about 9 minutes later); not repeated here | PR #39 |
-| 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Partly: both HEIC rows were stored in the original `.heic` format (the conversion fell back), so this path was exercised. The owner accepted "ok or unreadable" for the HEIC rows without naming the result: the exact `checkResult`, the "stored as original format: heic" note and the absence of a "not validated" email are **Pending (owner)**. Owner-checked in part 3: no "not validated" email arrived for the two HEIC rows |  |
+| 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Pass (owner-checked: both HEIC rows, stored in the original `.heic` format after the conversion fell back, are `unreadable` with the note "stored as original format: heic"; no "not validated" email arrived for them) | owner, sheet rows and inboxes |
 
 ### US-023 — Cami manages events, capacity and coupons without a deploy
 | AC | Case | Result | Evidence |
@@ -205,7 +205,7 @@ sections are identical in both, no horizontal scroll, no page errors.
 ### 3.6 HEIC and PNG substitute check (no iPhone available)
 A real HEIC (brand `heic`, HEVC, about 516 KB) and an iPhone-sized PNG (1170×2532) through the form in
 iPhone 13 emulation: both accepted, sent as `image/heic` and `image/png`, references returned.
-Stored: the HEIC files in their original `.heic` format (the conversion fell back, FFR-014), the PNG converted to `.jpg` (owner-checked in Drive). Check result of the HEIC rows and emails: see US-022 AC7 and US-025.
+Stored: the HEIC files in their original `.heic` format (the conversion fell back, FFR-014) and `unreadable` with the note, the PNG converted to `.jpg` (owner-checked in Drive and the sheet). No "not validated" email for the HEIC rows (US-022 AC7).
 **Real-iPhone Safari picker/HEIC check deferred to a pre-release check (owner, no device available).**
 
 ### 3.8 Abuse burst (US-020 AC6, US-024 AC2/AC3, `RATE_LIMITED`, `UPLOAD_CAP_REACHED`)
@@ -220,7 +220,7 @@ one-minute window per case, requests as in §3.1 with test tags only:
 | Coupon checks per minute (`LIMIT_COUPON_CHECKS_PER_MIN` 30) | 32 valid checks in one minute | 30 answered, the rest `RATE_LIMITED` | Pass: 30 × `ok`, 2 × `RATE_LIMITED` |
 | Daily upload cap (`LIMIT_UPLOADS_PER_DAY` lowered to 2; many screenshots already stored that day) | a paid `register` with a screenshot; then a ₡0 `register` | paid: `UPLOAD_CAP_REACHED`; ₡0: unaffected | Pass: `UPLOAD_CAP_REACHED`; the free registration `ok` |
 In the form the cap answer reads "No podemos recibir más capturas por ahora. Inténtalo más tarde o escribe a Cami a camila@lifetoolscr.com.", with the typed data and the chosen file kept (`form-es-1280-upload-cap.jpg`, the email is masked).
-Alert email (US-024 AC2): the thresholds were crossed (honeypot hits well above 10, 25 throttled requests above the limit of 20, the upload cap reached). The backend sends at most one alert email per Costa Rica day and a finding made after that day's email waits for the next day's (the first check after midnight Costa Rica time, 06:00 UTC); the email already sent that day listed the invalid sheet rows. The owner's check of the next alert email is **Pending (owner)**; until it is seen, `MAIL_REPLY_TO` must stay on the owner's address and the upload limit at 2 (the cap line of the alert is derived from the day's upload count against the limit when the alert is built).
+Alert email (US-024 AC2): the thresholds were crossed (honeypot hits well above 10, 25 throttled requests above the limit of 20, the upload cap reached). The backend sends at most one alert email per Costa Rica day and a finding made after that day's email waits for the next day's (the first check after midnight Costa Rica time, 06:00 UTC); the email already sent that day listed the invalid sheet rows. Owner decision (2026-10-22), asked verbatim whether to keep the test settings until the alert arrives or restore them now: "Keep until the alert (Recommended)". So `MAIL_REPLY_TO` stays on the owner's address and `LIMIT_UPLOADS_PER_DAY` at 2 until the alert email after 06:00 UTC (midnight Costa Rica time) has arrived; the owner then restores `MAIL_REPLY_TO` to camila@ and the upload limit to 100 and checks the Metrics row. The alert email and the Metrics values are **Pending (owner)**.
 
 ### 3.7 Checks for PR #44 (CMP-045), owner-checked
 Merged with these checks pending; the owner confirmed them after the staging re-paste:
