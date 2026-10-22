@@ -1,4 +1,7 @@
-// Smoke request after a deploy (CMP-047). Two requests that write nothing to the sheet, Drive or
+// Smoke request after a deploy (CMP-047). The events list can come from the cache of the previous
+// version; the registration request always runs the new code. A broken events build shows within
+// five minutes as a Failed `refreshEventsCache` run (runbook 5.1).
+// Two requests that write nothing to the sheet, Drive or
 // email: the events list must answer ok, and a registration with an invalid email must be
 // refused with VALIDATION_ERROR (or RATE_LIMITED when the registration limit is hit at that moment).
 // The second one adds one request to the register counters. The /exec URL is built from the
@@ -34,7 +37,7 @@ const checks = [
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
         action: 'register', submissionId: '00000000-0000-4000-8000-000000000000', eventCode: 'SMOKE',
-        participantName: 'Smoke', email: 'not-an-email', lang: 'es', consent: true, website: ''
+        participantName: 'Smoke', email: 'not-an-email', whatsapp: '+50688880000', lang: 'es', consent: true, website: ''
       })
     })),
     // RATE_LIMITED also proves the register path runs (the throttle answers before the validation).

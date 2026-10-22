@@ -59,7 +59,7 @@ if [ -n "$PREVIOUS_VERSION" ]; then
   "$CLASP" deploy --deploymentId "$DEPLOYMENT_ID" --versionNumber "$PREVIOUS_VERSION" --description "rollback after run ${GITHUB_RUN_NUMBER}" || true
   {
     echo "## Rolled back"
-    echo "The smoke request failed, so the deployment serves version $PREVIOUS_VERSION again. **The time triggers run the saved code, not the deployed version, so they still run the failed code: revert the change in the repository and deploy the reverted code.**"
+    echo "The smoke request failed, so the deployment serves version $PREVIOUS_VERSION again. **This does NOT roll back Head: the time triggers keep running the faulty code (they run the saved code).** Revert the pull request and deploy the reverted code. If the faulty code could harm data (wrong rows, emails to participants), delete both triggers meanwhile and add them again afterwards (runbook sections 2.6 and 2.7)."
   } >> "$GITHUB_STEP_SUMMARY"
   APPS_SCRIPT_DEPLOYMENT_ID="$DEPLOYMENT_ID" node .github/scripts/apps-script-smoke.mjs || true
   echo "::endgroup::"

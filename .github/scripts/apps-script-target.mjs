@@ -31,18 +31,25 @@ if (!title.toLowerCase().includes(expected) || title.toLowerCase().includes(othe
 console.log('Target project: ' + title + ' (environment ' + expected + ')');
 
 // The version the deployment serves now.
-let previous = '';
-if (deploymentId) {
-  const deployment = await scriptApi(token, 'projects/' + encodeURIComponent(scriptId) + '/deployments/' + encodeURIComponent(deploymentId));
-  const version = deployment.deploymentConfig && deployment.deploymentConfig.versionNumber;
-  if (version) previous = String(version);
+// The deployment must exist in this project and serve a numbered version (the web-app deployment,
+// not the "Head / test" one): otherwise the deploy would change the saved code and then fail.
+if (!deploymentId) stop('Missing APPS_SCRIPT_DEPLOYMENT_ID.');
+const deployment = await scriptApi(token, 'projects/' + encodeURIComponent(scriptId) + '/deployments/' + encodeURIComponent(deploymentId));
+if (deployment.__status) {
+  stop('Google did not return the deployment (HTTP ' + deployment.__status + '). Check APPS_SCRIPT_DEPLOYMENT_ID: it must be the web-app deployment of this project. Nothing was pushed.');
 }
-console.log(previous ? 'Version served now: ' + previous : '::warning::Could not read the version served now: a failed smoke request cannot be rolled back automatically.');
+const version = deployment.deploymentConfig && deployment.deploymentConfig.versionNumber;
+if (!version) {
+  stop('The deployment has no numbered version: it looks like the "Head / test" deployment. Use the ID of the web-app deployment (Deploy > Manage deployments). Nothing was pushed.');
+}
+const previous = String(version);
+console.log('Version served now: ' + previous);
 if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'previous_version=' + previous + '\n');
 
 // Permissions: project as it is now against the repo.
 try {
   const content = await scriptApi(token, 'projects/' + encodeURIComponent(scriptId) + '/content');
+  if (content.__status) throw new Error('content ' + content.__status);
   const manifest = (content.files || []).find((f) => f.name === 'appsscript');
   const remote = manifest ? (JSON.parse(manifest.source).oauthScopes || []) : null;
   const local = JSON.parse(readFileSync('apps-script/appsscript.json', 'utf8')).oauthScopes || [];
@@ -55,5 +62,7 @@ try {
     if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, note);
   }
 } catch {
-  console.log('::warning::Could not compare the permissions with the project.');
+  const note = '## Permissions not compared\n\nThe permissions of `appsscript.json` could not be compared with the project (Google did not answer). If this commit adds permissions, **the owner must approve them** (open the project in the Apps Script editor, run any function once, allow) before the web app and the triggers work.\n';
+  console.log('::warning::Could not compare the permissions with the project: if this commit adds permissions, the owner must approve them after the deploy.');
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, note);
 }
