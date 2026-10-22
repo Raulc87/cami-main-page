@@ -60,7 +60,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 3 | Missing name / email / WhatsApp / screenshot / consent: submit blocked, one message per field in the active language | Pass | scripted check |
 | 4 | Invalid email, phone, non-image renamed `.jpg`, file over 5 MB: matching error, nothing sent | Pass | scripted check; also on the server, see §3.1 |
 | 5 | Valid paid registration with JPEG, PNG, WebP: confirmation with reference | Pass | `form-es-1280-confirmation.jpg` |
-| 5 | HEIC: the form accepts a real HEIC (brand `heic`, about 516 KB) and sends it as `image/heic`; reference returned | Pass (client). Stored file, check result and emails: **Pending (owner)** | `mobile-iphone13-heic-done.jpg` |
+| 5 | HEIC: the form accepts a real HEIC (brand `heic`, about 516 KB) and sends it as `image/heic`; reference returned | Pass (client). Stored: both HEIC rows were stored in the original `.heic` format (conversion fell back, FFR-014; owner-checked in Drive), the PNG row as `.jpg`. Check result and emails for the HEIC rows: see US-022 AC7 | `mobile-iphone13-heic-done.jpg` |
 | 6 | Backend error: retry message, data kept; a dropped response followed by a retry reuses the same `submissionId` and returns the reference | Pass | scripted check |
 | 7 | Email already registered: the exact ES/EN text, nothing stored | Pass | scripted check |
 | 8 | Privacy notice (marked draft) and a required consent checkbox | Pass | form screenshots |
@@ -74,7 +74,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 2 | Unknown, inactive, expired, other-event coupon: "Cupón no válido", full price stays | Pass | scripted check, API cases C06/C08 |
 | 3 | Exhausted coupon, coupon already used by the email: matching message, full price stays | Pass | scripted check |
 | 4 | A registration marked `spam` frees the coupon use: a one-use coupon answered `COUPON_EXHAUSTED` for another email; after the owner set the registration that held it to `spam`, the next check answered 20% and ₡20 000 (no cache) | Pass | live edit 4 |
-| 5 | Coupon deactivated after apply, then a paid registration: stored with the discount, flagged `coupon changed`; the visitor sees the review message | Pass (visitor side); row **Pending (owner)** | `form-es-1280-flagged-coupon-changed.jpg` |
+| 5 | Coupon deactivated after apply, then a paid registration: stored with the discount, flagged `coupon changed`; the visitor sees the review message | Pass (visitor side; row owner-checked: `coupon changed`, coupon PROMO10AB at 10%, ₡22 500) | `form-es-1280-flagged-coupon-changed.jpg` |
 | 6 | Many failed coupon checks: refusal "try again later" | Pending: abuse burst (run last, with `MAIL_REPLY_TO` set to the owner's test address so camila@ gets no test alert) |  |
 | 7 | No coupon list is sent to the browser | Pass | the `events` response carries no coupon data |
 | 8 | A coupon typed but not applied blocks Submit with "Aplica el cupón o borra el campo."; no request is sent | Pass | CMP-032 mock run and the reviewer's run |
@@ -82,13 +82,13 @@ Form-side runs on staging (CMP-032 pass and this run).
 ### US-021 — Registrations in Drive and Sheets
 | AC | Case | Result | Evidence |
 |---|---|---|---|
-| 1 | Paid registration: JPEG named `<Name>_<date>_<eventCode>.jpg` in `<root>/<eventCode>/`, `_2` on collision, subfolder created if new; ₡0 stores no file | Pending (owner) | Drive listing |
+| 1 | Paid registration: JPEG named `<Name>_<date>_<eventCode>.jpg` in `<root>/<eventCode>/`, `_2` on collision, subfolder created if new; ₡0 stores no file | Pass (owner-checked in Drive: folders TPAID, TSOLD1 and TROUND only, none for the free events; `.jpg` files; the two same-name registrations are `Maria_Perez_Nandu_<date>_TPAID.jpg` and the `_2` file). The PNG upload was converted to `.jpg`; the HEIC uploads were stored in their original `.heic` format with a note, which this AC allows | owner, Drive listing |
 | 2 | Row with the §6 columns, status `new`, check result `not-required` for ₡0, values stored as text (a name starting `=` stays text) | Pass (owner-checked in the sheet: TFREE rows `not-required`, no file; the `=1+1 …` name shows as text) | owner, sheet rows |
 | 3 | At capacity, a ₡0 registration is refused `SOLD_OUT`; two simultaneous ₡0 registrations for the last place never both succeed | Pass (owner-checked in the sheet: exactly one row for the two simultaneous requests, and only the second request of the cancel test was rejected without a row) | API case R18: one `ok`, the other `SERVER_ERROR` (busy lock); a retry then gave `SOLD_OUT` |
 | 3 | A registration set to `refund/cancelled` frees the place (BR-E10): the event stopped showing as sold out within about 3 minutes (events cache); a new ₡0 registration was accepted and the next one was refused `SOLD_OUT` again | Pass | live edit 3 |
-| 4 | Closed, unpublished or full event with a paid registration: stored, flagged, the visitor is told Cami will contact them | Pass (visitor side). Rows for a full event: owner-checked (`sold out at submit`, needsReview TRUE, file stored); rows for the unpublished event and the changed coupon from the form run: **Pending (owner)** | `form-es-1280-flagged-event-unpublished.jpg` |
-| 5 | Invalid data or unknown event code rejected, nothing stored | Pass (responses); nothing stored: **Pending (owner)** | API cases R01–R16 |
-| 6 | Retry with a stored `submissionId` returns the original reference, nothing new | Pass | scripted check; one row per participant: **Pending (owner)** |
+| 4 | Closed, unpublished or full event with a paid registration: stored, flagged, the visitor is told Cami will contact them | Pass (visitor side). Rows for a full event: owner-checked (`sold out at submit`, needsReview TRUE, file stored); rows for the unpublished event (`event closed at submit`, ₡25 000) and the changed coupon (`coupon changed`) from the form run: owner-checked | `form-es-1280-flagged-event-unpublished.jpg` |
+| 5 | Invalid data or unknown event code rejected, nothing stored | Pass (responses; owner-checked: no row in any tab for the rejected requests, only the valid registrations and the honeypot request left rows or counts) | API cases R01–R16 |
+| 6 | Retry with a stored `submissionId` returns the original reference, nothing new | Pass | scripted check; one row per participant (owner-checked) |
 
 ### US-022 — Automatic check of the payment screenshot
 | AC | Case | Result | Evidence |
@@ -96,10 +96,10 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 1 | Receipt with the real account and the exact amount: `ok`, `needsReview` FALSE | Pass (owner-checked: `okES` ok with ₡25 000, `roundOK` ok with ₡10 493) | owner, sheet rows |
 | 2 | Wrong account or amount: `mismatch`, failing fields in `checkDetails`, review flag, "not validated" email | Pass for the row (owner-checked: `mismES` mismatch, needsReview TRUE); the email is under US-025 AC2 (**Pending (owner)**) | owner, sheet rows |
 | 3 | Unreadable image: `unreadable`, review flag, email | Pass for the row (owner-checked: `unreadEN` unreadable, needsReview TRUE); the email is under US-025 AC2 (**Pending (owner)**) | owner, sheet rows |
-| 4 | Status stays `new`; temporary OCR Doc deleted | Status `new` on the checked rows: Pass (owner-checked); temporary Doc deleted: **Pending (owner, Drive)** | owner |
+| 4 | Status stays `new`; temporary OCR Doc deleted | Status `new` on the checked rows: Pass (owner-checked); temporary Docs deleted: Pass (owner-checked: no leftover OCR Docs in Drive) | owner |
 | 5 | Cami's sample screenshots in the spike | N/A here (done in CMP-024, `SPRINT_02_SPIKE.md`) |  |
 | 6 | OCR service refuses the call (rate limit): the row stays `pending`, no "not validated" email yet, the retry trigger writes the result and email later | Pass, shown live on staging in PR #39's Verification (two checks hit the per-user OCR limit and were finished by the trigger about 9 minutes later); not repeated here | PR #39 |
-| 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Pending (owner): depends on the HEIC result |  |
+| 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Partly: both HEIC rows were stored in the original `.heic` format (the conversion fell back), so this path was exercised. The owner accepted "ok or unreadable" for the HEIC rows without naming the result: the exact `checkResult`, the "stored as original format: heic" note and the absence of a "not validated" email are **Pending (owner)** (the email under part 3) |  |
 
 ### US-023 — Cami manages events, capacity and coupons without a deploy
 | AC | Case | Result | Evidence |
@@ -108,16 +108,16 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 2 | Invalid row (blank name, invalid time) and a duplicated code are not shown; the others still are | Pass | listing before and after the owner's fixes; the duplicated code stayed hidden throughout |
 | 3 | A changed coupon discount applies on the next check (no cache): PROMO10AB changed from 10% to 20% answered 20% and ₡20 000 on the first check after the owner's saved edit. The first attempt answered 10% only because the owner had edited another coupon by mistake (owner confirmed); the code reads the sheet on every coupon check | Pass | live edit 2 |
 | 4 | `nameEn`/`descriptionEn` override the automatic translation | Pass | `events?lang=en` for TART |
-| 5 | Coupon row with an invalid code, discount or max uses is ignored | Pass (ignored: `COUPON_INVALID`); alert email **Pending (owner)** | API cases C04/C06 |
+| 5 | Coupon row with an invalid code, discount or max uses is ignored | Pass (ignored: `COUPON_INVALID`; owner-checked: the alert email lists the invalid sheet rows) | API cases C04/C06 |
 | — | A past event (started) is not listed (BR-E09); the two closed test events disappeared from the listing after their start time passed | Pass | listing |
 | — | A deleted event (TNEW) leaves the listing within about 6 minutes of the owner's delete (events cache up to 5 minutes) | Pass | live edit 1 restore |
 
 ### US-024 — Abuse metrics and alerts
 | AC | Case | Result | Evidence |
 |---|---|---|---|
-| 1 | Metrics row for the day: accepted, honeypot hits, throttled, failed coupon checks, MB uploaded, spam marked | Pending (owner) | Metrics tab |
+| 1 | Metrics row for the day: accepted, honeypot hits, throttled, failed coupon checks, MB uploaded, spam marked | Pass (owner-checked: counters filled, `spamMarked` at least 1, `honeypotHits` at least 1) | owner, Metrics tab |
 | 2 | Over a threshold: one alert email for the day. The burst runs last with `MAIL_REPLY_TO` on the owner's test address (runbook §2.6) and `LIMIT_UPLOADS_PER_DAY` lowered for the cap case, then restored | Pending: abuse burst |  |
-| 3 | Honeypot filled: normal-looking success, nothing stored, hit counted | Pass (response); count **Pending (owner)** | API case R14 |
+| 3 | Honeypot filled: normal-looking success, nothing stored, hit counted | Pass (response; owner-checked: the hit is counted in Metrics) | API case R14 |
 
 ### US-025 — Participant emails
 | AC | Case | Result | Evidence |
@@ -206,7 +206,7 @@ sections are identical in both, no horizontal scroll, no page errors.
 ### 3.6 HEIC and PNG substitute check (no iPhone available)
 A real HEIC (brand `heic`, HEVC, about 516 KB) and an iPhone-sized PNG (1170×2532) through the form in
 iPhone 13 emulation: both accepted, sent as `image/heic` and `image/png`, references returned.
-Stored file type, check result and emails: Pending (owner).
+Stored: the HEIC files in their original `.heic` format (the conversion fell back, FFR-014), the PNG converted to `.jpg` (owner-checked in Drive). Check result of the HEIC rows and emails: see US-022 AC7 and US-025.
 **Real-iPhone Safari picker/HEIC check deferred to a pre-release check (owner, no device available).**
 
 ## 4. Evidence index
@@ -225,3 +225,4 @@ Note: `form-es-1280-flagged-event-unpublished.jpg` and `form-es-1280-flagged-cou
 | 3 | `index.html` links `/favicon.svg`, which is not in `public/` (404 on every page load, also in production) | Observation, pre-existing | small ticket: add the favicon or remove the link |
 | 4 | Intermittent 30 s hangs on staging (§3.4) | Observation | keep watching; no ticket yet |
 | 5 | Staging script properties reached the 50-property UI limit (reported by Agent 1) | Observation | PR #44 (CMP-045) is the lasting fix |
+| 6 | Raw HEIC uploads are stored in their original `.heic` format (the server's JPEG conversion falls back): this is the first raw-HEIC test (the spike did not run one). US-021 AC1 allows the fallback, so it is not a Fail, but a payment photo taken with an iPhone camera is then not readable by the OCR check (needs manual review), while an iPhone screenshot (PNG) is converted and checked | AC wording is satisfied; user-impact observation | decide whether a ticket is needed: client-side conversion needs a library (TECH_STACK + ADR), or tell visitors to upload a screenshot; the real-iPhone picker may already convert to JPEG (deferred check) |
