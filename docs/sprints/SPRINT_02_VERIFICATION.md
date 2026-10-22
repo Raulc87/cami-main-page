@@ -34,7 +34,7 @@ Legend: **Pass**, **Fail**, **N/A** (cannot be exercised, with the reason), **Pe
 | AC | Case | Result | Evidence |
 |---|---|---|---|
 | 1 | Cards in start order with name, date, time (24 h `HH:mm`), description, price or "Gratis/Free", register button; ES and EN | Pass | `page-events-{es,en}-{1280,900,375}.jpg` |
-| 2 | Event without image shows the Lifetools logo; event with an image URL (TART) shows the art | Pass | `page-events-*` (logo), `page-events-art-{es-1280,en-375}.jpg` (art) |
+| 2 | Event without image shows the Lifetools logo; event with an image URL (TART) shows the art | Pass | `page-events-*` (logo), `page-events-art-{es,en}-1280.jpg` (art) |
 | 3 | Closed (registration closes 12 h before start) and sold-out events: button disabled, "Inscripciones cerradas" / "Agotado" (EN "Registration closed" / "Sold out") | Pass | cards of the closed event, the one-seat free event and the one-seat paid event |
 | 4 | EN site shows English name and description: automatic translation, and `nameEn`/`descriptionEn` override (TART shows the override) | Pass | `events?lang=en` listing, EN screenshots |
 | 5 | Backend down (requests aborted): no section, no ticker, page renders | Pass | scripted check |
@@ -211,9 +211,11 @@ Stored file type, check result and emails: Pending (owner).
 
 ## 4. Evidence index
 All files are in `docs/sprints/evidence/sprint-02/` (JPEG, masked, under 5 MB in total):
-`page-*` (layout and regression; `page-events-art-*` shows the event with an image), `form-*` (form states; the SINPE blocks show test values and registration references are masked), `mobile-iphone13-heic-*` (test values shown, reference masked),
+`page-*` (layout and regression; `page-events-art-*` shows the event with an image, in EN with the `nameEn`/`descriptionEn` override), `form-*` (form states; the SINPE blocks show test values and registration references are masked), `mobile-iphone13-heic-*` (test values shown, reference masked),
 `us005-ac2-featured-expanded-es.jpg`. Sheet, Drive and inbox screenshots from the owner are added
 here when received. 
+
+Note: `form-es-1280-flagged-event-unpublished.jpg` and `form-es-1280-flagged-coupon-changed.jpg` look the same on purpose: the visitor sees the same message whichever flag the backend sets (event closed/unpublished, or coupon changed); the difference is only in the sheet row.
 
 ## 5. Failures, observations and proposed tickets
 | # | Item | Class | Proposal |
