@@ -68,7 +68,9 @@ upload; if one is not, do not release:
 - [ ] Real-iPhone check on staging (owner, 2026-10-21: no device was available for CMP-033):
       with any iPhone, through the manual Pages test site (TECH_STACK §10; test SINPE values
       during the window), register with a Camera photo (Photo Library), the same photo from
-      Files, and a screenshot; confirm what is stored (`.jpg` or `.heic` + note) and the check
+      Files, and a screenshot, each with a **different** test email (one registration per
+      email per event, so a repeated email is refused as already registered before its file is
+      stored); confirm what is stored (`.jpg` or `.heic` + note) and the check
       result; then unpublish the site, restore the real SINPE values and delete the
       `STAGING_EVENTS_API_URL` secret.
 - [ ] Backend deploy to production through the approved deploy workflow (ADR-009), smoke

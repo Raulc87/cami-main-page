@@ -160,8 +160,10 @@ npm run preview   # serves dist/ locally
 - Manual site deploy with no site CI — a broken build can only be caught by the precheck.
 - Backend deploy token (ADR-009): the owner's `clasp` login token in GitHub environment secrets
   reaches every Apps Script project the owner can edit and the scopes granted at login; code
-  pushed with it runs as the owner (sends email, reads all of the owner's Drive). Mitigations
-  and revocation in ADR-009.
+  pushed with it runs as the owner (sends email, reads all of the owner's Drive). Both
+  environments hold a token for the same account, so a leaked staging secret can also change
+  production; the approval click guards against accidental deploys only. Mitigations and
+  revocation in ADR-009.
 - No tests — regressions rely on manual verification.
 
 ## 14. Upgrade / Scaling Path

@@ -82,6 +82,14 @@ Negative / risks (accepted by the owner):
   on GitHub; `main` protected (pull request required), since a merge now deploys staging;
   revoke the token at once if anything looks wrong (runbook), rotate it every 6 months or after
   a Google password change.
+- **The production approval protects against accidental deploys, not a stolen token.** Both
+  environments hold a login token for the same Google account, and that token can change any
+  project the account edits, production included. Whoever obtains the staging secret (e.g.
+  through code merged to `main` that runs in the staging job) can change production without the
+  approval click. Accepted by the owner with the token's reach (Decision); the defense is to keep
+  the secret from leaking (protected `main`, reviewed merges, the supply-chain measures below,
+  revocation). Revisit: a separate Google account that can edit only the staging project, so
+  the staging secret cannot reach production (Follow-up).
 - **Supply chain:** any code that runs in the deploy job could read the token. Mitigation
   (CMP-047): the deploy job installs only `@google/clasp` (pinned, with install scripts off or
   from its own lockfile), not the site's dev dependencies; the credentials file is written only
@@ -90,9 +98,14 @@ Negative / risks (accepted by the owner):
   before anything is pushed; the owner logs in again and replaces the secret.
 - Hand edits in the online editor are overwritten by the next deploy; nobody edits there.
 - Time-driven triggers run the newest pushed code as soon as it is pushed (they run Head).
-- If the smoke request fails, the new version is already live; roll back by selecting the
-  previous version in Deploy → Manage deployments (the web app), and revert the PR and redeploy
-  (time triggers run Head, so only a redeploy of the reverted code rolls them back).
+- If the smoke request fails, the new code is already in the project. The workflow puts the
+  web-app deployment back on the version it served before, but that does **not** roll back the
+  saved code (Head), which the two time triggers keep running (they can write the sheet, Drive
+  and send emails). So a failed smoke request is handled at once: revert the PR and let the
+  workflow redeploy the reverted code (staging runs on the merge; production needs a manual,
+  approved run); until then, if the faulty code could harm data, disable both triggers in the
+  project's Triggers page and re-enable them after the redeploy (runbook). Selecting a previous
+  version alone is never a sufficient rollback.
 - A change of `oauthScopes` in `appsscript.json` needs the owner to re-approve permissions
   before the backend works; the job summary says so.
 
@@ -104,4 +117,6 @@ Negative / risks (accepted by the owner):
   environments limited to `main`, with the owner as required reviewer on `production`; the three
   secrets; Actions workflow permissions read-only; a first `dry_run`; token revocation and
   rotation.
-- Revisit later: an own OAuth client with minimal scopes for the token.
+- Revisit later: an own OAuth client with minimal scopes for the token, and a separate Google
+  account (editor of the staging project only) for the staging secret, so a leaked staging
+  secret cannot reach production.
