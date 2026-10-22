@@ -83,7 +83,8 @@ they are not active paths.
 - Zero additional licensing cost — free tier first for any new tool (hosting and ad spend
   excepted, see PROJECT_SPEC NFR-003).
 - Static GoDaddy shared hosting, manual deploy; the events backend runs on Google Apps Script
-  (ADR-008), deployed by the owner.
+  (ADR-008), deployed from GitHub by a workflow; production runs need the owner's approval
+  (ADR-009).
 - Minimal stack — no new library without TECH_STACK update + ADR.
 - Bilingual EN/ES; fixed Spanish brand accents never translate.
 
