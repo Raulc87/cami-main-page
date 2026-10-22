@@ -13,12 +13,18 @@ before the PR is reported ready.
 
 | Item | Detail |
 |---|---|
-| Code under test | `main` after PR #29 (form), #28 (section and ticker) and the backend PRs; the staging scripts were re-pasted from PR #44 (CMP-045) during the run |
+| Code under test | Front end: `main` at `5f6cf9c` (PR #29 form, #28 section and ticker merged) at the start of the run; later merges into `main` during the run did not change application code. Backend: the staging deployment pasted by the owner from `main` with the backend PRs #33, #36, #38 and #39 (lock flush) included (the coordinator's go message of 2026-10-21 ~16:00Z). During the run the owner re-pasted the staging scripts from PR #44 (CMP-045), at about 00:15Z on 2026-10-22; see the table below |
 | Backend | Staging Apps Script deployment, staging spreadsheet and Drive folder (never production); the `/exec` URL is kept out of the repository |
 | Browser | Chromium (Playwright), `es-CR` and `en-US`, 1280 / 900 / 375 px; iPhone 13 emulation for the HEIC check; the site runs from the Vite dev server with `VITE_EVENTS_API_URL` pointing at staging, so every `events`, `coupon` and `register` call is a real browser `fetch` through the Apps Script redirect |
-| Test data | Synthetic images only; participant emails are plus-tags of the owner's Gmail (and Outlook) addresses and are not recorded here; references are not recorded here |
+| Test data | Synthetic images only; participant emails are plus-tags of the owner's Gmail (and Outlook) addresses and are not recorded here; registration references shown in screenshots are masked; the SINPE blocks in the form screenshots show test values (the pictures were taken with the `events` answer intercepted so that no real SINPE number or account name is in the repository) |
 | Rows, files, emails | Seen only by the owner; evidence screenshots are masked JPEGs in `docs/sprints/evidence/sprint-02/` (total under 5 MB) |
 | Not done | Real-iPhone Safari picker/HEIC check: **deferred to a pre-release check (owner, no device available)**. The substitute (a real HEIC file and an iPhone-style PNG through the form in a phone-sized viewport) is evidence for the client side only |
+
+Which results ran before and after the re-paste of PR #44 on staging (about 00:15Z, 2026-10-22):
+
+| Before the re-paste (backend #33/#36/#38/#39) | After the re-paste (backend incl. #44) |
+|---|---|
+| Form runs, live edits (a) and (b) of the form, the 27 API cases and the race (R18), the 15 + 4 email registrations, the HEIC/PNG substitute (first run, test values), CLS and regression captures | The HEIC re-run with the real values, the TNEW listing and removal, live edits 2 to 4 (coupon change, cancelled place, spam), the ticker/US-017 AC5/accessibility scripted checks (front-end only), the final evidence re-shoots |
 
 Legend: **Pass**, **Fail**, **N/A** (cannot be exercised, with the reason), **Pending (owner)**.
 
@@ -28,7 +34,7 @@ Legend: **Pass**, **Fail**, **N/A** (cannot be exercised, with the reason), **Pe
 | AC | Case | Result | Evidence |
 |---|---|---|---|
 | 1 | Cards in start order with name, date, time (24 h `HH:mm`), description, price or "Gratis/Free", register button; ES and EN | Pass | `page-events-{es,en}-{1280,900,375}.jpg` |
-| 2 | Event without image shows the Lifetools logo; event with an image URL (TART) shows the art | Pass | `page-events-*` (logo); art: see final re-shoot note in §4 |
+| 2 | Event without image shows the Lifetools logo; event with an image URL (TART) shows the art | Pass | `page-events-*` (logo), `page-events-art-{es-1280,en-375}.jpg` (art) |
 | 3 | Closed (registration closes 12 h before start) and sold-out events: button disabled, "Inscripciones cerradas" / "Agotado" (EN "Registration closed" / "Sold out") | Pass | cards of the closed event, the one-seat free event and the one-seat paid event |
 | 4 | EN site shows English name and description: automatic translation, and `nameEn`/`descriptionEn` override (TART shows the override) | Pass | `events?lang=en` listing, EN screenshots |
 | 5 | Backend down (requests aborted): no section, no ticker, page renders | Pass | scripted check |
@@ -69,7 +75,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 3 | Exhausted coupon, coupon already used by the email: matching message, full price stays | Pass | scripted check |
 | 4 | A registration marked `spam` frees the coupon use: a one-use coupon answered `COUPON_EXHAUSTED` for another email; after the owner set the registration that held it to `spam`, the next check answered 20% and ₡20 000 (no cache) | Pass | live edit 4 |
 | 5 | Coupon deactivated after apply, then a paid registration: stored with the discount, flagged `coupon changed`; the visitor sees the review message | Pass (visitor side); row **Pending (owner)** | `form-es-1280-flagged-coupon-changed.jpg` |
-| 6 | Many failed coupon checks: refusal "try again later" | Pending: abuse burst |  |
+| 6 | Many failed coupon checks: refusal "try again later" | Pending: abuse burst (run last, with `MAIL_REPLY_TO` set to the owner's test address so camila@ gets no test alert) |  |
 | 7 | No coupon list is sent to the browser | Pass | the `events` response carries no coupon data |
 | 8 | A coupon typed but not applied blocks Submit with "Aplica el cupón o borra el campo."; no request is sent | Pass | CMP-032 mock run and the reviewer's run |
 
@@ -92,7 +98,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 3 | Unreadable image: `unreadable`, review flag, email | Pending (owner) | `unreadEN` registrations |
 | 4 | Status stays `new`; temporary OCR Doc deleted | Pending (owner) | sheet and Drive |
 | 5 | Cami's sample screenshots in the spike | N/A here (done in CMP-024, `SPRINT_02_SPIKE.md`) |  |
-| 6 | OCR service refuses the call (rate limit) | N/A: cannot be provoked from the client |  |
+| 6 | OCR service refuses the call (rate limit): the row stays `pending`, no "not validated" email yet, the retry trigger writes the result and email later | Pass, shown live on staging in PR #39's Verification (two checks hit the per-user OCR limit and were finished by the trigger about 9 minutes later); not repeated here | PR #39 |
 | 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Pending (owner): depends on the HEIC result |  |
 
 ### US-023 — Cami manages events, capacity and coupons without a deploy
@@ -110,7 +116,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | AC | Case | Result | Evidence |
 |---|---|---|---|
 | 1 | Metrics row for the day: accepted, honeypot hits, throttled, failed coupon checks, MB uploaded, spam marked | Pending (owner) | Metrics tab |
-| 2 | Over a threshold: one alert email to camila@ for the day | Pending: abuse burst, run last |  |
+| 2 | Over a threshold: one alert email for the day. The burst runs last with `MAIL_REPLY_TO` on the owner's test address (runbook §2.6) and `LIMIT_UPLOADS_PER_DAY` lowered for the cap case, then restored | Pending: abuse burst |  |
 | 3 | Honeypot filled: normal-looking success, nothing stored, hit counted | Pass (response); count **Pending (owner)** | API case R14 |
 
 ### US-025 — Participant emails
@@ -118,7 +124,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 |---|---|---|---|
 | 1 | Confirmation (ES and EN) with event, date/time, amount, reference, reply-to camila@; Gmail and Outlook | Pending (owner) | inbox screenshots |
 | 2 | "Payment not validated" for `mismatch` and `unreadable` (ES and EN); Gmail and Outlook | Pending (owner) |  |
-| 3 | Email cannot be sent: row stays, `email failed`, review flag | N/A: cannot be provoked from the client |  |
+| 3 | Email cannot be sent: row stays, `email failed`, review flag | N/A on staging (cannot be provoked from the client); covered by the local tests in PR #39 | PR #39 |
 | 4 | Templates approved by Cami | N/A: release gate (BR-E11), not part of this verification |  |
 | 5 | "Registration received" for a stored-and-flagged registration (ES and EN); Gmail and Outlook | Pending (owner) |  |
 
@@ -132,14 +138,39 @@ Form-side runs on staging (CMP-032 pass and this run).
 ## 3. Integration checks
 
 ### 3.1 Contract §10 end-to-end list (API level, staging)
-27 of 27 cases pass: `events` shape (§7) and the `-06:00` instants; every validation rule with a valid
-and an invalid case (submissionId, eventCode, name length, email, WhatsApp, coupon format, file
-type, file over 5 MB, consent, lang, missing file for a paid event); `EVENT_NOT_FOUND`,
-`REGISTRATION_CLOSED` (coupon check, and a ₡0 registration on a closed free event),
-`COUPON_INVALID` (unknown, other-event, invalid sheet rows), `SOLD_OUT`, `ALREADY_REGISTERED`,
-honeypot fake success; the simultaneous-registration race. Codes not exercised: `RATE_LIMITED` and
-`UPLOAD_CAP_REACHED` (abuse burst, pending), `SERVER_ERROR` (seen as the busy-lock answer in the
-race and as a network failure, see §3.4).
+27 of 27 cases pass (run before the re-paste of PR #44). The requests are `events`, `coupon` and `register`
+posted as `text/plain` JSON from a script; "valid" cases use a distinct synthetic participant.
+| ID | Request | Expected | Result |
+|---|---|---|---|
+| C01 | `events` (es) | `data.sinpe` with number, accountName, isPlaceholder; each event with eventCode, name, description, date, time, startsAt (`-06:00`), registrationClosesAt, priceCrc, imageUrl, soldOut, registrationOpen | Pass |
+| C02 | coupon, unknown event code | `EVENT_NOT_FOUND` | Pass |
+| C03 | coupon on a closed event | `REGISTRATION_CLOSED` | Pass |
+| C04 | coupon, code too short | `VALIDATION_ERROR` couponCode `invalid_coupon_format` | Pass |
+| C05 | coupon, bad email | `VALIDATION_ERROR` email `invalid_email` | Pass |
+| C06 | coupon rows with discount 150 and max uses 0 | `COUPON_INVALID` (rows ignored) | Pass (2 cases) |
+| C07a | coupon whose `expiresOn` is today (Costa Rica) | valid, 10% | Pass |
+| C07b | coupon 15% on ₡12 345 | ₡10 493 (nearest colón) | Pass |
+| C08 | coupon of another event | `COUPON_INVALID` | Pass |
+| R01 | register, `submissionId` not a UUID | `VALIDATION_ERROR` submissionId `required` | Pass |
+| R02 | register, `eventCode` `x` | `VALIDATION_ERROR` eventCode `required` | Pass |
+| R03 | participantName 1 character | `VALIDATION_ERROR` participantName | Pass |
+| R04 | participantName 81 characters | `VALIDATION_ERROR` participantName | Pass |
+| R05 | email `bad` | `invalid_email` | Pass |
+| R06 | WhatsApp without `+` and country code | `invalid_phone` | Pass |
+| R07 | couponCode `ab` | `invalid_coupon_format` | Pass |
+| R08 | file that is not an image (JPEG name and type) | `invalid_file_type` | Pass |
+| R09 | image over 5 MB (about 7.3 MB of base64) | `file_too_large` | Pass |
+| R10 | consent false | `consent_required` | Pass |
+| R11 | lang `fr` | `VALIDATION_ERROR` lang `required` | Pass |
+| R12 | paid event without a file | `VALIDATION_ERROR` file `required` | Pass |
+| R13 | unknown event `NOPE1` | `EVENT_NOT_FOUND` | Pass |
+| R14 | honeypot `website` filled | `ok: true` with a fake reference, nothing stored | Pass |
+| R15 | unknown coupon code at register (with file) | `COUPON_INVALID` | Pass |
+| R16 | ₡0 registration on a closed free event | `REGISTRATION_CLOSED` | Pass |
+| R18 | two simultaneous ₡0 registrations for the last place | not both `ok` | Pass: one `ok`, one `SERVER_ERROR` (busy lock); a third request then got `SOLD_OUT` |
+
+The race ran against the backend with PR #39's lock flush (see §1). Codes not exercised: `RATE_LIMITED` and
+`UPLOAD_CAP_REACHED` (abuse burst, pending), `SERVER_ERROR` as a failure (seen only as the busy-lock answer and as a network failure, §3.4).
 
 ### 3.2 Real browser to staging (CORS and redirect path)
 Pass. Every call of the form run (events, coupon, register, with a 7 MB base64 body) went through
@@ -180,9 +211,9 @@ Stored file type, check result and emails: Pending (owner).
 
 ## 4. Evidence index
 All files are in `docs/sprints/evidence/sprint-02/` (JPEG, masked, under 5 MB in total):
-`page-*` (layout and regression), `form-*` (form states on staging), `mobile-iphone13-heic-*`,
+`page-*` (layout and regression; `page-events-art-*` shows the event with an image), `form-*` (form states; the SINPE blocks show test values and registration references are masked), `mobile-iphone13-heic-*` (test values shown, reference masked),
 `us005-ac2-featured-expanded-es.jpg`. Sheet, Drive and inbox screenshots from the owner are added
-here when received. A final re-shoot of the events section (with the art event) is added after the live edits.
+here when received. 
 
 ## 5. Failures, observations and proposed tickets
 | # | Item | Class | Proposal |
