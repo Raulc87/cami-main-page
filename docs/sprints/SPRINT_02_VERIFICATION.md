@@ -5,7 +5,10 @@ backend. Written by Implementation Agent 3 (CMP-033). A Fail is not fixed in thi
 classified (AC wording or defect) and a ticket is proposed. Story statuses are not changed here;
 the coordinator does that after the owner approves the evidence.
 
-**Status of this document: complete after the re-test, for the owner's review.** After the first review, the contract suite, the 640 px captures and the empty-events path were re-run, and the three owner-dependent checks (TNEW timing, `refund/cancelled` coupon release, ₡0 coupon branch) were run on staging v20 on 2026-10-22. Every line is now Pass, N/A with a reason, or the deferred real-iPhone check.
+**Status of this document: complete after the re-test, for the owner's review.** After the first review, the contract suite, the 640 px captures and the
+empty-events path were re-run, and the three owner-dependent checks (TNEW timing, `refund/cancelled` coupon
+release, ₡0 coupon branch) were run on staging v20 on 2026-10-22. Every line is now Pass, N/A with a reason,
+or the deferred real-iPhone check.
 
 ## 1. Method
 
@@ -13,7 +16,7 @@ the coordinator does that after the owner approves the evidence.
 |---|---|
 | Code under test | Front end: `main` at `5f6cf9c` (PR #29 form, #28 section and ticker merged) at the start of the run; later merges into `main` during the run did not change application code. Backend: the staging deployment pasted by the owner from `main` with the backend PRs #33, #36, #38 and #39 (lock flush) included (the coordinator's go message of 2026-10-21 ~16:00Z). During the run the owner re-pasted the staging scripts from PR #44 (CMP-045), at about 00:15Z on 2026-10-22; since 01:49Z on 2026-10-22 staging runs `main` at `88a88ae` as deployment version 20 (new workflow, smoke test passed); the API suite re-run, the 640 px and empty-events checks, and the follow-up tests ran against it; see the table below |
 | Backend | Staging Apps Script deployment, staging spreadsheet and Drive folder (never production); the `/exec` URL is kept out of the repository |
-| Browser | Chromium (Playwright), `es-CR` and `en-US`, 1280 / 900 / 375 px; iPhone 13 emulation for the HEIC check; the site runs from the Vite dev server with `VITE_EVENTS_API_URL` pointing at staging, so every `events`, `coupon` and `register` call is a real browser `fetch` through the Apps Script redirect |
+| Browser | Chromium (Playwright), `es-CR` and `en-US`, 1280 / 900 / 375 px, plus 640 px (the layout breakpoint) for the events page and the paid form; iPhone 13 emulation for the HEIC check; the site runs from the Vite dev server with `VITE_EVENTS_API_URL` pointing at staging, so every `events`, `coupon` and `register` call is a real browser `fetch` through the Apps Script redirect |
 | Test data | Synthetic images only; participant emails are plus-tags of the owner's Gmail (and Outlook) addresses and are not recorded here; registration references shown in screenshots are masked; the SINPE blocks in the form screenshots show test values, or are masked (the pictures were taken with the `events` answer intercepted so that no real SINPE number or account name is in the repository) |
 | Rows, files, emails | Seen only by the owner; evidence screenshots are masked JPEGs in `docs/sprints/evidence/sprint-02/` (total under 5 MB) |
 | Not done | Real-iPhone Safari picker/HEIC check: **deferred to a pre-release check (owner, no device available)**. The substitute (a real HEIC file and an iPhone-style PNG through the form in a phone-sized viewport) is evidence for the client side only |
@@ -73,7 +76,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 2 | Unknown, inactive, expired, other-event coupon: "Cupón no válido", full price stays | Pass | scripted check, API cases C06/C08 |
 | 3 | Exhausted coupon, coupon already used by the email: matching message, full price stays | Pass | scripted check |
 | 4 | A registration marked `spam` frees the coupon use (the `refund/cancelled` status is covered in the next row): a one-use coupon answered `COUPON_EXHAUSTED` for another email; after the owner set the registration that held it to `spam`, the next check answered 20% and ₡20 000 (no cache) | Pass | live edit 4 |
-| 4 | A registration marked `refund/cancelled` frees the coupon use | Pass: ONEUSE001 (one use, held by registration `TPAID-261022-VTJY`) answered `COUPON_EXHAUSTED` for another email; after the owner set that registration (TPAID tab) to `refund/cancelled`, the next check by another email answered 20% and ₡20 000 (staging v20, 2026-10-22) | scripted check |
+| 4 | A registration marked `refund/cancelled` frees the coupon use | Pass: ONEUSE001 (one use, held by a registration of the TPAID event, reference masked) answered `COUPON_EXHAUSTED` for another email; after the owner set that registration (TPAID tab) to `refund/cancelled`, the next check by another email answered 20% and ₡20 000 (staging v20, 2026-10-22) | scripted check |
 | 5 | Paid branch: coupon deactivated after apply, then a paid registration: stored with the discount, flagged `coupon changed`; the visitor sees the review message | Pass (visitor side; row owner-checked: `coupon changed`, coupon PROMO10AB at 10%, ₡22 500) | `form-es-1280-flagged-coupon-changed.jpg` |
 | 5 | ₡0 branch: a registration whose 100% coupon is no longer valid at submit is refused, and a one-use 100% coupon used once then again answers `COUPON_EXHAUSTED` | Pass (staging v20, 2026-10-22): FREE100OFF (inactive): coupon check and a ₡0 `register` both `COUPON_INVALID`, nothing stored; FREE100ONE (100%, 1 use): check 100% and ₡0, first ₡0 `register` `ok` (no file, not flagged), second with another email `COUPON_EXHAUSTED`. The owner deleted and re-added the FREE100ONE row by mistake during the TNEW repeat; a later check still answered `COUPON_EXHAUSTED` (uses are counted from the registration row) | scripted check |
 | 6 | Many failed coupon checks: refusal "try again later" | Pass: after 10 failed checks in a minute the next checks, including a valid coupon, got `RATE_LIMITED` until the minute ended; the next minute the valid coupon worked again (§3.8) | burst run |
@@ -116,7 +119,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 ### US-024 — Abuse metrics and alerts
 | AC | Case | Result | Evidence |
 |---|---|---|---|
-| 1 | Metrics row for the day: accepted, honeypot hits, throttled, failed coupon checks, MB uploaded, spam marked | Pass for the row's fields. **Defect found in the same run: the `throttled` counter undercounts under parallel requests** (23 against 30 `RATE_LIMITED` answers; proposed ticket in §5, item 7). (owner-checked, Metrics row of 2026-10-21 after the burst: accepted 39, honeypotHits 12, throttled 23, couponFailures 39, uploadedMb 1.3, spamMarked 1). The `throttled` value is lower than the 30 the burst should have produced: see observation 7 in §5 | owner, Metrics tab |
+| 1 | Metrics row for the day: accepted, honeypot hits, throttled, failed coupon checks, MB uploaded, spam marked | Pass for the row's fields. **Defect found in the same run: the `throttled` counter undercounts under parallel requests** (23 recorded against 30 `RATE_LIMITED` answers; proposed ticket in §5, observation 7). Owner-checked, Metrics row of 2026-10-21 after the burst: accepted 39, honeypotHits 12, throttled 23, couponFailures 39, uploadedMb 1.3, spamMarked 1 | owner, Metrics tab |
 | 2 | Over a threshold: one alert email for the day (at most one per Costa Rica day; a finding made after the day's email waits for the next day's email, FFR-029). Thresholds crossed with `MAIL_REPLY_TO` on the owner's test address and `LIMIT_UPLOADS_PER_DAY` lowered to 2 (§3.8) | Pass (owner-checked: the alert email, sent after midnight Costa Rica time as designed, lists the burst findings: honeypot 12 (limit 10), throttled requests 23 (limit 20), daily upload cap reached, together with the invalid sheet rows) | burst run, owner, inbox |
 | 3 | Honeypot filled: normal-looking success, nothing stored, hit counted | Pass (response; owner-checked: the hit is counted in Metrics); 11 more honeypot posts all answered `ok` (§3.8) | API case R14, burst run |
 
@@ -199,8 +202,8 @@ duplicate), and one `events` request timed out at 30 s with no bytes and then an
 Likely cause: Apps Script cold start or load. Not reproduced afterwards.
 
 ### 3.5 Regression of the existing sections
-Pass. Full-page captures at 1280 / 900 / 640 / 375 px in ES and EN, with and without events (640 px added after the first review, which is the layout breakpoint): the existing
-sections are identical in both, no horizontal scroll, no page errors.
+Pass. Full-page captures at 1280 / 900 / 375 px in ES and EN, with and without events, and at 640 px (the layout breakpoint, added after the first review) with events in ES and EN: the existing
+sections are identical in both, no horizontal scroll, no page errors. At 640 px (and 641 px) only the page with events was checked, no horizontal scroll; the page without events was not run at 640 px.
 `page-{events,noevents}-{es,en}-{1280,900,375}.jpg`, `page-events-{es,en}-640.jpg`, and the form at 640 px `form-es-640-paid.jpg` (test SINPE values).
 
 ### 3.6 HEIC and PNG substitute check (no iPhone available)
