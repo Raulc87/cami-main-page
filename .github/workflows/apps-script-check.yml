@@ -1,0 +1,41 @@
+# Syntax check of the events backend on pull requests (CMP-047). No secrets, read-only token.
+name: Apps Script check
+
+on:
+  pull_request:
+    paths:
+      - 'apps-script/**'
+      - '.github/scripts/**'
+      - '.github/workflows/deploy-apps-script.yml'
+      - '.github/workflows/apps-script-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+
+      - name: Syntax of every script file
+        run: |
+          status=0
+          for f in apps-script/*.js .github/scripts/*.mjs; do
+            node --check "$f" || status=1
+          done
+          exit $status
+
+      - name: appsscript.json is valid JSON and keeps the web app settings
+        run: |
+          node -e '
+            const m = JSON.parse(require("fs").readFileSync("apps-script/appsscript.json", "utf8"));
+            if (m.runtimeVersion !== "V8") throw new Error("runtimeVersion must be V8");
+            if (!m.webapp || m.webapp.executeAs !== "USER_DEPLOYING" || m.webapp.access !== "ANYONE_ANONYMOUS") throw new Error("webapp settings changed");
+          '

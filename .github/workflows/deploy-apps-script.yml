@@ -1,0 +1,132 @@
+# Deploys the events backend (apps-script/) to Google Apps Script with clasp (CMP-047, ADR-009).
+#
+# - staging: automatically after a push to main that changes apps-script/**, or by hand.
+# - production: by hand only, from main only; the job waits for the owner's approval on the
+#   `production` GitHub environment.
+#
+# Secrets are environment secrets (never repository secrets), the same three names in each
+# environment: CLASP_CREDENTIALS (the contents of the clasp login file), APPS_SCRIPT_ID (script ID
+# of that environment's project) and APPS_SCRIPT_DEPLOYMENT_ID (the existing web-app deployment
+# whose /exec URL the site uses). No pull_request trigger can reach them. Nothing here prints a
+# secret: the credential files are written with owner-only permissions, never printed, and removed
+# at the end.
+#
+# Runbook: docs/process/events-backend-runbook.md, section 5.1.
+name: Deploy Apps Script
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps-script/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Where to deploy
+        type: choice
+        options: [staging, production]
+        default: staging
+      dry_run:
+        description: Dry run (check the target and list the files, push nothing)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-apps-script-${{ github.event_name == 'push' && 'staging' || inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Only the main branch may deploy (the environments also allow only main).
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'push' && 'staging' || inputs.environment }}
+    env:
+      TARGET_ENV: ${{ github.event_name == 'push' && 'staging' || inputs.environment }}
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+    steps:
+      - name: Check the environment secrets are set
+        env:
+          CLASP_CREDENTIALS: ${{ secrets.CLASP_CREDENTIALS }}
+          APPS_SCRIPT_ID: ${{ secrets.APPS_SCRIPT_ID }}
+          APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.APPS_SCRIPT_DEPLOYMENT_ID }}
+        run: |
+          missing=""
+          [ -n "$CLASP_CREDENTIALS" ] || missing="$missing CLASP_CREDENTIALS"
+          [ -n "$APPS_SCRIPT_ID" ] || missing="$missing APPS_SCRIPT_ID"
+          [ -n "$APPS_SCRIPT_DEPLOYMENT_ID" ] || missing="$missing APPS_SCRIPT_DEPLOYMENT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing in the $TARGET_ENV environment:$missing"
+            exit 1
+          fi
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+          cache: npm
+
+      # Locked install; no install scripts (clasp needs none).
+      - run: npm ci --ignore-scripts
+
+      - name: Write the clasp files (owner-only permissions, never printed)
+        env:
+          CLASP_CREDENTIALS: ${{ secrets.CLASP_CREDENTIALS }}
+          APPS_SCRIPT_ID: ${{ secrets.APPS_SCRIPT_ID }}
+        run: |
+          umask 077
+          printf '%s' "$CLASP_CREDENTIALS" > "$RUNNER_TEMP/.clasprc.json"
+          printf '{"scriptId":"%s","rootDir":"apps-script"}\n' "$APPS_SCRIPT_ID" > .clasp.json
+          echo "clasp_config_auth=$RUNNER_TEMP/.clasprc.json" >> "$GITHUB_ENV"
+
+      - name: Check the target project
+        env:
+          CLASP_AUTH_FILE: ${{ runner.temp }}/.clasprc.json
+          APPS_SCRIPT_ID: ${{ secrets.APPS_SCRIPT_ID }}
+          EXPECTED_ENV: ${{ env.TARGET_ENV }}
+        run: node .github/scripts/apps-script-target.mjs
+
+      - name: Note a change of permissions (appsscript.json scopes)
+        run: |
+          node - <<'NODE' >> "$GITHUB_STEP_SUMMARY"
+          const { execSync } = require('node:child_process');
+          const { readFileSync } = require('node:fs');
+          const scopes = (text) => { try { return JSON.parse(text).oauthScopes || []; } catch { return null; } };
+          const now = scopes(readFileSync('apps-script/appsscript.json', 'utf8'));
+          let before = null;
+          try { before = scopes(execSync('git show HEAD~1:apps-script/appsscript.json', { encoding: 'utf8' })); } catch {}
+          if (now && before && JSON.stringify([...now].sort()) !== JSON.stringify([...before].sort())) {
+            console.log('## Permissions changed');
+            console.log('The `oauthScopes` in `appsscript.json` changed in this commit. **The owner must approve the new permissions** (open the project in the Apps Script editor and run any function once, then allow) before the web app and the triggers work again.');
+          }
+          NODE
+
+      - name: Files that will be pushed
+        run: npx clasp status
+
+      - name: Push the files
+        if: ${{ env.DRY_RUN != 'true' }}
+        run: npx clasp push --force
+
+      - name: Deploy to the existing deployment (the /exec URL stays)
+        if: ${{ env.DRY_RUN != 'true' }}
+        env:
+          APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.APPS_SCRIPT_DEPLOYMENT_ID }}
+        run: npx clasp deploy --deploymentId "$APPS_SCRIPT_DEPLOYMENT_ID" --description "${GITHUB_SHA::7} run ${GITHUB_RUN_NUMBER}"
+
+      - name: Smoke request
+        if: ${{ env.DRY_RUN != 'true' }}
+        env:
+          APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.APPS_SCRIPT_DEPLOYMENT_ID }}
+        run: node .github/scripts/apps-script-smoke.mjs
+
+      - name: Remove the clasp files
+        if: always()
+        run: rm -f "$RUNNER_TEMP/.clasprc.json" .clasp.json
