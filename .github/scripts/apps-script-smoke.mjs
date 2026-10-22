@@ -1,7 +1,8 @@
 // Smoke request after a deploy (CMP-047). Two requests that write nothing to the sheet, Drive or
 // email: the events list must answer ok, and a registration with an invalid email must be
-// refused with VALIDATION_ERROR. (The second one adds one to the request counters, which is
-// negligible.) It builds the /exec URL from the deployment ID and prints only the answer codes.
+// refused with VALIDATION_ERROR (or RATE_LIMITED when the registration limit is hit at that moment).
+// The second one adds one request to the register counters. The /exec URL is built from the
+// deployment ID and only the answer codes are printed.
 //
 // Environment: APPS_SCRIPT_DEPLOYMENT_ID.
 const id = process.env.APPS_SCRIPT_DEPLOYMENT_ID;
@@ -36,7 +37,8 @@ const checks = [
         participantName: 'Smoke', email: 'not-an-email', lang: 'es', consent: true, website: ''
       })
     })),
-    ok: (r) => r && r.ok === false && r.error && r.error.code === 'VALIDATION_ERROR'
+    // RATE_LIMITED also proves the register path runs (the throttle answers before the validation).
+    ok: (r) => r && r.ok === false && r.error && (r.error.code === 'VALIDATION_ERROR' || r.error.code === 'RATE_LIMITED')
   }
 ];
 

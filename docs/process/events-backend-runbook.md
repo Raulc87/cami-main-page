@@ -271,18 +271,26 @@ deploy, so do not edit there.
 
 **What the workflow does** (`.github/workflows/deploy-apps-script.yml`)
 1. Reads the three secrets of the environment (below). Nothing prints them.
-2. Asks Google for the project's title and stops unless it contains `staging` or `production`
-   as appropriate (guards against swapped secrets). It prints the title. An expired or revoked
-   token stops here, before anything is pushed.
+2. Asks Google for the project's title and stops unless it contains `staging` (or `production`)
+   and not the other word (guards against swapped secrets), so name the projects like
+   `cami-events-staging` and `cami-events-production`. It prints the title. An expired or revoked
+   token stops here, before anything is pushed. It also notes which version the deployment serves
+   now.
 3. `clasp push` of the folder, then `clasp deploy` onto the existing deployment ID.
 4. Smoke request on the `/exec` URL: the events list must answer ok, and a registration with an
-   invalid email must be refused with `VALIDATION_ERROR`. Neither writes to the sheet, Drive or
-   email; the second adds one to the request counters, which is negligible, also in production.
-   If a smoke check fails the new version is **already live**: go to section 6 (previous version).
-5. If the permissions (`oauthScopes` in `appsscript.json`) changed in the commit, the job summary
-   says so: the owner must approve the new permissions (open the project, run any function once,
-   allow) before the web app and the triggers work again.
-A `dry_run` option (manual run) does the checks and lists the files, and pushes nothing.
+   invalid email must be refused with `VALIDATION_ERROR` (`RATE_LIMITED` is also accepted when the
+   registration limit is hit at that moment). Neither writes to the sheet, Drive or email; the
+   second adds one request to the register counters, also in production.
+   If the smoke request fails, the deployment is put back on the version it served before and the
+   job still ends red. The saved code (which the time triggers run) stays as pushed: revert the
+   change in the repository and deploy again.
+5. If the permissions (`oauthScopes` in `appsscript.json`) differ from the project's, the job
+   summary says so: the owner must approve the new permissions (open the project, run any
+   function once, allow) before the web app and the triggers work again.
+A `dry_run` option (manual run) does the checks (it still needs the real secrets: it logs in and
+reads the project) and lists the files, and pushes nothing. A change to `apps-script/`, to the
+scripts under `.github/scripts/`, to the workflow or to `package-lock.json` on `main` deploys
+staging.
 
 **One-time setup (owner, plain words)**
 1. Turn on the **Google Apps Script API** for the Workspace account that owns the projects:

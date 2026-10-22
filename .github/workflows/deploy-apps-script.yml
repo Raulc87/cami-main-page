@@ -19,6 +19,9 @@ on:
     branches: [main]
     paths:
       - 'apps-script/**'
+      - '.github/scripts/**'
+      - '.github/workflows/deploy-apps-script.yml'
+      - 'package-lock.json'
   workflow_dispatch:
     inputs:
       environment:
@@ -83,30 +86,17 @@ jobs:
         run: |
           umask 077
           printf '%s' "$CLASP_CREDENTIALS" > "$RUNNER_TEMP/.clasprc.json"
-          printf '{"scriptId":"%s","rootDir":"apps-script"}\n' "$APPS_SCRIPT_ID" > .clasp.json
+          node -e 'require("fs").writeFileSync(".clasp.json", JSON.stringify({ scriptId: process.env.APPS_SCRIPT_ID.trim(), rootDir: "apps-script" }))'
           echo "clasp_config_auth=$RUNNER_TEMP/.clasprc.json" >> "$GITHUB_ENV"
 
-      - name: Check the target project
+      - name: Check the target project and note the version served now
+        id: target
         env:
           CLASP_AUTH_FILE: ${{ runner.temp }}/.clasprc.json
           APPS_SCRIPT_ID: ${{ secrets.APPS_SCRIPT_ID }}
+          APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.APPS_SCRIPT_DEPLOYMENT_ID }}
           EXPECTED_ENV: ${{ env.TARGET_ENV }}
         run: node .github/scripts/apps-script-target.mjs
-
-      - name: Note a change of permissions (appsscript.json scopes)
-        run: |
-          node - <<'NODE' >> "$GITHUB_STEP_SUMMARY"
-          const { execSync } = require('node:child_process');
-          const { readFileSync } = require('node:fs');
-          const scopes = (text) => { try { return JSON.parse(text).oauthScopes || []; } catch { return null; } };
-          const now = scopes(readFileSync('apps-script/appsscript.json', 'utf8'));
-          let before = null;
-          try { before = scopes(execSync('git show HEAD~1:apps-script/appsscript.json', { encoding: 'utf8' })); } catch {}
-          if (now && before && JSON.stringify([...now].sort()) !== JSON.stringify([...before].sort())) {
-            console.log('## Permissions changed');
-            console.log('The `oauthScopes` in `appsscript.json` changed in this commit. **The owner must approve the new permissions** (open the project in the Apps Script editor and run any function once, then allow) before the web app and the triggers work again.');
-          }
-          NODE
 
       - name: Files that will be pushed
         run: npx clasp status
@@ -122,10 +112,25 @@ jobs:
         run: npx clasp deploy --deploymentId "$APPS_SCRIPT_DEPLOYMENT_ID" --description "${GITHUB_SHA::7} run ${GITHUB_RUN_NUMBER}"
 
       - name: Smoke request
+        id: smoke
         if: ${{ env.DRY_RUN != 'true' }}
         env:
           APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.APPS_SCRIPT_DEPLOYMENT_ID }}
         run: node .github/scripts/apps-script-smoke.mjs
+
+      # The new version is live as soon as it is deployed. If the smoke request failed, serve the
+      # version that was live before (the code in the project, which time triggers run, stays as
+      # pushed until the change is reverted in the repo).
+      - name: Put the previous version back after a failed smoke request
+        if: ${{ failure() && steps.smoke.outcome == 'failure' && steps.target.outputs.previous_version != '' }}
+        env:
+          APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.APPS_SCRIPT_DEPLOYMENT_ID }}
+          PREVIOUS_VERSION: ${{ steps.target.outputs.previous_version }}
+        run: |
+          npx clasp deploy --deploymentId "$APPS_SCRIPT_DEPLOYMENT_ID" --versionNumber "$PREVIOUS_VERSION" --description "rollback after run ${GITHUB_RUN_NUMBER}"
+          echo "## Rolled back" >> "$GITHUB_STEP_SUMMARY"
+          echo "The smoke request failed, so the deployment serves version $PREVIOUS_VERSION again. Revert the change in the repository before the next deploy (the saved code, which time triggers run, is still the failed one)." >> "$GITHUB_STEP_SUMMARY"
+          node .github/scripts/apps-script-smoke.mjs || true
 
       - name: Remove the clasp files
         if: always()

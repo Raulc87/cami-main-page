@@ -1,58 +1,59 @@
 // Checks the Apps Script project the deploy is about to change (CMP-047).
 //
-// Reads the clasp login file and the script ID from the environment, asks Google for the
-// project's title and stops unless the title contains the environment name (a guard against
-// swapped secrets). Prints only the title and the environment, never a token or an ID.
+// 1. Asks Google for the project's title and stops unless it contains the environment name and
+//    not the other one (a guard against swapped secrets). Prints only the title.
+// 2. Records the version the deployment serves now (output `previous_version`), so a failed smoke
+//    request can put it back.
+// 3. Compares the permissions (`oauthScopes`) of the project as it is now with the repo's
+//    appsscript.json, and writes a note to the job summary when they differ.
 //
-// Environment: CLASP_AUTH_FILE (path of the login file), APPS_SCRIPT_ID, EXPECTED_ENV
-// ("staging" or "production").
-import { readFileSync } from 'node:fs';
-
-function stop(message) {
-  console.error('::error::' + message);
-  process.exit(1);
-}
+// Environment: CLASP_AUTH_FILE, APPS_SCRIPT_ID, APPS_SCRIPT_DEPLOYMENT_ID, EXPECTED_ENV
+// ("staging" or "production"); GITHUB_OUTPUT and GITHUB_STEP_SUMMARY when run by Actions.
+import { appendFileSync, readFileSync } from 'node:fs';
+import { accessToken, scriptApi, stop } from './apps-script-api.mjs';
 
 const authFile = process.env.CLASP_AUTH_FILE;
-const scriptId = process.env.APPS_SCRIPT_ID;
+const scriptId = (process.env.APPS_SCRIPT_ID || '').trim();
+const deploymentId = (process.env.APPS_SCRIPT_DEPLOYMENT_ID || '').trim();
 const expected = (process.env.EXPECTED_ENV || '').toLowerCase();
 if (!authFile || !scriptId || !expected) stop('Missing CLASP_AUTH_FILE, APPS_SCRIPT_ID or EXPECTED_ENV.');
+const other = expected === 'staging' ? 'production' : 'staging';
 
-let credential;
-try {
-  const store = JSON.parse(readFileSync(authFile, 'utf8'));
-  credential = store.tokens && store.tokens.default;
-} catch {
-  stop('CLASP_CREDENTIALS is not valid JSON. Paste the whole contents of the clasp login file.');
+const token = await accessToken(authFile);
+const project = await scriptApi(token, 'projects/' + encodeURIComponent(scriptId));
+if (project.__status) {
+  stop('Google did not return the project (HTTP ' + project.__status + '). Check APPS_SCRIPT_ID and that the Apps Script API is on for the login account.');
 }
-if (!credential || !credential.refresh_token || !credential.client_id || !credential.client_secret) {
-  stop('CLASP_CREDENTIALS has no usable login. Run "npx clasp login" again and replace the secret.');
-}
-
-// A fresh access token from the refresh token (the stored access token is usually expired).
-const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  body: new URLSearchParams({
-    client_id: credential.client_id,
-    client_secret: credential.client_secret,
-    refresh_token: credential.refresh_token,
-    grant_type: 'refresh_token'
-  })
-});
-if (!tokenResponse.ok) {
-  stop('Google rejected the login token (revoked or expired). Run "npx clasp login" and replace CLASP_CREDENTIALS in this environment.');
-}
-const { access_token: accessToken } = await tokenResponse.json();
-
-const projectResponse = await fetch('https://script.googleapis.com/v1/projects/' + encodeURIComponent(scriptId), {
-  headers: { Authorization: 'Bearer ' + accessToken }
-});
-if (!projectResponse.ok) {
-  stop('Google did not return the project (HTTP ' + projectResponse.status + '). Check APPS_SCRIPT_ID and that the Apps Script API is on for the login account.');
-}
-const { title } = await projectResponse.json();
-if (!title || !title.toLowerCase().includes(expected)) {
-  stop('The project title does not contain "' + expected + '": the secrets may belong to another environment. Nothing was pushed.');
+const title = String(project.title || '');
+if (!title.toLowerCase().includes(expected) || title.toLowerCase().includes(other)) {
+  stop('The project title must contain "' + expected + '" and not "' + other + '": the secrets may belong to another environment. Nothing was pushed.');
 }
 console.log('Target project: ' + title + ' (environment ' + expected + ')');
+
+// The version the deployment serves now.
+let previous = '';
+if (deploymentId) {
+  const deployment = await scriptApi(token, 'projects/' + encodeURIComponent(scriptId) + '/deployments/' + encodeURIComponent(deploymentId));
+  const version = deployment.deploymentConfig && deployment.deploymentConfig.versionNumber;
+  if (version) previous = String(version);
+}
+console.log(previous ? 'Version served now: ' + previous : '::warning::Could not read the version served now: a failed smoke request cannot be rolled back automatically.');
+if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, 'previous_version=' + previous + '\n');
+
+// Permissions: project as it is now against the repo.
+try {
+  const content = await scriptApi(token, 'projects/' + encodeURIComponent(scriptId) + '/content');
+  const manifest = (content.files || []).find((f) => f.name === 'appsscript');
+  const remote = manifest ? (JSON.parse(manifest.source).oauthScopes || []) : null;
+  const local = JSON.parse(readFileSync('apps-script/appsscript.json', 'utf8')).oauthScopes || [];
+  if (remote && JSON.stringify([...remote].sort()) !== JSON.stringify([...local].sort())) {
+    const added = local.filter((s) => !remote.includes(s));
+    const note = '## Permissions change\n\nThe `oauthScopes` of `appsscript.json` differ from the project now' +
+      (added.length ? ' (new: ' + added.map((s) => '`' + s.replace('https://www.googleapis.com/auth/', '') + '`').join(', ') + ')' : '') +
+      '. **The owner must approve the new permissions** (open the project in the Apps Script editor, run any function once, allow) before the web app and the triggers work again.\n';
+    console.log('::warning::Permissions change: the owner must approve the new permissions after this deploy.');
+    if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, note);
+  }
+} catch {
+  console.log('::warning::Could not compare the permissions with the project.');
+}
