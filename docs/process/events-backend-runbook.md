@@ -47,7 +47,7 @@ Do this once for staging, and again for production when the release gates pass
 Format the `eventCode` column of `Events` and the `eventCode` and `couponCode` columns of
 `Coupons` as plain text (select the column, Format → Number → Plain text), so that a code such as
 `2026-11` or `1E5` stays text and is not turned into a date or a number. Event codes cannot be
-`EVENTS`, `COUPONS` or `METRICS` (the names of system tabs): such a row is ignored and listed in
+`EVENTS`, `COUPONS`, `METRICS` or `TRANSLATIONS` (the names of system tabs): such a row is ignored and listed in
 the alert email.
 Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a time shown as
 `6:30 PM` is treated as invalid and the event is not shown (it is listed in the alert email).
@@ -60,42 +60,20 @@ Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a t
    do not control; they go only into script properties (2.4).
 
 ### 2.2 Create the Apps Script project
-Pick one of the two paths. The project is a **standalone** script (script.google.com → New
-project); it reaches the spreadsheet through `SPREADSHEET_ID`, so the same code works in both
-environments (owner decision 2026-10-20, recorded in ADR-008).
-
-**Path A — paste in the editor (no tooling)**
+The project is a **standalone** script; it reaches the spreadsheet through `SPREADSHEET_ID`, so the
+same code works in both environments (owner decision 2026-10-20, ADR-008). The code is never typed
+or pasted into the editor: it is uploaded by `clasp`, first by hand from your computer (below), then
+by the GitHub workflow (section 5.1). Create one project per environment.
 1. Open <https://script.google.com> signed in as the Workspace account → **New project**, name it
-   per section 1.
-2. Replace the default `Code.gs` content with the repo files from `apps-script/`: one editor
-   file per repo file (same names, `.gs` for `.js`).
-3. **Project Settings** (gear) → tick **Show "appsscript.json" manifest file in editor**, then
-   paste `apps-script/appsscript.json` into it.
-
-**Path B — `clasp` (recommended once you push more than twice)**
-1. One time per computer: `npm install -g @google/clasp` (note the version with
-   `clasp --version` in §10 at the first deploy: command names differ between 2.x and 3.x),
-   then `clasp login` (signed in as the Workspace account).
-2. Turn on the Apps Script API for that account: <https://script.google.com/home/usersettings>
-   → **Google Apps Script API** → On.
-3. Create the project in an **empty** scratch directory outside the repo, never with `rootDir`
-   pointing at `apps-script/`: `clasp create` creates a default project and pulls its default
-   files into the directory, which would overwrite the repo's `appsscript.json`.
-   `mkdir ~/cami-events-staging && cd ~/cami-events-staging`
-   `clasp create --type standalone --title "cami-events-staging"`
-   This writes `.clasp.json` (contains the script ID) and the default files; delete the default
-   files and keep only `.clasp.json`.
-4. `clasp` needs `rootDir` inside the directory that holds `.clasp.json`, so the file goes at the
-   **repo root** (the `.gitignore` entry comes with CMP-024, as the coordinator
-   assigned; until it merges do not `git add` it). Copy `.clasp.json`
-   there and add
-   `"rootDir": "apps-script"`. Run `git status` to confirm.
-5. Push the code from the repo root: `clasp push` (accept the manifest overwrite prompt the
-   first time).
-
-Keep one `.clasp.json` per environment outside the repo (for example
-`~/cami-events-staging/.clasp.json`, with `rootDir` added) and copy the one you need to the repo
-root before each `clasp` command. Never `git add` or commit `.clasp.json`.
+   per section 1 (`cami-events-staging` / `cami-events-production`: the workflow checks the name).
+2. **Project Settings** (gear) → copy the **Script ID** (kept private, never in the repo).
+3. Do the one-time setup of section 5.1 steps 1 and 2 (Apps Script API on, `clasp login`).
+4. First upload, once per environment, from the repo folder:
+   `cp .clasp.example.json .clasp.json`, put the script ID in `.clasp.json` (never commit it; it is
+   in `.gitignore`), then `.github/clasp/node_modules/.bin/clasp push --force`. This replaces the
+   default file of the new project with the files of `apps-script/`, including the manifest.
+5. Create the first web-app deployment by hand (section 3), then add the environment's secrets
+   (section 5.1). From then on the workflow uploads and deploys.
 
 ### 2.3 Enable the Advanced Drive Service (OCR)
 Required by the payment check (US-022).
@@ -189,9 +167,12 @@ After bumping `EVENTS_CACHE_VERSION` in `Events.js`, deploy a New version right 
 the trigger fills the new keys at once while the deployed version still reads the old ones.
 Triggers run the **saved** code (Head), not the deployed version: after changing `Events.js`,
 saving is enough for the trigger, while visitors still need a **New version** (section 5).
-The automatic English translations are kept in script properties named `TR_<hash>` (one per
-changed text). They are not pruned; if the properties page ever fills up, they can all be deleted
-and are rebuilt on demand.
+The automatic English translations are kept in the `Translations` tab (created by the script;
+columns `hash` and `text`, one row per translated text). The 5-minute run deletes the rows no
+published event uses any more (the translation of a draft event is dropped on each run and made again when it is published), so the tab stays as small as the event list. To change a
+translation by hand, fill the `nameEn`/`descriptionEn` columns of the event instead (they win), or
+delete its row from `Translations` to have it translated again. Earlier versions kept them as
+`TR_<hash>` script properties; see "Script properties page is read-only" below.
 Quota: about 290 runs a day of 5 to 10 s each, well inside the Workspace limits.
 
 ### 2.7 Pending payment checks trigger
@@ -213,6 +194,19 @@ with reply-to `MAIL_REPLY_TO`; while testing, set `MAIL_REPLY_TO` to your own ad
 registrations with your own email address, so that no real participant is written to.
 Triggers run the saved code (Head); visitors need a **New version** (section 5).
 
+### 2.8 Script properties page is read-only (more than 50 properties)
+The Apps Script settings page lets you edit script properties only while there are 50 or fewer.
+The script itself keeps about 30 (the settings in 2.4 plus the cache copy, alert state and the
+counters of today and yesterday), so it normally stays well below. If the page ever says the
+properties are read-only:
+1. In the editor run `showPropertyUsage`: the log shows how many properties exist and which kinds
+   (names only, no values).
+2. If many are `TR_<hash>` (left by an earlier version), run `deleteTranslationProperties`. The
+   translations now live in the `Translations` tab and are rebuilt by themselves.
+   If a tab named `Translations` holds anything but the `hash` and `text` columns, the script leaves it alone and translates without storing (one translation call per text on every 5-minute run): rename that tab.
+3. Open the settings page again. Do this in each environment, and before editing `SINPE_*` or
+   `MAIL_REPLY_TO` when the page is read-only.
+
 ## 3. Deploy as a web app (first time)
 1. Editor → **Deploy** → **New deployment** → gear → **Web app**.
 2. Description: the version note (for example `staging – skeleton`).
@@ -223,7 +217,8 @@ Triggers run the saved code (Head); visitors need a **New version** (section 5).
 5. **Deploy**. Copy the **Web app URL** (ends in `/exec`). This is the value of
    `VITE_EVENTS_API_URL` for this environment.
 6. Record, somewhere private (not the repo), each environment's URL and the **Deployment ID**
-   (in **Deploy → Manage deployments**), since you need the ID for `clasp deploy` below.
+   (in **Deploy → Manage deployments**): the ID goes into the `APPS_SCRIPT_DEPLOYMENT_ID` secret of
+   that environment (section 5.1).
 
 CMP-024's `apps-script/appsscript.json` must set `webapp.executeAs` = `USER_DEPLOYING` and
 `webapp.access` = `ANYONE_ANONYMOUS`. Do not rely on it for the first deployment: `clasp`
@@ -242,24 +237,125 @@ environment. Never use the `/dev` URL (**Test deployment**): it runs the last sa
 for signed-in editors, so the site cannot call it.
 
 ## 5. Update an existing deployment (keep the `/exec` URL)
+Routine updates are made by the GitHub workflow (5.1): it uploads `apps-script/` and puts a new
+version on the **existing** deployment, so the `/exec` URL does not change. Never create a second
+deployment for an environment that already has one: a new deployment gets a new URL.
 
-### Editor
-1. Paste the changed files (or `clasp push` first, Path B).
-2. **Deploy** → **Manage deployments** → select the active deployment → pencil (**Edit**).
-3. **Version: New version**, add a description (for example `CMP-025 events read`), **Deploy**.
-4. Check the URL in the dialog is unchanged.
-
-### `clasp`
+**Emergency only**, when the workflow cannot be used (for example the token has to be renewed
+first), the same can be done by hand from the owner's computer, with the login file and a
+`.clasp.json` (section 5.1, "Local use"). The other use of `clasp` from the computer is the
+one-time first upload of a new project (section 2.2). Routine deploys are never made by hand. The
+emergency commands:
 ```bash
-clasp push
-clasp deploy --deploymentId <DEPLOYMENT_ID> --description "CMP-025 events read"
-clasp deployments   # confirm the same ID now points to the new version
+.github/clasp/node_modules/.bin/clasp push --force
+.github/clasp/node_modules/.bin/clasp deploy --deploymentId <DEPLOYMENT_ID> --description "CMP-025 events read"
+.github/clasp/node_modules/.bin/clasp deployments   # confirm the same ID now points to the new version
 ```
 `clasp deploy` **without** `--deploymentId` creates a new deployment with a new URL: do not do
-that for an environment that already exists.
+that for an environment that already exists. Do not edit or paste code in the online editor.
 
-Saving code in the editor does **not** change the deployed web app: only a new version on the
-deployment does.
+Saving code does **not** change the deployed web app: only a new version on the deployment does.
+The time triggers are the exception: they run the **saved** code (Head), so a push changes what
+they run at once.
+
+### 5.1 Automatic deploy from GitHub (CMP-047, ADR-009)
+After the one-time setup below, a merge to `main` that changes `apps-script/` deploys **staging**
+by itself, and **production** is deployed by hand with the owner's approval click. The workflow
+uploads the whole `apps-script/` folder (so the project always equals the repo: no file can be
+missing or wrong), puts it on the **existing** deployment (the `/exec` URL does not change) and
+then sends a smoke request. Anything edited by hand in the online editor is overwritten at the next
+deploy, so do not edit there.
+
+The job installs **only** `clasp`, locked, from its own `.github/clasp/package-lock.json` and
+without install scripts, never the site's dependencies. The Google login is written to a file only
+inside `.github/scripts/deploy-apps-script.sh` and removed when that script ends, whatever happens;
+nothing prints it.
+
+**What the workflow does** (`.github/workflows/deploy-apps-script.yml`)
+1. Reads the three secrets of the environment (below). Nothing prints them.
+2. Asks Google for the project's title and stops unless it contains `staging` (or `production`)
+   and not the other word (guards against swapped secrets), so name the projects like
+   `cami-events-staging` and `cami-events-production`. It prints the title. An expired or revoked
+   token stops here, before anything is pushed. It also notes which version the deployment serves
+   now.
+3. `clasp push` of the folder, then `clasp deploy` onto the existing deployment ID.
+4. Smoke request on the `/exec` URL: the events list must answer ok, and a registration with an
+   invalid email must be refused with `VALIDATION_ERROR` (`RATE_LIMITED` is also accepted when the
+   registration limit is hit at that moment). Neither writes to the sheet, Drive or email; the
+   second adds one request to the register counters, also in production. The events list can come
+   from the cache of the previous version (the registration request always runs the new code): a
+   broken events build shows within five minutes as a **Failed** `refreshEventsCache` run in
+   **Executions**, so check it after each deploy.
+   If the smoke request fails, the deployment is put back on the version it served before and the
+   job still ends red. **Putting the deployment back does NOT roll back Head: the time triggers keep
+   running the faulty code (they run the saved code).** Revert the pull request and deploy the
+   reverted code. If the faulty code could harm data (wrong rows, emails to participants), delete
+   both triggers meanwhile and add them again afterwards (sections 2.6 and 2.7).
+5. If the permissions (`oauthScopes` in `appsscript.json`) differ from the project's, the job
+   summary says so: the owner must approve the new permissions (open the project, run any
+   function once, allow) before the web app and the triggers work again.
+A `dry_run` option (manual run) does the checks (it still needs the real secrets: it logs in and
+reads the project) and lists the files, and pushes nothing. A change to `apps-script/`, to the
+scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `main` deploys staging.
+
+**One-time setup (owner, plain words)**
+1. Turn on the **Google Apps Script API** for the Workspace account that owns the projects:
+   <https://script.google.com/home/usersettings>. A Workspace admin may have to allow it. Google
+   needs a few minutes to apply it: a run right after can fail with "User has not enabled the Apps
+   Script API"; wait and re-run.
+2. On your computer, in the repo folder: `cd .github/clasp`, `npm ci --ignore-scripts`, then
+   `./node_modules/.bin/clasp login` (a browser sign-in as that account). This writes the login file
+   `~/.clasprc.json`. Treat it like a password. **On Google's consent screen, write down every
+   permission it lists** (tick-by-tick, or a screenshot) and send the list to the coordinator, who
+   records it in ADR-009: it is the full reach of this token. (`npx @google/clasp@3.4.1 login`
+   also works and was used at the first setup, but it does not use the repo's lockfile and it runs
+   install scripts; prefer the repo route above for rotations.)
+3. GitHub → repo **Settings → Environments**: create `staging` and `production`. For both, under
+   *Deployment branches* choose **Selected branches → main**. For `production` also tick
+   **Required reviewers** and add the owner.
+4. In **each** environment add three *environment secrets* (not repository secrets):
+   - `CLASP_CREDENTIALS`: the whole contents of the login file. On a Mac, `pbcopy < ~/.clasprc.json`
+     copies it without showing it; paste it into the secret, then clear the clipboard with
+     `echo -n | pbcopy`. The same login serves both environments.
+   - `APPS_SCRIPT_ID`: the script ID of that environment's project (Project Settings → IDs).
+   - `APPS_SCRIPT_DEPLOYMENT_ID`: the ID of the existing web-app deployment whose `/exec` URL the
+     site uses (**Deploy → Manage deployments**, the ID under the active web app; not the
+     "Head / test" deployment).
+   The production project and its first web-app deployment are created by hand once (sections 2 and 3);
+   then add the production secrets.
+5. **Settings → Actions → General**: *Workflow permissions* = **Read repository contents**; *Fork pull
+   request workflows* = require approval for outside collaborators. **Protect `main`** (**Settings →
+   Branches**: pull request required; required approvals **0**, because every pull request here is
+   opened under the owner's own account and GitHub does not let an author approve their own pull
+   request), because a merge to `main` now deploys staging. Turn on two-factor sign-in for the
+   GitHub account (**Settings → Password and authentication**).
+6. First run: **Actions → Deploy Apps Script → Run workflow** with environment `staging` and
+   **dry run** on, then once without dry run. Read the printed project title and the smoke result.
+
+**Who can deploy**: anyone who can merge into `main` deploys staging; only the owner's approval
+click lets a production run start. No workflow that runs on pull requests can read the secrets.
+
+**Token care**
+- The login token reaches far (full list in ADR-009): every Apps Script project the account can
+  edit and their deployments, Drive file access and the Google Cloud platform scope. Code pushed
+  with it runs as the Workspace owner: it **sends email as the owner** and reads and writes **all**
+  of the owner's Drive. A leaked staging secret can change production too (same account). Keep the
+  GitHub account protected with two-factor sign-in, and read ADR-009 before the first setup.
+- If anything looks wrong, or when a person with access to the repository settings leaves: revoke
+  it at <https://myaccount.google.com/permissions> (the clasp app), run `clasp login` again (runbook 5.1) and
+  replace `CLASP_CREDENTIALS` in **both** environments. Do the same every 6 months, and after changing
+  the Google account password.
+- When the token has expired or been revoked the deploy stops at step 2 with
+  "Google rejected the login token": renew it as above and run the workflow again. Nothing was pushed.
+- Optional hardening later: sign in with your own Google Cloud OAuth client that has only the
+  Apps Script scopes (`clasp login --creds ...`).
+
+**Local use (first upload and emergencies only)**: with the login file on your computer and a
+`.clasp.json` made from `.clasp.example.json` (never committed), `.github/clasp/node_modules/.bin/clasp
+push` and `... clasp deploy --deploymentId ...` do by hand what the workflow does. Use it for the
+one-time first upload of a new project (section 2.2) and when the workflow cannot run (for example
+while the token is being renewed); say so in the pull request or the deployment description. Do not
+use both for the same change.
 
 ## 6. Roll back to a previous version
 The deployment keeps its URL; only the version it serves changes.
@@ -267,6 +363,10 @@ The deployment keeps its URL; only the version it serves changes.
 2. **Version** → pick the previous numbered version (see **Project history** / `clasp versions`
    if unsure which) → **Deploy**.
 3. Repeat the smoke request (section 8).
+
+Choosing a previous version changes only what the web app serves. **It does not roll back Head:
+the time triggers run the saved code.** Revert the change in the repository and deploy the reverted
+code (section 5.1); if the faulty code could harm data, delete both triggers until then.
 
 With `clasp`: `clasp deploy --deploymentId <DEPLOYMENT_ID> --versionNumber <N>`.
 

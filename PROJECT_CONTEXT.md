@@ -24,7 +24,7 @@
   (includes the content model, §9)
 - UX/UI direction: [docs/ux/UX_UI_DIRECTION.md](docs/ux/UX_UI_DIRECTION.md)
 - Tech stack: [TECH_STACK.md](TECH_STACK.md)
-- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-008
+- ADRs: [docs/decisions/](docs/decisions/) — ADR-001..ADR-009
 - Implementation plans: [docs/plans/IMPLEMENTATION_PLAN.md](docs/plans/IMPLEMENTATION_PLAN.md)
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
@@ -75,7 +75,7 @@ they are not active paths.
   automated reviewers on every PR
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-046
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-049
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
@@ -83,7 +83,8 @@ they are not active paths.
 - Zero additional licensing cost — free tier first for any new tool (hosting and ad spend
   excepted, see PROJECT_SPEC NFR-003).
 - Static GoDaddy shared hosting, manual deploy; the events backend runs on Google Apps Script
-  (ADR-008), deployed by the owner.
+  (ADR-008), deployed from GitHub by a workflow; production runs need the owner's approval
+  (ADR-009).
 - Minimal stack — no new library without TECH_STACK update + ADR.
 - Bilingual EN/ES; fixed Spanish brand accents never translate.
 

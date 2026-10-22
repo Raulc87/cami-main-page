@@ -1,0 +1,83 @@
+# Deploys the events backend (apps-script/) to Google Apps Script with clasp (CMP-047, ADR-009).
+#
+# - staging: automatically after a push to main that changes apps-script/**, or by hand.
+# - production: by hand only, from main only; the job waits for the owner's approval on the
+#   `production` GitHub environment.
+#
+# Secrets are environment secrets (never repository secrets), the same three names in each
+# environment: CLASP_CREDENTIALS (the contents of the clasp login file), APPS_SCRIPT_ID (script ID
+# of that environment's project) and APPS_SCRIPT_DEPLOYMENT_ID (the existing web-app deployment
+# whose /exec URL the site uses). No pull_request trigger can reach them. The job installs only
+# clasp, from its own lockfile in .github/clasp/ (never the site's dependencies). The login file is
+# written and removed inside one script (.github/scripts/deploy-apps-script.sh), is never printed
+# and is removed whatever happens.
+#
+# Runbook: docs/process/events-backend-runbook.md, section 5.1.
+name: Deploy Apps Script
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps-script/**'
+      - '.github/scripts/**'
+      - '.github/workflows/deploy-apps-script.yml'
+      - '.github/clasp/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Where to deploy
+        type: choice
+        options: [staging, production]
+        default: staging
+      dry_run:
+        description: Dry run (check the target and list the files, push nothing)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-apps-script-${{ github.event_name == 'push' && 'staging' || inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Only the main branch may deploy (the environments also allow only main).
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'push' && 'staging' || inputs.environment }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: .github/clasp/package-lock.json
+
+      # Only clasp, locked, without install scripts.
+      - name: Install clasp
+        working-directory: .github/clasp
+        run: npm ci --ignore-scripts
+
+      - name: Deploy
+        env:
+          TARGET_ENV: ${{ github.event_name == 'push' && 'staging' || inputs.environment }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+          CLASP_CREDENTIALS: ${{ secrets.CLASP_CREDENTIALS }}
+          APPS_SCRIPT_ID: ${{ secrets.APPS_SCRIPT_ID }}
+          APPS_SCRIPT_DEPLOYMENT_ID: ${{ secrets.APPS_SCRIPT_DEPLOYMENT_ID }}
+        run: |
+          missing=""
+          [ -n "$CLASP_CREDENTIALS" ] || missing="$missing CLASP_CREDENTIALS"
+          [ -n "$APPS_SCRIPT_ID" ] || missing="$missing APPS_SCRIPT_ID"
+          [ -n "$APPS_SCRIPT_DEPLOYMENT_ID" ] || missing="$missing APPS_SCRIPT_DEPLOYMENT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing in the $TARGET_ENV environment:$missing"
+            exit 1
+          fi
+          .github/scripts/deploy-apps-script.sh

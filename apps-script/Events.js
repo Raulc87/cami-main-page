@@ -172,6 +172,7 @@ function refreshEventsCache() {
   try {
     updateSpamMetrics_();
     pruneDaily_(crDate_(Date.now()));
+    pruneTranslations_();
   } catch (err) {
     console.error('housekeeping failed: ' + err.name);
   }
@@ -191,7 +192,7 @@ function buildEventsResponse_(lang) {
     console.error('queue failed: ' + err.name); // the listing must not depend on the alert queue
   }
 
-  var translations = lang === 'en' ? PropertiesService.getScriptProperties().getProperties() : {};
+  var translations = lang === 'en' ? loadTranslations_() : {};
   var list = [];
   events.valid.forEach(function (ev) {
     if (ev.startsAtMs <= nowMs) return;

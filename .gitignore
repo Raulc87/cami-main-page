@@ -9,3 +9,6 @@ dist/
 
 # clasp
 .clasp.json
+
+# clasp login file (a Google login token: never commit)
+.clasprc.json
