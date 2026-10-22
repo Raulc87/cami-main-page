@@ -5,8 +5,7 @@ backend. Written by Implementation Agent 3 (CMP-033). A Fail is not fixed in thi
 classified (AC wording or defect) and a ticket is proposed. Story statuses are not changed here;
 the coordinator does that after the owner approves the evidence.
 
-**Status of this document: complete, for the owner's review.** Every line is now Pass, N/A with a
-reason, or the deferred real-iPhone check; `Pending (owner)` is kept in the legend only.
+**Status of this document: re-test in progress (CMP-033 is `review`).** After the first review, the contract suite, the 640 px captures and the empty-events path were re-run (below). Lines marked `Pending (owner)` need a step on the staging sheet (listed in §5); they are re-tested when the owner has done it.
 
 ## 1. Method
 
@@ -39,6 +38,7 @@ Legend: **Pass**, **Fail**, **N/A** (cannot be exercised, with the reason), **Pe
 | 5 | Backend down (requests aborted): no section, no ticker, page renders | Pass | scripted check |
 | 5 | Backend slow: answer after 4.5 s is shown; after 5.5 s the section and ticker stay hidden (5 s limit) | Pass | CLS run (§3.3) and scripted check with a 6.5 s answer |
 | 5 | `VITE_EVENTS_API_URL` empty: page identical to the pre-events page, no section, no ticker | Pass | `page-noevents-{es,en}-{1280,900,375}.jpg` |
+| 5 | Backend configured and answering successfully with `events: []` (answer substituted in the browser): no section, no ticker, page renders, no console error | Pass | scripted check (re-run 2026-10-22) |
 
 ### US-018 — Upcoming-events ticker
 | AC | Case | Result | Evidence |
@@ -47,7 +47,7 @@ Legend: **Pass**, **Fail**, **N/A** (cannot be exercised, with the reason), **Pe
 | 2 | Selecting an item (click, or Enter with keyboard focus) scrolls to that event's card | Pass | scripted check |
 | 3 | Hover pauses; keyboard focus pauses | Pass | scripted check |
 | 4 | `prefers-reduced-motion`: static banner | Pass | scripted check |
-| 5 | No upcoming events: no banner | Pass | `page-noevents-*` |
+| 5 | No upcoming events: no banner. Both paths: `VITE_EVENTS_API_URL` empty, and a configured backend successfully answering with an empty `events` array | Pass | `page-noevents-*`; scripted check with the empty answer |
 
 ### US-019 — Registration form with SINPE proof
 Form-side runs on staging (CMP-032 pass and this run).
@@ -72,8 +72,10 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 1 | Coupon expiring today is still valid (inclusive) | Pass | API case C07a |
 | 2 | Unknown, inactive, expired, other-event coupon: "Cupón no válido", full price stays | Pass | scripted check, API cases C06/C08 |
 | 3 | Exhausted coupon, coupon already used by the email: matching message, full price stays | Pass | scripted check |
-| 4 | A registration marked `spam` frees the coupon use: a one-use coupon answered `COUPON_EXHAUSTED` for another email; after the owner set the registration that held it to `spam`, the next check answered 20% and ₡20 000 (no cache) | Pass | live edit 4 |
-| 5 | Coupon deactivated after apply, then a paid registration: stored with the discount, flagged `coupon changed`; the visitor sees the review message | Pass (visitor side; row owner-checked: `coupon changed`, coupon PROMO10AB at 10%, ₡22 500) | `form-es-1280-flagged-coupon-changed.jpg` |
+| 4 | A registration marked `spam` frees the coupon use (the `refund/cancelled` status is covered in the next row): a one-use coupon answered `COUPON_EXHAUSTED` for another email; after the owner set the registration that held it to `spam`, the next check answered 20% and ₡20 000 (no cache) | Pass | live edit 4 |
+| 4 | A registration marked `refund/cancelled` frees the coupon use | **Pending (owner)**: the registration that holds the one-use coupon ONEUSE001 (ref `TPAID-261022-VTJY`) needs to be set to `refund/cancelled` in the sheet; then ONEUSE001 should answer 20% / ₡20 000 for another email | re-test after the owner's edit |
+| 5 | Paid branch: coupon deactivated after apply, then a paid registration: stored with the discount, flagged `coupon changed`; the visitor sees the review message | Pass (visitor side; row owner-checked: `coupon changed`, coupon PROMO10AB at 10%, ₡22 500) | `form-es-1280-flagged-coupon-changed.jpg` |
+| 5 | ₡0 branch: a registration whose 100% coupon is no longer valid at submit is refused (`COUPON_INVALID`), and a one-use 100% coupon used once then again answers `COUPON_EXHAUSTED` | **Pending (owner)**: needs two coupons on the TPAID event (FREE100OFF: 100%, 20 uses, inactive; and FREE100ONE: 100%, 1 use, active). The ₡0 request is sent with the coupon the form had applied, so the server sees a coupon that is no longer valid | re-test after the owner adds them |
 | 6 | Many failed coupon checks: refusal "try again later" | Pass: after 10 failed checks in a minute the next checks, including a valid coupon, got `RATE_LIMITED` until the minute ended; the next minute the valid coupon worked again (§3.8) | burst run |
 | 7 | No coupon list is sent to the browser | Pass | the `events` response carries no coupon data |
 | 8 | A coupon typed but not applied blocks Submit with "Aplica el cupón o borra el campo."; no request is sent | Pass | CMP-032 mock run and the reviewer's run |
@@ -97,13 +99,13 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 3 | Unreadable image: `unreadable`, review flag, email | Pass for the row (owner-checked: `unreadEN` unreadable, needsReview TRUE); the email is Pass under US-025 AC2 (owner-checked) | owner, sheet rows |
 | 4 | Status stays `new`; temporary OCR Doc deleted | Status `new` on the checked rows: Pass (owner-checked); temporary Docs deleted: Pass (owner-checked: no leftover OCR Docs in Drive) | owner |
 | 5 | Cami's sample screenshots in the spike | N/A here (done in CMP-024, `SPRINT_02_SPIKE.md`) |  |
-| 6 | OCR service refuses the call (rate limit): the row stays `pending`, no "not validated" email yet, the retry trigger writes the result and email later | Pass, shown live on staging in PR #39's Verification (two checks hit the per-user OCR limit and were finished by the trigger about 9 minutes later); not repeated here | PR #39 |
+| 6 | OCR service refuses the call (rate limit): the row stays `pending`, no "not validated" email yet, the retry trigger writes the result and email later | Pass for the retry; **N/A on staging for the 24-hour cutoff** (a row has to stay `pending` for 24 h while OCR is refused, which cannot be provoked; covered by PR #39's local tests: 60 overdue rows, alert with the first 50 references). Retry shown live on staging in PR #39's Verification (two checks hit the per-user OCR limit and were finished by the trigger about 9 minutes later); not repeated here | PR #39 |
 | 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Pass (owner-checked: both HEIC rows, stored in the original `.heic` format after the conversion fell back, are `unreadable` with the note "stored as original format: heic"; no "not validated" email arrived for them) | owner, sheet rows and inboxes |
 
 ### US-023 — Cami manages events, capacity and coupons without a deploy
 | AC | Case | Result | Evidence |
 |---|---|---|---|
-| 1 | A new published event appears within 5 minutes (TNEW) | Pass. First attempt: not listed after 7 minutes because the owner's row was incomplete (owner: "I missed it before"). After the owner completed it, it was listed 2.3 minutes after my first check (name, date, time, price and `registrationOpen` correct); the owner's exact save time was not recorded, so this is an upper bound of about 2.3 minutes plus the owner's delay | listing poll |
+| 1 | A new published event appears within 5 minutes (TNEW) | **Pending a controlled repeat** (the owner's save time was not recorded). First attempt: not listed after 7 minutes because the owner's row was incomplete (owner: "I missed it before"). After the owner completed it, it was listed 2.3 minutes after my first check (name, date, time, price and `registrationOpen` correct); the owner's exact save time was not recorded, so the 2.3 minutes is a lower bound for the real delay (the save came before my first check). The events cache is 360 s with a 5-minute refresh trigger (FFR-033), so the expected worst case is about 6 minutes. Controlled repeat: the owner adds the row and says "saved now", I time the first listing, then the owner deletes it | listing poll |
 | 2 | Invalid row (blank name, invalid time) and a duplicated code are not shown; the others still are | Pass | listing before and after the owner's fixes; the duplicated code stayed hidden throughout |
 | 3 | A changed coupon discount applies on the next check (no cache): PROMO10AB changed from 10% to 20% answered 20% and ₡20 000 on the first check after the owner's saved edit. The first attempt answered 10% only because the owner had edited another coupon by mistake (owner confirmed); the code reads the sheet on every coupon check | Pass | live edit 2 |
 | 4 | `nameEn`/`descriptionEn` override the automatic translation | Pass | `events?lang=en` for TART |
@@ -114,7 +116,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 ### US-024 — Abuse metrics and alerts
 | AC | Case | Result | Evidence |
 |---|---|---|---|
-| 1 | Metrics row for the day: accepted, honeypot hits, throttled, failed coupon checks, MB uploaded, spam marked | Pass (owner-checked, Metrics row of 2026-10-21 after the burst: accepted 39, honeypotHits 12, throttled 23, couponFailures 39, uploadedMb 1.3, spamMarked 1). The `throttled` value is lower than the 30 the burst should have produced: see observation 7 in §5 | owner, Metrics tab |
+| 1 | Metrics row for the day: accepted, honeypot hits, throttled, failed coupon checks, MB uploaded, spam marked | Pass for the row's fields. **Defect found in the same run: the `throttled` counter undercounts under parallel requests** (23 against 30 `RATE_LIMITED` answers; proposed ticket in §5, item 7). (owner-checked, Metrics row of 2026-10-21 after the burst: accepted 39, honeypotHits 12, throttled 23, couponFailures 39, uploadedMb 1.3, spamMarked 1). The `throttled` value is lower than the 30 the burst should have produced: see observation 7 in §5 | owner, Metrics tab |
 | 2 | Over a threshold: one alert email for the day (at most one per Costa Rica day; a finding made after the day's email waits for the next day's email, FFR-029). Thresholds crossed with `MAIL_REPLY_TO` on the owner's test address and `LIMIT_UPLOADS_PER_DAY` lowered to 2 (§3.8) | Pass (owner-checked: the alert email, sent after midnight Costa Rica time as designed, lists the burst findings: honeypot 12 (limit 10), throttled requests 23 (limit 20), daily upload cap reached, together with the invalid sheet rows) | burst run, owner, inbox |
 | 3 | Honeypot filled: normal-looking success, nothing stored, hit counted | Pass (response; owner-checked: the hit is counted in Metrics); 11 more honeypot posts all answered `ok` (§3.8) | API case R14, burst run |
 
@@ -137,7 +139,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 ## 3. Integration checks
 
 ### 3.1 Contract §10 end-to-end list (API level, staging)
-27 of 27 cases pass (run before the re-paste of PR #44). The requests are `events`, `coupon` and `register`
+27 of 27 cases passed on the first run (before the re-paste of PR #44). **Re-run on 2026-10-22 against the staging backend as pasted from PR #44: 25 of 26 scripted cases pass** (the suite counts C06 once and C07a as two checks, so the number differs from the 27 above); the one "fail" is C07a, where the script's expectation is one-sided: the coupon expiring today is accepted and a coupon that expired yesterday is refused, so both sides of the boundary behave as specified (the script now records both). The requests are `events`, `coupon` and `register`
 posted as `text/plain` JSON from a script; "valid" cases use a distinct synthetic participant.
 | ID | Request | Expected | Result |
 |---|---|---|---|
@@ -197,9 +199,9 @@ duplicate), and one `events` request timed out at 30 s with no bytes and then an
 Likely cause: Apps Script cold start or load. Not reproduced afterwards.
 
 ### 3.5 Regression of the existing sections
-Pass. Full-page captures at 1280 / 900 / 375 px in ES and EN, with and without events: the existing
+Pass. Full-page captures at 1280 / 900 / 640 / 375 px in ES and EN, with and without events (640 px added after the first review, which is the layout breakpoint): the existing
 sections are identical in both, no horizontal scroll, no page errors.
-`page-{events,noevents}-{es,en}-{1280,900,375}.jpg`.
+`page-{events,noevents}-{es,en}-{1280,900,375}.jpg`, `page-events-{es,en}-640.jpg`, and the form at 640 px `form-es-640-paid.jpg` (test SINPE values).
 
 ### 3.6 HEIC and PNG substitute check (no iPhone available)
 A real HEIC (brand `heic`, HEVC, about 516 KB) and an iPhone-sized PNG (1170×2532) through the form in
@@ -231,7 +233,7 @@ Counter check: the honeypot count is exact (11 sequential posts plus the earlier
 ## 4. Evidence index
 All files are in `docs/sprints/evidence/sprint-02/` (JPEG, masked, under 5 MB in total):
 `form-es-1280-upload-cap.jpg` (the upload-cap answer in the form), `page-*` (layout and regression; `page-events-art-*` shows the event with an image, in EN with the `nameEn`/`descriptionEn` override), `form-*` (form states; the SINPE blocks show test values and registration references are masked), `mobile-iphone13-heic-*` (test values shown, reference masked),
-`us005-ac2-featured-expanded-es.jpg`. Sheet, Drive and inbox results were checked by the owner and are recorded in the tables; no screenshots of them are committed. Every image that can show the payment block or a reference was checked on a contact sheet before the last push: the SINPE blocks show test values or are masked, references are masked, and no email address or participant name appears.
+`us005-ac2-featured-expanded-es.jpg`, `page-events-{es,en}-640.jpg`, `form-es-640-paid.jpg`. Sheet, Drive and inbox results were checked by the owner and are recorded in the tables as text, deliberately: screenshots of the sheet and inboxes would show participant emails and references; masked screenshots can be added if the owner wants them. Every image that can show the payment block or a reference was checked on a contact sheet before the last push: the SINPE blocks show test values or are masked, references are masked, and no email address or participant name appears.
 
 Note: `form-es-1280-flagged-event-unpublished.jpg` and `form-es-1280-flagged-coupon-changed.jpg` look the same on purpose: the visitor sees the same message whichever flag the backend sets (event closed/unpublished, or coupon changed); the difference is only in the sheet row.
 
@@ -244,4 +246,6 @@ Note: `form-es-1280-flagged-event-unpublished.jpg` and `form-es-1280-flagged-cou
 | 4 | Intermittent 30 s hangs on staging (§3.4) | Observation | keep watching; no ticket yet |
 | 5 | Staging script properties reached the 50-property UI limit (reported by Agent 1) | Observation | PR #44 (CMP-045) is the lasting fix |
 | 6 | Raw HEIC uploads are stored in their original `.heic` format (the server's JPEG conversion falls back): this is the first raw-HEIC test (the spike did not run one). US-021 AC1 allows the fallback, so it is not a Fail, but a payment photo taken with an iPhone camera is then not readable by the OCR check (needs manual review), while an iPhone screenshot (PNG) is converted and checked | AC wording is satisfied; user-impact observation | decide whether a ticket is needed: client-side conversion needs a library (TECH_STACK + ADR), or tell visitors to upload a screenshot; the real-iPhone picker may already convert to JPEG (deferred check) |
-| 7 | The `throttled` counter of the `Metrics` row is lower than the number of `RATE_LIMITED` answers: 23 recorded for a burst that produced 30 (25 for `register`, 5 for `coupon`). From the code (not reproduced, so as not to send another alert to camila@): `bumpMetric_` adds to the cell by reading it and writing it back under `tryShortLock_(5000)`, which, when the script lock stays busy for 5 s, silently carries on WITHOUT the lock (the comment says a slightly wrong limit is better than a failing request). The `register` wave sent 15 requests at once, so several increments collide and one is lost; the sequential honeypot count is exact. The 23 still crossed the threshold of 20 and the alert went out, but under a burst the counters can read low and an alert near its threshold could be missed. Not a Fail of US-024 (AC1 does not promise exact counts) | Observation / low-severity defect | ticket: make the daily counters robust under parallel requests (for example keep them in a script property updated under a longer lock wait, or retry, or write them from the 5-minute trigger), or document the tolerance and set the thresholds with a margin. `bumpWindow_` (the per-minute limit counters) uses the same pattern with a 3 s wait (`tryShortLock_(3000)`), so the per-minute limiters could drift under the same parallel load too; the burst's limits were exact (20/25, 30/2), so this is not a finding here, but the ticket should cover it |
+| 7 | (US-024 AC1) The `throttled` counter of the `Metrics` row is lower than the number of `RATE_LIMITED` answers: 23 recorded for a burst that produced 30 (25 for `register`, 5 for `coupon`). From the code (not reproduced, so as not to send another alert to camila@): `bumpMetric_` adds to the cell by reading it and writing it back under `tryShortLock_(5000)`, which, when the script lock stays busy for 5 s, silently carries on WITHOUT the lock (the comment says a slightly wrong limit is better than a failing request). The `register` wave sent 15 requests at once, so several increments collide and one is lost; the sequential honeypot count is exact. The 23 still crossed the threshold of 20 and the alert went out, but under a burst the counters can read low and an alert near its threshold could be missed. AC1 lists the counters but not their exactness, so it is recorded as a Pass for the row's fields with this defect noted; a Fail of the AC wording is the owner's call | Defect, low severity (classified after the review) | ticket: make the daily counters robust under parallel requests (for example keep them in a script property updated under a longer lock wait, or retry, or write them from the 5-minute trigger), or document the tolerance and set the thresholds with a margin. `bumpWindow_` (the per-minute limit counters) uses the same pattern with a 3 s wait (`tryShortLock_(3000)`), so the per-minute limiters could drift under the same parallel load too; the burst's limits were exact (20/25, 30/2), so this is not a finding here, but the ticket should cover it |
+| 8 | US-022 AC6, 24-hour cutoff, and US-025 AC3 (`email failed`) cannot be provoked on staging | N/A on staging | covered by PR #39's local tests; no ticket |
+| 9 | Pending owner steps for the re-test: (a) controlled repeat of TNEW (US-023 AC1); (b) set the registration `TPAID-261022-VTJY` to `refund/cancelled` (US-020 AC4); (c) add the coupons FREE100OFF (TPAID, 100, 20, inactive) and FREE100ONE (TPAID, 100, 1, active) for US-020 AC5 | Pending | tests run when done |
