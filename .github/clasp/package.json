@@ -1,0 +1,8 @@
+{
+  "name": "apps-script-deploy",
+  "private": true,
+  "description": "Only the deploy tool for the Apps Script workflow (CMP-047). Kept apart from the site's package.json so that the job that holds the Google login installs nothing else.",
+  "devDependencies": {
+    "@google/clasp": "3.4.1"
+  }
+}
