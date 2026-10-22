@@ -307,8 +307,9 @@ scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `mai
    `./node_modules/.bin/clasp login` (a browser sign-in as that account). This writes the login file
    `~/.clasprc.json`. Treat it like a password. **On Google's consent screen, write down every
    permission it lists** (tick-by-tick, or a screenshot) and send the list to the coordinator, who
-   records it in ADR-009: it is the full reach of this token. (Equivalent without the repo
-   folder, as done at the first setup: `npx @google/clasp@3.4.1 login`, the same pinned version.)
+   records it in ADR-009: it is the full reach of this token. (`npx @google/clasp@3.4.1 login`
+   also works and was used at the first setup, but it does not use the repo's lockfile and it runs
+   install scripts; prefer the repo route above for rotations.)
 3. GitHub → repo **Settings → Environments**: create `staging` and `production`. For both, under
    *Deployment branches* choose **Selected branches → main**. For `production` also tick
    **Required reviewers** and add the owner.
@@ -326,8 +327,8 @@ scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `mai
    request workflows* = require approval for outside collaborators. **Protect `main`** (**Settings →
    Branches**: pull request required; required approvals **0**, because every pull request here is
    opened under the owner's own account and GitHub does not let an author approve their own pull
-   request), because a merge to `main` now deploys staging. Turn on two-factor sign-in for the GitHub account (**Settings → Password and
-   authentication**).
+   request), because a merge to `main` now deploys staging. Turn on two-factor sign-in for the
+   GitHub account (**Settings → Password and authentication**).
 6. First run: **Actions → Deploy Apps Script → Run workflow** with environment `staging` and
    **dry run** on, then once without dry run. Read the printed project title and the smoke result.
 

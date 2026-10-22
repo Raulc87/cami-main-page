@@ -72,7 +72,8 @@ Negative / risks (accepted by the owner):
 - **The owner's Google login token is stored in GitHub** (environment secret
   `CLASP_CREDENTIALS`). It is not limited to these two projects: `clasp login` grants broad
   scopes (read/write of **every** Apps Script project the owner can edit, their deployments,
-  Drive file access and, in current `clasp` versions, `cloud-platform`; the exact list is read
+  access to the Drive files used with the app (`drive.file`) and Drive metadata, and
+  `cloud-platform`; the exact list is read
   off the consent screen at setup and recorded below). Code pushed with it runs as the
   owner with the backend's own scopes: it **sends email as the owner**, reads and writes **all**
   of the owner's Drive (full Drive scope, TECH_STACK §11), the events spreadsheet, and can
