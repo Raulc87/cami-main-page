@@ -9,7 +9,7 @@
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved on
   merge of PR #21; v1.3 Approved on merge of PR #26; v1.4 Approved on merge of PR #30;
   v1.5 Approved on merge of PR #32; v1.6 Approved on merge of PR #43; v1.7 Approved (on merge
-  of PR #XX))
+  of PR #46))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment

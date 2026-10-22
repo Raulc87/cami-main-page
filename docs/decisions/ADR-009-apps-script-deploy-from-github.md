@@ -1,6 +1,6 @@
 # ADR-009 — Deploy the Apps Script backend automatically from GitHub
 
-- Status: Accepted (on merge of PR #XX, CMP-048)
+- Status: Accepted (on merge of PR #46, CMP-048)
 - Date: 2026-10-22
 - Decision owner: Raul Casanas
 - Related: [ADR-008](ADR-008-events-backend-google-apps-script.md),
