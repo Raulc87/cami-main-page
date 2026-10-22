@@ -81,17 +81,17 @@ Every sprint must end with a demonstrable deliverable.
 ## Selected User Stories
 | Story | Points | Agent | Dependencies | Ticket / branch (`CMP-XXX-slug`) | Status |
 |---|---:|---|---|---|---|
-| — (deploy runbook) | — | Agent 1 | — | CMP-023 `CMP-023-events-backend-runbook` | todo |
-| — (backend spike + skeleton) | — | Agent 1 | CMP-023; staging sheet/folder (owner); Cami's samples | CMP-024 `CMP-024-events-backend-spike` | todo |
-| US-023 (+ `events` action for US-017) | 3 | Agent 1 | CMP-024 | CMP-025 `CMP-025-events-read-and-sheet-validation` | todo |
-| US-021 | 5 | Agent 1 | CMP-025 | CMP-026 `CMP-026-registration-storage` | todo |
-| US-020 (server), US-024 | 2 + 2 | Agent 1 | CMP-026 | CMP-027 `CMP-027-coupons-limits-metrics` | todo |
-| US-022, US-025 | 5 + 3 | Agent 1 | CMP-026 (CMP-027 merged first, same files) | CMP-028 `CMP-028-payment-check-and-emails` | todo |
-| — (frontend foundation) | — | Agent 2 | — | CMP-029 `CMP-029-events-frontend-foundation` | todo |
-| US-017, US-018 | 3 + 2 | Agent 2 | CMP-029; CMP-025 on staging | CMP-030 `CMP-030-events-section-and-ticker` | todo |
-| US-002 (AC2 defect) | — | Agent 2 | CMP-029 (shared `global.css`) | CMP-031 `CMP-031-service-card-hover-fix` | todo |
-| US-019, US-020 (client) | 5 + 1 | Agent 3 | CMP-029; CMP-026/027 on staging | CMP-032 `CMP-032-event-registration-form` | todo |
-| — (integration verification; US-005 AC2 check) | — | Agent 3 | everything above merged and on staging | CMP-033 `CMP-033-sprint-02-integration-verification` | todo |
+| — (deploy runbook) | — | Agent 1 | — | CMP-023 `CMP-023-events-backend-runbook` | done |
+| — (backend spike + skeleton) | — | Agent 1 | CMP-023; staging sheet/folder (owner); Cami's samples | CMP-024 `CMP-024-events-backend-spike` | done |
+| US-023 (+ `events` action for US-017) | 3 | Agent 1 | CMP-024 | CMP-025 `CMP-025-events-read-and-sheet-validation` | done |
+| US-021 | 5 | Agent 1 | CMP-025 | CMP-026 `CMP-026-registration-storage` | done |
+| US-020 (server), US-024 | 2 + 2 | Agent 1 | CMP-026 | CMP-027 `CMP-027-coupons-limits-metrics` | done |
+| US-022, US-025 | 5 + 3 | Agent 1 | CMP-026 (CMP-027 merged first, same files) | CMP-028 `CMP-028-payment-check-and-emails` | done |
+| — (frontend foundation) | — | Agent 2 | — | CMP-029 `CMP-029-events-frontend-foundation` | done |
+| US-017, US-018 | 3 + 2 | Agent 2 | CMP-029; CMP-025 on staging | CMP-030 `CMP-030-events-section-and-ticker` | done |
+| US-002 (AC2 defect) | — | Agent 2 | CMP-029 (shared `global.css`) | CMP-031 `CMP-031-service-card-hover-fix` | done |
+| US-019, US-020 (client) | 5 + 1 | Agent 3 | CMP-029; CMP-026/027 on staging | CMP-032 `CMP-032-event-registration-form` | done |
+| — (integration verification; US-005 AC2 check) | — | Agent 3 | everything above merged and on staging | CMP-033 `CMP-033-sprint-02-integration-verification` | done |
 
 US-020's 3 points are split 2 (server) + 1 (client). Total: 31 points.
 
@@ -309,3 +309,19 @@ The human reviewer is the final approver.
   `STAGING_EVENTS_API_URL` secret.
 - CMP-033 note for Cami's sheet guide: an event shows on the site only when `published` is TRUE;
   an empty `published` cell is a draft and is hidden (FFR-019).
+- CMP-033 closed (2026-10-22): the owner checked the sheet, Drive, Metrics and both inboxes in
+  three parts plus the abuse-alert email, and approved the evidence by squash-merging PR #48
+  (`SPRINT_02_VERIFICATION.md`). US-017..US-025 and US-005 are `Done` (CMP-051). Still open for
+  release: the real-iPhone check, Cami's approval of the emails and form wording, the lawyer's
+  review of the privacy notice, and the production setup (release-checklist §3b). Owner's
+  suggestion recorded as CMP-052 (alert email to the owner as well as Cami); CMP-053 (counter
+  undercount) and CMP-054 (favicon) come from the verification's observations.
+- Owner answers (2026-10-22, CMP-051), questions as asked: "US-002 (service-card hover): the fix
+  was merged earlier (PR #27), and the reviewer has now measured it on the live code at all four
+  screen widths: on hover the card lifts 5 px, the left border turns dark blue, and a soft shadow
+  appears, exactly as specified. Accept that measurement as the evidence and mark US-002 Done?" —
+  options: yes, mark Done; no, I'll look myself. Owner: **"Yes, mark Done (Recommended)"**.
+  "US-024 (abuse metrics and alerts): everything passed, but the 'throttled' counter came out a
+  little low under a burst (23 instead of 30). The limit was still crossed and the alert still
+  went out. Accept US-024 as Done with that known bug tracked as ticket CMP-053 for next sprint?"
+  — options: yes, Done + CMP-053; no, fix first. Owner: **"Yes, Done + CMP-053 (Recommended)"**.
