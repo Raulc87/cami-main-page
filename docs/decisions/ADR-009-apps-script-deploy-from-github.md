@@ -86,7 +86,14 @@ Negative / risks (accepted by the owner):
   environments hold a login token for the same Google account, and that token can change any
   project the account edits, production included. Whoever obtains the staging secret (e.g.
   through code merged to `main` that runs in the staging job) can change production without the
-  approval click. Accepted by the owner with the token's reach (Decision); the defense is to keep
+  approval click. Acknowledged by the owner (2026-10-22), question as asked: "One more point
+  on the automatic deploy before Agent 1's setup: if someone stole the STAGING login stored in
+  GitHub, they could also change PRODUCTION without your approval click, because both use the
+  same Google account. The approval click only stops accidental deploys. The defence is that the
+  login never leaks: only code you merge into main can use it. Is that OK as is, or set up a
+  separate staging-only Google account now (more setup; staging might then send its emails from
+  that account)?" — options: OK as is; separate staging account. Owner: "OK as is
+  (Recommended)". The defense is to keep
   the secret from leaking (protected `main`, reviewed merges, the supply-chain measures below,
   revocation). Revisit: a separate Google account that can edit only the staging project, so
   the staging secret cannot reach production (Follow-up).
