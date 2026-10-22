@@ -65,6 +65,16 @@ upload; if one is not, do not release:
 - [ ] Registration form wording (EN/ES labels and messages in `UI_TEXT.events.form`, including
       the sending note and the "event no longer available" message) reviewed by the owner and
       Cami (BR-E11).
+- [ ] Real-iPhone check on staging (owner, 2026-10-21: no device was available for CMP-033):
+      with any iPhone, through the manual Pages test site (TECH_STACK §10; test SINPE values
+      during the window), register with a Camera photo (Photo Library), the same photo from
+      Files, and a screenshot, each with a **different** test email (one registration per
+      email per event, so a repeated email is refused as already registered before its file is
+      stored); confirm what is stored (`.jpg` or `.heic` + note) and the check
+      result; then unpublish the site, restore the real SINPE values and delete the
+      `STAGING_EVENTS_API_URL` secret.
+- [ ] Backend deploy to production through the approved deploy workflow (ADR-009), smoke
+      request green; both time triggers installed once in production (runbook).
 - [ ] Lifetools logo in place for events without art.
 - [ ] Production Apps Script deployment updated per
       [events-backend-runbook.md](events-backend-runbook.md), and the site build points
