@@ -5,7 +5,7 @@ backend. Written by Implementation Agent 3 (CMP-033). A Fail is not fixed in thi
 classified (AC wording or defect) and a ticket is proposed. Story statuses are not changed here;
 the coordinator does that after the owner approves the evidence.
 
-**Status of this document: DRAFT.** Lines marked `Pending (owner)` need the owner's view of the
+**Status of this document: DRAFT (waiting for the abuse burst and one detail of US-022 AC7).** Lines marked `Pending (owner)` need the owner's view of the
 staging sheet, Drive folder or inbox, or a live edit by the owner; they are replaced by Pass/Fail
 before the PR is reported ready.
 
@@ -94,12 +94,12 @@ Form-side runs on staging (CMP-032 pass and this run).
 | AC | Case | Result | Evidence |
 |---|---|---|---|
 | 1 | Receipt with the real account and the exact amount: `ok`, `needsReview` FALSE | Pass (owner-checked: `okES` ok with ₡25 000, `roundOK` ok with ₡10 493) | owner, sheet rows |
-| 2 | Wrong account or amount: `mismatch`, failing fields in `checkDetails`, review flag, "not validated" email | Pass for the row (owner-checked: `mismES` mismatch, needsReview TRUE); the email is under US-025 AC2 (**Pending (owner)**) | owner, sheet rows |
-| 3 | Unreadable image: `unreadable`, review flag, email | Pass for the row (owner-checked: `unreadEN` unreadable, needsReview TRUE); the email is under US-025 AC2 (**Pending (owner)**) | owner, sheet rows |
+| 2 | Wrong account or amount: `mismatch`, failing fields in `checkDetails`, review flag, "not validated" email | Pass for the row (owner-checked: `mismES` mismatch, needsReview TRUE); the email is Pass under US-025 AC2 (owner-checked) | owner, sheet rows |
+| 3 | Unreadable image: `unreadable`, review flag, email | Pass for the row (owner-checked: `unreadEN` unreadable, needsReview TRUE); the email is Pass under US-025 AC2 (owner-checked) | owner, sheet rows |
 | 4 | Status stays `new`; temporary OCR Doc deleted | Status `new` on the checked rows: Pass (owner-checked); temporary Docs deleted: Pass (owner-checked: no leftover OCR Docs in Drive) | owner |
 | 5 | Cami's sample screenshots in the spike | N/A here (done in CMP-024, `SPRINT_02_SPIKE.md`) |  |
 | 6 | OCR service refuses the call (rate limit): the row stays `pending`, no "not validated" email yet, the retry trigger writes the result and email later | Pass, shown live on staging in PR #39's Verification (two checks hit the per-user OCR limit and were finished by the trigger about 9 minutes later); not repeated here | PR #39 |
-| 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Partly: both HEIC rows were stored in the original `.heic` format (the conversion fell back), so this path was exercised. The owner accepted "ok or unreadable" for the HEIC rows without naming the result: the exact `checkResult`, the "stored as original format: heic" note and the absence of a "not validated" email are **Pending (owner)** (the email under part 3) |  |
+| 7 | Original-format screenshot that OCR cannot read: `unreadable`, no "not validated" email | Partly: both HEIC rows were stored in the original `.heic` format (the conversion fell back), so this path was exercised. The owner accepted "ok or unreadable" for the HEIC rows without naming the result: the exact `checkResult`, the "stored as original format: heic" note and the absence of a "not validated" email are **Pending (owner)**. Owner-checked in part 3: no "not validated" email arrived for the two HEIC rows |  |
 
 ### US-023 — Cami manages events, capacity and coupons without a deploy
 | AC | Case | Result | Evidence |
@@ -122,11 +122,11 @@ Form-side runs on staging (CMP-032 pass and this run).
 ### US-025 — Participant emails
 | AC | Case | Result | Evidence |
 |---|---|---|---|
-| 1 | Confirmation (ES and EN) with event, date/time, amount, reference, reply-to camila@; Gmail and Outlook | Pending (owner) | inbox screenshots |
-| 2 | "Payment not validated" for `mismatch` and `unreadable` (ES and EN); Gmail and Outlook | Pending (owner) |  |
+| 1 | Confirmation (ES and EN) with event, date/time, amount, reference, reply-to camila@; Gmail and Outlook | Pass (owner-checked in both inboxes: confirmation in ES and EN for the free-event registrations; `okES` and `roundOK` got a confirmation only; sender `no-reply@`, Reply-To camila@, amounts as ₡25 000 (ES) and ₡25,000 (EN)) | owner, inboxes |
+| 2 | "Payment not validated" for `mismatch` and `unreadable` (ES and EN); Gmail and Outlook | Pass (owner-checked in both inboxes: `mismES` ES and `unreadEN` EN each got the "not validated" email besides the confirmation; the PNG row, whose check was a mismatch, got one too) | owner, inboxes |
 | 3 | Email cannot be sent: row stays, `email failed`, review flag | N/A on staging (cannot be provoked from the client); covered by the local tests in PR #39 | PR #39 |
 | 4 | Templates approved by Cami | N/A: release gate (BR-E11), not part of this verification |  |
-| 5 | "Registration received" for a stored-and-flagged registration (ES and EN); Gmail and Outlook | Pending (owner) |  |
+| 5 | "Registration received" for a stored-and-flagged registration (ES and EN); Gmail and Outlook | Pass (owner-checked in both inboxes: `recvES`/`recvEN` and the two form-run rows got "registration received", which does not promise a place) | owner, inboxes |
 
 ### US-005 — Real client testimonials (AC2 check carried over from CMP-017)
 | AC | Case | Result | Evidence |
@@ -208,6 +208,12 @@ A real HEIC (brand `heic`, HEVC, about 516 KB) and an iPhone-sized PNG (1170×25
 iPhone 13 emulation: both accepted, sent as `image/heic` and `image/png`, references returned.
 Stored: the HEIC files in their original `.heic` format (the conversion fell back, FFR-014), the PNG converted to `.jpg` (owner-checked in Drive). Check result of the HEIC rows and emails: see US-022 AC7 and US-025.
 **Real-iPhone Safari picker/HEIC check deferred to a pre-release check (owner, no device available).**
+
+### 3.7 Checks for PR #44 (CMP-045), owner-checked
+Merged with these checks pending; the owner confirmed them after the staging re-paste:
+- the English listing and the English confirmation email for the free test event read "Free trial workshop" (automatic translation, the `Translations` entries used);
+- the `Translations` tab holds one row per text with `hash` and `text` as plain text;
+- the removed TNEW event's text is no longer in the tab (one pruning cycle seen).
 
 ## 4. Evidence index
 All files are in `docs/sprints/evidence/sprint-02/` (JPEG, masked, under 5 MB in total):
