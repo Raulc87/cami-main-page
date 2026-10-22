@@ -1,13 +1,15 @@
 # TECH_STACK
 
 ## Metadata
-- Version: 1.6 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
+- Version: 1.7 (homologated in CMP-014; §9 reviewer setup in CMP-016; v1.2: events backend —
   §1, §5–7, §10–14 — in CMP-021; v1.3: §10 two Apps Script projects — CMP-035;
   v1.4: §11 script permissions — CMP-036; v1.5: §11 full Drive scope named — CMP-037;
-  v1.6: §9/§10 temporary GitHub Pages test site — CMP-044)
+  v1.6: §9/§10 temporary GitHub Pages test site — CMP-044; v1.7: §9–§11 automatic Apps Script
+  deploy from GitHub, ADR-009 — CMP-048)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.2 Approved on
   merge of PR #21; v1.3 Approved on merge of PR #26; v1.4 Approved on merge of PR #30;
-  v1.5 Approved on merge of PR #32; v1.6 Approved (on merge of PR #43))
+  v1.5 Approved on merge of PR #32; v1.6 Approved on merge of PR #43; v1.7 Approved (on merge
+  of PR #XX))
 - Owner: Raul Casanas
 
 ## 1. Complexity Assessment
@@ -93,7 +95,11 @@ npm run preview   # serves dist/ locally
   until a test runner is adopted (that adoption requires an ADR).
 
 ## 9. CI/CD
-- No CI on push. One manual-only workflow, `.github/workflows/pages-staging.yml`
+- Backend deploy (ADR-009, CMP-047): a GitHub Actions workflow pushes `apps-script/` with a
+  pinned `clasp` to the staging project on each merge to `main` that changes it, and to
+  production only on a manual run approved by the owner; each run ends with a smoke request. A
+  check workflow on pull requests (no secrets) runs `node --check` on the backend files.
+- No other CI. One manual-only workflow, `.github/workflows/pages-staging.yml`
   (`workflow_dispatch`, CMP-043), builds `main` against the staging backend for the temporary
   test site in §10. Code review: a dedicated Claude Code review-only session (owner decision
   2026-10-18, CMP-016), plus GitHub Copilot code review and Codex as automated reviewers on
@@ -104,8 +110,9 @@ npm run preview   # serves dist/ locally
 ## 10. Hosting / Deployment
 - `npm run build` generates `dist/`; its contents are uploaded manually to `public_html/`.
 - The events backend is deployed separately: two standalone Apps Script projects (staging and
-  production), each with one web-app deployment, by the owner, per
-  [events-backend-runbook.md](docs/process/events-backend-runbook.md) (ADR-008).
+  production), each with one web-app deployment (ADR-008), updated by the deploy workflow in §9
+  (ADR-009; the owner approves production runs), per
+  [events-backend-runbook.md](docs/process/events-backend-runbook.md). No manual paste.
 - Temporary test site (owner decision, 2026-10-21, CMP-033): GitHub Pages
   (`noindex`), deployed only by running the manual workflow
   in §9, so a real phone can test the full flow against **staging**. The staging `/exec` URL is
@@ -134,6 +141,12 @@ npm run preview   # serves dist/ locally
   the owning account's Gmail settings. The spike's alias test confirmed `gmail.settings.basic` is
   enough (2026-10-20); any scope broader than the one the owner accepted (e.g. full mailbox
   `https://mail.google.com/`) goes back to the owner before it is deployed.
+- Deploy secrets (ADR-009): `CLASP_CREDENTIALS` (the owner's Google login token for `clasp`),
+  `APPS_SCRIPT_ID` and `APPS_SCRIPT_DEPLOYMENT_ID`, stored only as GitHub **environment** secrets
+  (`staging`, `production`), deployable only from `main`, production behind the owner's
+  approval; never in the repo. The token can change code running as the owner (Drive, Sheets,
+  Gmail settings): revoke it at once if anything looks wrong; rotate it every 6 months or after a
+  Google password change.
 
 ## 12. Observability
 - Events backend: daily `Metrics` tab and alert emails to camila@ (FFR-029); Apps Script
