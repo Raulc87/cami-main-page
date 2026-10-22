@@ -104,14 +104,18 @@ Negative / risks (accepted by the owner):
 - The token can expire (password change, long disuse): deploys then stop with a clear message
   before anything is pushed; the owner logs in again and replaces the secret.
 - Hand edits in the online editor are overwritten by the next deploy; nobody edits there.
+- From the owner's computer, `clasp` is used only for the first upload into a new project
+  (before its secrets exist) and in an emergency when the workflow cannot run (runbook); every
+  routine deploy goes through the workflow. Nothing is ever pasted into the editor.
 - Time-driven triggers run the newest pushed code as soon as it is pushed (they run Head).
 - If the smoke request fails, the new code is already in the project. The workflow puts the
   web-app deployment back on the version it served before, but that does **not** roll back the
   saved code (Head), which the two time triggers keep running (they can write the sheet, Drive
   and send emails). So a failed smoke request is handled at once: revert the PR and let the
   workflow redeploy the reverted code (staging runs on the merge; production needs a manual,
-  approved run); until then, if the faulty code could harm data, disable both triggers in the
-  project's Triggers page and re-enable them after the redeploy (runbook). Selecting a previous
+  approved run); until then, if the faulty code could harm data, delete both triggers in the
+  project's Triggers page (Apps Script cannot pause them) and create them again after the
+  redeploy (runbook). Selecting a previous
   version alone is never a sufficient rollback.
 - A change of `oauthScopes` in `appsscript.json` needs the owner to re-approve permissions
   before the backend works; the job summary says so.

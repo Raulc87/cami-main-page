@@ -3,7 +3,8 @@
 - Status: Accepted (on merge of PR #21, CMP-021; proposed in CMP-019). The deploy method
   (`clasp` from the owner's computer or pasting in the editor) is superseded by
   [ADR-009](ADR-009-apps-script-deploy-from-github.md) (CMP-048): deploys only by the GitHub
-  workflow, never by pasting.
+  workflow (from a computer only for a new project's first upload or an emergency), never by
+  pasting.
 - Date: 2026-10-19
 - Decision owner: Raul Casanas
 - Related specs: [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md),
@@ -51,7 +52,8 @@ Cons:
   account with write access to her Drive.
 - Code lives in the repo (`apps-script/`) and the owner deploys it with `clasp` or by pasting it
   into the script editor, following a deploy runbook. *(Superseded by ADR-009: deployed only by
-  the GitHub workflow; no paste, no deploy from a computer.)*
+  the GitHub workflow; never pasted; `clasp` from a computer only for a new project's first
+  upload or an emergency.)*
 Risks:
 - Deployment URL changes if redeployed incorrectly; mitigated by a documented deploy runbook.
 - Abuse of the anonymous endpoint: coupon-code enumeration, or uploads filling the storage
