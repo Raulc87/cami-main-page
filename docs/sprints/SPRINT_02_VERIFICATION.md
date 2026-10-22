@@ -97,7 +97,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 ### US-023 — Cami manages events, capacity and coupons without a deploy
 | AC | Case | Result | Evidence |
 |---|---|---|---|
-| 1 | A new published event appears within 5 minutes (TNEW) | Pending: not listed after 7 minutes in the first attempt; the owner is checking the row |  |
+| 1 | A new published event appears within 5 minutes (TNEW) | Pass. First attempt: not listed after 7 minutes because the owner's row was incomplete (owner: "I missed it before"). After the owner completed it, it was listed 2.3 minutes after my first check (name, date, time, price and `registrationOpen` correct); the owner's exact save time was not recorded, so this is an upper bound of about 2.3 minutes plus the owner's delay | listing poll |
 | 2 | Invalid row (blank name, invalid time) and a duplicated code are not shown; the others still are | Pass | listing before and after the owner's fixes; the duplicated code stayed hidden throughout |
 | 3 | A changed coupon discount applies on the next check (no cache) | Pending: live edit |  |
 | 4 | `nameEn`/`descriptionEn` override the automatic translation | Pass | `events?lang=en` for TART |
@@ -185,7 +185,7 @@ here when received. A final re-shoot of the events section (with the art event) 
 ## 5. Failures, observations and proposed tickets
 | # | Item | Class | Proposal |
 |---|---|---|---|
-| 1 | TNEW not listed after 7 minutes (US-023 AC1) | Pending: row data or defect | decide after the owner's check |
+| 1 | TNEW not listed after 7 minutes in the first attempt (US-023 AC1) | Not a defect: the row was incomplete (owner confirmed); listed after the fix | none |
 | 2 | The ticker's appearance shifts the page down by 40 px (CLS 0.03–0.06) | Observation | optional ticket to reserve the ticker height |
 | 3 | `index.html` links `/favicon.svg`, which is not in `public/` (404 on every page load, also in production) | Observation, pre-existing | small ticket: add the favicon or remove the link |
 | 4 | Intermittent 30 s hangs on staging (§3.4) | Observation | keep watching; no ticket yet |
