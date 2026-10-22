@@ -5,7 +5,7 @@ backend. Written by Implementation Agent 3 (CMP-033). A Fail is not fixed in thi
 classified (AC wording or defect) and a ticket is proposed. Story statuses are not changed here;
 the coordinator does that after the owner approves the evidence.
 
-**Status of this document: DRAFT (waiting for the abuse burst and one detail of US-022 AC7).** Lines marked `Pending (owner)` need the owner's view of the
+**Status of this document: DRAFT (one line left: the daily alert email of the abuse burst, US-024 AC2, which the backend sends after midnight Costa Rica time).** Lines marked `Pending (owner)` need the owner's view of the
 staging sheet, Drive folder or inbox, or a live edit by the owner; they are replaced by Pass/Fail
 before the PR is reported ready.
 
