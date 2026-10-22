@@ -64,24 +64,38 @@ Positive:
 
 Negative / risks (accepted by the owner):
 - **The owner's Google login token is stored in GitHub** (environment secret
-  `CLASP_CREDENTIALS`). Whoever can use it can change code that runs as the owner with Drive,
-  Sheets and Gmail-settings access. Mitigations: secrets only in the `staging`/`production`
+  `CLASP_CREDENTIALS`). It is not limited to these two projects: `clasp login` grants broad
+  scopes (read/write of **every** Apps Script project the owner can edit, their deployments,
+  Drive file access and, in current `clasp` versions, `cloud-platform`; the exact list is read
+  off the consent screen at setup and recorded in the runbook). Code pushed with it runs as the
+  owner with the backend's own scopes: it **sends email as the owner**, reads and writes **all**
+  of the owner's Drive (full Drive scope, TECH_STACK §11), the events spreadsheet, and can
+  change time triggers. Mitigations: secrets only in the `staging`/`production`
   environments, deployable only from `main`; production needs the owner's approval; no workflow
   with secrets runs on pull requests; actions pinned by commit SHA and `clasp` locked; two-factor
   on GitHub; `main` protected (pull request required), since a merge now deploys staging;
   revoke the token at once if anything looks wrong (runbook), rotate it every 6 months or after
   a Google password change.
+- **Supply chain:** any code that runs in the deploy job could read the token. Mitigation
+  (CMP-047): the deploy job installs only `@google/clasp` (pinned, with install scripts off or
+  from its own lockfile), not the site's dev dependencies; the credentials file is written only
+  in the step that runs `clasp` and deleted after; actions are pinned by commit SHA.
 - The token can expire (password change, long disuse): deploys then stop with a clear message
   before anything is pushed; the owner logs in again and replaces the secret.
 - Hand edits in the online editor are overwritten by the next deploy; nobody edits there.
 - Time-driven triggers run the newest pushed code as soon as it is pushed (they run Head).
 - If the smoke request fails, the new version is already live; roll back by selecting the
-  previous version in Deploy → Manage deployments, or revert the PR and redeploy.
+  previous version in Deploy → Manage deployments (the web app), and revert the PR and redeploy
+  (time triggers run Head, so only a redeploy of the reverted code rolls them back).
 - A change of `oauthScopes` in `appsscript.json` needs the owner to re-approve permissions
   before the backend works; the job summary says so.
 
 ## Follow-up
-- CMP-047 (Agent 1): the workflows, the pinned `clasp`, `.clasp.example.json`, the runbook
-  section with the owner's one-time setup (Apps Script API on, `clasp login`, environments,
-  secrets, first `dry_run`), token revocation and rotation.
+- CMP-047 (Agent 1): the workflows, `@google/clasp` pinned as a dev dependency (installed alone
+  in the deploy job), `.clasp.example.json`, and the runbook section with the owner's one-time
+  setup: Apps Script API on; `clasp login` and **record the scopes shown on the consent screen**;
+  GitHub two-factor on; `main` protected (pull request required); `staging` and `production`
+  environments limited to `main`, with the owner as required reviewer on `production`; the three
+  secrets; Actions workflow permissions read-only; a first `dry_run`; token revocation and
+  rotation.
 - Revisit later: an own OAuth client with minimal scopes for the token.

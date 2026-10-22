@@ -23,7 +23,8 @@ contract. Before v1.2 the project was **Simple** (static page, no backend).
 - Hosting provider: GoDaddy **Web Hosting** (shared hosting, cPanel) — not the Airo site
   builder product (see [release-checklist.md](docs/process/release-checklist.md)).
 - Control panel/runtime: cPanel File Manager; static files only for this project.
-- Deployment restrictions: manual upload of `dist/` to `public_html/`; no CI/CD.
+- Deployment restrictions: manual upload of `dist/` to `public_html/` (the site); the Apps Script
+  backend is deployed by a GitHub workflow (ADR-009).
 - Cost constraints: zero license budget — free tier first (PROJECT_SPEC NFR-003).
 - Portability constraints: output is plain static files, portable to any static host.
 
@@ -65,8 +66,8 @@ npm run preview   # serves dist/ locally
   ([ADR-008](docs/decisions/ADR-008-events-backend-google-apps-script.md)), plain JavaScript
   (V8 runtime). Services: `SpreadsheetApp`, `DriveApp`, Advanced Drive Service (OCR),
   `GmailApp`/`MailApp`, `LanguageApp`, `LockService`, `CacheService`, `PropertiesService`.
-- Code: in the repo under `apps-script/`; deployed by the owner with `clasp` or by pasting into
-  the script editor, following the deploy runbook (Sprint 02).
+- Code: in the repo under `apps-script/`; deployed by the GitHub deploy workflow with a pinned
+  `@google/clasp` dev dependency (ADR-009, §9), never by pasting into the script editor.
 - Interface: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md).
 - Alternatives considered: serverless functions + Google APIs, Google Forms, Node.js (ADR-008).
   Node.js stays the upgrade path (§14).
@@ -156,7 +157,11 @@ npm run preview   # serves dist/ locally
 ## 13. Risks
 - Apps Script limits: no client IP/headers (global throttling only), quotas, redirect-based
   responses (ADR-008).
-- Manual deploy with no CI — a broken build can only be caught by the precheck.
+- Manual site deploy with no site CI — a broken build can only be caught by the precheck.
+- Backend deploy token (ADR-009): the owner's `clasp` login token in GitHub environment secrets
+  reaches every Apps Script project the owner can edit and the scopes granted at login; code
+  pushed with it runs as the owner (sends email, reads all of the owner's Drive). Mitigations
+  and revocation in ADR-009.
 - No tests — regressions rely on manual verification.
 
 ## 14. Upgrade / Scaling Path
