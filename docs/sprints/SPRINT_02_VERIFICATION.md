@@ -75,7 +75,7 @@ Form-side runs on staging (CMP-032 pass and this run).
 | 3 | Exhausted coupon, coupon already used by the email: matching message, full price stays | Pass | scripted check |
 | 4 | A registration marked `spam` frees the coupon use: a one-use coupon answered `COUPON_EXHAUSTED` for another email; after the owner set the registration that held it to `spam`, the next check answered 20% and ₡20 000 (no cache) | Pass | live edit 4 |
 | 5 | Coupon deactivated after apply, then a paid registration: stored with the discount, flagged `coupon changed`; the visitor sees the review message | Pass (visitor side; row owner-checked: `coupon changed`, coupon PROMO10AB at 10%, ₡22 500) | `form-es-1280-flagged-coupon-changed.jpg` |
-| 6 | Many failed coupon checks: refusal "try again later" | Pending: abuse burst (run last, with `MAIL_REPLY_TO` set to the owner's test address so camila@ gets no test alert) |  |
+| 6 | Many failed coupon checks: refusal "try again later" | Pass: after 10 failed checks in a minute the next checks, including a valid coupon, got `RATE_LIMITED` until the minute ended; the next minute the valid coupon worked again (§3.8) | burst run |
 | 7 | No coupon list is sent to the browser | Pass | the `events` response carries no coupon data |
 | 8 | A coupon typed but not applied blocks Submit with "Aplica el cupón o borra el campo."; no request is sent | Pass | CMP-032 mock run and the reviewer's run |
 
@@ -116,8 +116,8 @@ Form-side runs on staging (CMP-032 pass and this run).
 | AC | Case | Result | Evidence |
 |---|---|---|---|
 | 1 | Metrics row for the day: accepted, honeypot hits, throttled, failed coupon checks, MB uploaded, spam marked | Pass (owner-checked: counters filled, `spamMarked` at least 1, `honeypotHits` at least 1) | owner, Metrics tab |
-| 2 | Over a threshold: one alert email for the day. The burst runs last with `MAIL_REPLY_TO` on the owner's test address (runbook §2.6) and `LIMIT_UPLOADS_PER_DAY` lowered for the cap case, then restored | Pending: abuse burst |  |
-| 3 | Honeypot filled: normal-looking success, nothing stored, hit counted | Pass (response; owner-checked: the hit is counted in Metrics) | API case R14 |
+| 2 | Over a threshold: one alert email for the day (at most one per Costa Rica day; a finding made after the day's email waits for the next day's email, FFR-029). Thresholds crossed with `MAIL_REPLY_TO` on the owner's test address and `LIMIT_UPLOADS_PER_DAY` lowered to 2 (§3.8) | Thresholds crossed: Pass. Alert email: **Pending (owner)**: see §3.8 | burst run |
+| 3 | Honeypot filled: normal-looking success, nothing stored, hit counted | Pass (response; owner-checked: the hit is counted in Metrics); 11 more honeypot posts all answered `ok` (§3.8) | API case R14, burst run |
 
 ### US-025 — Participant emails
 | AC | Case | Result | Evidence |
@@ -169,8 +169,7 @@ posted as `text/plain` JSON from a script; "valid" cases use a distinct syntheti
 | R16 | ₡0 registration on a closed free event | `REGISTRATION_CLOSED` | Pass |
 | R18 | two simultaneous ₡0 registrations for the last place | not both `ok` | Pass: one `ok`, one `SERVER_ERROR` (busy lock); a third request then got `SOLD_OUT` |
 
-The race ran against the backend with PR #39's lock flush (see §1). Codes not exercised: `RATE_LIMITED` and
-`UPLOAD_CAP_REACHED` (abuse burst, pending), `SERVER_ERROR` as a failure (seen only as the busy-lock answer and as a network failure, §3.4).
+The race ran against the backend with PR #39's lock flush (see §1). `RATE_LIMITED` and `UPLOAD_CAP_REACHED` were exercised by the abuse burst (§3.8). `SERVER_ERROR` was seen only as the busy-lock answer and as a network failure (§3.4).
 
 ### 3.2 Real browser to staging (CORS and redirect path)
 Pass. Every call of the form run (events, coupon, register, with a 7 MB base64 body) went through
@@ -209,6 +208,20 @@ iPhone 13 emulation: both accepted, sent as `image/heic` and `image/png`, refere
 Stored: the HEIC files in their original `.heic` format (the conversion fell back, FFR-014), the PNG converted to `.jpg` (owner-checked in Drive). Check result of the HEIC rows and emails: see US-022 AC7 and US-025.
 **Real-iPhone Safari picker/HEIC check deferred to a pre-release check (owner, no device available).**
 
+### 3.8 Abuse burst (US-020 AC6, US-024 AC2/AC3, `RATE_LIMITED`, `UPLOAD_CAP_REACHED`)
+Run last, against the staging backend with `MAIL_REPLY_TO` on the owner's test address and
+`LIMIT_UPLOADS_PER_DAY` lowered to 2 by the owner (so no test alert reaches camila@), one fresh
+one-minute window per case, requests as in §3.1 with test tags only:
+| Case | Requests | Expected | Result |
+|---|---|---|---|
+| Honeypot | 11 `register` with the hidden field filled | all `ok`, nothing stored, 11 hits counted | Pass: 11 × `ok` |
+| Register throttle (`LIMIT_REGISTER_PER_MIN` 20) | 45 `register` with an invalid email in one minute (3 waves of 15) | 20 answered normally, the rest `RATE_LIMITED` | Pass: 20 × `VALIDATION_ERROR`, 25 × `RATE_LIMITED` |
+| Failed coupon checks (`LIMIT_COUPON_FAILS_PER_MIN` 10) | 12 checks with unknown codes in one minute, then a valid coupon in the same minute | 10 × `COUPON_INVALID`, then `RATE_LIMITED` for coupon checks until the minute ends | Pass: 10 × `COUPON_INVALID`, 2 × `RATE_LIMITED`; the valid coupon in that minute `RATE_LIMITED`; in the next minute `ok` |
+| Coupon checks per minute (`LIMIT_COUPON_CHECKS_PER_MIN` 30) | 32 valid checks in one minute | 30 answered, the rest `RATE_LIMITED` | Pass: 30 × `ok`, 2 × `RATE_LIMITED` |
+| Daily upload cap (`LIMIT_UPLOADS_PER_DAY` lowered to 2; many screenshots already stored that day) | a paid `register` with a screenshot; then a ₡0 `register` | paid: `UPLOAD_CAP_REACHED`; ₡0: unaffected | Pass: `UPLOAD_CAP_REACHED`; the free registration `ok` |
+In the form the cap answer reads "No podemos recibir más capturas por ahora. Inténtalo más tarde o escribe a Cami a camila@lifetoolscr.com.", with the typed data and the chosen file kept (`form-es-1280-upload-cap.jpg`, the email is masked).
+Alert email (US-024 AC2): the thresholds were crossed (honeypot hits well above 10, 25 throttled requests above the limit of 20, the upload cap reached). The backend sends at most one alert email per Costa Rica day and a finding made after that day's email waits for the next day's (the first check after midnight Costa Rica time, 06:00 UTC); the email already sent that day listed the invalid sheet rows. The owner's check of the next alert email is **Pending (owner)**; until it is seen, `MAIL_REPLY_TO` must stay on the owner's address and the upload limit at 2 (the cap line of the alert is derived from the day's upload count against the limit when the alert is built).
+
 ### 3.7 Checks for PR #44 (CMP-045), owner-checked
 Merged with these checks pending; the owner confirmed them after the staging re-paste:
 - the English listing and the English confirmation email for the free test event read "Free trial workshop" (automatic translation, the `Translations` entries used);
@@ -217,7 +230,7 @@ Merged with these checks pending; the owner confirmed them after the staging re-
 
 ## 4. Evidence index
 All files are in `docs/sprints/evidence/sprint-02/` (JPEG, masked, under 5 MB in total):
-`page-*` (layout and regression; `page-events-art-*` shows the event with an image, in EN with the `nameEn`/`descriptionEn` override), `form-*` (form states; the SINPE blocks show test values and registration references are masked), `mobile-iphone13-heic-*` (test values shown, reference masked),
+`form-es-1280-upload-cap.jpg` (the upload-cap answer in the form), `page-*` (layout and regression; `page-events-art-*` shows the event with an image, in EN with the `nameEn`/`descriptionEn` override), `form-*` (form states; the SINPE blocks show test values and registration references are masked), `mobile-iphone13-heic-*` (test values shown, reference masked),
 `us005-ac2-featured-expanded-es.jpg`. Sheet, Drive and inbox screenshots from the owner are added
 here when received. 
 
