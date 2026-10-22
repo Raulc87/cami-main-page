@@ -300,18 +300,22 @@ scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `mai
 
 **One-time setup (owner, plain words)**
 1. Turn on the **Google Apps Script API** for the Workspace account that owns the projects:
-   <https://script.google.com/home/usersettings>. A Workspace admin may have to allow it.
+   <https://script.google.com/home/usersettings>. A Workspace admin may have to allow it. Google
+   needs a few minutes to apply it: a run right after can fail with "User has not enabled the Apps
+   Script API"; wait and re-run.
 2. On your computer, in the repo folder: `cd .github/clasp`, `npm ci --ignore-scripts`, then
    `./node_modules/.bin/clasp login` (a browser sign-in as that account). This writes the login file
    `~/.clasprc.json`. Treat it like a password. **On Google's consent screen, write down every
    permission it lists** (tick-by-tick, or a screenshot) and send the list to the coordinator, who
-   records it in ADR-009: it is the full reach of this token.
+   records it in ADR-009: it is the full reach of this token. (Equivalent without the repo
+   folder, as done at the first setup: `npx @google/clasp@3.4.1 login`, the same pinned version.)
 3. GitHub → repo **Settings → Environments**: create `staging` and `production`. For both, under
    *Deployment branches* choose **Selected branches → main**. For `production` also tick
    **Required reviewers** and add the owner.
 4. In **each** environment add three *environment secrets* (not repository secrets):
-   - `CLASP_CREDENTIALS`: the whole contents of the login file (open it in a text editor, copy all,
-     paste). The same login serves both environments.
+   - `CLASP_CREDENTIALS`: the whole contents of the login file. On a Mac, `pbcopy < ~/.clasprc.json`
+     copies it without showing it; paste it into the secret, then clear the clipboard with
+     `echo -n | pbcopy`. The same login serves both environments.
    - `APPS_SCRIPT_ID`: the script ID of that environment's project (Project Settings → IDs).
    - `APPS_SCRIPT_DEPLOYMENT_ID`: the ID of the existing web-app deployment whose `/exec` URL the
      site uses (**Deploy → Manage deployments**, the ID under the active web app; not the
@@ -320,8 +324,9 @@ scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `mai
    then add the production secrets.
 5. **Settings → Actions → General**: *Workflow permissions* = **Read repository contents**; *Fork pull
    request workflows* = require approval for outside collaborators. **Protect `main`** (**Settings →
-   Branches**: pull request required, with your approval), because a merge to `main` now deploys
-   staging. Turn on two-factor sign-in for the GitHub account (**Settings → Password and
+   Branches**: pull request required; required approvals **0**, because every pull request here is
+   opened under the owner's own account and GitHub does not let an author approve their own pull
+   request), because a merge to `main` now deploys staging. Turn on two-factor sign-in for the GitHub account (**Settings → Password and
    authentication**).
 6. First run: **Actions → Deploy Apps Script → Run workflow** with environment `staging` and
    **dry run** on, then once without dry run. Read the printed project title and the smoke result.
