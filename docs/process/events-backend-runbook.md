@@ -225,9 +225,10 @@ Routine updates are made by the GitHub workflow (5.1): it uploads `apps-script/`
 version on the **existing** deployment, so the `/exec` URL does not change. Never create a second
 deployment for an environment that already has one: a new deployment gets a new URL.
 
-If the workflow cannot be used (for example the token has to be renewed first), the same can be
-done by hand from your computer, with the login file and a `.clasp.json` (section 5.1, "Local
-alternative"):
+**Emergency only**, when the workflow cannot be used (for example the token has to be renewed
+first), the same can be done by hand from the owner's computer, with the login file and a
+`.clasp.json` (section 5.1, "Local alternative"). The other use of `clasp` from the computer is
+the one-time first upload of a new project (section 2.2). Routine deploys are never made by hand:
 ```bash
 .github/clasp/node_modules/.bin/clasp push --force
 .github/clasp/node_modules/.bin/clasp deploy --deploymentId <DEPLOYMENT_ID> --description "CMP-025 events read"
@@ -312,8 +313,11 @@ scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `mai
 click lets a production run start. No workflow that runs on pull requests can read the secrets.
 
 **Token care**
-- The login token can change code that runs as the Workspace owner (Drive, Sheets and Gmail
-  settings). Keep the GitHub account protected with two-factor sign-in.
+- The login token reaches far (full list in ADR-009): every Apps Script project the account can
+  edit and their deployments, Drive file access and the Google Cloud platform scope. Code pushed
+  with it runs as the Workspace owner: it **sends email as the owner** and reads and writes **all**
+  of the owner's Drive. A leaked staging secret can change production too (same account). Keep the
+  GitHub account protected with two-factor sign-in, and read ADR-009 before the first setup.
 - If anything looks wrong, or when a person with access to the repository settings leaves: revoke
   it at <https://myaccount.google.com/permissions> (the clasp app), run `clasp login` again (runbook 5.1) and
   replace `CLASP_CREDENTIALS` in **both** environments. Do the same every 6 months, and after changing
@@ -323,10 +327,12 @@ click lets a production run start. No workflow that runs on pull requests can re
 - Optional hardening later: sign in with your own Google Cloud OAuth client that has only the
   Apps Script scopes (`clasp login --creds ...`).
 
-**Local alternative**: with the login file on your computer and a `.clasp.json` made from
-`.clasp.example.json` (never committed), `.github/clasp/node_modules/.bin/clasp push` and
-`... clasp deploy --deploymentId ...` do by hand what the workflow does. Do not use both for the
-same change.
+**Local use (first upload and emergencies only)**: with the login file on your computer and a
+`.clasp.json` made from `.clasp.example.json` (never committed), `.github/clasp/node_modules/.bin/clasp
+push` and `... clasp deploy --deploymentId ...` do by hand what the workflow does. Use it for the
+one-time first upload of a new project (section 2.2) and when the workflow cannot run (for example
+while the token is being renewed); say so in the pull request or the deployment description. Do not
+use both for the same change.
 
 ## 6. Roll back to a previous version
 The deployment keeps its URL; only the version it serves changes.
