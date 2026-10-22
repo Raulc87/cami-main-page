@@ -178,9 +178,8 @@ So that I know whether her approach fits me
 ### US-005 — Real client testimonials
 - Priority: High
 - Story Points: — (retroactive)
-- Status: Review — AC2's Spanish-to-English long-quote fallback is not exercised by current
-  data (every long quote has a Spanish version); needs one check with test data (CMP-017
-  observation, CMP-020)
+- Status: Done (AC2 verified with test data in CMP-033; evidence approved by merging PR #48;
+  recorded in CMP-051)
 - Related Spec: [ARCHITECTURE_SPEC §9](ARCHITECTURE_SPEC.md#9-logical-data-architecture-content-model)
 - Related Requirements: FR-007, BR-003
 - Tickets: CMP-002, CMP-008, CMP-009
@@ -509,7 +508,8 @@ Dependencies:
 ### US-017 — Upcoming events section
 - Priority: High
 - Story Points: 3
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-001..FFR-004, FFR-025, FFR-028, BR-E09)
 - Related Requirements: FR-011, FR-009, NFR-002
 
@@ -551,7 +551,8 @@ So that I can choose one to attend
 ### US-018 — Upcoming-events ticker banner
 - Priority: Medium
 - Story Points: 2
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-005, FFR-006)
 - Related Requirements: FR-011, NFR-002
 
@@ -589,7 +590,8 @@ So that I notice them right away
 ### US-019 — Event registration form with SINPE Móvil payment proof
 - Priority: High
 - Story Points: 5
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051; the real-iPhone picker check and the form wording review are release gates (release-checklist §3b))
 - Related Spec: FEATURE_SPEC_events_registration (FFR-007..FFR-011, FFR-018, FFR-022, FFR-023,
   FFR-027), BR-E01..BR-E03, BR-E09
 - Related Requirements: FR-011, FR-009
@@ -644,7 +646,8 @@ So that my place is reserved
 ### US-020 — Discount coupon at registration
 - Priority: Medium
 - Story Points: 3
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-012, FFR-013, FFR-021, FFR-024, FFR-031, §12),
   BR-E03, BR-E10, BR-E13
 - Related Requirements: FR-011
@@ -695,7 +698,8 @@ So that I pay the discounted price
 ### US-021 — Registrations stored in Google Drive and Sheets
 - Priority: High
 - Story Points: 5
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051; the real-iPhone HEIC check is a release gate (release-checklist §3b))
 - Related Spec: FEATURE_SPEC_events_registration (FFR-014..FFR-016, FFR-022, FFR-024, FFR-025,
   FFR-030), BR-E04, BR-E05, BR-E10, BR-E13; contract §6
 - Related Requirements: FR-011, NFR-003
@@ -744,7 +748,8 @@ So that I can manage participants and payments in one place
 ### US-022 — Automatic check of the payment screenshot
 - Priority: Medium
 - Story Points: 5
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051; a raw iPhone HEIC photo is stored in its original format and checked by hand (FFR-017), revisit after the real-iPhone check)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-032, FFR-030), BR-E06
 - Related Requirements: FR-011
 
@@ -796,7 +801,8 @@ So that I spot wrong payments before confirming
 ### US-023 — Cami manages events, capacity and coupons without a deploy
 - Priority: High
 - Story Points: 3
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-019, FFR-020, FFR-033, FFR-028); contract §6
 - Related Requirements: FR-011
 
@@ -836,7 +842,8 @@ So that the site reflects them without waiting for a developer
 ### US-024 — Abuse metrics and alerts
 - Priority: Medium
 - Story Points: 2
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051; the `throttled` counter undercounts under parallel load (CMP-053))
 - Related Spec: FEATURE_SPEC_events_registration (FFR-029, §12)
 - Related Requirements: FR-011, NFR-003
 
@@ -872,7 +879,8 @@ So that we know when to add a captcha
 ### US-025 — Participant emails (confirmation, payment not validated)
 - Priority: High
 - Story Points: 3
-- Status: Ready
+- Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
+  CMP-051; the email templates are a release gate (Cami's approval, BR-E11))
 - Related Spec: FEATURE_SPEC_events_registration (FFR-026), BR-E11
 - Related Requirements: FR-011, FR-009
 
