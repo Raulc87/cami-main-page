@@ -24,7 +24,7 @@ Which results ran before and after the re-paste of PR #44 on staging (about 00:1
 |---|---|
 | Form runs, live edits (a) and (b) of the form, the 27 API cases and the race (R18), the 15 + 4 email registrations, the HEIC/PNG substitute (first run, test values), CLS and regression captures | The HEIC re-run with the real values, the TNEW listing and removal, live edits 2 to 4 (coupon change, cancelled place, spam), the ticker/US-017 AC5/accessibility scripted checks (front-end only), the final evidence re-shoots |
 
-Legend: **Pass**, **Fail**, **N/A** (cannot be exercised, with the reason),.
+Legend: **Pass**, **Fail**, **N/A** (cannot be exercised, with the reason).
 
 ## 2. Results per story
 
