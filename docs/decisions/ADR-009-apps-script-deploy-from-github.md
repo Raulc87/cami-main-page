@@ -72,8 +72,9 @@ Negative / risks (accepted by the owner):
 - **The owner's Google login token is stored in GitHub** (environment secret
   `CLASP_CREDENTIALS`). It is not limited to these two projects: `clasp login` grants broad
   scopes (read/write of **every** Apps Script project the owner can edit, their deployments,
-  Drive file access and, in current `clasp` versions, `cloud-platform`; the exact list is read
-  off the consent screen at setup and recorded in the runbook). Code pushed with it runs as the
+  access to the Drive files used with the app (`drive.file`) and Drive metadata, and
+  `cloud-platform`; the exact list is read
+  off the consent screen at setup and recorded below). Code pushed with it runs as the
   owner with the backend's own scopes: it **sends email as the owner**, reads and writes **all**
   of the owner's Drive (full Drive scope, TECH_STACK §11), the events spreadsheet, and can
   change time triggers. Mitigations: secrets only in the `staging`/`production`
@@ -128,6 +129,20 @@ Negative / risks (accepted by the owner):
   environments limited to `main`, with the owner as required reviewer on `production`; the three
   secrets; Actions workflow permissions read-only; a first `dry_run`; token revocation and
   rotation.
+- Scopes granted at the owner's `clasp login` (2026-10-22, `clasp` 3.4.1; Google's account
+  permissions page, nine items, read by the coordinator from the owner's screenshot, in Spanish
+  in the original): see your profile information; see, edit, create and delete only the specific
+  Google Drive files used with this app; see information about your Google Drive files; create
+  and update Google Apps Script projects; create and update Google Apps Script deployments; view
+  the projects' log data; publish this app as a web app or a service that can share your data;
+  see, edit, configure and delete your Google Cloud data and see your account's email address;
+  manage your Google API service configuration. The token itself holds no full-Drive or Gmail
+  scope; code it pushes still runs with the backend's own scopes (above).
+- First runs (2026-10-22): the staging dry run reached `cami-events-staging` and listed the 16
+  files; the first real run failed with "User has not enabled the Apps Script API" right after the
+  API was turned on (Google needs a few minutes to apply it) and passed on a re-run: 16 files
+  pushed, version 20 on the existing deployment, smoke request PASS (events ok, invalid
+  registration `VALIDATION_ERROR`). Production setup pending (release-checklist §3b).
 - Revisit later: an own OAuth client with minimal scopes for the token, and a separate Google
   account (editor of the staging project only) for the staging secret, so a leaked staging
   secret cannot reach production.
