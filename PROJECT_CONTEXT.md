@@ -89,7 +89,8 @@ they are not active paths.
 ## Agent allocation
 - Implementation Agent 1: events backend and production setup — CMP-053, CMP-050, CMP-052,
   CMP-064 (fresh session at the go-ahead)
-- Implementation Agent 2: security — CMP-056, CMP-062, CMP-063 (fresh session at the go-ahead)
+- Implementation Agent 2: security — CMP-056, CMP-062, CMP-063, CMP-069 (fresh session at the
+  go-ahead)
 - Implementation Agent 3: site, developer guide, iPhone check, logo, verification, go-live —
   CMP-057, CMP-054, CMP-065, CMP-067, CMP-066, CMP-068 (fresh session at the go-ahead)
 - Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 03; Codex runs as

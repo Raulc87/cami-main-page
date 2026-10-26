@@ -78,7 +78,8 @@ upload; if one is not, do not release:
       request green; both time triggers installed once in production (runbook).
 - [ ] Lifetools logo in place for events without art (CMP-067).
 - [ ] Security baseline approved (`docs/security/SECURITY_BASELINE.md`, CMP-056) with the PTES
-      deadline written in (owner decision, 2026-10-26: 60 days after the events go-live);
+      deadline written in as a date (CMP-069; owner decision, 2026-10-26: 60 days after the
+      events go-live);
       after that date, no release until the penetration test is done (AGENTS.md → Security
       baseline).
 - [ ] Pre-test security review done (CMP-063): no open critical or high finding, unless the

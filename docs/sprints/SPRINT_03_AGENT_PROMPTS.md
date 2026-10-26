@@ -207,6 +207,12 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    that: scope, tool, rate, time window and the alert settings. Record findings with a severity in
    docs/security/PRETEST_REVIEW.md (no secrets, no exploit details beyond what a fix needs) and
    send each to the coordinator as a proposed ticket.
+4. CMP-069-ptes-deadline-date — when the coordinator gives you the go-live date the owner set:
+   write the PTES deadline in the baseline as a date (the go-live date plus 60 days). Small
+   PR; it merges before the go-live upload.
+If your baseline classifies the project as high-risk or complex, tell the coordinator at once:
+the OSSTMM 3 test before a release that adds a major new attack surface is not covered by the
+60-day deadline, so the go-live waits for that test or a new owner decision.
 ```
 
 ## Agent 3 — Site, iPhone check and integration
