@@ -264,10 +264,12 @@ Events placeholders (CMP-029 on; each is a release gate in
 - SINPE Móvil number and account name — placeholders in script properties (`isPlaceholder`,
   BR-E01) until Cami confirms them; never in the repo.
 - Privacy notice — the generic draft in
-  [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3 until the lawyer review.
+  [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3, approved by Cami
+  2026-10-26 (CMP-058); shown with a "Draft" badge until CMP-059 removes it.
 - Participant email templates (confirmation, registration received, payment not validated) —
   drafts in [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §1–§2, used by the
-  backend from CMP-028, until Cami approves them (BR-E11, US-025 AC4).
+  backend from CMP-028; approved by Cami 2026-10-26 with her changes (CMP-058, applied in
+  CMP-059; BR-E11, US-025 AC4).
 
 ### When adding new content
 

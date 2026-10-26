@@ -6,12 +6,13 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.4 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.5 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
-  on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046)
+  on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
+  `contactOptIn`, owner 2026-10-26 — CMP-058)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
-  PR #35; v1.3 on merge of PR #37; v1.4 Approved (on merge of PR #45))
+  PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 Approved (on merge of PR #52))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-033)
 - Related stories: US-017..US-025
@@ -61,10 +62,11 @@ email never appears in a URL (FNFR-001). Throttled globally.
   "eventCode": "EV1",
   "participantName": "María Pérez",
   "email": "maria@example.com",
-  "whatsapp": "+50684104791",
+  "whatsapp": "+50688880000",
   "couponCode": "PROMO10AB",
   "lang": "es",
   "consent": true,
+  "contactOptIn": false,
   "website": "",
   "file": { "name": "IMG_1234.HEIC", "mimeType": "image/heic", "base64": "..." }
 }
@@ -81,6 +83,7 @@ email never appears in a URL (FNFR-001). Throttled globally.
 | `couponCode` | string | no | `^[A-Z0-9]{8,20}$` when present | trim, upper; empty → none | `couponCode` |
 | `lang` | string | yes | `es` or `en` | — | `lang` |
 | `consent` | boolean | yes | must be `true` | — | `consentAt` (server time) |
+| `contactOptIn` | boolean | no | optional; only the JSON boolean `true` counts as opting in. Missing, `false` or any other value (a string, a number, `null`) is stored as `FALSE` and never refused (no error code): the box only widens contact, so the safe reading of anything unclear is "no" (the optional, unticked second checkbox, FFR-018) | — | `contactOptIn` (`TRUE` / `FALSE`) |
 | `website` | string | yes | honeypot: must be `""` | — | not stored |
 | `file` | object/null | when amount due > ₡0 | image, ≤ 5 MB decoded; types JPEG, PNG, WebP, HEIC/HEIF (detected from content, not name) | stored as JPEG (`.jpg`), converted with `Blob.getAs` (spike); if conversion fails, the original is stored with its own extension (`.png`, `.webp`, `.heic`) and `checkDetails` gets the note `stored as original format: <ext>` (a note, not a flag; if OCR then cannot read it, `checkResult` is `unreadable` with no retries and no "not validated" email, FFR-017; owner, 2026-10-20) | Drive file → `screenshotUrl` |
 
@@ -119,7 +122,9 @@ Spreadsheet (Workspace `lifetoolscr.com`), tabs:
 - `<eventCode>` (one per event, created on first registration), columns in order:
   `timestamp`, `submissionId`, `reference`, `eventCode`, `participantName`, `email`,
   `whatsapp`, `lang`, `couponCode`, `discountPercent`, `amountDueCrc`, `screenshotUrl`,
-  `checkResult`, `checkDetails`, `needsReview`, `status`, `consentAt`, `notes`.
+  `checkResult`, `checkDetails`, `needsReview`, `status`, `consentAt`, `notes`, `contactOptIn`
+  (v1.5; added last so existing tabs keep their columns: the script adds the header to a tab
+  that lacks it, and older rows stay blank, read as `FALSE`).
 - `Metrics`: one row per day — `date`, `accepted`, `honeypotHits`, `throttled`,
   `couponFailures`, `uploadedMb`, `spamMarked`.
 - `Translations` (created by the script, CMP-045): `hash`, `text` — the automatic English
@@ -242,3 +247,6 @@ The checklist must cover:
   refused, paid stored and flagged); duplicate email; retry with the same `submissionId`; event
   closed after the form opened (paid stored and flagged); coupon changed after apply (paid
   stored and flagged).
+- `contactOptIn` (v1.5): ticked → `TRUE` in the row; unticked or missing → `FALSE`; a
+  non-boolean value → `FALSE`, not refused; a registration in an event tab created before v1.5
+  adds the `contactOptIn` header as the last column, and that tab's older rows stay blank.

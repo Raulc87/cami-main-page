@@ -26,7 +26,7 @@ runner.
 - **Runbook:** how the owner deploys the script to staging and production.
 - **Not in scope:** the production release of the feature. It waits for the release gates in
   [release-checklist.md §3b](../process/release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)
-  (real SINPE values, lawyer-reviewed privacy notice, Cami-approved emails, the logo); see §17.
+  (real SINPE values, privacy notice reviewed by Cami as the legal review (owner decision, CMP-058), Cami-approved emails, the logo); see §17.
 
 ## 3. Traceability
 Project Requirement → User Story → Acceptance Criterion → Implementation step (§11) → Test
@@ -76,7 +76,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
   names, buttons) are drafted in EN and ES and listed in the PR body for the owner's approval.
   The privacy notice uses the draft in
   [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3, marked as a draft in
-  code (BR-002) until the lawyer review.
+  code (BR-002) until the release (approved by Cami as the legal review, CMP-058).
 - **Layout and interaction** follow [UX_UI_DIRECTION.md §13](../ux/UX_UI_DIRECTION.md#13-events-ui).
 
 ## 7. Components / Files Affected
@@ -176,7 +176,7 @@ changed); `email failed` flag (US-025 AC3).
 - Owner: staging spreadsheet and folder, Workspace alias check, every deploy.
 - Cami: 2–3 sample SINPE screenshots (spike), the Lifetools logo, the SINPE values and the email
   approval (release gates).
-- Lawyer (Cinthia): privacy notice review (release gate).
+- Cami: privacy notice review, as the legal review (owner decision 2026-10-26, CMP-058; release gate).
 
 ## 20. Open Technical Questions
 - HEIC → JPEG conversion method (spike decides; a new frontend library needs TECH_STACK + ADR).
