@@ -15,7 +15,8 @@
   codes as text, ₡0 on a duplicated code — CMP-040; v1.7: BR-E11 names the alert email and
   reason phrases — CMP-041; v1.8: BR-E11 adds the form wording, owner 2026-10-21 — CMP-042;
   v1.9: FFR-028 translations in a sheet tab, FFR-019 reserved name — CMP-046; v1.10: Cami's
-  review of the texts, BR-E11 legal review by Cami (owner decision), amount format — CMP-058)
+  review of the texts, BR-E11 legal review by Cami (owner decision), amount format, optional
+  contact checkbox (FFR-018, contract v1.5) — CMP-058)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
   PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 Approved (on merge of PR #52))
@@ -131,7 +132,10 @@ Registration
   submission ID (UUID) (FFR-022).
 - FFR-018: The form shows a privacy notice (generic, Ley 8968-based draft in
   [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3, approved by Cami as the
-  legal review, 2026-10-26 — BR-E11) and requires an explicit consent checkbox.
+  legal review, 2026-10-26 — BR-E11) and requires an explicit consent checkbox. Below it, an
+  optional, unticked second checkbox asks whether the person wants Cami to contact them about
+  other events and news; it is stored as `contactOptIn` and never blocks the registration
+  (contract v1.5; owner, 2026-10-26, CMP-058).
 - FFR-022: Idempotency: a request whose submission ID is already stored returns that row's
   reference and stores nothing new.
 - FFR-023: Free events and ₡0 totals (a free event or a 100% coupon): same form and data
@@ -169,7 +173,7 @@ Storage (server side)
   first registration.
 - FFR-016: Row columns and order: contract §6 (timestamp, submission ID, reference, event code,
   name, email, WhatsApp, language, coupon, discount %, amount due, screenshot URL, check result,
-  check details, needsReview, status, consent time, notes). Status is `new` on creation; only Cami
+  check details, needsReview, status, consent time, notes, contact opt-in). Status is `new` on creation; only Cami
   sets `confirmed`, `refund/cancelled` or `spam`. Check result is `pending` until US-022 ships.
 - FFR-024: Late changes to a paid registration (BR-E13): if, when `register` arrives with a
   screenshot, the event is closed, unpublished or sold out, or the coupon the visitor applied is
@@ -457,6 +461,7 @@ Per story in [USER_STORIES.md](USER_STORIES.md) (US-017..US-025).
 | WhatsApp example (CMP-058) | The form's WhatsApp example is the neutral `+50688880000`, not Cami's number — owner, 2026-10-26, asked "Cami wants the WhatsApp example in the form to be [Cami's number, omitted]. That's her real SINPE number, and our rule says SINPE data never goes in the repo (the form text lives in the public code). It would also be shown publicly on the site. OK to use it?" (options: use a neutral example; use Cami's number): "Use a neutral example (Recommended)". The number is omitted from the quote on purpose: SINPE data never goes in the repo (FNFR-001/002, BR-E01) |
 | Amount format (CMP-058) | `₡15,000` (comma) in both languages, in the emails and on the site — owner, 2026-10-26, asked "Cami wants amounts with a comma in both languages (₡15,000). Today Spanish emails AND the website show ₡15 000. Change where?" (options: emails and website; emails only): "Emails and website (Recommended)" |
 | Reason phrases (CMP-058) | "Registration received" email: "…, pero {motivo}." with the phrases in EVENTS_EMAILS_AND_PRIVACY §1b — owner, 2026-10-26, asked whether to use the proposed rewording of Cami's comments (options: yes, use that; ask Cami first): "Yes, use that (Recommended)" |
+| Contact consent (FFR-018, CMP-058) | Keep the required consent checkbox for the registration and add an optional, unticked second checkbox for other contact ("Quiero que Cami me contacte sobre otros eventos y novedades." / "I'd like Cami to contact me about other events and news."), stored as `contactOptIn` (contract v1.5) — owner, 2026-10-26, asked "The new privacy notice lets Cami contact people beyond the event (Cami's change), but the checkbox still says 'I authorize the use of my data for this registration' — so people only agree to the narrower use. How should the consent work?" (options: add optional 2nd box; widen the one box; keep as is): "Add optional 2nd box (Recommended)" |
 | Events wait (FFR-004, FNFR-003) | The site waits up to 5 s (was 3 s) for the `events` answer before hiding the section and the ticker; the page itself never waits — owner, 2026-10-20, asked "On staging, about 1 in 10 loads of the event list took longer than the site's 3-second wait (3.4 s and 4.6 s), so for those visitors the events section and ticker stay hidden. The page itself is never slowed down; the events just load in after it. How should we handle it?" (options: wait up to 5 s; accept for now; retry once; remember the last list): "Wait up to 5 s" |
 | Screenshot format (FFR-014) | If conversion to JPEG fails, store the original with its own extension and a `checkDetails` note; never refuse the registration for it — owner, 2026-10-20, asked "When someone pays and uploads their SINPE screenshot, the backend saves it as a JPEG. If Google can't convert an unusual image type (WebP or iPhone HEIC; most phones send JPEG anyway), what should happen?" (options: save the original; refuse the upload): "Save the original (Recommended)" |
 | Original-format payment check (FFR-017) | A screenshot kept in its original format that OCR cannot read → `unreadable`, no retries, flagged for Cami, no "not validated" email — owner, 2026-10-20, asked "Follow-up to 'Save the original': when a screenshot is kept in its original format (rare WebP/HEIC), Google's automatic payment check may not be able to read it. What should happen then?" (options: Cami checks by hand; normal "not validated" email): "Cami checks by hand (Recommended)" |

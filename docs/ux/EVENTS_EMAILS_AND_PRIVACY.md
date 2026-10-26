@@ -160,7 +160,9 @@ review questions:
 - **Registering someone else:** no change; one registration per person, each with its own email
   ("no creo que haga falta, con que sea una inscripcion por persona con un correo distinto por
   cada una"). Several people under one email may be evaluated later.
-- **Consent checkbox:** unchanged ("asi esta bien").
+- **Consent checkbox:** unchanged ("asi esta bien"). Because the notice now allows contact beyond
+  the event, the owner added an optional, unticked second checkbox for that (2026-10-26,
+  FEATURE_SPEC §20 "Contact consent"); see below.
 
 ### ES
 **Aviso de privacidad.** Cami Hernandez (Lifetools, camila@lifetoolscr.com) recopila tu nombre,
@@ -172,6 +174,8 @@ camila@lifetoolscr.com, conforme a la Ley N.° 8968 de Costa Rica.
 
 ☐ Acepto el aviso de privacidad y autorizo el uso de mis datos para esta inscripción.
 
+☐ *(opcional)* Quiero que Cami me contacte sobre otros eventos y novedades.
+
 ### EN
 **Privacy notice.** Cami Hernandez (Lifetools, camila@lifetoolscr.com) collects your name,
 email, WhatsApp number and, when applicable, your payment receipt only to manage your
@@ -181,6 +185,8 @@ You can request access, correction or deletion of your data by writing to
 camila@lifetoolscr.com, under Costa Rica's Law No. 8968.
 
 ☐ I accept the privacy notice and authorize the use of my data for this registration.
+
+☐ *(optional)* I'd like Cami to contact me about other events and news.
 
 ## 4. Form wording (BR-E11)
 
