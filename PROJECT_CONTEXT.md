@@ -58,8 +58,9 @@
   CMP-056 in Sprint 03, approved by its end (AGENTS.md → Security baseline)
 - Penetration-test plan: `docs/security/PENTEST_PLAN.md`, required (the site is live and the
   events feature handles personal data and payment receipts): written in Sprint 03 (CMP-062);
-  the PTES test, run by a tester the owner authorizes in writing, comes before the events
-  production release, in Sprint 04 (owner decisions, CMP-056 and SPRINT_03_PLAN)
+  the PTES test, run by a tester the owner authorizes in writing, is due 60 days after the
+  events go-live, a dated deadline recorded in the baseline; after it, the test gates every
+  release (owner decisions, SPRINT_03_PLAN → Sprint Review Notes)
 - Developer guide: `CONTRIBUTING.md`, not written yet: planned as CMP-057 in
   Sprint 03; until then
   [README.md](README.md) covers local development
@@ -72,24 +73,25 @@ Former spec file names (before CMP-014) are mapped in
 they are not active paths.
 
 ## Current sprint
-- Sprint: 03 — release preparation for the events feature (security baseline, pen-test plan,
-  production backend, real-iPhone check) and backlog fixes CMP-050, CMP-052..CMP-054. Sprint 02
+- Sprint: 03 — events go-live (security baseline, pre-test review, production backend,
+  real-iPhone check, Lifetools logo, release v1.1.0) and backlog fixes CMP-050,
+  CMP-052..CMP-054. Sprint 02
   closed 2026-10-26 (review in its plan).
-- Goal: the events feature is release-ready except for the penetration test
+- Goal: the events feature is live on `camihernandez.com`; the PTES test follows by its deadline
 - Start: 2026-10-28
 - End: 2026-11-05 (if the start moves: the 7th business day from the actual start)
 - Agent prompts: [docs/sprints/SPRINT_03_AGENT_PROMPTS.md](docs/sprints/SPRINT_03_AGENT_PROMPTS.md)
-- Deliverable: staging demo and production-backend smoke results, with evidence
-  (`SPRINT_03_VERIFICATION.md`); no production release of the events in Sprint 03: the PTES
-  test and the go-live are Sprint 04 (owner: "Find one; release next sprint")
+- Deliverable: evidence in `SPRINT_03_VERIFICATION.md`, then release v1.1.0 with the events
+  live and every release-checklist §3b gate met (owner: "I don't want to wait for Cami to use
+  this in the meantime")
 - Status: Planned — waiting for the plan's merge and the owner's go-ahead
 
 ## Agent allocation
 - Implementation Agent 1: events backend and production setup — CMP-053, CMP-050, CMP-052,
   CMP-064 (fresh session at the go-ahead)
 - Implementation Agent 2: security — CMP-056, CMP-062, CMP-063 (fresh session at the go-ahead)
-- Implementation Agent 3: site, developer guide, iPhone check, verification — CMP-057, CMP-054,
-  CMP-065, CMP-066 (fresh session at the go-ahead)
+- Implementation Agent 3: site, developer guide, iPhone check, logo, verification, go-live —
+  CMP-057, CMP-054, CMP-065, CMP-067, CMP-066, CMP-068 (fresh session at the go-ahead)
 - Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 03; Codex runs as
   the automated reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs

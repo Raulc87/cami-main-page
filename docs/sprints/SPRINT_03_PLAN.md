@@ -44,21 +44,21 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 4. Credentials rule | Pass: contract §9, TECH_STACK §11, ADR-009 |
 | 5. Personal data: jurisdiction, consent, notice **(blocking)** | Pass: Costa Rica Law 8968; notice and consent approved by Cami as the legal review (owner decision, FEATURE_SPEC §20); optional contact consent (contract v1.5) |
 | 5. Abuse/spam protection | Pass: in place (FFR-029); captcha rule tracked |
-| 5. Security baseline approved | Not blocking this sprint: the project already wrote code when it adopted the baseline (CMP-055), so it is a story here (CMP-056) and this item blocks from Sprint 04 |
-| 5. Stories touching an OWASP risk have verifying ACs **(blocking)** | Pass: CMP-052 and CMP-053 carry their security checks below; CMP-056 adds the Top 10 ACs to the events stories for Sprint 04 |
+| 5. Security baseline approved | Not blocking the start: the project already wrote code when it adopted the baseline (CMP-055), so it is a story here (CMP-056). It blocks the go-live (CMP-068), since it records the penetration-test deadline |
+| 5. Stories touching an OWASP risk have verifying ACs **(blocking)** | Pass: CMP-052 and CMP-053 carry their security checks below; CMP-056 adds the Top 10 ACs to the events stories, verified before the go-live by CMP-063 |
 | 5. Secret and dependency scanning | Planned in this sprint (CMP-056 §6; CMP-050 for the deploy tool) |
-| 5. Pen test before a production release | Not a release sprint: no production release in Sprint 03. The PTES test, its retest and the go-live are Sprint 04 (owner decision below); this sprint writes the plan and scope (CMP-062) |
+| 5. Pen test before a production release | The events go live in this sprint (CMP-068) before the PTES test: the owner chose a dated deadline instead, 60 days after the go-live, recorded in the security baseline (CMP-056), as AGENTS.md → Security baseline allows for a project already in production. After the deadline the test gates every release. This sprint writes the plan and scope (CMP-062); the test runs in a later sprint (owner decisions below) |
 | 5.1 Visual identity status | Pass: UX_UI_DIRECTION (approved palette, tokens) |
 | 5.1 Tokens, not literals | Pass |
-| 5.1 Brand assets **(go-live only)** | Not a go-live sprint. The Lifetools logo is still a release gate (Cami) |
+| 5.1 Brand assets **(go-live only)** | Go-live sprint: the Lifetools logo comes from Cami during the sprint (owner, below) and is added in CMP-067 |
 | 6. Hosting runtime confirmed | Pass: ADR-002 (GoDaddy static), ADR-008 (Apps Script) |
 | 6. Local development defined | Pass: [`README.md`](../../README.md) |
 | 6. Formatter and linter named and run in CI | Not set up; not blocking; left for a later sprint |
 | 6. Developer guide **(first sprint that runs code)** | Story in this sprint (CMP-057), so it exists by the sprint's end |
 | 6. Test, lint and CI checks named; required on `main` | Pass: `apps-script-check` and `docs-link-check` run on every PR |
 | 6. Branching ADR and deployment runbook **(deploying sprint)** | Pass: [ADR-007](../decisions/ADR-007-branching-and-release-model.md), [`events-backend-runbook.md`](../process/events-backend-runbook.md), ADR-009 |
-| 6. Release runbook **(go-live only)** | Exists: [`release-checklist.md`](../process/release-checklist.md) |
-| 6. Previews and tests use their own data | Pass: the staging spreadsheet, folder and project; production gets only the marked smoke submissions of CMP-064 |
+| 6. Release runbook **(go-live only)** | Pass: [`release-checklist.md`](../process/release-checklist.md), with the events gates in §3b |
+| 6. Previews and tests use their own data | Pass: the staging spreadsheet, folder and project; production gets only the marked smoke submissions of CMP-064 and the owner's one test registration in CMP-068, deleted afterwards |
 | 6. Real-delivery email test | Done in Sprint 02 (Gmail and Outlook); CMP-052 repeats it for the alert email |
 | 7. Workstreams assigned, ≤ 3 agents **(blocking)** | Pass: Agents 1, 2 and 3 below |
 | 7. Ownership map **(blocking)** | Pass |
@@ -76,22 +76,25 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 8. Go-ahead **(blocking)** | Pending (gate 4) |
 
 ## Sprint Goal
-- Make the events feature release-ready, everything except the penetration test: security
-  baseline and pen-test plan approved and a tester booked, the production backend deployed and
-  smoke-tested (not yet linked from the live site), the real-iPhone check done, and the
-  backlog fixes Sprint 02 left on staging.
+- Put the events feature live on `camihernandez.com` so Cami can use it: security baseline
+  approved with the penetration-test deadline, pre-test security review done, the production
+  backend deployed and smoke-tested, the real-iPhone check done, the Lifetools logo in place,
+  the backlog fixes Sprint 02 left, and the release (v1.1.0) with every release-checklist §3b
+  gate checked. The PTES test follows by its deadline (owner decision).
 
 ## Required Deliverable
 - A demo on staging and production-backend smoke results, with evidence in
   `docs/sprints/SPRINT_03_VERIFICATION.md` (CMP-066):
-  - the approved security baseline and pen-test plan, and the tester's signed authorization or
-    the booking date;
+  - the approved security baseline (with the PTES deadline), the pen-test plan and the
+    pre-test review, with no open critical or high finding;
   - the production Apps Script project deployed through the approved workflow run, smoke PASS;
   - the real-iPhone check result and the test site taken down;
   - the alert email reaching both addresses, exact counters under a burst, the favicon, the
-    developer guide.
-- No production release of the site in this sprint: the go-live is Sprint 04, after the PTES
-  test and its retest (owner decision, Sprint Review Notes).
+    Lifetools logo, the developer guide.
+- The production release v1.1.0 with the events live (CMP-068): every release-checklist §3b
+  gate checked, the live smoke test passed, tag and GitHub Release.
+- The PTES test is not in this sprint: it runs by its deadline, 60 days after the go-live
+  (owner decision, Sprint Review Notes).
 
 ## Selected tickets
 No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-025.
@@ -110,7 +113,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-057 | Developer guide (`CONTRIBUTING.md`) | Agent 3 | — | `CMP-057-developer-guide` | todo |
 | CMP-054 | Missing `/favicon.svg` | Agent 3 | — | `CMP-054-favicon` | todo |
 | CMP-065 | Real-iPhone check on staging, then the test-site takedown | Agent 3 + owner | CMP-052, CMP-053 on staging | `CMP-065-real-iphone-check` | todo |
+| CMP-067 | Lifetools logo for events without their own picture | Agent 3 | Cami's logo file | `CMP-067-lifetools-logo` | todo |
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above | `CMP-066-sprint-03-verification` | todo |
+| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, and every §3b gate | `CMP-068-events-release` | todo |
 
 ### Ticket checks (acceptance criteria)
 - **CMP-061 (coordinator):** contract §9 gets an `ALERT_TO` script property (comma-separated
@@ -129,24 +134,27 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 - **CMP-050:** `npm audit` in `.github/clasp` reported; if a `clasp` release fixes the 3 high
   warnings, the pin is bumped and the staging deploy stays green; otherwise the row records why
   it waits.
-- **CMP-056:** the baseline from the kit's `SECURITY_BASELINE_TEMPLATE.md`: classification
+- **CMP-056:** merged before the go-live. The baseline from the kit's `SECURITY_BASELINE_TEMPLATE.md`: classification
   (personal data and payment receipts); OWASP ASVS 5.0.0 level and the full inventory for that
   level, each requirement covered (AC, test or configuration check) or not applicable with a
   reason; the OWASP Top 10 (2025) and API Security Top 10 (2023) risks that apply, written as
   acceptance criteria for the events stories (added to USER_STORIES → Security through a
   coordinator docs PR); the NIST SSDF mapping; secret scanning and dependency scanning (set up,
-  or a dated story); the PTES requirement before the events release (owner decision); OSSTMM
+  or a dated story); the PTES deadline: 60 days after the events go-live, with the date written in once the go-live
+  date is known (owner decision); after it, the test gates every release; OSSTMM
   only if the classification is high-risk. Approved by the owner on merge.
 - **CMP-062:** `PENTEST_PLAN.md` from the kit's template: scope (staging and/or production
   backend, the site, the form, Drive and the sheet as read by the backend), out of scope,
   rules of engagement within GoDaddy's and Google's terms, timing, the written authorization
-  form for the tester, the report format and the retest of critical and high findings. The
-  owner finds and books the tester (Sprint Review Notes).
+  form for the tester, the report format and the retest of critical and high findings. Scope
+  covers production, since the test runs after the go-live, within the providers' terms. The
+  owner finds and books the tester before the deadline (Sprint Review Notes).
 - **CMP-063:** an ASVS-based code review of `apps-script/` and the form, and a scan of
   **staging only**, run only after the owner authorizes it in writing in the PR (scope, tool,
   time window), never against production; findings with a severity in
   `docs/security/PRETEST_REVIEW.md`, each proposed as a ticket. No
-  attack on production; this is not the penetration test. Staging and production share the
+  attack on production; this is not the penetration test. Every critical or high finding is
+  fixed (or the owner accepts it in writing) before the go-live (CMP-068). Staging and production share the
   owner's Google account quotas (MailApp, Drive, OCR, fetch) and a scan's hits trigger the
   alert email, so the scan is low-rate, application-level checks only, within Google's terms,
   never during the CMP-064 deploy and smoke, with the alert settings switched before and
@@ -157,7 +165,8 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   - the `production` environment secrets;
   - the first deploy through the workflow with the owner's approval click, smoke PASS;
   - both time triggers installed;
-  - the production build's `VITE_EVENTS_API_URL` prepared for Sprint 04, not uploaded.
+  - the production build's `VITE_EVENTS_API_URL` value handed to the owner privately for
+    CMP-068 (never committed).
   - The runbook gets the token-expiry note: the staging login expired after 4 days on
     2026-10-26 and was renewed; if it recurs, check the Workspace "Google Cloud session control"
     setting.
@@ -172,8 +181,18 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   `.heic` with the note) and the check result; then unpublish the site, restore the real SINPE
   values on staging and delete the `STAGING_EVENTS_API_URL` secret. The owner then decides the
   HEIC follow-up (CMP-033 observation 6).
+- **CMP-067:** Cami's Lifetools logo (from the owner, not from the web) in `public/images/`
+  replaces the marked placeholder for events without their own picture; checked at
+  1280/900/375 px in EN and ES.
 - **CMP-066:** `docs/sprints/SPRINT_03_VERIFICATION.md` with the evidence of every ticket; the
   staging cleanup list (test rows, files, coupons, Pages secret) for the owner.
+- **CMP-068:** the PR sets `package.json` to `1.1.0` and walks the owner through
+  [`release-checklist.md`](../process/release-checklist.md): every §3b gate checked (each with
+  its ticket), the build with the production `VITE_EVENTS_API_URL` (the owner's local setting,
+  never committed), the upload with a backup of the current site, then on the live site one
+  real registration by the owner on a test event (hidden afterwards, row and file deleted), the
+  events section and ticker in EN and ES, then the tag and GitHub Release. Rollback: restore
+  the backup.
 
 ## Parallel Workstreams
 ### Agent 1 — Events backend (fresh session)
@@ -185,8 +204,8 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 - Never runs a penetration test or attack tools, and never scans production.
 
 ### Agent 3 — Site, iPhone check and integration (fresh session)
-- CMP-057 and CMP-054 at the go-ahead; CMP-065 when the owner has the iPhone and CMP-052 and
-  CMP-053 are on staging; CMP-066 last.
+- CMP-057 and CMP-054 at the go-ahead; CMP-067 when Cami's logo arrives; CMP-065 when the
+  owner has the iPhone and CMP-052 and CMP-053 are on staging; CMP-066, then CMP-068 last.
 
 Maximum implementation agents in parallel: 3.
 
@@ -200,7 +219,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 |---|---|
 | `apps-script/**`, `.github/clasp/**`, `.github/scripts/deploy-apps-script.sh` and the other deploy scripts, `.github/workflows/deploy-apps-script.yml`, `.github/workflows/apps-script-check.yml`, [`docs/process/events-backend-runbook.md`](../process/events-backend-runbook.md) | Agent 1 |
 | `docs/security/**` | Agent 2 |
-| `src/**`, `public/**`, `index.html`, `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
+| `src/**`, `public/**`, `index.html`, `package.json` (version, CMP-068), `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
 | [`TICKETS.md`](../../TICKETS.md) | Shared: each agent updates only its own rows; the coordinator adds rows |
 | `.github/workflows/docs-link-check.yml`, `.github/scripts/check_doc_links.py`, `docs/specs/**`, [`docs/process/release-checklist.md`](../process/release-checklist.md) and the other process docs, `docs/sprints/SPRINT_03_*.md` except the verification, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), `docs/decisions/**`, `docs/ux/**` | Coordinator (docs PRs) |
 
@@ -218,7 +237,9 @@ Each line names what the PR waits for.
 5. CMP-062 and CMP-063 — CMP-056.
 6. CMP-064 (production) — CMP-052, CMP-053.
 7. CMP-065 (iPhone check) — CMP-052, CMP-053 deployed to staging.
-8. CMP-066 (verification, integration owner Agent 3) — every PR above.
+8. CMP-067 (logo) — Cami's file only.
+9. CMP-066 (verification, integration owner Agent 3) — every PR above.
+10. CMP-068 (go-live) — CMP-066 (and so every PR above).
 
 Cycle check: every arrow points to a PR earlier in this list, so no PR waits, directly or
 through others, on a PR that waits on it.
@@ -245,8 +266,15 @@ The human reviewer is the final approver.
   items as in Sprint 02.
 
 ## Risks
-- **The penetration tester.** Finding and authorizing a tester (and its cost, against the
-  zero-cost rule NFR-003) may take longer than the sprint; the go-live waits for it.
+- **Live before the penetration test.** Real people's data and payment screenshots are stored
+  before an outside tester has checked the form. Mitigations: the security baseline, the
+  pre-test review with critical and high findings fixed before the go-live, the abuse limits
+  and alerts already in place, and the test by its deadline. Finding a tester (and its cost,
+  against the zero-cost rule NFR-003) may take time; after the deadline every release waits
+  for it.
+- **The go-live depends on outside items:** Cami's logo, the owner's iPhone and the production
+  setup with the owner. If one slips, CMP-068 moves to the next sprint; nothing else waits on
+  it.
 - **The staging login token** expired after 4 days once (2026-10-26). If it recurs, every
   deploy stops until the owner logs in again (CMP-064 note).
 - **The iPhone window** depends on the owner having a device during the sprint; while the test
@@ -258,8 +286,8 @@ The human reviewer is the final approver.
 - Every selected ticket `done`, or moved to Sprint 04 by the owner.
 - The Required Deliverable demonstrated and its evidence approved (merging CMP-066).
 - [`TICKETS.md`](../../TICKETS.md), [`USER_STORIES.md`](../specs/USER_STORIES.md) and
-  [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) updated; the Sprint 04 (go-live) plan drafted
-  when the tester's date is known.
+  [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) updated; the PTES deadline date written in
+  the baseline once the go-live date is known.
 
 ## Sprint Review Notes
 - Owner answers (2026-10-26), questions as asked:
@@ -276,3 +304,18 @@ The human reviewer is the final approver.
   - "Sprint 02 is done (all stories Done). Close it and start Sprint 03 as soon as its plan is
     merged?" — options: yes, close Sprint 02; not yet. Owner: **"Yes, close Sprint 02
     (Recommended)"**.
+- Owner change (2026-10-26, before this plan merged): the coordinator explained the go-live
+  waits for the tester and offered to go live at the end of Sprint 03 with the test by a set
+  date. Owner: **"I think I will switch to that, I don't have a PTES tester yet and I don't
+  want to wait for Cami to use this in the meantime."** This replaces the first answer above:
+  the events go live in Sprint 03 (CMP-068) and the PTES test follows by a deadline. Follow-up
+  questions as asked:
+  - "Under the kit's rules, launching before the security test means you set a deadline for
+    it, written into the security rules. Once the deadline passes, nothing else can be
+    released until the test is done. Which deadline?" — options: 60, 30 or 90 days after
+    launch. Owner: **"60 days after launch (Recommended)"**.
+  - "One release item is still open: Cami's Lifetools logo, shown on events that have no
+    picture of their own. Can Cami send it during Sprint 03?" — options: yes, Cami will send
+    it; launch without it. Owner: **"Yes, Cami will send it"** (CMP-067).
+  - Coordinator addition, approved with this plan: critical and high findings of the pre-test
+    review (CMP-063) are fixed, or accepted by the owner in writing, before the go-live.

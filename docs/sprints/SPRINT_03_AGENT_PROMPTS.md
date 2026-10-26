@@ -155,11 +155,12 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    minutes: the cami-events-production project, first upload and web-app deployment, the
    production script properties (real SINPE values typed by the owner, never sent to you),
    the `production` environment secrets, the first deploy through the workflow with the
-   owner's approval, a smoke PASS, both time triggers installed. Prepare, do not upload, the
-   production site build setting for Sprint 04. Add the token-expiry note to the runbook
+   owner's approval, a smoke PASS, both time triggers installed. Give the owner, privately
+   and never in the repo, the production /exec URL for the site build of the go-live
+   (CMP-068, Agent 3). Add the token-expiry note to the runbook
    (staging login expired after 4 days on 2026-10-26 and was renewed; if it recurs, check the
-   Workspace Admin → Security → Google Cloud session control setting). The production site
-   does not link to the events until Sprint 04.
+   Workspace Admin → Security → Google Cloud session control setting). The live site links to
+   the events only at the go-live (CMP-068), after this ticket.
 ```
 
 ## Agent 2 — Security
@@ -173,8 +174,9 @@ fixes.
 
 Hard limits (AGENTS.md → Security baseline): you never run a penetration test, exploit or
 attack tool, and never send any test traffic to production or to the live site. The PTES
-penetration test is run in Sprint 04 by a human tester the owner authorizes in writing; you
-prepare and assist only. A scan of staging (CMP-063) runs only after the owner authorizes it in
+penetration test runs after the events go live (CMP-068, this sprint), by a deadline of 60
+days after the go-live (owner decision), by a human tester the owner authorizes in writing;
+you prepare and assist only. A scan of staging (CMP-063) runs only after the owner authorizes it in
 writing on the PR, naming the scope, the tool and the time window.
 
 Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
@@ -185,8 +187,10 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    Security Top 10 (2023) risks that apply, drafted as acceptance criteria for the events
    stories (send them to the coordinator, who adds them to USER_STORIES → Security in a docs
    PR); the NIST SSDF mapping; secret and dependency scanning (set up, or a dated story); the
-   PTES requirement before the events release (owner decision, TICKETS CMP-056); OSSTMM only
-   if the classification is high-risk. The owner approves it on merge.
+   PTES deadline: 60 days after the events go-live, the date written in once the go-live date is
+   known; after it, the test gates every release (owner decision, SPRINT_03_PLAN → Sprint
+   Review Notes; AGENTS.md → Security baseline); OSSTMM only if the classification is
+   high-risk. The owner approves it on merge. It must merge before the go-live (CMP-068).
 2. CMP-062-pentest-plan — after CMP-056 is merged: docs/security/PENTEST_PLAN.md from the kit's
    PENTEST_PLAN_TEMPLATE.md: scope, out of scope, rules of engagement within GoDaddy's and
    Google's terms, timing, the written authorization form for the tester, report format, and
@@ -197,7 +201,9 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    on the PR, a scan of staging: low-rate, application-level checks only, within Google's
    terms (staging shares the owner's Google quotas with production), never during the CMP-064
    deploy and smoke, with the alert settings switched before and restored after as in the
-   Sprint 02 burst (scan hits trigger the alert email). Ask the owner to authorize exactly
+   Sprint 02 burst (scan hits trigger the alert email). Every critical or high finding is
+   fixed, or accepted by the owner in writing, before the go-live (CMP-068): report each one to
+   the coordinator as soon as you find it. Ask the owner to authorize exactly
    that: scope, tool, rate, time window and the alert settings. Record findings with a severity in
    docs/security/PRETEST_REVIEW.md (no secrets, no exploit details beyond what a fix needs) and
    send each to the coordinator as a proposed ticket.
@@ -209,7 +215,8 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
 [Common rules block]
 
 You are Implementation Agent 3: site fixes, the developer guide, the real-iPhone check and the
-sprint's verification. You own src/**, public/**, index.html, CONTRIBUTING.md, README.md,
+sprint's verification and the go-live release. You own src/**, public/**, index.html,
+package.json (version only, CMP-068), CONTRIBUTING.md, README.md,
 .github/workflows/pages-staging.yml, docs/sprints/SPRINT_03_VERIFICATION.md and
 docs/sprints/evidence/sprint-03/**.
 
@@ -232,6 +239,16 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    personal data masked), and the staging cleanup list for the owner (test rows, files,
    coupons, the Pages secret). A Fail is not fixed in this PR: classify it and propose a
    ticket. Do not change story statuses; the coordinator does after the owner approves.
+5. CMP-067-lifetools-logo — when the owner sends Cami's logo file (any time; it can come
+   before item 4): replace the marked placeholder in public/images/ for events without their
+   own picture; check 1280/900/375 px in EN and ES. Never take the logo from the web.
+6. CMP-068-events-release — after CMP-066 is merged and every release-checklist §3b gate is
+   met: set package.json to 1.1.0 and walk the owner through docs/process/release-checklist.md
+   (the build with the production VITE_EVENTS_API_URL as the owner's local, uncommitted
+   setting; a backup of the current site; the upload; on the live site, one real registration
+   by the owner on a test event, hidden afterwards with its row and file deleted, and the
+   events section and ticker in EN and ES; then the tag and GitHub Release). Rollback:
+   restore the backup. List each §3b gate in the PR body with the ticket that met it.
 ```
 
 ## Review-only agent
