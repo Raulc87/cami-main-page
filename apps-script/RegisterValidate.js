@@ -44,12 +44,8 @@ function validateRegisterInput_(body) {
 
   if (body.consent !== true) fields.consent = 'consent_required';
 
-  // Optional second checkbox (contract v1.5): a boolean; missing means false, anything else is malformed.
-  var contactOptIn = false;
-  if (body.contactOptIn !== undefined && body.contactOptIn !== null) {
-    if (typeof body.contactOptIn === 'boolean') contactOptIn = body.contactOptIn;
-    else fields.contactOptIn = 'required';
-  }
+  // Optional second checkbox (contract v1.5): only the JSON boolean true opts in; missing or any other value is false, never refused.
+  var contactOptIn = body.contactOptIn === true;
 
   var file = body.file;
   var hasFile = !!(file && typeof file === 'object' && str_(file.base64) !== '');
