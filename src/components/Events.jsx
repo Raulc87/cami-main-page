@@ -3,7 +3,7 @@ import { C } from '../constants/colors'
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
 import EventRegistration from './EventRegistration'
-import { cardId, formatEventDate } from './eventsShared'
+import { cardId, formatCrc, formatEventDate } from './eventsShared'
 
 const LOGO = '/images/lifetools-logo.svg'
 
@@ -64,7 +64,7 @@ export default function Events({ events, sinpe, onRefetch }) {
                 const status = ev.soldOut ? t.soldOut[lang] : !ev.registrationOpen ? t.registrationClosed[lang] : null
                 const price = ev.priceCrc === 0
                   ? t.free[lang]
-                  : `₡${ev.priceCrc.toLocaleString(lang === 'es' ? 'es-CR' : 'en-US')}`
+                  : formatCrc(ev.priceCrc)
                 return (
                   <article key={ev.eventCode} id={cardId(ev.eventCode)} className="evt-card" tabIndex={-1}>
                     <img

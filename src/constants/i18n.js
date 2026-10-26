@@ -108,7 +108,7 @@ export const UI_TEXT = {
       name: { en: 'Participant name', es: 'Nombre del participante' },
       email: { en: 'Email', es: 'Correo electrónico' },
       whatsapp: { en: 'WhatsApp number (with country code)', es: 'Número de WhatsApp (con código de país)' },
-      whatsappHint: { en: 'Example: +50684104791', es: 'Ejemplo: +50684104791' },
+      whatsappHint: { en: 'Example: +50688880000', es: 'Ejemplo: +50688880000' },
       file: { en: 'Payment screenshot', es: 'Captura del comprobante de pago' },
       fileHint: {
         en: 'JPEG, PNG, WebP or HEIC image, up to 5 MB.',
@@ -133,8 +133,8 @@ export const UI_TEXT = {
       privacyDraft: { en: 'Draft', es: 'Borrador' },
       privacyTitle: { en: 'Privacy notice', es: 'Aviso de privacidad' },
       privacyNotice: {
-        en: 'Cami Hernandez (Lifetools, camila@lifetoolscr.com) collects your name, email, WhatsApp number and, when applicable, your payment receipt only to manage your registration for this event and to contact you about it. Your data is stored in Google Workspace and is not shared with third parties or used for advertising without your consent. You can request access, correction or deletion of your data by writing to camila@lifetoolscr.com, under Costa Rica’s Law No. 8968.',
-        es: 'Cami Hernandez (Lifetools, camila@lifetoolscr.com) recopila tu nombre, correo, número de WhatsApp y, si aplica, el comprobante de pago, únicamente para gestionar tu inscripción a este evento y comunicarse contigo sobre él. Tus datos se guardan en Google Workspace y no se comparten con terceros ni se usan para publicidad sin tu consentimiento. Puedes pedir acceso, corrección o eliminación de tus datos escribiendo a camila@lifetoolscr.com, conforme a la Ley N.° 8968 de Costa Rica.',
+        en: 'Cami Hernandez (Lifetools, camila@lifetoolscr.com) collects your name, email, WhatsApp number and, when applicable, your payment receipt only to manage your registration for this event and to contact you. Your data is not shared with third parties or used for advertising without your consent. You can request access, correction or deletion of your data by writing to camila@lifetoolscr.com, under Costa Rica’s Law No. 8968.',
+        es: 'Cami Hernandez (Lifetools, camila@lifetoolscr.com) recopila tu nombre, correo, número de WhatsApp y, si aplica, el comprobante de pago, únicamente para gestionar tu inscripción a este evento y comunicarse contigo. Tus datos no se comparten con terceros ni se usan para publicidad sin tu consentimiento. Puedes pedir acceso, corrección o eliminación de tus datos escribiendo a camila@lifetoolscr.com, conforme a la Ley N.° 8968 de Costa Rica.',
       },
       consent: {
         en: 'I accept the privacy notice and authorize the use of my data for this registration.',
@@ -155,8 +155,8 @@ export const UI_TEXT = {
         },
         invalid_email: { en: 'Enter a valid email address.', es: 'Escribe un correo electrónico válido.' },
         invalid_phone: {
-          en: 'Use the format +<country code><number>, e.g. +50684104791.',
-          es: 'Usa el formato +<código de país><número>, por ejemplo +50684104791.',
+          en: 'Use the format +<country code><number>, e.g. +50688880000.',
+          es: 'Usa el formato +<código de país><número>, por ejemplo +50688880000.',
         },
         invalid_coupon_format: {
           en: 'The coupon must be 8 to 20 letters and numbers.',

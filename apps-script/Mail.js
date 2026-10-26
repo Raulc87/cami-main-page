@@ -36,29 +36,30 @@ function formatEventDate_(startsAtMs, lang) {
 
 function formatAmount_(amountCrc, lang) {
   if (!amountCrc) return lang === 'en' ? 'Free' : 'Gratis';
-  var grouped = String(amountCrc).replace(/\B(?=(\d{3})+(?!\d))/g, lang === 'en' ? ',' : ' ');
+  var grouped = String(amountCrc).replace(/\B(?=(\d{3})+(?!\d))/g, ','); // comma thousands in both languages (as on the site)
   return '₡' + grouped;
 }
 
+// The whole clause after "pero" / "but" in the "registration received" email, by flag.
 var RECEIVED_REASONS = {
   es: {
-    'sold out at submit': 'estaba lleno',
-    'event closed at submit': 'había cerrado inscripciones',
+    'sold out at submit': 'llegó cuando el evento estaba lleno',
+    'event closed at submit': 'llegó cuando el evento había cerrado inscripciones',
     'coupon changed': 'el cupón ya no estaba disponible',
-    'duplicate event code': 'tenía un problema en su configuración'
+    'duplicate event code': 'el evento tenía un problema en su configuración'
   },
   en: {
-    'sold out at submit': 'was full',
-    'event closed at submit': 'had closed registrations',
+    'sold out at submit': 'it arrived when the event was full',
+    'event closed at submit': 'it arrived after the event had closed registrations',
     'coupon changed': 'the coupon was no longer available',
-    'duplicate event code': 'had a setup problem'
+    'duplicate event code': 'the event had a setup problem'
   }
 };
 
 function joinReasons_(reasons, lang) {
   var map = RECEIVED_REASONS[lang];
   var phrases = reasons.map(function (r) { return map[r]; }).filter(Boolean);
-  if (!phrases.length) phrases = [lang === 'en' ? 'needed a review' : 'necesitaba una revisión'];
+  if (!phrases.length) phrases = [lang === 'en' ? 'it needed a review' : 'necesitaba una revisión'];
   return phrases.join(lang === 'en' ? ' and ' : ' y ');
 }
 
@@ -92,14 +93,14 @@ function buildParticipantMail_(ctx) {
     if (en) {
       return {
         subject: 'We received your registration for ' + ctx.eventName,
-        body: 'Hi ' + ctx.name + ',\n\nWe received your registration for ' + ctx.eventName + ' (reference ' + ctx.reference + '), but it arrived after the event ' +
+        body: 'Hi ' + ctx.name + ',\n\nWe received your registration for ' + ctx.eventName + ' (reference ' + ctx.reference + '), but ' +
           why + '. Cami will review it and write to you soon to confirm whether there is a place or to arrange a refund of your payment.\n\n' +
           'If you have any questions, just reply to this email.\n\nCami'
       };
     }
     return {
       subject: 'Recibimos tu inscripción a ' + ctx.eventName,
-      body: 'Hola ' + ctx.name + ':\n\nRecibimos tu inscripción a ' + ctx.eventName + ' (referencia ' + ctx.reference + '), pero llegó cuando el evento ya ' +
+      body: 'Hola ' + ctx.name + ':\n\nRecibimos tu inscripción a ' + ctx.eventName + ' (referencia ' + ctx.reference + '), pero ' +
         why + '. Cami va a revisar tu caso y te escribirá pronto para confirmarte si hay espacio o para coordinar la devolución de tu pago.\n\n' +
         'Si tienes alguna pregunta, responde a este correo.\n\nCami'
     };
