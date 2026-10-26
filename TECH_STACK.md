@@ -103,8 +103,8 @@ npm run preview   # serves dist/ locally
 - No other CI. One manual-only workflow, `.github/workflows/pages-staging.yml`
   (`workflow_dispatch`, CMP-043), builds `main` against the staging backend for the temporary
   test site in §10. Code review: a dedicated Claude Code review-only session (owner decision
-  2026-10-18, CMP-016), plus GitHub Copilot code review and Codex as automated reviewers on
-  every PR, plus `/code-review` before opening a PR (see
+  2026-10-18, CMP-016), plus Codex as the automated reviewer on every PR (Copilot is not
+  relied on, CMP-055), plus `/code-review` before opening a PR (see
   [pr-workflow.md](docs/process/pr-workflow.md) and
   [AGENTS.md → Review-only agent](AGENTS.md#review-only-agent)).
 

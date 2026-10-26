@@ -4,7 +4,14 @@
 - Name: cami-main-page — personal brand website for Cami Hernandez
 - Project key: CMP (tickets, branches, PR titles; see [AGENTS.md](AGENTS.md#tickets-and-branches))
 - Repository: https://github.com/Raulc87/cami-main-page
-- Starter Kit: https://github.com/Raulc87/sdd_starter_kit (AGENTS.md last aligned in CMP-016)
+- Starter Kit: https://github.com/Raulc87/sdd_starter_kit (private: attach it to the sessions
+  that read its templates, guides and skills) · Edition: Full · Synced to kit v1.2.0 (tag on
+  commit `bd756f9`, CMP-055). Templates, guides and kit skills are read at this ref; each kit
+  sync PR updates it.
+- Repository visibility: public (kept public as the owner's portfolio, kit #16) · current
+  setting public (only the owner changes it)
+- Kept project rules (instead of the kit's), with their reasons:
+  [ADR-006 → Kit disposition](docs/decisions/ADR-006-adopt-sdd-starter-kit.md#kit-disposition)
 - Status: Live at `camihernandez.com` (v1.0.1); documentation homologated to the SDD starter
   kit in CMP-014
 - Product owner / final reviewer: Raul Casanas
@@ -13,9 +20,8 @@
 - Project spec: [docs/specs/PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md)
 - User stories: [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md)
 - Feature specs: [FEATURE_SPEC_events_registration.md](docs/specs/FEATURE_SPEC_events_registration.md)
-  (v1.9 — events and registration, US-017..US-025); new ones from
-  [docs/templates/FEATURE_SPEC_TEMPLATE.md](docs/templates/FEATURE_SPEC_TEMPLATE.md) as
-  `docs/specs/FEATURE_SPEC_<topic>.md`
+  (v1.9 — events and registration, US-017..US-025); new ones from the kit's
+  `FEATURE_SPEC_TEMPLATE.md` (at the kit ref above) as `docs/specs/FEATURE_SPEC_<topic>.md`
 - Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.4,
   locked) — site ↔ events backend
 - Events emails and privacy notice (drafts, release gates):
@@ -47,7 +53,16 @@
   release-checklist, events-backend-runbook
 - Branching and release model:
   [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) (Accepted)
-- Templates: [docs/templates/](docs/templates/)
+- Security baseline: `docs/security/SECURITY_BASELINE.md`, not written yet: planned as
+  CMP-056 for the next sprint, approved by its end (AGENTS.md → Security baseline)
+- Penetration-test plan: `docs/security/PENTEST_PLAN.md`, required (the site is live and the
+  events feature handles personal data and payment receipts): before the next production
+  release, unless the owner records a dated deadline in the security baseline (CMP-056)
+- Developer guide: `CONTRIBUTING.md`, not written yet: planned as CMP-057; until then
+  [README.md](README.md) covers local development
+- Docs link check: [.github/workflows/docs-link-check.yml](.github/workflows/docs-link-check.yml)
+  (every pull request; run locally with `python3 .github/scripts/check_doc_links.py`)
+- Templates: none in this repo; read from the kit at the kit ref above
 
 Former spec file names (before CMP-014) are mapped in
 [ADR-006 → Implementation Impact](docs/decisions/ADR-006-adopt-sdd-starter-kit.md#implementation-impact);
@@ -71,11 +86,11 @@ they are not active paths.
   (session launched 2026-10-19)
 - Implementation Agent 3: registration form, integration verification — CMP-032, CMP-033
   (launched when CMP-029 is merged)
-- Review-only Agent: dedicated Claude Code reviewer session (Opus); Copilot and Codex run as
-  automated reviewers on every PR
+- Review-only Agent: dedicated Claude Code reviewer session (Opus); Codex runs as the automated
+  reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-051
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-055
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

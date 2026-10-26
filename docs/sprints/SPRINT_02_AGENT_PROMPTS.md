@@ -1,6 +1,6 @@
 # SPRINT 02 — Agent Kickoff Prompts
 
-From [SPRINT_AGENT_PROMPTS_TEMPLATE.md](../templates/SPRINT_AGENT_PROMPTS_TEMPLATE.md). The
+From [SPRINT_AGENT_PROMPTS_TEMPLATE.md](https://github.com/Raulc87/sdd_starter_kit/blob/v1.2.0/docs/sprints/SPRINT_AGENT_PROMPTS_TEMPLATE.md). The
 coordinator launches these sessions after this plan is merged and the owner gives the go-ahead
 (Entry Gate 4 in [SPRINT_02_PLAN.md](SPRINT_02_PLAN.md)).
 
