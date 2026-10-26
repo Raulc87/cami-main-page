@@ -2,7 +2,8 @@
 
 ## Metadata
 - Sprint: 02
-- Status: Active (plan approved on merge of PR #22; owner's go-ahead 2026-10-19, Entry Gate 4)
+- Status: Closed 2026-10-26 (plan approved on merge of PR #22; owner's go-ahead 2026-10-19,
+  Entry Gate 4; closed by the owner, Sprint Review Notes)
 - Start: 2026-10-20 (Tuesday), the first business day after the go-ahead
 - End: 2026-10-28 (Wednesday); if the start moves, the 7th business day counted from the actual
   start
@@ -325,3 +326,20 @@ The human reviewer is the final approver.
   little low under a burst (23 instead of 30). The limit was still crossed and the alert still
   went out. Accept US-024 as Done with that known bug tracked as ticket CMP-053 for next sprint?"
   — options: yes, Done + CMP-053; no, fix first. Owner: **"Yes, Done + CMP-053 (Recommended)"**.
+- Unplanned work after the verification (2026-10-26): Cami reviewed the events texts (CMP-058,
+  PR #52) and Agent 1 applied them (CMP-059, PR #53). Staging check of CMP-059 on staging
+  version 21: the owner checked the new `contactOptIn` column and its values, the two flagged
+  test registrations, the reason clauses in both languages and the amount format, and answered
+  **"all OK"**.
+- PR #52 was merged with a regular merge, so its first commit, which quoted Cami's SINPE number
+  in a FEATURE_SPEC §20 row (redacted in a later commit of the same PR), is in `main`'s history.
+  Question as asked: "Your options: 1. Leave it (my recommendation). This is the same number
+  Cami will show every visitor on the payment form once the events feature goes live. [...]
+  2. Rewrite main's history to drop that commit. [...]" Owner: **"leave it"**. `main`'s history
+  is not rewritten.
+- Sprint closed (owner, 2026-10-26). Question as asked: "Sprint 02 is done (all stories Done).
+  Close it and start Sprint 03 as soon as its plan is merged?" — options: yes, close Sprint 02;
+  not yet. Owner: **"Yes, close Sprint 02 (Recommended)"**. US-017..US-025, US-002 and US-005
+  are Done; the release gates still open (real-iPhone check, production setup, security
+  baseline and penetration test) move to Sprint 03 and Sprint 04
+  ([SPRINT_03_PLAN.md](SPRINT_03_PLAN.md)).

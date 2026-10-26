@@ -35,9 +35,10 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md) (Active since the
-  owner's go-ahead, 2026-10-19); Sprint 01 is closed
-  ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md), kept for its review)
+- Active sprint plan: [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md) (Planned; active at
+  the owner's go-ahead); Sprints 01 and 02 are closed
+  ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
+  [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md), kept for their reviews)
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
   ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
@@ -54,11 +55,13 @@
 - Branching and release model:
   [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) (Accepted)
 - Security baseline: `docs/security/SECURITY_BASELINE.md`, not written yet: planned as
-  CMP-056 for the next sprint, approved by its end (AGENTS.md → Security baseline)
+  CMP-056 in Sprint 03, approved by its end (AGENTS.md → Security baseline)
 - Penetration-test plan: `docs/security/PENTEST_PLAN.md`, required (the site is live and the
-  events feature handles personal data and payment receipts): before the next production
-  release, unless the owner records a dated deadline in the security baseline (CMP-056)
-- Developer guide: `CONTRIBUTING.md`, not written yet: planned as CMP-057; until then
+  events feature handles personal data and payment receipts): written in Sprint 03 (CMP-062);
+  the PTES test, run by a tester the owner authorizes in writing, comes before the events
+  production release, in Sprint 04 (owner decisions, CMP-056 and SPRINT_03_PLAN)
+- Developer guide: `CONTRIBUTING.md`, not written yet: planned as CMP-057 in
+  Sprint 03; until then
   [README.md](README.md) covers local development
 - Docs link check: [.github/workflows/docs-link-check.yml](.github/workflows/docs-link-check.yml)
   (every pull request; run locally with `python3 .github/scripts/check_doc_links.py`)
@@ -69,28 +72,29 @@ Former spec file names (before CMP-014) are mapped in
 they are not active paths.
 
 ## Current sprint
-- Sprint: 02 — events feature (US-017..US-025, 31 points) plus the US-002 fix and US-005 check.
-  Sprint 01 closed 2026-10-19 (review in its plan).
-- Goal: the events feature works end to end on staging
-- Start: 2026-10-20
-- End: 2026-10-28 (if the start moves: the 7th business day from the actual start)
-- Agent prompts: [docs/sprints/SPRINT_02_AGENT_PROMPTS.md](docs/sprints/SPRINT_02_AGENT_PROMPTS.md)
-- Deliverable: staging demo of the contract §10 end-to-end list, with evidence
-  (`SPRINT_02_VERIFICATION.md`); no production release until the release-checklist §3b gates
-  pass
-- Status: Active — owner's go-ahead 2026-10-19: "merged, go ahead with Sprint 02"
+- Sprint: 03 — release preparation for the events feature (security baseline, pen-test plan,
+  production backend, real-iPhone check) and backlog fixes CMP-050, CMP-052..CMP-054. Sprint 02
+  closed 2026-10-26 (review in its plan).
+- Goal: the events feature is release-ready except for the penetration test
+- Start: 2026-10-28
+- End: 2026-11-05 (if the start moves: the 7th business day from the actual start)
+- Agent prompts: [docs/sprints/SPRINT_03_AGENT_PROMPTS.md](docs/sprints/SPRINT_03_AGENT_PROMPTS.md)
+- Deliverable: staging demo and production-backend smoke results, with evidence
+  (`SPRINT_03_VERIFICATION.md`); no production release of the events in Sprint 03: the PTES
+  test and the go-live are Sprint 04 (owner: "Find one; release next sprint")
+- Status: Planned — waiting for the plan's merge and the owner's go-ahead
 
 ## Agent allocation
-- Implementation Agent 1: events backend — CMP-023..CMP-028 (session launched 2026-10-19)
-- Implementation Agent 2: events section, ticker, frontend foundation, US-002 fix — CMP-029..CMP-031
-  (session launched 2026-10-19)
-- Implementation Agent 3: registration form, integration verification — CMP-032, CMP-033
-  (launched when CMP-029 is merged)
-- Review-only Agent: dedicated Claude Code reviewer session (Opus); Codex runs as the automated
-  reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
+- Implementation Agent 1: events backend and production setup — CMP-053, CMP-050, CMP-052,
+  CMP-064 (fresh session at the go-ahead)
+- Implementation Agent 2: security — CMP-056, CMP-062, CMP-063 (fresh session at the go-ahead)
+- Implementation Agent 3: site, developer guide, iPhone check, verification — CMP-057, CMP-054,
+  CMP-065, CMP-066 (fresh session at the go-ahead)
+- Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 03; Codex runs as
+  the automated reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-058
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-060
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
