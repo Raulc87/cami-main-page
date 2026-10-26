@@ -129,7 +129,7 @@ export const UI_TEXT = {
         en: 'Apply the coupon or clear the field.',
         es: 'Aplica el cupón o borra el campo.',
       },
-      // Privacy notice (draft, BR-E11) and consent: verbatim from EVENTS_EMAILS_AND_PRIVACY §3
+      // Privacy notice (approved by Cami, BR-E11) and consent: verbatim from EVENTS_EMAILS_AND_PRIVACY §3
       privacyTitle: { en: 'Privacy notice', es: 'Aviso de privacidad' },
       privacyNotice: {
         en: 'Cami Hernandez (Lifetools, camila@lifetoolscr.com) collects your name, email, WhatsApp number and, when applicable, your payment receipt only to manage your registration for this event and to contact you. Your data is not shared with third parties or used for advertising without your consent. You can request access, correction or deletion of your data by writing to camila@lifetoolscr.com, under Costa Rica’s Law No. 8968.',
