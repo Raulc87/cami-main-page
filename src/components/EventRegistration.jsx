@@ -607,7 +607,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
 
         <section className="evt-form-privacy" aria-labelledby="evt-form-privacy-title">
           <h3 id="evt-form-privacy-title" className="evt-form-section-title">
-            {t.privacyTitle[lang]} <span className="evt-form-draft">{t.privacyDraft[lang]}</span>
+            {t.privacyTitle[lang]}
           </h3>
           <p className="evt-form-notice">{t.privacyNotice[lang]}</p>
         </section>
