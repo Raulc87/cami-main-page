@@ -638,7 +638,9 @@ So that my place is reserved
    registered for this event" and nothing is stored.
 8. Given the form
    When it renders
-   Then it shows the privacy notice and a consent checkbox that must be checked to submit.
+   Then it shows the privacy notice and a consent checkbox that must be checked to submit, and
+   below it an optional, unticked checkbox to be contacted about other events and news, which
+   does not block the submit and is stored with the registration (FFR-018, CMP-058).
 
 **Dependencies**
 - US-021, US-017.
