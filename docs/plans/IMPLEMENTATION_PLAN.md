@@ -13,7 +13,7 @@
 ## 1. Purpose
 Record how the shipped site (v1.0.1) implements the approved requirements, so new work starts
 from a traced baseline. New features get their own plan from
-[IMPLEMENTATION_PLAN_TEMPLATE.md](../templates/IMPLEMENTATION_PLAN_TEMPLATE.md) (e.g.
+[IMPLEMENTATION_PLAN_TEMPLATE.md](https://github.com/Raulc87/sdd_starter_kit/blob/v1.2.0/docs/plans/IMPLEMENTATION_PLAN_TEMPLATE.md) (e.g.
 `docs/plans/IMPLEMENTATION_PLAN_US-012.md`).
 
 ## 2. Technical Scope

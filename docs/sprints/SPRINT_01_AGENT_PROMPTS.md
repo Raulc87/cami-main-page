@@ -1,6 +1,6 @@
 # SPRINT 01 — Agent Kickoff Prompts
 
-From [SPRINT_AGENT_PROMPTS_TEMPLATE.md](../templates/SPRINT_AGENT_PROMPTS_TEMPLATE.md).
+From [SPRINT_AGENT_PROMPTS_TEMPLATE.md](https://github.com/Raulc87/sdd_starter_kit/blob/v1.2.0/docs/sprints/SPRINT_AGENT_PROMPTS_TEMPLATE.md).
 Launched by the coordinator on 2026-10-18 on the owner's explicit instruction ("as the
 coordinator, like the SDD demands, open a reviewer session as well as agents sessions").
 
