@@ -1,8 +1,9 @@
-# Events — participant emails and privacy notice (drafts)
+# Events — participant emails and privacy notice
 
-- Status: **Draft.** Email texts need Cami's approval; the privacy notice needs a lawyer's
-  review (Cinthia or another lawyer) before production (FEATURE_SPEC BR-E11). Until then they
-  are placeholders under PROJECT_SPEC BR-002.
+- Status: **Approved by Cami, with her changes** (review document, 2026-10-26; recorded in
+  CMP-058). Emails, amount format, form wording and the privacy notice. Per the owner's decision of
+  2026-10-26, Cami's review stands as the legal review of the privacy notice (FEATURE_SPEC
+  BR-E11 and §20). The code applies these texts in CMP-059.
 - Related: [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md)
   (FFR-018, FFR-026), US-019, US-025.
 - Placeholders in `{braces}` are filled by the backend. Sender: Workspace alias if available,
@@ -53,10 +54,9 @@ Cami
 
 Hola {nombre}:
 
-Recibimos tu inscripción a **{evento}** (referencia {referencia}), pero llegó cuando el evento ya
-{estaba lleno / había cerrado inscripciones / el cupón ya no estaba disponible}. Cami va a revisar
-tu caso y te escribirá pronto para confirmarte si hay espacio o para coordinar la devolución de
-tu pago.
+Recibimos tu inscripción a **{evento}** (referencia {referencia}), pero {motivo}. Cami va a
+revisar tu caso y te escribirá pronto para confirmarte si hay espacio o para coordinar la
+devolución de tu pago.
 
 Si tienes alguna pregunta, responde a este correo.
 
@@ -67,8 +67,7 @@ Cami
 
 Hi {name},
 
-We received your registration for **{event}** (reference {reference}), but it arrived after the
-event {was full / had closed registrations / the coupon was no longer available}. Cami will
+We received your registration for **{event}** (reference {reference}), but {reason}. Cami will
 review it and write to you soon to confirm whether there is a place or to arrange a refund of
 your payment.
 
@@ -77,20 +76,16 @@ If you have any questions, just reply to this email.
 Cami
 
 ### Reason phrases (both languages)
-The `{…}` reason is one or more of these, joined by "and" / "y" when several flags apply (code:
-`apps-script/Mail.js`, CMP-028):
+The `{motivo}` / `{reason}` is one or more of these, joined by "y" / "and" when several flags
+apply (code: `apps-script/Mail.js`; reworded by Cami, 2026-10-26, applied in CMP-059):
 
 | Flag (`checkDetails`) | ES | EN |
 |---|---|---|
-| `sold out at submit` | estaba lleno | was full |
-| `event closed at submit` | había cerrado inscripciones | had closed registrations |
+| `sold out at submit` | llegó cuando el evento estaba lleno | it arrived when the event was full |
+| `event closed at submit` | llegó cuando el evento había cerrado inscripciones | it arrived after the event had closed registrations |
 | `coupon changed` | el cupón ya no estaba disponible | the coupon was no longer available |
-| `duplicate event code` | tenía un problema en su configuración | had a setup problem |
-| (no known flag) | necesitaba una revisión | needed a review |
-
-For Cami: the coupon phrase reads awkwardly after "llegó cuando el evento ya …" / "arrived after
-the event …" (e.g. "arrived after the event the coupon was no longer available"). She can
-approve it as is or give new wording; a wording change is a small code change.
+| `duplicate event code` | el evento tenía un problema en su configuración | the event had a setup problem |
+| (no known flag) | necesitaba una revisión | it needed a review |
 
 ## 2. "Payment not validated" email
 
@@ -148,20 +143,30 @@ ignored until fixed.
 Lifetools
 
 ## Amount format
-Spanish emails show amounts as `₡15 000`, like the site; English emails show `₡15,000`
-(CMP-028). Cami confirms the style when she approves the texts; a change is a small code change.
+Both languages show amounts with a comma, `₡15,000`, in the emails and on the site (Cami,
+2026-10-26: "utilicemos coma en ambos"; the owner extended it to the site; applied in CMP-059).
 
-## 3. Privacy notice (form) — generic draft
+## 3. Privacy notice (form)
 
-Open points for the lawyer review (BR-E11): the data **retention period** (Q-11; not stated
-below), and the "not shared with third parties" sentence if Cloudflare Turnstile is enabled later
-(FFR-029), since it processes visitor data for the captcha.
+Approved by Cami, 2026-10-26, as the legal review (owner decision, BR-E11). Her answers to the
+review questions:
+- **Retention period:** not stated ("no hace falta poner tiempo de conservacion de datos").
+- **Provider:** Google is not named ("quiza podemos no nombrar al proveedor, solo decir que tus
+  datos son guardados mas no mencionar a Google"); the storage sentence is dropped.
+- **Purpose:** "about it" is dropped so the email can be used to contact the person on other
+  topics too ("podriamos quitar esto para permitir que se pueda usar el correo para comunicarse
+  con la persona otros temas tambien, no solo este evento").
+- **Captcha (Turnstile):** revisited when it is enabled ("lo veremos al momento de usar captcha").
+- **Registering someone else:** no change; one registration per person, each with its own email
+  ("no creo que haga falta, con que sea una inscripcion por persona con un correo distinto por
+  cada una"). Several people under one email may be evaluated later.
+- **Consent checkbox:** unchanged ("asi esta bien").
 
 ### ES
 **Aviso de privacidad.** Cami Hernandez (Lifetools, camila@lifetoolscr.com) recopila tu nombre,
 correo, número de WhatsApp y, si aplica, el comprobante de pago, únicamente para gestionar tu
-inscripción a este evento y comunicarse contigo sobre él. Tus datos se guardan en Google
-Workspace y no se comparten con terceros ni se usan para publicidad sin tu consentimiento.
+inscripción a este evento y comunicarse contigo. Tus datos no se comparten con terceros ni se
+usan para publicidad sin tu consentimiento.
 Puedes pedir acceso, corrección o eliminación de tus datos escribiendo a
 camila@lifetoolscr.com, conforme a la Ley N.° 8968 de Costa Rica.
 
@@ -170,9 +175,17 @@ camila@lifetoolscr.com, conforme a la Ley N.° 8968 de Costa Rica.
 ### EN
 **Privacy notice.** Cami Hernandez (Lifetools, camila@lifetoolscr.com) collects your name,
 email, WhatsApp number and, when applicable, your payment receipt only to manage your
-registration for this event and to contact you about it. Your data is stored in Google
-Workspace and is not shared with third parties or used for advertising without your consent.
+registration for this event and to contact you. Your data is not shared with third parties or
+used for advertising without your consent.
 You can request access, correction or deletion of your data by writing to
 camila@lifetoolscr.com, under Costa Rica's Law No. 8968.
 
 ☐ I accept the privacy notice and authorize the use of my data for this registration.
+
+## 4. Form wording (BR-E11)
+
+The registration form's EN/ES texts in `UI_TEXT.events.form`
+([`src/constants/i18n.js`](../../src/constants/i18n.js)) are approved by Cami as listed in the
+review document (2026-10-26), with one change: the WhatsApp example number in the field hint
+and the phone error message is the neutral `+50688880000`. Cami asked for her own number; the
+owner chose a neutral example so no real number goes in the public repository (CMP-058).

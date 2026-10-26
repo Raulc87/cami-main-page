@@ -24,7 +24,7 @@
   `FEATURE_SPEC_TEMPLATE.md` (at the kit ref above) as `docs/specs/FEATURE_SPEC_<topic>.md`
 - Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.4,
   locked) — site ↔ events backend
-- Events emails and privacy notice (drafts, release gates):
+- Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058):
   [EVENTS_EMAILS_AND_PRIVACY.md](docs/ux/EVENTS_EMAILS_AND_PRIVACY.md)
 - Architecture spec: [docs/specs/ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC.md)
   (includes the content model, §9)
@@ -90,7 +90,7 @@ they are not active paths.
   reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-055
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-058
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

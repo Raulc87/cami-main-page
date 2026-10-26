@@ -56,15 +56,16 @@ upload; if one is not, do not release:
 
 - [ ] Real SINPE Móvil number and account name configured in the **production** script
       properties (no `0000-0000` placeholder, BR-E01).
-- [ ] Privacy notice text reviewed by a lawyer, including the retention period
-      ([EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3), and the reviewed
-      text is what the site shows.
+- [ ] Privacy notice text reviewed: approved by Cami as the legal review, 2026-10-26 (owner
+      decision, FEATURE_SPEC §20; no retention period stated), in
+      [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3, and the approved
+      text is what the site shows (CMP-059), with the "Draft" badge removed.
 - [ ] Email templates (confirmation, registration received with its reason phrases, payment not
-      validated, and the internal alert email; amount format confirmed) approved by Cami and in
-      use by the production script.
+      validated, and the internal alert email; amount format `₡15,000` in both languages) approved
+      by Cami (2026-10-26, with her changes, CMP-058) and in use by the production script.
 - [ ] Registration form wording (EN/ES labels and messages in `UI_TEXT.events.form`, including
       the sending note and the "event no longer available" message) reviewed by the owner and
-      Cami (BR-E11).
+      Cami (BR-E11; Cami approved them 2026-10-26, applied in CMP-059).
 - [ ] Real-iPhone check on staging (owner, 2026-10-21: no device was available for CMP-033):
       with any iPhone, through the manual Pages test site (TECH_STACK §10; test SINPE values
       during the window), register with a Camera photo (Photo Library), the same photo from
