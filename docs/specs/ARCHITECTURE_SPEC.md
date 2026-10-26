@@ -265,7 +265,7 @@ Events placeholders (CMP-029 on; each is a release gate in
   BR-E01) until Cami confirms them; never in the repo.
 - Privacy notice — the generic draft in
   [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §3, approved by Cami
-  2026-10-26 (CMP-058); shown with a "Draft" badge until the release removes it.
+  2026-10-26 (CMP-058); shown with a "Draft" badge until CMP-059 removes it.
 - Participant email templates (confirmation, registration received, payment not validated) —
   drafts in [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §1–§2, used by the
   backend from CMP-028; approved by Cami 2026-10-26 with her changes (CMP-058, applied in
