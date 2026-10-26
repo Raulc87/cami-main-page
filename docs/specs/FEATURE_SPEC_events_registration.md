@@ -125,7 +125,7 @@ Registration
   screenshot (paid events only), consent. All required. One registration = one participant = one
   payment (Q-22).
 - FFR-010: Client-side validation (repeated on the server, contract §3.3): valid email; WhatsApp
-  in international format `+<country code><number>`, e.g. `+50684104791` (Q-6); the screenshot
+  in international format `+<country code><number>`, e.g. `+50688880000` (Q-6); the screenshot
   may be any common image format, including iPhone HEIC/HEIF (Q-14), up to 5 MB.
 - FFR-011: On submit the participant sees a confirmation with a registration reference, or a
   clear error that keeps the entered data. Each form attempt carries a client-generated

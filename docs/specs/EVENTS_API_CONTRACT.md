@@ -62,7 +62,7 @@ email never appears in a URL (FNFR-001). Throttled globally.
   "eventCode": "EV1",
   "participantName": "María Pérez",
   "email": "maria@example.com",
-  "whatsapp": "+50684104791",
+  "whatsapp": "+50688880000",
   "couponCode": "PROMO10AB",
   "lang": "es",
   "consent": true,
