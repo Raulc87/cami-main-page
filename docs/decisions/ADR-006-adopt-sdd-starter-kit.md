@@ -85,7 +85,10 @@ Added in CMP-055, when the project synced to kit `v1.2.0` (kit issue #62; kit re
 **only** list of the rules it keeps instead of the kit's; [`AGENTS.md`](../../AGENTS.md) and
 [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) link here instead of repeating them. A project
 rule that is not in that table does not apply: the kit's rule does. Adding, changing or dropping
-a kept rule is a docs PR that updates the table, approved by the owner.
+a kept rule is a docs PR that updates the table, approved by the owner. Rules with no kit counterpart
+([`AGENTS.md`](../../AGENTS.md) → Project rules, Model choice, Scrum, and the coordinator's
+one-sprint agent sessions) are additions, not kept rules: they replace nothing in the kit, so
+they are not rows here and still apply.
 
 ### Kit files
 
