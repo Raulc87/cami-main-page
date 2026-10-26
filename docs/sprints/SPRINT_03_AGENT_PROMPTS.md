@@ -27,7 +27,10 @@ Codex reviews every PR automatically when it opens (no session prompt needed).
 1. Review-only agent: start once, before the first PR is opened. Its session ID replaces
    `<REVIEWER_SESSION>` in every implementation prompt; the coordinator's
    (`session_01Bz1vUqhjanC9ePRd5t2u6j`) replaces `<COORDINATOR_SESSION>` in every prompt.
-2. Agents 1, 2 and 3 at the go-ahead: each has work with no dependency (CMP-053/CMP-050,
+2. Attach the private kit repository (`Raulc87/sdd_starter_kit`, read at v1.2.0) to the
+   reviewer's, Agent 2's and Agent 3's sessions: they read its templates (security baseline,
+   pen-test plan, developer guide).
+3. Agents 1, 2 and 3 at the go-ahead: each has work with no dependency (CMP-053/CMP-050,
    CMP-056, CMP-057/CMP-054).
 
 ## Coordination
@@ -191,7 +194,11 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    unchanged; no secrets, URLs of staging or IDs in it (the tester gets them privately).
 3. CMP-063-pretest-security-review — after CMP-056 is merged: an ASVS-based review of
    apps-script/** and the registration form; then, only with the owner's written authorization
-   on the PR, a scan of staging. Record findings with a severity in
+   on the PR, a scan of staging: low-rate, application-level checks only, within Google's
+   terms (staging shares the owner's Google quotas with production), never during the CMP-064
+   deploy and smoke, with the alert settings switched before and restored after as in the
+   Sprint 02 burst (scan hits trigger the alert email). Ask the owner to authorize exactly
+   that: scope, tool, rate, time window and the alert settings. Record findings with a severity in
    docs/security/PRETEST_REVIEW.md (no secrets, no exploit details beyond what a fix needs) and
    send each to the coordinator as a proposed ticket.
 ```

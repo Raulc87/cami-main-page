@@ -23,7 +23,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on this PR's head, 0 broken. The three planned documents (security baseline, pen-test plan, developer guide) are not written yet and are stories of this sprint (CMP-056, CMP-062, CMP-057), as the CMP-057 row says |
 | 2 | Readiness checklist has no open blocking items | Pass, except item 8 (the go-ahead), which is gate 4 |
 | 3 | Integration contracts locked | Pass: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.5, locked. CMP-061 changes §9 (alert recipients) in a docs PR that merges before CMP-052 (Foundation) |
-| 4 | Final go-ahead from the human owner | Pending |
+| 4 | Final go-ahead from the human owner | Pending: given after this plan merges. The owner's "go ahead with Sprint 03" (2026-10-26) asked for this plan; it is not the go-ahead to start |
 
 ### Readiness checklist result (2026-10-26)
 | Item | Result |
@@ -98,7 +98,7 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
-| CMP-060 | This plan, the agent prompts, the Sprint 02 close and the pending decision records | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | review |
+| CMP-060 | This plan, the agent prompts, the Sprint 02 close and the pending decision records | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
 | CMP-061 | Contract v1.6 and FFR-029: alert recipients (`ALERT_TO`) | Coordinator | CMP-060 | coordinator branch | todo |
 | CMP-056 | Security baseline (`docs/security/SECURITY_BASELINE.md`) | Agent 2 | — | `CMP-056-security-baseline` | todo |
 | CMP-062 | Pen-test plan and written scope (`docs/security/PENTEST_PLAN.md`) | Agent 2 | CMP-056 | `CMP-062-pentest-plan` | todo |
@@ -146,7 +146,11 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   **staging only**, run only after the owner authorizes it in writing in the PR (scope, tool,
   time window), never against production; findings with a severity in
   `docs/security/PRETEST_REVIEW.md`, each proposed as a ticket. No
-  attack on production; this is not the penetration test.
+  attack on production; this is not the penetration test. Staging and production share the
+  owner's Google account quotas (MailApp, Drive, OCR, fetch) and a scan's hits trigger the
+  alert email, so the scan is low-rate, application-level checks only, within Google's terms,
+  never during the CMP-064 deploy and smoke, with the alert settings switched before and
+  restored after as in the Sprint 02 burst; the owner's authorization names all of these.
 - **CMP-064:** following runbook §2, §3 and §5.1 with the owner:
   - the production project `cami-events-production`, first upload, web-app deployment;
   - production script properties with the real SINPE values;
@@ -198,7 +202,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 | `docs/security/**` | Agent 2 |
 | `src/**`, `public/**`, `index.html`, `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
 | [`TICKETS.md`](../../TICKETS.md) | Shared: each agent updates only its own rows; the coordinator adds rows |
-| `docs/specs/**`, [`docs/process/release-checklist.md`](../process/release-checklist.md) and the other process docs, `docs/sprints/SPRINT_03_*.md` except the verification, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), `docs/decisions/**`, `docs/ux/**` | Coordinator (docs PRs) |
+| `.github/workflows/docs-link-check.yml`, `.github/scripts/check_doc_links.py`, `docs/specs/**`, [`docs/process/release-checklist.md`](../process/release-checklist.md) and the other process docs, `docs/sprints/SPRINT_03_*.md` except the verification, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), `docs/decisions/**`, `docs/ux/**` | Coordinator (docs PRs) |
 
 ## Integration Contracts
 - [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.5, locked; v1.6 (CMP-061)
