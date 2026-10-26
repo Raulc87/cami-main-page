@@ -139,6 +139,11 @@ export const UI_TEXT = {
         en: 'I accept the privacy notice and authorize the use of my data for this registration.',
         es: 'Acepto el aviso de privacidad y autorizo el uso de mis datos para esta inscripción.',
       },
+      // Optional second checkbox, never required (contract v1.5, FFR-018)
+      contactOptIn: {
+        en: "I'd like Cami to contact me about other events and news.",
+        es: 'Quiero que Cami me contacte sobre otros eventos y novedades.',
+      },
       submit: { en: 'Register', es: 'Inscribirme' },
       submitting: { en: 'Sending…', es: 'Enviando…' },
       sendingNote: {

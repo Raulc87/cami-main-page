@@ -98,6 +98,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
   const [whatsapp, setWhatsapp] = useState('')
   const [website, setWebsite] = useState('') // honeypot: real visitors never see or fill it
   const [consent, setConsent] = useState(false)
+  const [contactOptIn, setContactOptIn] = useState(false)
   const [couponText, setCouponText] = useState('')
   const [coupon, setCoupon] = useState(null) // { code, discountPercent, amountDueCrc } once applied
   const [couponBusy, setCouponBusy] = useState(false)
@@ -315,6 +316,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
       couponCode: coupon ? coupon.code : '',
       lang,
       consent: true,
+      contactOptIn,
       website,
       file: filePayload,
     })
@@ -632,6 +634,15 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
               {fieldError('consent')}
             </p>
           )}
+          <label className="evt-form-consent evt-form-optin" htmlFor="evt-contact-optin">
+            <input
+              id="evt-contact-optin"
+              type="checkbox"
+              checked={contactOptIn}
+              onChange={(e) => setContactOptIn(e.target.checked)}
+            />
+            <span>{t.contactOptIn[lang]}</span>
+          </label>
         </div>
 
         {formError && (
