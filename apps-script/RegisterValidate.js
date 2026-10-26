@@ -44,6 +44,9 @@ function validateRegisterInput_(body) {
 
   if (body.consent !== true) fields.consent = 'consent_required';
 
+  // Optional second checkbox (contract v1.5): only the JSON boolean true opts in; missing or any other value is false, never refused.
+  var contactOptIn = body.contactOptIn === true;
+
   var file = body.file;
   var hasFile = !!(file && typeof file === 'object' && str_(file.base64) !== '');
   // Measured after removing a data-URL prefix and whitespace, as prepareScreenshot_ will decode it.
@@ -56,7 +59,7 @@ function validateRegisterInput_(body) {
     hasFile: hasFile,
     value: hasErrors ? null : {
       submissionId: submissionId, eventCode: eventCode, participantName: participantName, email: email,
-      whatsapp: whatsapp, couponCode: couponCode, lang: lang
+      whatsapp: whatsapp, couponCode: couponCode, lang: lang, contactOptIn: contactOptIn
     }
   };
 }

@@ -4,6 +4,7 @@ import { C } from '../constants/colors'
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
 import { checkCoupon, register } from '../api/events'
+import { formatCrc } from './eventsShared'
 
 // Registration form for one event (US-019, US-020 client side).
 // Contract: docs/specs/EVENTS_API_CONTRACT.md (§3.2 coupon, §3.3 register, §7 errors, §8 fields).
@@ -74,8 +75,6 @@ function toBase64(file) {
   })
 }
 
-const formatCrc = (n, lang) => `₡${Number(n).toLocaleString(lang === 'es' ? 'es-CR' : 'en-US')}`
-
 function formatDate(date, lang) {
   const [y, m, d] = String(date).split('-').map(Number)
   if (!y || !m || !d) return String(date)
@@ -99,6 +98,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
   const [whatsapp, setWhatsapp] = useState('')
   const [website, setWebsite] = useState('') // honeypot: real visitors never see or fill it
   const [consent, setConsent] = useState(false)
+  const [contactOptIn, setContactOptIn] = useState(false)
   const [couponText, setCouponText] = useState('')
   const [coupon, setCoupon] = useState(null) // { code, discountPercent, amountDueCrc } once applied
   const [couponBusy, setCouponBusy] = useState(false)
@@ -316,6 +316,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
       couponCode: coupon ? coupon.code : '',
       lang,
       consent: true,
+      contactOptIn,
       website,
       file: filePayload,
     })
@@ -403,7 +404,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
         </div>
         <div>
           <dt>{t.summaryPrice[lang]}</dt>
-          <dd>{price > 0 ? formatCrc(price, lang) : UI_TEXT.events.free[lang]}</dd>
+          <dd>{price > 0 ? formatCrc(price) : UI_TEXT.events.free[lang]}</dd>
         </div>
       </dl>
     </div>
@@ -566,7 +567,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
               <div>
                 <dt>{t.payAmount[lang]}</dt>
                 <dd className="evt-form-amount">
-                  {formatCrc(amountDue, lang)}
+                  {formatCrc(amountDue)}
                   {coupon && <span className="evt-form-discount"> −{coupon.discountPercent}%</span>}
                 </dd>
               </div>
@@ -608,7 +609,7 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
 
         <section className="evt-form-privacy" aria-labelledby="evt-form-privacy-title">
           <h3 id="evt-form-privacy-title" className="evt-form-section-title">
-            {t.privacyTitle[lang]} <span className="evt-form-draft">{t.privacyDraft[lang]}</span>
+            {t.privacyTitle[lang]}
           </h3>
           <p className="evt-form-notice">{t.privacyNotice[lang]}</p>
         </section>
@@ -633,6 +634,15 @@ function RegistrationDialog({ event, sinpe, onClose, onStale }) {
               {fieldError('consent')}
             </p>
           )}
+          <label className="evt-form-consent evt-form-optin" htmlFor="evt-contact-optin">
+            <input
+              id="evt-contact-optin"
+              type="checkbox"
+              checked={contactOptIn}
+              onChange={(e) => setContactOptIn(e.target.checked)}
+            />
+            <span>{t.contactOptIn[lang]}</span>
+          </label>
         </div>
 
         {formError && (

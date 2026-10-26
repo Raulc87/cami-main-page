@@ -1,4 +1,4 @@
-// Helpers shared by Events.jsx and EventsTicker.jsx (kept out of the component modules).
+// Helpers shared by Events.jsx, EventsTicker.jsx and EventRegistration.jsx (kept out of the component modules).
 
 export function formatEventDate(date, lang) {
   const [y, m, d] = date.split('-').map(Number)
@@ -9,4 +9,10 @@ export function formatEventDate(date, lang) {
 
 export function cardId(eventCode) {
   return `evt-${eventCode}`
+}
+
+// Colón amount with a comma thousands separator in both languages (Cami's decision): ₡15,000.
+// The participant emails (apps-script/Mail.js, formatAmount_) use the same format.
+export function formatCrc(n) {
+  return `₡${Number(n).toLocaleString('en-US')}`
 }

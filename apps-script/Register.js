@@ -4,8 +4,20 @@
 var REGISTRATION_HEADERS = [
   'timestamp', 'submissionId', 'reference', 'eventCode', 'participantName', 'email', 'whatsapp', 'lang',
   'couponCode', 'discountPercent', 'amountDueCrc', 'screenshotUrl', 'checkResult', 'checkDetails',
-  'needsReview', 'status', 'consentAt', 'notes'
+  'needsReview', 'status', 'consentAt', 'notes', 'contactOptIn'
 ];
+
+// A tab created before a column was added lacks its header: add the missing trailing headers (older
+// rows stay blank in them, read as FALSE). Only when the existing header row is a prefix of ours.
+function ensureRegistrationHeaders_(sheet) {
+  var have = sheet.getLastColumn();
+  if (have >= REGISTRATION_HEADERS.length || have < 1) return;
+  var existing = sheet.getRange(1, 1, 1, have).getValues()[0].map(function (h) { return String(h).trim(); });
+  var isPrefix = existing.every(function (h, i) { return h === REGISTRATION_HEADERS[i]; });
+  if (!isPrefix) { console.error('registration tab headers differ from the expected ones; contactOptIn header not added'); return; }
+  var missing = REGISTRATION_HEADERS.slice(have);
+  sheet.getRange(1, have + 1, 1, missing.length).setValues([missing]);
+}
 
 // The event for a registration: the first row of its code that passes validation, wherever it is
 // published or not (a late paid registration is stored and flagged, BR-E13). `duplicated` is true
@@ -247,9 +259,10 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
       "'" + timestamp, v.submissionId, reference, "'" + v.eventCode, neutralize(v.participantName), neutralize(v.email),
       neutralize(v.whatsapp), v.lang, neutralize(v.couponCode), coupon ? coupon.discountPercent : '', amountDue, screenshotUrl,
       screenshot ? 'pending' : 'not-required', notes.join('; '), flags.length > 0, 'new',
-      "'" + timestamp, ''
+      "'" + timestamp, '', v.contactOptIn === true
     ];
     var sheet = getOrCreateSheet(v.eventCode, REGISTRATION_HEADERS);
+    ensureRegistrationHeaders_(sheet);
     var row = sheet.getLastRow() + 1;
     sheet.getRange(row, 1, 1, values.length).setValues([values]);
   } catch (err) {
