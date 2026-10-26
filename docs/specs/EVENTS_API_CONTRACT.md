@@ -83,7 +83,7 @@ email never appears in a URL (FNFR-001). Throttled globally.
 | `couponCode` | string | no | `^[A-Z0-9]{8,20}$` when present | trim, upper; empty → none | `couponCode` |
 | `lang` | string | yes | `es` or `en` | — | `lang` |
 | `consent` | boolean | yes | must be `true` | — | `consentAt` (server time) |
-| `contactOptIn` | boolean | no | `true` or `false`; missing → `false` (the optional, unticked second checkbox, FFR-018) | — | `contactOptIn` (`TRUE` / `FALSE`) |
+| `contactOptIn` | boolean | no | optional; only the JSON boolean `true` counts as opting in. Missing, `false` or any other value (a string, a number, `null`) is stored as `FALSE` and never refused (no error code): the box only widens contact, so the safe reading of anything unclear is "no" (the optional, unticked second checkbox, FFR-018) | — | `contactOptIn` (`TRUE` / `FALSE`) |
 | `website` | string | yes | honeypot: must be `""` | — | not stored |
 | `file` | object/null | when amount due > ₡0 | image, ≤ 5 MB decoded; types JPEG, PNG, WebP, HEIC/HEIF (detected from content, not name) | stored as JPEG (`.jpg`), converted with `Blob.getAs` (spike); if conversion fails, the original is stored with its own extension (`.png`, `.webp`, `.heic`) and `checkDetails` gets the note `stored as original format: <ext>` (a note, not a flag; if OCR then cannot read it, `checkResult` is `unreadable` with no retries and no "not validated" email, FFR-017; owner, 2026-10-20) | Drive file → `screenshotUrl` |
 
@@ -247,3 +247,6 @@ The checklist must cover:
   refused, paid stored and flagged); duplicate email; retry with the same `submissionId`; event
   closed after the form opened (paid stored and flagged); coupon changed after apply (paid
   stored and flagged).
+- `contactOptIn` (v1.5): ticked → `TRUE` in the row; unticked or missing → `FALSE`; a
+  non-boolean value → `FALSE`, not refused; a registration in an event tab created before v1.5
+  adds the `contactOptIn` header as the last column, and that tab's older rows stay blank.
