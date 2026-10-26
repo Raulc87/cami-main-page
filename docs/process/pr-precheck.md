@@ -1,7 +1,7 @@
 # PR Precheck
 
 Checklist that any agent (or person) must run **before opening a PR**, no exceptions. The goal is
-to catch the obvious problems before asking Copilot or the user for review, not after.
+to catch the obvious problems before asking the reviewers or the user for review, not after.
 
 ## 1. Scope
 
@@ -62,7 +62,7 @@ An outdated spec is as real a bug as a code one — don't leave it for "later".
       `high` if the change touches something sensitive — forms, lead data, external integrations
       once they exist). Resolve or justify every finding before continuing.
 - [ ] The **model** used to run `/code-review` goes with the level: docs/copy only → Haiku (or
-      leave it to Copilot); narrow UI → Sonnet; forms, lead data, or external integrations → Opus.
+      leave it to Codex); narrow UI → Sonnet; forms, lead data, or external integrations → Opus.
       Full table in [model-cost-policy.md](model-cost-policy.md) §5.
 - [ ] If `/code-review` flags something you decide **not** to resolve, leave the justification in
       the PR description ("Risks" section — see [pr-workflow.md](pr-workflow.md)), not in silence.

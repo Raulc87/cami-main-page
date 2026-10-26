@@ -168,7 +168,7 @@ Not part of the current release; tracked as backlog in [USER_STORIES.md](USER_ST
 - Demographic social ads (US-016)
 
 Each one needs its own ticket and, when it changes architecture, its own FEATURE_SPEC (from
-[docs/templates/FEATURE_SPEC_TEMPLATE.md](../templates/FEATURE_SPEC_TEMPLATE.md)) before
+[the kit's `FEATURE_SPEC_TEMPLATE.md`](https://github.com/Raulc87/sdd_starter_kit/blob/v1.2.0/docs/specs/FEATURE_SPEC_TEMPLATE.md)) before
 implementation.
 
 ## 16. Open Questions

@@ -50,39 +50,33 @@ no UI to verify, or no user story), say so explicitly instead of omitting the se
 `Verification` replaces the former "Test" section: it asks for evidence (build output, browser
 check, screenshots), not just a statement that it was tested.
 
-## 3. Request Copilot review (balanced mode)
+## 3. Ask for reviews
 
-After creating the PR, request an automatic GitHub Copilot code review in **balanced** mode
-(neither the most superficial nor the most exhaustive — a balance between noise and coverage).
+Two independent reviewers look at every PR before the owner approves it
+([AGENTS.md → Kept project rules](../../AGENTS.md#kept-project-rules-adopted-projects), minimum
+review):
 
-```bash
-gh pr edit <PR_NUMBER> --add-reviewer @copilot
-```
+- **Codex** (the Codex GitHub integration) reviews automatically when the PR opens; nothing to
+  request. The author may ask it again with an `@codex review` comment **at most twice per PR**;
+  after that, re-reviews come only from the review-only agent
+  ([AGENTS.md → Automated PR reviewers](../../AGENTS.md#automated-pr-reviewers)).
+- **The review-only agent** (a dedicated Claude Code session) reviews when the author asks:
+  after **every push** to the PR (the first push, each fix, each merge of the base branch), the
+  author sends it one message naming the PR, its head commit and what changed since the last
+  review. Its "ready for human approval" verdict goes to the coordinator, who tells the owner
+  with the merge order ([AGENTS.md → Review flow](../../AGENTS.md#review-flow)).
 
-The correct identifier is `@copilot` (supported since GitHub CLI 2.88.0) — `Copilot` or
-`copilot-pull-request-reviewer[bot]` fail because `gh` doesn't resolve them as a user via
-GraphQL, even though that same reviewer can be assigned by hand from "Request review" in the
-GitHub UI. If `gh pr edit --add-reviewer @copilot` fails anyway (old `gh` version, or the Copilot
-code review app isn't installed/enabled on the repo), request the review manually from the UI and
-tell the user.
-
-Copilot code review's verbosity mode (`balanced`) is configured at the repository/organization
-level in GitHub (Settings → Code review → Copilot), not via `gh` per PR. If the repo doesn't have
-that mode configured yet, it's a one-time manual GitHub configuration step to do from the UI —
-tell the user if there's no certainty that the mode is set to `balanced`.
-
-Copilot is an **automated reviewer**. The **review-only agent** is a dedicated Claude Code
-session that reviews when the owner or the coordinator asks
-([AGENTS.md → Review-only agent](../../AGENTS.md#review-only-agent)). The human owner is the
-final approver of every PR.
+GitHub Copilot code review is not part of this flow: requests in Sprint 02 produced no reviews
+(ADR-006 → Kit disposition, kept rule Reviewers). The human owner is the final approver of every
+PR.
 
 ## 4. Handle review comments
 
 The author agent subscribes to its own PR's events (comments, reviews) and acts when they
-arrive; it does not poll the PR in a loop. Comments come from the automated reviewers (Copilot,
-Codex — [AGENTS.md → Automated PR reviewers](../../AGENTS.md#automated-pr-reviewers)), from the
-review-only agent's COMMENT review (requested by the owner or the coordinator), and from the
-owner. For each one:
+arrive; it does not poll the PR in a loop. Comments come from Codex
+([AGENTS.md → Automated PR reviewers](../../AGENTS.md#automated-pr-reviewers)), from the
+review-only agent's COMMENT review (asked for by the author after every push, or by the owner or
+the coordinator), and from the owner. For each one:
 
 1. Read each line comment and each review finding.
 2. Decide: fix it, or justify why it doesn't apply?
@@ -93,8 +87,8 @@ owner. For each one:
 
 A PR is ready to merge only if:
 
-- **Zero unresolved line comments** on the PR (whether from Copilot, Codex, the review-only
-  agent or a human).
+- **Zero unresolved line comments** on the PR (whether from Codex, the review-only agent or a
+  human).
 - **The latest review-only agent review reads "Ready for human approval"**, or every finding
   in it (they are in the review body, not in line threads) has a visible reply from the author:
   fixed (with the commit) or why no change is needed.
