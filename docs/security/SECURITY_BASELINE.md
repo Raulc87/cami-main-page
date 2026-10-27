@@ -281,8 +281,8 @@ Code reviewed by CMP-063; verified on a running system by the PTES test, with te
   a new test scope) if they are built: lead capture or the intake questionnaire with persistence
   (US-011, US-012), a payment gateway or card payments, user accounts or an admin web panel, and
   the captcha (Cloudflare Turnstile, FFR-029) as a new outside service.
-- Plan: `docs/security/PENTEST_PLAN.md` (CMP-062, not written yet; from the kit's
-  `PENTEST_PLAN_TEMPLATE.md`; its scope covers production, since the test runs after the go-live).
+- Plan: [`PENTEST_PLAN.md`](PENTEST_PLAN.md) (CMP-062, from the kit's `PENTEST_PLAN_TEMPLATE.md`;
+  its scope covers production, since the test runs after the go-live).
 - Planned before release: **the PTES deadline is 60 days after the events go-live** (release
   v1.1.0, CMP-068), owner decision 2026-10-26 ("60 days after launch", SPRINT_03_PLAN → Sprint
   Review Notes). **Deadline date:** written here by CMP-069 as the go-live date plus 60 days, once

@@ -929,3 +929,141 @@ So that I know my place is reserved or what to fix
 
 **Jira**
 - Jira Key: TBD
+
+## Security
+
+Security acceptance criteria for the events stories, from the security baseline
+([`SECURITY_BASELINE.md` §3](../security/SECURITY_BASELINE.md#3-owasp-top-10-and-api-top-10-as-acceptance-criteria),
+CMP-056, approved on merge of PR #58). They keep the baseline's `SAC-NN` IDs because its ASVS
+inventory refers to them; each names the stories it applies to. Section references (§4, §6, §7)
+are to the baseline. CMP-063 verifies them against the code, plus the owner's checks of SAC-13
+and SAC-15; the checks on staging wait for the penetration test (owner, 2026-10-27). Never
+against production by an agent.
+
+- **SAC-01 Server-side validation** (US-019, US-020, US-021, US-023; A05, API3, API10;
+  `v5.0.0-2.2.1`, `v5.0.0-2.2.2`, `v5.0.0-2.2.3`, `v5.0.0-1.1.1`, `v5.0.0-15.3.3`)
+  Given a `register` or `coupon` request sent directly to the backend, not through the form, with
+  a validated field outside its contract §3.3 rule (wrong type, too long, wrong format, missing)
+  When it is received
+  Then it is refused with `VALIDATION_ERROR` and the field code (contract §8) and nothing is
+  stored; the contract's exceptions hold: unknown fields are ignored (an otherwise valid request
+  is accepted), a non-boolean `contactOptIn` is stored as `FALSE` and never refused, and a filled
+  honeypot gets the normal-looking success answer with nothing stored (§3.3); an `Events` or
+  `Coupons` row that breaks a contract §6 rule is skipped and listed in the alert email.
+- **SAC-02 No formulas from input** (US-021; A05; `v5.0.0-1.2.4`, `v5.0.0-1.3.3`)
+  Given a registration whose name, email, WhatsApp or coupon value starts with `=`, `+`, `-`,
+  `@`, a tab, a carriage return or a digit
+  When it is stored
+  Then the cell holds the literal text and Sheets evaluates no formula (FFR-014).
+- **SAC-03 Untrusted text shown as text** (US-017, US-018, US-025; A05, API10; `v5.0.0-1.2.1`,
+  `v5.0.0-1.2.3`, `v5.0.0-3.2.2`)
+  Given an event name or description (or its automatic translation) containing HTML or script
+  markup, and a participant name containing markup
+  When the cards, the ticker, the form and the emails show them
+  Then they appear as literal text, no script runs, and the emails stay plain text.
+- **SAC-04 Safe image links** (US-017, US-023; A05; `v5.0.0-1.2.2`)
+  Given an `Events.imageUrl` that is not an `https://` URL (for example `javascript:`, `data:`
+  or `http:`)
+  When the events load
+  Then the API returns `imageUrl: null` and the card shows the Lifetools logo.
+- **SAC-05 Upload checks** (US-019, US-021; A05, API4; `v5.0.0-5.2.1`, `v5.0.0-5.2.2`,
+  `v5.0.0-5.3.1`, `v5.0.0-5.3.2`)
+  Given a file that is not a JPEG, PNG, WebP or HEIC/HEIF image (also one renamed `.jpg`), or an
+  image over 5 MB
+  When it is submitted
+  Then it is refused with `invalid_file_type` or `file_too_large` and no file is created in Drive;
+  an accepted file is stored in the private event folder under the BR-E04 name, never under the
+  name it was uploaded with.
+- **SAC-06 Abuse limits** (US-020, US-021, US-024; A06, API4, API6; `v5.0.0-2.3.2`,
+  `v5.0.0-2.4.1`, `v5.0.0-15.2.2`)
+  Given more `register` calls, coupon checks or failed coupon checks in a minute than the
+  contract §9 limits, or more uploads in a day than the daily caps
+  When the limit is passed
+  Then further requests get `RATE_LIMITED` or `UPLOAD_CAP_REACHED`, each one is counted in
+  `Metrics` exactly (CMP-053), and the day's alert email lists it (FFR-029); coupon codes Cami
+  creates are random strings of at least 8 characters from a password generator, never words
+  (FFR-020).
+- **SAC-07 No double booking, no partial records** (US-020, US-021; A06, A08, API6;
+  `v5.0.0-2.3.1`, `v5.0.0-2.3.3`, `v5.0.0-2.3.4`)
+  Given parallel registrations for the last place, or parallel uses of a coupon's last use
+  When they are processed
+  Then at most capacity (or `maxUses`) of them count (BR-E10, BR-E13 for paid ones), a registration
+  sent without the coupon check is re-checked in full, and a registration whose row cannot be
+  written leaves no file behind.
+- **SAC-08 Only the data each answer needs** (US-017, US-020, US-021; A01, API1, API3;
+  `v5.0.0-8.2.2`, `v5.0.0-8.2.3`, `v5.0.0-14.2.1`, `v5.0.0-15.3.1`)
+  Given any anonymous request
+  When `events`, `coupon` or `register` answers
+  Then the answer holds only the contract §7 fields: no participant data, no coupon list
+  (FFR-021), no spreadsheet, folder or file IDs or URLs; a retry with a stored `submissionId`
+  returns only that registration's reference and flag; personal data travels only in POST bodies,
+  never in a URL.
+- **SAC-09 Only the public actions are reachable** (all events stories; A01, API5;
+  `v5.0.0-8.2.1`, `v5.0.0-3.5.3`, `v5.0.0-13.4.5`, `v5.0.0-15.2.3`)
+  Given a GET or POST with any `action` other than `events` (GET) or `coupon` and `register`
+  (POST)
+  When it is received
+  Then it answers `SERVER_ERROR` and changes nothing; the editor-only functions (the smoke check,
+  the time-driven triggers, the spike helpers) cannot be started through the web app.
+- **SAC-10 Safe failure** (US-019, US-021, US-022, US-025; A10; `v5.0.0-16.5.1`,
+  `v5.0.0-16.5.2`, `v5.0.0-16.5.3`)
+  Given a malformed body, an unexpected exception, or a Sheets, Drive, OCR or mail failure
+  When the request is processed
+  Then the answer is a contract §7 error code with no stack trace, ID or personal data; no
+  registration is stored half-way; an OCR or email failure never loses a stored registration
+  (FFR-032, US-025 AC3); the form keeps the visitor's data for a retry.
+- **SAC-11 Logs without personal data** (US-024; A09; `v5.0.0-16.2.5`, `v5.0.0-16.3.3`,
+  `v5.0.0-16.3.4`, `v5.0.0-16.4.1`)
+  Given any request to the web app, valid or not
+  When the backend logs it
+  Then the Apps Script execution log holds only fixed messages and error names: no request
+  content, personal data, SINPE data, IDs or secrets (the editor-only spike helpers, which log
+  sample file names and error messages, are reviewed in CMP-063, §7); honeypot hits, throttled requests, failed
+  coupon checks and upload-cap hits are counted in `Metrics` (FFR-029).
+- **SAC-12 No secrets in the code or the bundle** (all events stories; A02, API8;
+  `v5.0.0-13.3.1`, `v5.0.0-13.4.1`, `v5.0.0-13.4.2`)
+  Given the repository, the production build (`dist/`) and the files uploaded to GoDaddy
+  When they are inspected before each release
+  Then they hold no token, credential, spreadsheet, folder or deployment ID, staging URL or real
+  SINPE data, only the public production `/exec` URL in the bundle (FNFR-002); no source maps,
+  `.git` folder or `.env` file is uploaded; the SINPE values reach the browser only in the
+  `events` answer (contract §9).
+- **SAC-13 HTTPS and browser protections on the site** (US-017..US-025; A02, A04;
+  `v5.0.0-3.4.1`, `v5.0.0-3.4.3`, `v5.0.0-3.4.4`, `v5.0.0-3.4.5`, `v5.0.0-3.4.6`,
+  `v5.0.0-4.1.2`, `v5.0.0-12.1.1`, `v5.0.0-12.2.1`, `v5.0.0-12.2.2`, `v5.0.0-13.4.3`)
+  Given the production site
+  When it is opened over HTTP or HTTPS
+  Then HTTP redirects to HTTPS with a valid public certificate on TLS 1.2 or 1.3; responses carry
+  `Strict-Transport-Security` (at least one year), a `Content-Security-Policy` that allows only
+  the site, Google Fonts, the events backend and its redirect host, and `https:` images, with
+  `frame-ancestors`, plus `X-Content-Type-Options: nosniff` and a `Referrer-Policy`; folders show
+  no listing. Checked by the owner in the browser's developer tools (no scan of production); a
+  missing header becomes a ticket (proposed, §7).
+- **SAC-14 Known, current dependencies** (all stories; A03, A08; `v5.0.0-15.1.1`,
+  `v5.0.0-15.1.2`, `v5.0.0-15.2.1`, `v5.0.0-3.7.1`)
+  Given a release or a deploy
+  When it is prepared
+  Then the site's and the deploy tool's dependencies come from their lockfiles, `npm audit` shows
+  no critical or high finding past the §4 remediation times (CMP-050 for `.github/clasp`), GitHub
+  actions are pinned by commit, and every routine backend deploy to staging or production goes
+  through the deploy workflow from `main`; `clasp` from the owner's computer is used only for a
+  new project's first upload or an emergency, as ADR-009 and the events-backend runbook allow.
+- **SAC-15 Private storage and minimal data in the browser** (US-019, US-021; A01;
+  `v5.0.0-5.3.1`, `v5.0.0-14.2.3`, `v5.0.0-14.3.3`)
+  Given the events spreadsheet and the screenshots folder (staging and production)
+  When their sharing settings are checked
+  Then they are shared only with Cami's and the owner's accounts (no "anyone with the link");
+  the site loads no analytics or tracker and keeps only the language in `localStorage`; consent is
+  required and the contact opt-in defaults to `FALSE` (FFR-018).
+- **SAC-16 No email abuse beyond the accepted risk** (US-025; A05, API6; `v5.0.0-1.3.11`)
+  Given a registration request
+  When the backend sends an email
+  Then it goes only to the one validated address of a stored registration (a single `@`, no
+  spaces or line breaks, so no second recipient or extra header), with the approved templates, plain text, and the
+  participant's name as the only text the visitor controls.
+- **SAC-17 Known endpoints** (all events stories; API9, A02; `v5.0.0-13.1.1`)
+  Given the endpoint inventory in §6
+  When a release is prepared (release-checklist §3b)
+  Then each listed endpoint exists and nothing else answers for the project: one web-app
+  deployment per Apps Script project, the GitHub Pages test site unpublished after CMP-065 and
+  its staging URL secret deleted, and the staging URL in no tracked file.

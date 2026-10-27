@@ -22,7 +22,7 @@
 - Feature specs: [FEATURE_SPEC_events_registration.md](docs/specs/FEATURE_SPEC_events_registration.md)
   (v1.11 — events and registration, US-017..US-025); new ones from the kit's
   `FEATURE_SPEC_TEMPLATE.md` (at the kit ref above) as `docs/specs/FEATURE_SPEC_<topic>.md`
-- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.6,
+- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.7,
   locked) — site ↔ events backend
 - Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058):
   [EVENTS_EMAILS_AND_PRIVACY.md](docs/ux/EVENTS_EMAILS_AND_PRIVACY.md)
@@ -54,8 +54,10 @@
   release-checklist, events-backend-runbook
 - Branching and release model:
   [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) (Accepted)
-- Security baseline: `docs/security/SECURITY_BASELINE.md`, not written yet: planned as
-  CMP-056 in Sprint 03, approved by its end (AGENTS.md → Security baseline)
+- Security baseline: [docs/security/SECURITY_BASELINE.md](docs/security/SECURITY_BASELINE.md)
+  (approved on merge of PR #58, CMP-056; ASVS 5.0.0 level 2, not high-risk) with its
+  [ASVS inventory](docs/security/ASVS_INVENTORY.md); security acceptance criteria SAC-01..SAC-17
+  in [USER_STORIES.md → Security](docs/specs/USER_STORIES.md#security)
 - Penetration-test plan: `docs/security/PENTEST_PLAN.md`, required (the site is live and the
   events feature handles personal data and payment receipts): written in Sprint 03 (CMP-062);
   the PTES test, run by a tester the owner authorizes in writing, is due 60 days after the
@@ -98,7 +100,7 @@ they are not active paths.
   the automated reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-061
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-070
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

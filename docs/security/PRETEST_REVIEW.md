@@ -6,7 +6,7 @@ Pre-test security review (CMP-063): an OWASP ASVS 5.0.0 level 2 review of the ev
 [`src/api/events.js`](../../src/api/events.js)), against the security acceptance criteria
 SAC-01..SAC-17 of [`SECURITY_BASELINE.md`](SECURITY_BASELINE.md) §3 and the rows of
 [`ASVS_INVENTORY.md`](ASVS_INVENTORY.md) marked "Planned (CMP-063)". It is **not** the
-penetration test (`docs/security/PENTEST_PLAN.md`, CMP-062), and nothing in it was run against
+penetration test ([`PENTEST_PLAN.md`](PENTEST_PLAN.md), CMP-062), and nothing in it was run against
 production or the live site.
 
 ## Metadata
@@ -74,7 +74,7 @@ never executed, no request was sent to staging or production, and the partial sc
 The owner then posted no authorization. Decision: Owner, 2026-10-27 (relayed by the coordinator), question as asked: "The security agent couldn't run the gentle staging check: its session's safety controls blocked the script, so it sent nothing. What should happen to that check?" (options: leave it to the tester; I'll run it by hand). Owner: "Leave it to the tester (Recommended)". So:
 
 - the "PTES test" items of §2 are checked by the human tester under
-  `docs/security/PENTEST_PLAN.md` (CMP-062), which already covers them (its §3 threat model and §4
+  [`PENTEST_PLAN.md`](PENTEST_PLAN.md) (CMP-062), which already covers them (its §3 threat model and §4
   methods), before the PTES deadline;
 - CMP-063 closes on the code review (§2) plus the owner's two checks: SAC-13 (the live site's HTTPS
   and security headers, in the browser's developer tools) and SAC-15 (the spreadsheet and the
