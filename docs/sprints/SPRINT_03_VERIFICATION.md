@@ -6,9 +6,9 @@ or defect) and a ticket is proposed. Story statuses are not changed here; the co
 that after the owner approves the evidence. No acceptance criteria of a user story changed this
 sprint (the plan says "no new user stories"), so there is no story table.
 
-**Status of this document: complete for review, with two tickets pending their merge** (CMP-067,
-PR #86, whose evidence is below, and CMP-069, PR #85, Agent 2); this PR records them as pending and
-is updated when they merge. **CMP-065 is moved after the go-live** (owner, 2026-10-27). CMP-068
+**Status of this document: complete for review, with one ticket pending its merge** (CMP-067,
+PR #86, whose evidence is below); CMP-069 (PR #85, Agent 2) merged on 2026-10-27. This PR is updated
+when #86 merges. **CMP-065 is moved after the go-live** (owner, 2026-10-27). CMP-068
 (the release) is not part of this document.
 
 ## 1. Method
@@ -68,7 +68,7 @@ decision), **Pending** (waits on a merge).
 | Check | Result | Source |
 |---|---|---|
 | Baseline from the kit template: classification, ASVS 5.0.0 level and inventory, OWASP Top 10 / API Top 10 risks as acceptance criteria, NIST SSDF mapping, secret and dependency scanning, PTES deadline rule | Pass | Merged with the owner's approval on merge (ticket row); the Top 10 criteria are SAC-01..SAC-17 in USER_STORIES → Security (CMP-070) |
-| The PTES deadline written as a date | Pending | CMP-069 (PR #85, Agent 2), after the owner sets the go-live date |
+| The PTES deadline written as a date | Pass | CMP-069 (PR #85, merged 2026-10-27): deadline **2026-12-26** in baseline §5 (go-live date 2026-10-27 plus 60 days) |
 
 ### CMP-062 — Pen-test plan (PR #60)
 | Check | Result | Source |
@@ -141,9 +141,10 @@ the cleanup list below.
 | Cami's logo (from the owner, not from the web) replaces the marked placeholder for events without their own picture | Pass | The owner attached it in chat; `public/images/lifetools-logo.png` (the placeholder SVG removed); used as received, not redrawn or recolored |
 | Checked at 1280 / 900 / 375 px in EN and ES: loads, not cropped (`object-fit: contain` on the cream tile), the alt text is "Lifetools logo" / "Logo de Lifetools" | Pass | [1280 ES](evidence/sprint-03/CMP-067-logo-card-1280-es.jpg), [1280 EN](evidence/sprint-03/CMP-067-logo-card-1280-en.jpg), [900 ES](evidence/sprint-03/CMP-067-logo-card-900-es.jpg), [900 EN](evidence/sprint-03/CMP-067-logo-card-900-en.jpg), [375 ES](evidence/sprint-03/CMP-067-logo-card-375-es.jpg), [375 EN](evidence/sprint-03/CMP-067-logo-card-375-en.jpg) (a mocked event without a picture; the text on the cards is test data) |
 
-### CMP-069 — PTES deadline date (Agent 2; PR #85) — **Pending its merge**
-The baseline states the PTES deadline as a date (go-live date plus 60 days), merged before the
-upload. Result recorded when PR #85 merges.
+### CMP-069 — PTES deadline date (Agent 2; PR #85)
+| Check | Result | Source |
+|---|---|---|
+| Once the owner sets the go-live date, the baseline states the PTES deadline as a date (go-live plus 60 days), merged before the upload | Pass | Go-live date 2026-10-27 (owner: "go live TODAY if possible"); baseline §5 and §7 give 2026-12-26. If the upload slips past that Costa Rica date, CMP-068 states the actual upload date and Agent 2 moves the deadline |
 
 ### CMP-059 — Cami's approved copy changes (US-019, US-025; Agent 1)
 | Check | Result | Source |
