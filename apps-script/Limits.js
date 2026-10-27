@@ -68,9 +68,10 @@ function windowKey_(name, epochMs) {
 }
 
 // Fixed one-minute window counter (CacheService): returns the count including this call. The
-// window is chosen on arrival, so a request that waits for the lock still counts in its own minute.
-function bumpWindow_(name) {
-  var key = windowKey_(name, Date.now());
+// window is chosen on arrival (`arrivedMs`, now by default), so a request that waits for the lock
+// still counts in its own minute.
+function bumpWindow_(name, arrivedMs) {
+  var key = windowKey_(name, arrivedMs || Date.now());
   var release = takeCounterLock_('window ' + name) || releaseNothing_;
   try {
     var cache = CacheService.getScriptCache();
@@ -82,8 +83,17 @@ function bumpWindow_(name) {
   }
 }
 
-function readWindow_(name) {
-  return Number(CacheService.getScriptCache().get(windowKey_(name, Date.now())) || 0);
+// Takes one count back from the window of `arrivedMs`, the one it was added to (never below zero).
+function dropWindowCount_(name, arrivedMs) {
+  var key = windowKey_(name, arrivedMs);
+  var release = takeCounterLock_('window drop ' + name) || releaseNothing_;
+  try {
+    var cache = CacheService.getScriptCache();
+    var n = Math.max(0, Number(cache.get(key) || 0) - 1);
+    cache.put(key, String(n), 120);
+  } finally {
+    release();
+  }
 }
 
 function readDaily_(prefix, date) {
