@@ -74,6 +74,12 @@ upload; if one is not, do not release:
       stored); confirm what is stored (`.jpg` or `.heic` + note) and the check
       result; then unpublish the site, restore the real SINPE values and delete the
       `STAGING_EVENTS_API_URL` secret.
+      **v1.1.0 (events go-live): moved after the release by the owner (2026-10-27).** No
+      iPhone was available; the owner tests on production with the first iPhone available
+      (a registration for a live event with a Camera photo, the same photo from Files and a
+      screenshot, each with a different test email; those test rows and files deleted
+      afterwards), and any problem becomes a bug ticket. The test site comes down before the
+      release instead (unpublish, real SINPE values on staging, secret deleted).
 - [ ] Backend deploy to production through the approved deploy workflow (ADR-009), smoke
       request green; both time triggers installed once in production (runbook).
 - [ ] Lifetools logo in place for events without art (CMP-067).

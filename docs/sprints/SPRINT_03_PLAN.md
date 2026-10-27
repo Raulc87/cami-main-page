@@ -111,7 +111,7 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-064 | Production backend setup and first approved deploy | Agent 1 + owner | CMP-052, CMP-053 | `CMP-064-production-backend` | done |
 | CMP-057 | Developer guide (`CONTRIBUTING.md`) | Agent 3 | — | `CMP-057-developer-guide` | done |
 | CMP-054 | Missing `/favicon.svg` | Agent 3 | — | `CMP-054-favicon` | done |
-| CMP-065 | Real-iPhone check on staging, then the test-site takedown | Agent 3 + owner | CMP-052, CMP-053 on staging | `CMP-065-real-iphone-check` | todo |
+| CMP-065 | Real-iPhone check on staging, then the test-site takedown | Agent 3 + owner | CMP-052, CMP-053 on staging | `CMP-065-real-iphone-check` | moved after the go-live (owner) |
 | CMP-067 | Lifetools logo for events without their own picture | Agent 3 | Cami's logo file | `CMP-067-lifetools-logo` | todo |
 | CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | todo |
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
@@ -437,3 +437,17 @@ The human reviewer is the final approver.
   still got three GoDaddy visitor-statistics cookies; the owner turned off GoDaddy's "Real User
   Metrics tracking" for the domain, and a new check showed none (owner: "it shows no cookies
   now"). CMP-068 repeats the check after the go-live upload.
+- CMP-065 moved after the go-live (owner, 2026-10-27). The owner proposed it: "what if we go
+  live without the iphone real test and as soon as I find someone who has an Iphone, I test it
+  the full thing with a live event? [...] we can treat this as a bug if we actually find one, it
+  also has a fallback which is the manual verification". Question as asked: "Go live without the
+  iPhone check? [...] A camera photo in Apple's HEIC format is already accepted and stored, but
+  it isn't auto-checked, so Cami reviews that payment by hand. The one thing the check would
+  catch: an iPhone that can't upload at all. Then that person couldn't register online and
+  would need to contact Cami. [...]" Owner: **"Go live, iPhone test after (Recommended)"**. The
+  release no longer waits for CMP-065; the test site comes down now (unpublish, real SINPE
+  values on staging, `STAGING_EVENTS_API_URL` secret deleted); with the first iPhone available
+  the owner registers for a live event on production (Camera photo, the same photo from Files,
+  a screenshot, different test emails), the test rows and files are deleted afterwards, and a
+  problem becomes a bug ticket. The HEIC follow-up decision waits for that test. CMP-068 lists
+  it under Risks.
