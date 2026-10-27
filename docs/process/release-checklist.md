@@ -76,7 +76,14 @@ upload; if one is not, do not release:
       `STAGING_EVENTS_API_URL` secret.
 - [ ] Backend deploy to production through the approved deploy workflow (ADR-009), smoke
       request green; both time triggers installed once in production (runbook).
-- [ ] Lifetools logo in place for events without art.
+- [ ] Lifetools logo in place for events without art (CMP-067).
+- [ ] Security baseline approved (`docs/security/SECURITY_BASELINE.md`, CMP-056) with the PTES
+      deadline written in as a date (CMP-069; owner decision, 2026-10-26: 60 days after the
+      events go-live);
+      after that date, no release until the penetration test is done (AGENTS.md → Security
+      baseline).
+- [ ] Pre-test security review done (CMP-063): no open critical or high finding, unless the
+      owner accepted it in writing.
 - [ ] Production Apps Script deployment updated per
       [events-backend-runbook.md](events-backend-runbook.md), and the site build points
       `VITE_EVENTS_API_URL` at the production `/exec` URL.
