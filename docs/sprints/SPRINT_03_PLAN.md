@@ -182,6 +182,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   form with a coupon check and a submission against staging, both languages, at 1280/900/375
   px. Right after the CMP-068 upload: the redirect, the four headers and a clean console on the
   live site; a server error or a broken page means restoring the backup.
+- **CMP-068 also checks** the cookie gate in release-checklist §3b (PRETEST_REVIEW §2b) before
+  the upload, and lists under Risks that SAC-01..SAC-10 and SAC-16 are code-reviewed only, with
+  their checks on a running system left to the PTES test (owner, 2026-10-27).
 - **CMP-064:** following runbook §2, §3 and §5.1 with the owner:
   - the production project `cami-events-production`, first upload, web-app deployment;
   - production script properties with the real SINPE values;
