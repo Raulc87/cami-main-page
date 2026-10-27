@@ -27,28 +27,28 @@ function releaseAfterFlush_(lock) {
   lock.releaseLock();
 }
 
-// How long a counter update waits for the script lock. Registrations hold the lock while they
-// store a row and a screenshot, and a burst queues up behind them; a wait shorter than that queue
-// used to drop increments (CMP-053). A counter update is a short cache or sheet write, so the queue
-// drains well within these waits and the executions limit (6 min) is never near.
-var WINDOW_LOCK_WAIT_MS = 30000;
-var METRIC_LOCK_WAIT_MS = 60000;
+// Counter updates take the user lock, not the script lock that registrations hold while they store
+// a row and a screenshot: the web app runs as its owner, so every request shares one user lock and
+// the counters never queue behind a registration (CMP-053). Everything under it is a cache or
+// script-property write of a few milliseconds, so a short wait is enough and a request is never
+// held for long by a counter.
+var COUNTER_LOCK_WAIT_MS = 10000;
 
-// Takes the script lock for a counter update; returns a function that releases it. If the lock
-// stays busy for the whole wait it returns a no-op and logs the miss (a count that is off by one
-// is better than a request that fails, but it must be visible in Executions, never silent).
-function tryShortLock_(waitMs, what) {
-  var lock = LockService.getScriptLock();
+// Takes the counter lock; returns a function that releases it. If the lock stays busy for the whole
+// wait it returns a no-op and logs the miss (a count that is off by one is better than a request
+// that fails, but it must be visible in Executions, never silent).
+function holdCounterLock_(what) {
+  var lock = LockService.getUserLock();
   try {
-    lock.waitLock(waitMs);
-    return function () { releaseAfterFlush_(lock); };
+    lock.waitLock(COUNTER_LOCK_WAIT_MS);
+    return function () { lock.releaseLock(); };
   } catch (err) {
-    console.error('counter lock busy after ' + waitMs + ' ms, update may be missed: ' + what);
+    console.error('counter lock busy after ' + COUNTER_LOCK_WAIT_MS + ' ms, update may be missed: ' + what);
     return function () {};
   }
 }
 
-// Like tryShortLock_ but returns null when the lock stayed busy.
+// Briefly takes the script lock; returns null when it stayed busy.
 function takeShortLock_(waitMs) {
   var lock = LockService.getScriptLock();
   try {
@@ -63,12 +63,13 @@ function windowKey_(name, epochMs) {
   return 'RL_' + name + '_' + Math.floor(epochMs / 60000);
 }
 
-// Fixed one-minute window counter (CacheService): returns the count including this call.
+// Fixed one-minute window counter (CacheService): returns the count including this call. The
+// window is chosen on arrival, so a request that waits for the lock still counts in its own minute.
 function bumpWindow_(name) {
-  var release = tryShortLock_(WINDOW_LOCK_WAIT_MS, 'window ' + name);
+  var key = windowKey_(name, Date.now());
+  var release = holdCounterLock_('window ' + name);
   try {
     var cache = CacheService.getScriptCache();
-    var key = windowKey_(name, Date.now());
     var n = Number(cache.get(key) || 0) + 1;
     cache.put(key, String(n), 120);
     return n;
@@ -109,24 +110,25 @@ function uploadCapReached_(date, bytes) {
   return readDaily_(DAILY_UPLOADS_PREFIX, date) >= maxUploads || readDaily_(DAILY_BYTES_PREFIX, date) + bytes > maxBytes;
 }
 
-// Adds to one column of today's `Metrics` row (created on first use). Never throws.
+// Daily metric increments are kept in script properties and written to the `Metrics` row by the
+// 5-minute trigger (`flushMetrics_`), so a request never waits for a sheet write (CMP-053).
+var METRIC_PENDING_PREFIX = 'METRIC_PENDING_';
+
+function pendingMetricKey_(date, field) {
+  return METRIC_PENDING_PREFIX + date + ':' + field;
+}
+
+function roundMetric_(value) {
+  return Math.round(value * 100) / 100;
+}
+
+// Adds to one metric of today. Never throws.
 function bumpMetric_(field, amount) {
-  var release = tryShortLock_(METRIC_LOCK_WAIT_MS, 'metric ' + field);
+  var release = holdCounterLock_('metric ' + field);
   try {
-    var date = crDate_(Date.now());
-    var sheet = getOrCreateSheet('Metrics', METRIC_HEADERS);
-    var last = sheet.getLastRow();
-    var dates = last > 1 ? sheet.getRange(2, 1, last - 1, 1).getValues() : [];
-    var rowIndex = -1;
-    for (var i = 0; i < dates.length; i++) {
-      if (plainDate_(dates[i][0]) === date) { rowIndex = i + 2; break; }
-    }
-    if (rowIndex < 0) {
-      rowIndex = last + 1;
-      sheet.getRange(rowIndex, 1, 1, METRIC_HEADERS.length).setValues([["'" + date, 0, 0, 0, 0, 0, 0]]);
-    }
-    var cell = sheet.getRange(rowIndex, METRIC_HEADERS.indexOf(field) + 1);
-    cell.setValue(Math.round((Number(cell.getValue() || 0) + amount) * 100) / 100);
+    var key = pendingMetricKey_(crDate_(Date.now()), field);
+    var props = PropertiesService.getScriptProperties();
+    props.setProperty(key, String(roundMetric_(Number(props.getProperty(key) || 0) + amount)));
   } catch (err) {
     console.error('metric ' + field + ' failed: ' + err.name);
   } finally {
@@ -134,7 +136,69 @@ function bumpMetric_(field, amount) {
   }
 }
 
-// Today's metrics as numbers (zeros when there is no row yet).
+// Pending increments as { date: { field: amount } }.
+function readPendingMetrics_() {
+  var pending = {};
+  var all = PropertiesService.getScriptProperties().getProperties();
+  Object.keys(all).forEach(function (k) {
+    if (k.indexOf(METRIC_PENDING_PREFIX) !== 0) return;
+    var parts = k.slice(METRIC_PENDING_PREFIX.length).split(':');
+    pending[parts[0]] = pending[parts[0]] || {};
+    pending[parts[0]][parts[1]] = Number(all[k]) || 0;
+  });
+  return pending;
+}
+
+// Row of `date` in `Metrics` (created when missing), as a sheet row number.
+function metricsRowFor_(sheet, date) {
+  var last = sheet.getLastRow();
+  var dates = last > 1 ? sheet.getRange(2, 1, last - 1, 1).getValues() : [];
+  for (var i = 0; i < dates.length; i++) {
+    if (plainDate_(dates[i][0]) === date) return i + 2;
+  }
+  sheet.getRange(last + 1, 1, 1, METRIC_HEADERS.length).setValues([["'" + date, 0, 0, 0, 0, 0, 0]]);
+  return last + 1;
+}
+
+// Writes the pending increments into the `Metrics` rows, then takes exactly what was written off
+// the pending values (increments that arrived meanwhile stay for the next run). Run by the
+// 5-minute trigger; a busy script lock just means the next run does it.
+function flushMetrics_() {
+  var pending = readPendingMetrics_();
+  var dates = Object.keys(pending);
+  if (!dates.length) return;
+  var release = takeShortLock_(30000);
+  if (!release) return;
+  var written = [];
+  try {
+    var sheet = getOrCreateSheet('Metrics', METRIC_HEADERS);
+    dates.forEach(function (date) {
+      var row = metricsRowFor_(sheet, date);
+      Object.keys(pending[date]).forEach(function (field) {
+        var column = METRIC_HEADERS.indexOf(field) + 1;
+        if (column < 2) return; // not a metric column: leave it, it is never written
+        var cell = sheet.getRange(row, column);
+        cell.setValue(roundMetric_(Number(cell.getValue() || 0) + pending[date][field]));
+        written.push({ key: pendingMetricKey_(date, field), amount: pending[date][field] });
+      });
+    });
+  } finally {
+    release();
+  }
+  var unlockCounters = holdCounterLock_('metrics flush');
+  try {
+    var props = PropertiesService.getScriptProperties();
+    written.forEach(function (w) {
+      var left = roundMetric_(Number(props.getProperty(w.key) || 0) - w.amount);
+      if (left > 0) props.setProperty(w.key, String(left)); else props.deleteProperty(w.key);
+    });
+  } finally {
+    unlockCounters();
+  }
+}
+
+// Today's metrics as numbers (zeros when there is no row yet): the sheet row plus what is still
+// waiting for the next flush.
 function readMetrics_(date) {
   var out = {};
   METRIC_HEADERS.slice(1).forEach(function (h) { out[h] = 0; });
@@ -145,6 +209,8 @@ function readMetrics_(date) {
       METRIC_HEADERS.slice(1).forEach(function (h) { out[h] += Number(rows[i].v[h] || 0); });
     }
   }
+  var waiting = readPendingMetrics_()[date] || {};
+  Object.keys(waiting).forEach(function (h) { if (h in out) out[h] += waiting[h]; });
   return out;
 }
 

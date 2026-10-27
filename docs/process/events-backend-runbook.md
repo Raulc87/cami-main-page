@@ -152,7 +152,9 @@ may not see the events section.
 5. Check: after about 6 minutes, open **Executions** (sidebar): a `refreshEventsCache` run
    appears about every 5 minutes with status **Completed**. A **Failed** run: open it and read the
    log; the site keeps working from the last cache or rebuilds on demand.
-The same run also recounts the registrations Cami has marked `spam` in the `Metrics` tab, drops
+The same run also writes the day's counters (accepted, honeypot hits, throttled, failed coupon
+checks, MB uploaded) to the `Metrics` tab, so the row can be up to 5 minutes behind (the alert
+already counts what is waiting), recounts the registrations Cami has marked `spam` in it, drops
 old daily counters, and sends the **daily alert email** to `MAIL_REPLY_TO` when something new
 needs Cami's attention (an invalid `Events` or `Coupons` row, or a daily threshold crossed); at
 most one per day, and findings made after it go into the next day's email. While testing, point
