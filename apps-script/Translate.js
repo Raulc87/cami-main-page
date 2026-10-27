@@ -117,7 +117,7 @@ function propertyCount_() {
 function showPropertyUsage() {
   var groups = {};
   Object.keys(PropertiesService.getScriptProperties().getProperties()).forEach(function (k) {
-    var g = k.replace(/[0-9a-f]{32}$/, '<hash>').replace(/\d{4}-\d{2}-\d{2}$/, '<date>');
+    var g = k.replace(/[0-9a-f]{32}$/, '<hash>').replace(/\d{4}-\d{2}-\d{2}$/, '<date>').replace(/^(METRIC_PENDING_)\d{4}-\d{2}-\d{2}/, '$1<date>');
     groups[g] = (groups[g] || 0) + 1;
   });
   console.log(propertyCount_() + ' script properties (the settings page is read-only past 50): ' + JSON.stringify(groups));

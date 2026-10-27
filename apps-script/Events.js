@@ -159,8 +159,9 @@ function rebuildEventsCache_() {
   if (failed.length) throw new Error('rebuildEventsCache_ failed for: ' + failed.join(', '));
 }
 
-// Run by the time-driven trigger every 5 minutes: rebuilds the cache, recounts the `spam`
-// metric, prunes old daily counters and sends the day's alert email when there is something new.
+// Run by the time-driven trigger every 5 minutes: rebuilds the cache, writes the pending daily
+// counters to `Metrics`, recounts the `spam` metric, prunes old daily counters and sends the day's
+// alert email when there is something new.
 function refreshEventsCache() {
   var error = null;
   try {
@@ -169,6 +170,11 @@ function refreshEventsCache() {
     error = err;
   }
   // Housekeeping must not hide a failed rebuild, nor fail the run by itself.
+  try {
+    flushMetrics_();
+  } catch (err) {
+    console.error('metrics flush failed: ' + err.name);
+  }
   try {
     updateSpamMetrics_();
     pruneDaily_(crDate_(Date.now()));
