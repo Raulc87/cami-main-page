@@ -187,8 +187,17 @@ function flushMetrics_() {
       });
     });
   } finally {
+    // Also after a failure partway: what reached the sheet must not be added again. If the sheet
+    // cannot confirm the writes, keep the pending values (an over-count for one run, never a loss).
+    var confirmed = true;
+    try {
+      SpreadsheetApp.flush();
+    } catch (err) {
+      confirmed = false;
+      console.error('metrics flush not confirmed: ' + err.name);
+    }
     release();
-    subtractWritten_(written); // also after a failure partway: what reached the sheet must not be added again
+    if (confirmed) subtractWritten_(written);
   }
 }
 
