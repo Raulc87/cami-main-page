@@ -6,9 +6,9 @@ or defect) and a ticket is proposed. Story statuses are not changed here; the co
 that after the owner approves the evidence. No acceptance criteria of a user story changed this
 sprint (the plan says "no new user stories"), so there is no story table.
 
-**Status of this document: complete for review, with one ticket pending its merge** (CMP-067,
-PR #86, whose evidence is below); CMP-069 (PR #85, Agent 2) merged on 2026-10-27. This PR is updated
-when #86 merges. **CMP-065 is moved after the go-live** (owner, 2026-10-27). CMP-068
+**Status of this document: complete for review.** CMP-067 (PR #86) and CMP-069 (PR #85, Agent 2)
+merged on 2026-10-27; no ticket is pending a merge. The only pending items are the live checks after
+the CMP-068 upload. **CMP-065 is moved after the go-live** (owner, 2026-10-27). CMP-068
 (the release) is not part of this document.
 
 ## 1. Method
@@ -16,7 +16,7 @@ when #86 merges. **CMP-065 is moved after the go-live** (owner, 2026-10-27). CMP
 | Item | Detail |
 |---|---|
 | What this document is | A compilation of each ticket's recorded checks (the merged PR, its review and the ticket row in [`TICKETS.md`](../../TICKETS.md)) with a result per check. Agent 3 ran the checks of CMP-054, CMP-057, CMP-067, CMP-072 and CMP-079 itself; every other result is as recorded by the agent, reviewer or owner named in the Source column, and was not re-run here |
-| Code under test | `main` at `63628a6` (after PR #84), plus PR #86 (CMP-067) for its own rows |
+| Code under test | `main` at `7a9142d` (after PR #86, CMP-067); the other tickets' rows were checked on the `main` of the day they merged |
 | Staging | The staging Apps Script deployment, spreadsheet and Drive folder; production was touched only by CMP-064 with the owner (masked results below). The staging and production `/exec` URLs, spreadsheet and folder IDs, SINPE values and test inboxes are never written here |
 | Browser checks | Chromium (Playwright) at 1280 / 900 / 375 px, `es` and `en`, against the built site (`dist/`) |
 | Evidence | Masked JPEGs in [`evidence/sprint-03/`](evidence/sprint-03/) (7 files, under 200 KB in total). The staging evidence of the other tickets is in their PR bodies and ticket rows, in words with no personal data |
@@ -135,7 +135,7 @@ already accepted and stored but is not auto-checked, so Cami reviews that paymen
 HEIC follow-up decision (CMP-033 observation 6) moves with it. The test-site takedown items are in
 the cleanup list below.
 
-### CMP-067 — Lifetools logo (US-017; PR #86) — **Pending its merge**
+### CMP-067 — Lifetools logo (US-017; PR #86)
 | Check | Result | Evidence |
 |---|---|---|
 | Cami's logo (from the owner, not from the web) replaces the marked placeholder for events without their own picture | Pass | The owner attached it in chat; `public/images/lifetools-logo.png` (the placeholder SVG removed); used as received, not redrawn or recolored |
