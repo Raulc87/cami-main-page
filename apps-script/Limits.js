@@ -31,9 +31,9 @@ function releaseAfterFlush_(lock) {
 // a row and a screenshot, so the counters never queue behind a registration (CMP-053). Everything
 // under it is a cache or script-property write of a few milliseconds, so a short wait is enough.
 // ASSUMED, not documented by Google: for an "execute as me" web app every anonymous request, and the
-// owner's trigger, resolve to the same user, hence one shared user lock. The CMP-053 burst on staging
-// must prove it (exact counts) before this code goes to production; a lock that is not shared fails
-// the burst and the counters go back to the script lock.
+// owner's trigger, resolve to the same user, hence one shared user lock. The CMP-053 burst on staging,
+// run after the merge, proves it (exact counts); if the lock is not shared the burst fails and a fix
+// ticket moves the counters back to the script lock.
 var COUNTER_LOCK_WAIT_MS = 10000;
 
 // Takes the counter lock; returns a function that releases it, or null when it was not taken
