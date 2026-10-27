@@ -6,13 +6,15 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.5 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.6 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
   on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
-  `contactOptIn`, owner 2026-10-26 — CMP-058)
+  `contactOptIn`, owner 2026-10-26 — CMP-058; v1.6: §9 `ALERT_TO`, alert email to more than one
+  address, owner 2026-10-22 — CMP-061)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
-  PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 Approved (on merge of PR #52))
+  PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 Approved (on
+  merge of the CMP-061 PR))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-033)
 - Related stories: US-017..US-025
@@ -222,6 +224,7 @@ shows the form for an event the last `events` response marked closed or sold out
 | `LIMIT_COUPON_FAILS_PER_MIN` = 10 | Script property | Max failed coupon checks per minute; over → `RATE_LIMITED` for coupon checks until the minute ends |
 | `LIMIT_UPLOADS_PER_DAY` = 100 | Script property | Max stored screenshots per day (Costa Rica day, resets 00:00); over → `UPLOAD_CAP_REACHED` (₡0 registrations unaffected) |
 | `LIMIT_UPLOAD_MB_PER_DAY` = 300 | Script property | Max MB stored per day; over → `UPLOAD_CAP_REACHED` |
+| `ALERT_TO` | Script property | Comma-separated addresses that receive the daily alert email (FFR-029), for example the owner and camila@; empty → `MAIL_REPLY_TO`. Read only from script properties; an invalid address is skipped and logged without the address (v1.6) |
 | `ALERT_HONEYPOT_PER_DAY` = 10 | Script property | Alert email when the day's honeypot hits exceed it (FFR-029) |
 | `ALERT_THROTTLED_PER_DAY` = 20 | Script property | Alert email when the day's throttled requests exceed it |
 
@@ -247,6 +250,9 @@ The checklist must cover:
   refused, paid stored and flagged); duplicate email; retry with the same `submissionId`; event
   closed after the form opened (paid stored and flagged); coupon changed after apply (paid
   stored and flagged).
+- `ALERT_TO` (v1.6): with two valid addresses, the day's alert email reaches both (one email
+  per day, as before); with `ALERT_TO` empty it reaches `MAIL_REPLY_TO`; with one invalid
+  address, the valid one still receives it and the log names no address.
 - `contactOptIn` (v1.5): ticked → `TRUE` in the row; unticked or missing → `FALSE`; a
   non-boolean value → `FALSE`, not refused; a registration in an event tab created before v1.5
   adds the `contactOptIn` header as the last column, and that tab's older rows stay blank.

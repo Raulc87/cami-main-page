@@ -35,8 +35,8 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md) (Planned; active at
-  the owner's go-ahead); Sprints 01 and 02 are closed
+- Active sprint plan: [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md) (Active since the
+  owner's go-ahead, 2026-10-27); Sprints 01 and 02 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md), kept for their reviews)
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
@@ -84,20 +84,21 @@ they are not active paths.
 - Deliverable: evidence in `SPRINT_03_VERIFICATION.md`, then release v1.1.0 with the events
   live and every release-checklist §3b gate met (owner: "I don't want to wait for Cami to use
   this in the meantime")
-- Status: Planned — waiting for the plan's merge and the owner's go-ahead
+- Status: Active — owner's go-ahead 2026-10-27: "go ahead"
 
 ## Agent allocation
 - Implementation Agent 1: events backend and production setup — CMP-053, CMP-050, CMP-052,
-  CMP-064 (fresh session at the go-ahead)
-- Implementation Agent 2: security — CMP-056, CMP-062, CMP-063, CMP-069 (fresh session at the
-  go-ahead)
+  CMP-064 (session launched 2026-10-27)
+- Implementation Agent 2: security — CMP-056, CMP-062, CMP-063, CMP-069 (session launched
+  2026-10-27)
 - Implementation Agent 3: site, developer guide, iPhone check, logo, verification, go-live —
-  CMP-057, CMP-054, CMP-065, CMP-067, CMP-066, CMP-068 (fresh session at the go-ahead)
-- Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 03; Codex runs as
+  CMP-057, CMP-054, CMP-065, CMP-067, CMP-066, CMP-068 (session launched 2026-10-27)
+- Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 03, launched
+  2026-10-27; Codex runs as
   the automated reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-060
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-061
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

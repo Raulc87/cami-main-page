@@ -121,7 +121,9 @@ Cami
 
 ## 2b. Alert email to Cami (internal, FFR-029)
 
-Sent to `MAIL_REPLY_TO` (camila@), at most once a day, only when there is something to act on.
+Sent to every address in `ALERT_TO` (the owner and camila@; empty → `MAIL_REPLY_TO`, camila@;
+contract §9 v1.6, CMP-061), at most once a day, only when there is something to act on. The
+text is the same for every recipient.
 Current text (code: `apps-script/Alerts.js`, CMP-027); one message in both languages:
 
 **Asunto / Subject:** Eventos: avisos del {fecha} / Events alerts for {date}

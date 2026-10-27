@@ -870,7 +870,8 @@ So that we know when to add a captcha
 2. Given a day over a threshold (> 10 honeypot hits, > 20 throttled requests, or the upload cap
    reached)
    When it is crossed
-   Then one alert email goes to camila@lifetoolscr.com for that day; an invalid sheet row or a
+   Then one alert email goes, for that day, to every address in `ALERT_TO` (empty →
+   camila@lifetoolscr.com; contract §9 v1.6); an invalid sheet row or a
    check stuck `pending` past its limit also triggers it, still at most one per day (FFR-029,
    FFR-032).
 3. Given a request with the honeypot field filled

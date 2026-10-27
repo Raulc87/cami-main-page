@@ -2,8 +2,7 @@
 
 ## Metadata
 - Sprint: 03
-- Status: Planned (the plan is approved on merge of the PR that adds it; the sprint starts at the
-  owner's go-ahead, Entry Gate 4)
+- Status: Active (plan approved on merge of PR #54; owner's go-ahead 2026-10-27, Entry Gate 4)
 - Start: 2026-10-28 (Wednesday), or the first business day after the go-ahead if it comes later
 - End: 2026-11-05 (Thursday); if the start moves, the 7th business day counted from the actual
   start
@@ -23,7 +22,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on this PR's head, 0 broken. The three planned documents (security baseline, pen-test plan, developer guide) are not written yet and are stories of this sprint (CMP-056, CMP-062, CMP-057), as the CMP-057 row says |
 | 2 | Readiness checklist has no open blocking items | Pass, except item 8 (the go-ahead), which is gate 4 |
 | 3 | Integration contracts locked | Pass: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.5, locked. CMP-061 changes §9 (alert recipients) in a docs PR that merges before CMP-052 (Foundation) |
-| 4 | Final go-ahead from the human owner | Pending: given after this plan merges. The owner's "go ahead with Sprint 03" (2026-10-26) asked for this plan; it is not the go-ahead to start |
+| 4 | Final go-ahead from the human owner | Pass: "go ahead" (owner, 2026-10-27, after merging PR #54). The earlier "go ahead with Sprint 03" (2026-10-26) asked for this plan |
 
 ### Readiness checklist result (2026-10-26)
 | Item | Result |
@@ -73,7 +72,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 7.1 `main` protected | Required by ADR-009 (a merge deploys staging; runbook §5.1 setup); owner to confirm in GitHub settings (not blocking) |
 | 7.1 `release/*` branches | N/A (ADR-007) |
 | 7.1 Coordinator follows AGENTS.md | Pass |
-| 8. Go-ahead **(blocking)** | Pending (gate 4) |
+| 8. Go-ahead **(blocking)** | Pass (gate 4) |
 
 ## Sprint Goal
 - Put the events feature live on `camihernandez.com` so Cami can use it: security baseline
@@ -102,7 +101,7 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
 | CMP-060 | This plan, the agent prompts, the Sprint 02 close and the pending decision records | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
-| CMP-061 | Contract v1.6 and FFR-029: alert recipients (`ALERT_TO`) | Coordinator | CMP-060 | coordinator branch | todo |
+| CMP-061 | Contract v1.6 and FFR-029: alert recipients (`ALERT_TO`) | Coordinator | CMP-060 | coordinator branch | done |
 | CMP-056 | Security baseline (`docs/security/SECURITY_BASELINE.md`) | Agent 2 | — | `CMP-056-security-baseline` | todo |
 | CMP-062 | Pen-test plan and written scope (`docs/security/PENTEST_PLAN.md`) | Agent 2 | CMP-056 | `CMP-062-pentest-plan` | todo |
 | CMP-063 | Pre-test security review: ASVS code review and an owner-authorized, staging-only scan; findings become tickets | Agent 2 | CMP-056 | `CMP-063-pretest-security-review` | todo |
@@ -338,3 +337,8 @@ The human reviewer is the final approver.
     record that 'still due' means 'past the recorded deadline', so this launch is allowed. Do
     you accept that reading?" — options: yes, accept it; no, test first. Owner: **"Yes, accept
     it (Recommended)"** (Entry Gates → readiness item 5, pen test).
+- Go-ahead (owner, 2026-10-27, after merging PR #54): "go ahead". The coordinator launched, from
+  [SPRINT_03_AGENT_PROMPTS.md](SPRINT_03_AGENT_PROMPTS.md), the review-only session (Opus),
+  Agent 1 (Sonnet), Agent 2 (Opus) and Agent 3 (Sonnet), tagged `cmp-sprint-03`; Agents 2, 3
+  and the reviewer attach the kit themselves before reading its templates. The Sprint 02
+  sessions are archived.

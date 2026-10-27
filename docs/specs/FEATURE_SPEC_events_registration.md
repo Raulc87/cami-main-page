@@ -16,10 +16,11 @@
   reason phrases — CMP-041; v1.8: BR-E11 adds the form wording, owner 2026-10-21 — CMP-042;
   v1.9: FFR-028 translations in a sheet tab, FFR-019 reserved name — CMP-046; v1.10: Cami's
   review of the texts, BR-E11 legal review by Cami (owner decision), amount format, optional
-  contact checkbox (FFR-018, contract v1.5) — CMP-058)
+  contact checkbox (FFR-018, contract v1.5) — CMP-058; v1.11: FFR-029 alert email to every
+  address in `ALERT_TO`, owner 2026-10-22 — CMP-061)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
-  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 Approved (on merge of PR #52))
+  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 on merge of PR #52; v1.11 Approved (on merge of the CMP-061 PR))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -266,7 +267,9 @@ Administration (Cami)
 Abuse metrics
 - FFR-029: A `Metrics` tab gets one row per day (accepted registrations, honeypot hits,
   throttled requests, failed coupon checks, MB uploaded, rows marked `spam`). The backend emails
-  camila@ when a day exceeds a threshold (initially: > 10 honeypot hits, > 20 throttled
+  every address in the `ALERT_TO` script property (the owner and camila@; empty → camila@ through
+  `MAIL_REPLY_TO`; contract §9 v1.6, owner suggestion 2026-10-22: "it's possible we would need
+  that alert email to reach me as well", CMP-052) when a day exceeds a threshold (initially: > 10 honeypot hits, > 20 throttled
   requests, or the daily upload cap reached), and also when there is something Cami must act
   on: an invalid `Events`/`Coupons` row (FFR-019, US-023 AC5) or a check stuck `pending` past
   its limit (FFR-032). At most one alert email per day: it is sent at the first trigger of the
