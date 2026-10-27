@@ -430,5 +430,6 @@ The human reviewer is the final approver.
 - Owner settings from SECURITY_BASELINE §7 done (2026-10-27). Owner: **"repo: all 4 on; 2FA:
   GitHub, Google, GoDaddy on; Cami on"** (secret scanning, push protection, Dependabot alerts and
   private vulnerability reporting on the repository; two-factor on the owner's GitHub, Google and
-  GoDaddy accounts and on Cami's Google account). CMP-066 records it for the release-checklist
+  GoDaddy accounts; "Cami on" answers the coordinator's request for two-factor on Cami's Google
+  account). CMP-066 records it for the release-checklist
   §3b gate.
