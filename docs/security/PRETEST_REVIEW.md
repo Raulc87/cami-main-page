@@ -30,32 +30,35 @@ Every critical or high finding is fixed, or accepted by the owner in writing, be
 Method: reading every backend file and the form against each criterion and its ASVS rows; a
 search of [`src/`](../../src/) and [`apps-script/`](../../apps-script/) for dynamic code, HTML
 injection points, outbound requests and logging; `npm audit` on both lockfiles (local, no
-network traffic to the project's systems). Results: **Met in code** means the code does what the
-criterion asks; **Staging** means the behavior is confirmed by the staging check (§3);
-**Owner check** means a setting only the owner can see.
+network traffic to the project's systems).
 
-| Criterion | Code review result | Still to do |
+While findings are open, this public table records only **what was reviewed and what is left**,
+not whether each criterion is met: the result per criterion is in the private record (§1), and it
+is published here once the fixes are released. **Staging** means the behavior is confirmed by
+the staging check (§3); **Owner check** means a setting only the owner can see; **Release check**
+means it is checked when a release is prepared.
+
+| Criterion | Code review | Still to do |
 |---|---|---|
-| SAC-01 Server-side validation | Met in code: every field re-validated on the server against contract §3.3 (`RegisterValidate.js`, `Coupons.js`); unknown fields ignored; `contactOptIn` true only for the JSON boolean; honeypot answered as a success with nothing stored; sheet rows validated (`Validate.js`) | Staging |
-| SAC-02 No formulas from input | Met in code: `neutralize` (`Sheets.js`) prefixes values starting with `=`, `+`, `-`, `@`, tab, CR or a digit; applied to name, email, WhatsApp and coupon; the other cells are server values | Staging |
-| SAC-03 Untrusted text shown as text | Met in code: React text nodes only, no `dangerouslySetInnerHTML`, `innerHTML` or `eval` in `src/`; emails are plain text (`Mail.js`) | Staging (one event with markup) |
-| SAC-04 Safe image links | Met in code: `imageUrl` kept only when it matches `https://` (`Validate.js`), otherwise `null` and the logo | Staging |
-| SAC-05 Upload checks | Met in code: size checked before and after decoding, type from the first bytes (`detectImageType_`), file name from BR-E04 (`fileSafeName_`), uploaded name ignored, private folder | Staging |
-| SAC-06 Abuse limits | Met in code: per-minute windows and daily caps (`Limits.js`), counted exactly since CMP-053. SEC-002 | Staging (below the limits only); the CMP-053 burst covers the limits themselves |
-| SAC-07 No double booking, no partial records | Met in code: capacity, duplicate and coupon checks and the append under the script lock, coupon re-read under the lock, file trashed when the row fails (`Register.js`) | Staging (two parallel requests for a last place) |
-| SAC-08 Only the data each answer needs | Met in code: answers carry only the contract §7 fields; no coupon list; a stored `submissionId` returns only its reference and flag. SEC-005, SEC-006 | Staging |
-| SAC-09 Only the public actions are reachable | Met in code: `doGet`/`doPost` route only `events`, `coupon`, `register`, anything else `SERVER_ERROR` (`Code.js`); editor-only functions are not routed. SEC-003 | Staging |
-| SAC-10 Safe failure | Met in code: top-level `try`/`catch` returns `SERVER_ERROR` with a fixed log line; after-store steps never fail a stored registration | Staging (malformed bodies) |
-| SAC-11 Logs without personal data | Met in code for web-app requests: log lines carry fixed text and error names (and Google's lock messages, CMP-053). SEC-003 | — |
-| SAC-12 No secrets in the code or the bundle | Met: no secret, ID or SINPE value in the repository; the production build has no source maps (`dist/` checked locally); `VITE_EVENTS_API_URL` comes from the environment | Release check (CMP-068) |
-| SAC-13 HTTPS and browser protections on the site | Not checkable from the code (GoDaddy settings) | Owner check of the live site in the browser's developer tools (baseline §7) |
-| SAC-14 Known, current dependencies | Lockfiles committed; actions pinned by commit; deploy only from `main` (ADR-009). SEC-001; the deploy tool's audit is CMP-050 (the pin waits for a fixed `clasp` release) | Fix of SEC-001 |
-| SAC-15 Private storage and minimal data in the browser | Met in code: `localStorage` holds only `cmp-lang`; no analytics or trackers; consent required, opt-in false by default | Owner check of the sharing of the spreadsheet and folder |
-| SAC-16 No email abuse beyond the accepted risk | Met in code: one address per registration (`EMAIL_RE` allows a single `@`, no spaces or line breaks), fixed templates, plain text | Staging |
-| SAC-17 Known endpoints | Matches the baseline §6 inventory | Release check (CMP-068) |
+| SAC-01 Server-side validation | Reviewed 2026-10-27 | Staging |
+| SAC-02 No formulas from input | Reviewed 2026-10-27 | Staging |
+| SAC-03 Untrusted text shown as text | Reviewed 2026-10-27 | Staging |
+| SAC-04 Safe image links | Reviewed 2026-10-27 | Staging |
+| SAC-05 Upload checks | Reviewed 2026-10-27 | Staging |
+| SAC-06 Abuse limits | Reviewed 2026-10-27 | Staging (below the limits only; the CMP-053 burst covers the limits themselves) |
+| SAC-07 No double booking, no partial records | Reviewed 2026-10-27 | Staging |
+| SAC-08 Only the data each answer needs | Reviewed 2026-10-27 | Staging |
+| SAC-09 Only the public actions are reachable | Reviewed 2026-10-27 | Staging |
+| SAC-10 Safe failure | Reviewed 2026-10-27 | Staging |
+| SAC-11 Logs without personal data | Reviewed 2026-10-27 | — |
+| SAC-12 No secrets in the code or the bundle | Reviewed 2026-10-27 | Release check (CMP-068) |
+| SAC-13 HTTPS and browser protections on the site | Not checkable from the code (GoDaddy settings) | Owner check of the live site in the browser's developer tools |
+| SAC-14 Known, current dependencies | Reviewed 2026-10-27 (the deploy tool's audit is CMP-050) | Release check (CMP-068) |
+| SAC-15 Private storage and minimal data in the browser | Reviewed 2026-10-27 | Owner check of the sharing of the spreadsheet and folder |
+| SAC-16 No email abuse beyond the accepted risk | Reviewed 2026-10-27 | Staging |
+| SAC-17 Known endpoints | Reviewed 2026-10-27 | Release check (CMP-068) |
 
-Scopes and editor-only code (baseline §7 item "script scopes and editor-only helpers"): reviewed;
-see SEC-003 and SEC-004.
+The baseline §7 item on script scopes and editor-only helpers was reviewed too.
 
 ## 3. Staging check (waiting for the owner's written authorization)
 
