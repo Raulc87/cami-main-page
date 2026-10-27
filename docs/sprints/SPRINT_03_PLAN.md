@@ -174,8 +174,14 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   in `public/` (copied to `dist/` and uploaded with the site; GoDaddy runs Apache) adds the
   301 redirect to HTTPS and the four headers as SAC-13 describes; the CSP allows only the site,
   Google Fonts, the events backend and its redirect host, and `https:` images, with
-  `frame-ancestors`. Checked in `npm run preview` where possible; the live check is part of the
-  go-live (CMP-068), with the backup as rollback if the hosting rejects a directive.
+  `frame-ancestors`; HSTS is a plain `max-age` of at least one year, without
+  `includeSubDomains` or `preload`. Before the upload (`vite preview` does not read
+  `.htaccess`): the same headers are applied to a local serve of `dist/` (for example a small
+  local server or Apache container, not committed), and the whole page is exercised with the
+  browser console showing no CSP violation: the events section and ticker, the registration
+  form with a coupon check and a submission against staging, both languages, at 1280/900/375
+  px. Right after the CMP-068 upload: the redirect, the four headers and a clean console on the
+  live site; a server error or a broken page means restoring the backup.
 - **CMP-064:** following runbook §2, §3 and §5.1 with the owner:
   - the production project `cami-events-production`, first upload, web-app deployment;
   - production script properties with the real SINPE values;
