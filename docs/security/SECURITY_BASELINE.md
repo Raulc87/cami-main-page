@@ -28,7 +28,7 @@ were verified.
 ## Metadata
 - Project: cami-main-page — personal brand website for Cami Hernandez, with events and
   registration (FR-011, [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md))
-- Status: Review (Approved on merge of PR #N)
+- Status: Approved (on merge of PR #58)
 - Owner: Raul Casanas (product owner, final approver)
 - Last updated: 2026-10-27 (CMP-056, Implementation Agent 2)
 - Versions used: ASVS 5.0.0 · Top 10 2025 · API Top 10 2023 · SSDF 1.1
@@ -383,5 +383,5 @@ severity, appears in a tracked file until the fix is released. No such finding i
 | Live before the penetration test (SPRINT_03_PLAN → Risks): real participants' data and payment screenshots are stored before an outside tester has checked the system | Owner | Accepted 2026-10-26 with the 60-day deadline (§5) and the CMP-063 gate |
 
 ## 8. Approval
-- Approved by: Raul Casanas (product owner), on merge of PR #N
+- Approved by: Raul Casanas (product owner), on merge of PR #58
 - Date: on merge
