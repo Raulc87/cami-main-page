@@ -1,6 +1,8 @@
 // Which files the Apps Script project holds that the repo does not (CMP-084).
-// `clasp push` only sends the files the repo has: a file removed from `apps-script/` stays in the
-// project, and would keep being served and run. The deploy warns when it finds any.
+// `clasp push` sends nothing when no file of the repo differs from the project ("Script is already
+// up to date"), so a deploy whose only change is a file removed from `apps-script/` leaves that file
+// in the project, where it keeps being served and run. After the push, the deploy warns when the
+// project still holds files that the repo does not have.
 import { readdirSync } from 'node:fs';
 
 // The name Google gives a file: `Code.js` is `Code`, `appsscript.json` is `appsscript`.

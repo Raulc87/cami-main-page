@@ -41,6 +41,7 @@ fi
 
 echo "::group::Push and deploy"
 "$CLASP" push --force
+CLASP_AUTH_FILE="$AUTH_FILE" node .github/scripts/apps-script-leftovers.mjs || true
 "$CLASP" deploy --deploymentId "$DEPLOYMENT_ID" --description "${GITHUB_SHA::7} run ${GITHUB_RUN_NUMBER}"
 echo "::endgroup::"
 
