@@ -936,7 +936,9 @@ Security acceptance criteria for the events stories, from the security baseline
 ([`SECURITY_BASELINE.md` §3](../security/SECURITY_BASELINE.md#3-owasp-top-10-and-api-top-10-as-acceptance-criteria),
 CMP-056, approved on merge of PR #58). They keep the baseline's `SAC-NN` IDs because its ASVS
 inventory refers to them; each names the stories it applies to. Section references (§4, §6, §7)
-are to the baseline. CMP-063 verifies them against the code and on staging, never production.
+are to the baseline. CMP-063 verifies them against the code, plus the owner's checks of SAC-13
+and SAC-15; the checks on staging wait for the penetration test (owner, 2026-10-27). Never
+against production by an agent.
 
 - **SAC-01 Server-side validation** (US-019, US-020, US-021, US-023; A05, API3, API10;
   `v5.0.0-2.2.1`, `v5.0.0-2.2.2`, `v5.0.0-2.2.3`, `v5.0.0-1.1.1`, `v5.0.0-15.3.3`)

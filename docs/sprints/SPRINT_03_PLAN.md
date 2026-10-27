@@ -164,6 +164,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   alert email, so the scan is low-rate, application-level checks only, within Google's terms,
   never during the CMP-064 deploy and smoke, with the alert settings switched before and
   restored after as in the Sprint 02 burst; the owner's authorization names all of these.
+  **Changed (owner, 2026-10-27, Sprint Review Notes):** the staging scan is not run in
+  CMP-063; its checks wait for the PTES test (CMP-062). CMP-063 closes on the code review plus
+  the owner's checks of SAC-13 (site headers) and SAC-15 (sharing settings).
 - **CMP-064:** following runbook §2, §3 and §5.1 with the owner:
   - the production project `cami-events-production`, first upload, web-app deployment;
   - production script properties with the real SINPE values;
@@ -390,3 +393,9 @@ The human reviewer is the final approver.
   - "The security agent asks for permission to run a gentle, slow check against STAGING only
     [...]. Never against the live site. Allow it?" — Owner: **"Yes, allow it (Recommended)"**;
     the written authorization with its window is on PR #62.
+  - Later: the security agent's session blocked the script for the staging check, so no request
+    was sent. Question as asked: "The security agent couldn't run the gentle staging check: its
+    session's safety controls blocked the script, so it sent nothing. What should happen to that
+    check?" — options: leave it to the tester; I'll run it by hand. Owner: **"Leave it to the
+    tester (Recommended)"**. The staging checks wait for the PTES test (CMP-062); CMP-063
+    closes on the code review plus the owner's checks of SAC-13 and SAC-15.
