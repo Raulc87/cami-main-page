@@ -91,6 +91,11 @@ upload; if one is not, do not release:
       no release until the test has run and has no open critical or high finding, every medium
       or low finding has a ticket or a risk the owner accepted in writing, and the fixes of
       critical and high findings are retested by the testers.
+- [ ] Cookies on the live site (`docs/security/PRETEST_REVIEW.md` §2b, CMP-063): in a
+      private window, a fresh visit to the site creates no cookie; if one appears (for example
+      the `_tccl_*` and `_scc_session` cookies seen on 2026-10-27, which the site's code does
+      not set), the hosting feature that sets it is turned off, or Cami approves notice wording
+      that covers it (BR-E11) and the security baseline records the SAC-15 exception.
 - [ ] Pre-test security review done (CMP-063): no open critical or high finding, unless the
       owner accepted it in writing. The findings are tracked privately (public repository), so
       the owner confirms this gate with a dated statement in the release PR (CMP-068), "No
