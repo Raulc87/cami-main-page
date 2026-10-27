@@ -18,6 +18,9 @@ production or the live site.
 
 ## 1. How findings are recorded
 
+The owner keeps the private record (a private document outside the repository, owner decision
+2026-10-27).
+
 This repository is **public**. Until a finding is fixed and the fix is released, it appears here
 only as a neutral ID and wording ("SEC-00N: security fix, tracked privately"), **with no
 severity**. Its details, severity and proposed fix go to the coordinator privately, who arranges
@@ -97,12 +100,12 @@ is sent before that authorization.
 
 | Finding | Status |
 |---|---|
-| SEC-001: security fix, tracked privately | Proposed ticket sent to the coordinator |
-| SEC-002: security fix, tracked privately | Proposed ticket sent to the coordinator |
-| SEC-003: security fix, tracked privately | Proposed ticket sent to the coordinator |
-| SEC-004: security fix, tracked privately | Proposed ticket sent to the coordinator |
-| SEC-005: security fix, tracked privately | Proposed ticket sent to the coordinator |
-| SEC-006: security fix, tracked privately | Proposed ticket sent to the coordinator |
+| SEC-001: security fix, tracked privately | Tracked privately; fix planned (owner decision 2026-10-27) |
+| SEC-002: security fix, tracked privately | Tracked privately; fix planned (owner decision 2026-10-27) |
+| SEC-003: security fix, tracked privately | Tracked privately; fix planned (owner decision 2026-10-27) |
+| SEC-004: security fix, tracked privately | Tracked privately; fix planned (owner decision 2026-10-27) |
+| SEC-005: security fix, tracked privately | Tracked privately; fix planned (owner decision 2026-10-27) |
+| SEC-006: tracked privately | Accepted by the owner 2026-10-27 |
 
 Before the go-live (CMP-068), every finding the private record rates critical or high is fixed
 or accepted by the owner in writing; the others have a ticket or a written acceptance.
