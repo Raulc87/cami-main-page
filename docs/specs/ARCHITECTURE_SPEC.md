@@ -260,7 +260,7 @@ when building new features on top of it (PROJECT_SPEC BR-002).
 
 Events placeholders (CMP-029 on; each is a release gate in
 [release-checklist.md §3b](../process/release-checklist.md#3b-events-feature-release-gates-feature_spec_events_registration-br-e11)):
-- `public/images/lifetools-logo.svg` — marked placeholder until Cami provides the Lifetools logo.
+- `public/images/lifetools-logo.png` — Cami's Lifetools logo, shown for events without their own picture (CMP-067).
 - SINPE Móvil number and account name — placeholders in script properties (`isPlaceholder`,
   BR-E01) until Cami confirms them; never in the repo.
 - Privacy notice — the generic draft in

@@ -112,9 +112,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-057 | Developer guide (`CONTRIBUTING.md`) | Agent 3 | — | `CMP-057-developer-guide` | done |
 | CMP-054 | Missing `/favicon.svg` | Agent 3 | — | `CMP-054-favicon` | done |
 | CMP-065 | Real-iPhone check on staging, then the test-site takedown | Agent 3 + owner | CMP-052, CMP-053 on staging | `CMP-065-real-iphone-check` | moved after the go-live (owner) |
-| CMP-067 | Lifetools logo for events without their own picture | Agent 3 | Cami's logo file | `CMP-067-lifetools-logo` | todo |
-| CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | todo |
-| CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
+| CMP-067 | Lifetools logo for events without their own picture | Agent 3 | Cami's logo file | `CMP-067-lifetools-logo` | done |
+| CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | done |
+| CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | done |
 | CMP-072 | SEC-001: security fix, tracked privately | Agent 3 | CMP-063 finding | `CMP-072-sec-001` | done |
 | CMP-079 | HTTPS redirect and security headers on the live site (SAC-13): an `.htaccess` in `public/` | Agent 3 | — | `CMP-079-https-and-headers` | done |
 | CMP-073..CMP-076 | SEC-002..SEC-005: security fixes, tracked privately (one PR each) | Agent 1 | CMP-063 findings | `CMP-07N-sec-00M` | done |
