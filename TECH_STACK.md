@@ -150,7 +150,7 @@ npm run preview   # serves dist/ locally
   Google password change.
 
 ## 12. Observability
-- Events backend: daily `Metrics` tab and alert emails to camila@ (FFR-029); Apps Script
+- Events backend: daily `Metrics` tab and alert emails to the `ALERT_TO` addresses (FFR-029); Apps Script
   execution log for errors (no personal data logged).
 - Site analytics: none (backlog US-014).
 

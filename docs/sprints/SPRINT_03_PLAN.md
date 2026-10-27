@@ -2,11 +2,10 @@
 
 ## Metadata
 - Sprint: 03
-- Status: Planned (the plan is approved on merge of the PR that adds it; the sprint starts at the
-  owner's go-ahead, Entry Gate 4)
-- Start: 2026-10-28 (Wednesday), or the first business day after the go-ahead if it comes later
-- End: 2026-11-05 (Thursday); if the start moves, the 7th business day counted from the actual
-  start
+- Status: Active (plan approved on merge of PR #54; owner's go-ahead 2026-10-27, Entry Gate 4)
+- Start: 2026-10-27 (Tuesday), the day of the go-ahead and the launch of the sessions (planned
+  2026-10-28)
+- End: 2026-11-04 (Wednesday), the 7th business day from the actual start
 - Duration: 7 business days
 - Saturdays and Sundays excluded
 - Final human reviewer: Raul Casanas
@@ -23,7 +22,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on this PR's head, 0 broken. The three planned documents (security baseline, pen-test plan, developer guide) are not written yet and are stories of this sprint (CMP-056, CMP-062, CMP-057), as the CMP-057 row says |
 | 2 | Readiness checklist has no open blocking items | Pass, except item 8 (the go-ahead), which is gate 4 |
 | 3 | Integration contracts locked | Pass: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.5, locked. CMP-061 changes §9 (alert recipients) in a docs PR that merges before CMP-052 (Foundation) |
-| 4 | Final go-ahead from the human owner | Pending: given after this plan merges. The owner's "go ahead with Sprint 03" (2026-10-26) asked for this plan; it is not the go-ahead to start |
+| 4 | Final go-ahead from the human owner | Pass: "go ahead" (owner, 2026-10-27, after merging PR #54). The earlier "go ahead with Sprint 03" (2026-10-26) asked for this plan |
 
 ### Readiness checklist result (2026-10-26)
 | Item | Result |
@@ -73,7 +72,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 7.1 `main` protected | Required by ADR-009 (a merge deploys staging; runbook §5.1 setup); owner to confirm in GitHub settings (not blocking) |
 | 7.1 `release/*` branches | N/A (ADR-007) |
 | 7.1 Coordinator follows AGENTS.md | Pass |
-| 8. Go-ahead **(blocking)** | Pending (gate 4) |
+| 8. Go-ahead **(blocking)** | Pass (gate 4) |
 
 ## Sprint Goal
 - Put the events feature live on `camihernandez.com` so Cami can use it: security baseline
@@ -102,7 +101,7 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
 | CMP-060 | This plan, the agent prompts, the Sprint 02 close and the pending decision records | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
-| CMP-061 | Contract v1.6 and FFR-029: alert recipients (`ALERT_TO`) | Coordinator | CMP-060 | coordinator branch | todo |
+| CMP-061 | Contract v1.6 and FFR-029: alert recipients (`ALERT_TO`) | Coordinator | CMP-060 | coordinator branch | done |
 | CMP-056 | Security baseline (`docs/security/SECURITY_BASELINE.md`) | Agent 2 | — | `CMP-056-security-baseline` | todo |
 | CMP-062 | Pen-test plan and written scope (`docs/security/PENTEST_PLAN.md`) | Agent 2 | CMP-056 | `CMP-062-pentest-plan` | todo |
 | CMP-063 | Pre-test security review: ASVS code review and an owner-authorized, staging-only scan; findings become tickets | Agent 2 | CMP-056 | `CMP-063-pretest-security-review` | todo |
@@ -152,8 +151,11 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   owner finds and books the tester before the deadline (Sprint Review Notes).
 - **CMP-063:** an ASVS-based code review of `apps-script/` and the form, and a scan of
   **staging only**, run only after the owner authorizes it in writing in the PR (scope, tool,
-  time window), never against production; findings with a severity in
-  `docs/security/PRETEST_REVIEW.md`, each proposed as a ticket. No
+  time window), never against production. The repository is public, so
+  `docs/security/PRETEST_REVIEW.md` names an unfixed finding only by a neutral ID and wording
+  ("SEC-00N: security fix, tracked privately", no severity until the fix is released, as the
+  kit's security templates require); the details go to the coordinator privately and are
+  tracked outside the repository with the owner; each finding is proposed as a ticket. No
   attack on production; this is not the penetration test. Every critical or high finding is
   fixed (or the owner accepts it in writing) before the go-live (CMP-068). Staging and production share the
   owner's Google account quotas (MailApp, Drive, OCR, fetch) and a scan's hits trigger the
@@ -199,7 +201,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   never committed), the upload with a backup of the current site, then on the live site one
   real registration by the owner on a test event (hidden afterwards, row and file deleted), the
   events section and ticker in EN and ES, then the tag and GitHub Release. Rollback: restore
-  the backup.
+  the backup. Before the upload, the owner writes in the PR a dated statement that no critical
+  or high security finding is open (no details), after checking the private notes with the
+  coordinator (release-checklist §3b, owner 2026-10-27).
 
 ## Parallel Workstreams
 ### Agent 1 — Events backend (fresh session)
@@ -233,7 +237,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 
 ## Integration Contracts
 - [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.5, locked; v1.6 (CMP-061)
-  changes only §9 (`ALERT_TO`).
+  changes only §9 (`ALERT_TO`) and adds its §10 test.
 
 ## Merge / Integration Order
 Each line names what the PR waits for.
@@ -273,6 +277,14 @@ The human reviewer is the final approver.
 ## Verification
 - Each PR: `npm run build` (and `node --check` for `apps-script/`), its checks above against
   staging (production only for the CMP-064 smoke), evidence in the PR body.
+- PRs that deploy staging on merge (ADR-009: changes under `apps-script/**`,
+  `.github/clasp/**`, `.github/scripts/**` or the deploy workflow): staging deploys only from
+  `main`, so their staging checks run after the merge (owner decision, Sprint Review Notes). The PR merges after review
+  with its ticket row at `review`; after the automatic deploy the owning agent runs the checks
+  on staging and records the evidence and `done` in its next PR (the last ones in CMP-066). A
+  failed check becomes a new ticket. CMP-064 does not wait for the CMP-053 staging burst (owner,
+  2026-10-27: "No, don't wait", Sprint Review Notes); a fix found later reaches production like
+  any other change.
 - CMP-066 collects the evidence in `SPRINT_03_VERIFICATION.md`; the owner checks inbox and sheet
   items as in Sprint 02.
 
@@ -338,3 +350,30 @@ The human reviewer is the final approver.
     record that 'still due' means 'past the recorded deadline', so this launch is allowed. Do
     you accept that reading?" — options: yes, accept it; no, test first. Owner: **"Yes, accept
     it (Recommended)"** (Entry Gates → readiness item 5, pen test).
+- Go-ahead (owner, 2026-10-27, after merging PR #54): "go ahead". The coordinator launched, from
+  [SPRINT_03_AGENT_PROMPTS.md](SPRINT_03_AGENT_PROMPTS.md), the review-only session (Opus),
+  Agent 1 (Sonnet), Agent 2 (Opus) and Agent 3 (Sonnet), tagged `cmp-sprint-03`. Agent 2's
+  attempt to attach the private kit was blocked by its session's permissions, so the
+  coordinator sent Agents 2 and 3 the kit templates they need verbatim from its checkout at
+  v1.2.0 (`bd756f9`). The Sprint 02
+  sessions are archived.
+- Question as asked (2026-10-27, from the reviewer on PR #55): "Backend changes only reach the
+  test copy (staging) after you merge them, because staging updates automatically from main.
+  So the backend agent can't show its staging test results before you merge. How should that
+  work this sprint?" — options: merge, then test; test before merging (by hand, runbook
+  emergency path). Owner: **"Merge, then test (Recommended)"** (Verification).
+- Questions as asked (2026-10-27, from the reviewer and Agent 1 on PR #55):
+  - "The counter fix (PR #55) relies on a Google behaviour we haven't proven yet. If it doesn't
+    hold, the counters get slightly worse, not better. Since we test after merging, should the
+    real (production) backend wait until the staging test of this fix passes, with a revert or
+    a fix first if it fails?" — options: yes, wait for the test; no, don't wait. Owner: **"No,
+    don't wait"**. CMP-064 does not wait for the CMP-053 staging burst; a failed burst becomes
+    a fix ticket, deployed to production like any other change.
+  - "The counter fix also means the daily Metrics row in the sheet can be up to 5 minutes
+    behind (it's updated by the 5-minute background job instead of on every request). The
+    alerts still work the same way. OK?" — options: OK, 5 minutes is fine; no, must be
+    instant. Owner: **"OK, 5 minutes is fine (Recommended)"** (FFR-029, FEATURE_SPEC v1.11).
+  - "Security problems found before launch are kept private (not in the public repo). So
+    before launch, who confirms that no serious problem is still open?" — options: I confirm
+    it in writing; the security agent confirms. Owner: **"I confirm it in writing
+    (Recommended)"** (release-checklist §3b, CMP-068).
