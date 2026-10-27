@@ -30,7 +30,7 @@ were verified.
   registration (FR-011, [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md))
 - Status: Approved (on merge of PR #58)
 - Owner: Raul Casanas (product owner, final approver)
-- Last updated: 2026-10-27 (CMP-056, Implementation Agent 2)
+- Last updated: 2026-10-27 (CMP-069: PTES deadline date)
 - Versions used: ASVS 5.0.0 · Top 10 2025 · API Top 10 2023 · SSDF 1.1
 - Inventory appendix: [`ASVS_INVENTORY.md`](ASVS_INVENTORY.md)
 
@@ -285,8 +285,11 @@ Code reviewed by CMP-063; verified on a running system by the PTES test, with te
   its scope covers production, since the test runs after the go-live).
 - Planned before release: **the PTES deadline is 60 days after the events go-live** (release
   v1.1.0, CMP-068), owner decision 2026-10-26 ("60 days after launch", SPRINT_03_PLAN → Sprint
-  Review Notes). **Deadline date:** written here by CMP-069 as the go-live date plus 60 days, once
-  the owner sets the go-live date (the first step of CMP-068), and merged before the upload.
+  Review Notes). **Deadline date: 2026-12-26** (CMP-069): the go-live date 2026-10-27 plus 60
+  days. The owner set the go-live date on 2026-10-27, relayed by the coordinator: "go live TODAY
+  if possible". If the go-live upload (CMP-068) happens after 2026-10-27 (Costa Rica date,
+  `America/Costa_Rica`), the deadline is the actual upload date plus 60 days: CMP-068 states the
+  actual upload date, and Agent 2 updates the date here.
 - Already in production when this baseline was adopted: **yes** (v1.0.0 at `camihernandez.com`,
   before the events feature). Under [`AGENTS.md`](../../AGENTS.md) → Security baseline, the owner
   recorded the dated deadline above instead of testing before the events release. **Once the
@@ -374,7 +377,7 @@ listed in [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §4.
 | Item | Owner | Decision / due |
 |---|---|---|
 | Classification "not high-risk" (§1) and the target fix times (§4 RV) | Owner | Decided 2026-10-27 (quoted in §1 and §4). ASVS level L2 (§2): approved on merge of this PR |
-| PTES deadline date (§5) | Agent 2 (CMP-069), from the owner's go-live date | Before the go-live upload |
+| PTES deadline date (§5) | Agent 2 (CMP-069), from the owner's go-live date | Done 2026-10-27: deadline 2026-12-26 (go-live 2026-10-27 plus 60 days; moves with the actual upload date: CMP-068 states it, Agent 2 updates §5) |
 | GitHub secret scanning with push protection, Dependabot alerts and private vulnerability reporting enabled; two-factor on the owner's and Cami's accounts (§4, §6) | Owner (repository and account settings) | Done 2026-10-27. Owner: "repo: all 4 on; 2FA: GitHub, Google, GoDaddy on; Cami on" (the four repository switches: secret scanning, push protection, Dependabot alerts and private vulnerability reporting; two-factor on the owner's GitHub, Google and GoDaddy accounts and, answering the coordinator's request for two-factor on Cami's Google account, "Cami on"). Recorded again in the CMP-066 verification |
 | Site HTTPS and security headers (SAC-13): the owner checks the live site in the browser; any missing control becomes a ticket for the site owner (Agent 3, `public/`) | Owner, Agent 3 | Checked by the owner 2026-10-27: not met (no HTTPS redirect, none of the headers; [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §2b); fix CMP-079 before the go-live |
 | Story: dependency audit check, Dependabot version updates and SBOM (§6) | Coordinator (allocates) | Sprint 04 (proposed), at the latest by the PTES deadline |
