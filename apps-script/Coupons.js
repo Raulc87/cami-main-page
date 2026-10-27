@@ -64,9 +64,9 @@ function handleCoupon_(body) {
   if (Object.keys(fields).length) return fail('VALIDATION_ERROR', fields);
 
   var found = lookupEventForRegister_(eventCode);
-  if (!found) return fail('EVENT_NOT_FOUND');
+  if (!found || !found.published) return fail('EVENT_NOT_FOUND'); // a code with no published row answers like an unknown code
   var nowMs = Date.now();
-  if (!found.published || found.duplicated || nowMs >= found.event.startsAtMs - REGISTRATION_CLOSES_HOURS * 3600000) {
+  if (found.duplicated || nowMs >= found.event.startsAtMs - REGISTRATION_CLOSES_HOURS * 3600000) {
     return fail('REGISTRATION_CLOSED');
   }
 
