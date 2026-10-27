@@ -86,8 +86,8 @@ requirement text quoted from the official OWASP list. Summary by chapter:
 | `v5.0.0-16` Security Logging and Error Handling | Yes | Logs without personal data, counted security events, generic errors: SAC-10, SAC-11 |
 | `v5.0.0-17` WebRTC | No | No WebRTC |
 
-Totals: 82 requirements planned (designed in the specs or the code, verified by the pre-test
-security review CMP-063), 13 verified by document review, 13 accepted risks (provider-controlled
+Totals: 83 requirements planned (designed in the specs or the code, verified by the pre-test
+security review CMP-063), 12 verified by document review, 13 accepted risks (provider-controlled
 or accepted gaps, §7) and 145 not applicable. The review-only agent and the sprint readiness
 check use this inventory.
 
@@ -109,7 +109,7 @@ the go-live (CMP-068).
 | A05:2025 Injection | Yes | SAC-01, SAC-02, SAC-03, SAC-04, SAC-16 (US-017, US-019, US-021, US-023, US-025); `v5.0.0-1.2.1`, `v5.0.0-1.2.2`, `v5.0.0-1.3.3`, `v5.0.0-1.3.11`, `v5.0.0-2.2.1` | |
 | A06:2025 Insecure Design | Yes | SAC-06, SAC-07; the threat model in the pen-test plan (CMP-062); BR-E13 trade-off (§7); `v5.0.0-2.3.2`, `v5.0.0-2.3.4`, `v5.0.0-2.4.1` | |
 | A07:2025 Authentication Failures | No (application) | Admin accounts outside the application: two-factor on the Google and GitHub accounts (§4 PO, configuration check) | No authentication in the application (§1) |
-| A08:2025 Software or Data Integrity Failures | Yes | SAC-14 (deploy only from `main` through the workflow, ADR-009); SAC-07 (no partial registrations); `v5.0.0-2.3.3`, `v5.0.0-15.2.1` | |
+| A08:2025 Software or Data Integrity Failures | Yes | SAC-14 (routine deploys only from `main` through the workflow, ADR-009); SAC-07 (no partial registrations); `v5.0.0-2.3.3`, `v5.0.0-15.2.1` | |
 | A09:2025 Security Logging and Alerting Failures | Yes | SAC-11 (US-024); §6 logging inventory; `v5.0.0-16.2.5`, `v5.0.0-16.3.3`, `v5.0.0-16.4.1` | |
 | A10:2025 Mishandling of Exceptional Conditions | Yes | SAC-10 (US-019, US-021, US-022, US-025); `v5.0.0-16.5.1`, `v5.0.0-16.5.2`, `v5.0.0-16.5.3` | |
 | API1:2023 Broken Object Level Authorization | Yes | SAC-08 (US-021): no request returns another participant's data; `v5.0.0-8.2.2`, `v5.0.0-8.3.1` | |
@@ -133,12 +133,13 @@ Verified against staging (never production) by CMP-063, with test data only.
 - **SAC-01 Server-side validation** (US-019, US-020, US-021, US-023; A05, API3, API10;
   `v5.0.0-2.2.1`, `v5.0.0-2.2.2`, `v5.0.0-2.2.3`, `v5.0.0-1.1.1`, `v5.0.0-15.3.3`)
   Given a `register` or `coupon` request sent directly to the backend, not through the form, with
-  a field outside its contract §3.3 rule (wrong type, too long, wrong format, missing) or with
-  extra fields
+  a validated field outside its contract §3.3 rule (wrong type, too long, wrong format, missing)
   When it is received
-  Then it is refused with `VALIDATION_ERROR` and the field code (contract §8), nothing is stored,
-  and extra fields are ignored; an `Events` or `Coupons` row that breaks a contract §6 rule is
-  skipped and listed in the alert email.
+  Then it is refused with `VALIDATION_ERROR` and the field code (contract §8) and nothing is
+  stored; the contract's exceptions hold: unknown fields are ignored (an otherwise valid request
+  is accepted), a non-boolean `contactOptIn` is stored as `FALSE` and never refused, and a filled
+  honeypot gets the normal-looking success answer with nothing stored (§3.3); an `Events` or
+  `Coupons` row that breaks a contract §6 rule is skipped and listed in the alert email.
 - **SAC-02 No formulas from input** (US-021; A05; `v5.0.0-1.2.4`, `v5.0.0-1.3.3`)
   Given a registration whose name, email, WhatsApp or coupon value starts with `=`, `+`, `-`,
   `@`, a tab, a carriage return or a digit
@@ -234,8 +235,9 @@ Verified against staging (never production) by CMP-063, with test data only.
   When it is prepared
   Then the site's and the deploy tool's dependencies come from their lockfiles, `npm audit` shows
   no critical or high finding past the §4 remediation times (CMP-050 for `.github/clasp`), GitHub
-  actions are pinned by commit, and the backend reaches staging or production only through the
-  deploy workflow from `main` (ADR-009).
+  actions are pinned by commit, and every routine backend deploy to staging or production goes
+  through the deploy workflow from `main`; `clasp` from the owner's computer is used only for a
+  new project's first upload or an emergency, as ADR-009 and the events-backend runbook allow.
 - **SAC-15 Private storage and minimal data in the browser** (US-019, US-021; A01;
   `v5.0.0-5.3.1`, `v5.0.0-14.2.3`, `v5.0.0-14.3.3`)
   Given the events spreadsheet and the screenshots folder (staging and production)
@@ -261,7 +263,7 @@ Verified against staging (never production) by CMP-063, with test data only.
 | SSDF practice group | Covered by the kit's workflow ([`AGENTS.md`](../../AGENTS.md)) | This project adds |
 |---|---|---|
 | **PO** Prepare the Organization (security requirements, roles, toolchains, check criteria, secure environments) | Security requirements recorded in the spec and this baseline before implementation; roles (owner, implementation agents, review-only agent, coordinator); sprint readiness gates | This baseline and the SAC criteria (§3); a security agent role per sprint (Sprint 03: Agent 2) that writes documents and reviews code but never tests production. **Credentials:** the owner holds the Google login used by the deploy (`CLASP_CREDENTIALS`, GitHub `staging`/`production` environment secrets only) and the GoDaddy cPanel login; Cami and the owner edit the spreadsheet and Drive. **Configuration checks (owner, before the go-live):** two-factor on the owner's Google, GitHub and GoDaddy accounts and on Cami's Google account; GitHub secret scanning with push protection, Dependabot alerts and private vulnerability reporting enabled on the repository (§6). Separate staging and production data, projects and secrets (ADR-007 decision 6, ADR-008) |
-| **PS** Protect the Software (code and release integrity, archived releases) | Protected `main` (pull request required, no force pushes); only the owner merges; releases are tags on checked commits ([`release-checklist.md`](../process/release-checklist.md)) | The backend reaches staging and production only through the deploy workflow from `main`, production behind the owner's approval click, with actions pinned by commit and `clasp` locked (ADR-009); a backup of the live site before each upload (release-checklist); the deploy token revoked at once if anything looks wrong, rotated every 6 months or after a Google password change (ADR-009) |
+| **PS** Protect the Software (code and release integrity, archived releases) | Protected `main` (pull request required, no force pushes); only the owner merges; releases are tags on checked commits ([`release-checklist.md`](../process/release-checklist.md)) | Routine backend deploys to staging and production go only through the deploy workflow from `main`, production behind the owner's approval click (local `clasp` only for a new project's first upload or an emergency, ADR-009), with actions pinned by commit and `clasp` locked (ADR-009); a backup of the live site before each upload (release-checklist); the deploy token revoked at once if anything looks wrong, rotated every 6 months or after a Google password change (ADR-009) |
 | **PW** Produce Well-Secured Software (design to requirements, design review, reuse, secure coding, build configuration, code review, testing, secure defaults) | Spec first; tests from acceptance criteria; review by an independent reviewer; least-complex stack | A locked integration contract with validation rules on both sides (contract §3.3, §6); the threat model in the pen-test plan (CMP-062); the ASVS-based pre-test review of `apps-script/` and the form (CMP-063); secure defaults in the specs (anonymous endpoint with global limits, private storage, formula neutralization, `contactOptIn` false unless the box is ticked); `node --check` on the backend and the docs link check in CI; the review-only agent checks the SAC criteria on every PR. Dependency policy: lockfiles committed, updates through a PR, scanned as in §6 |
 | **RV** Respond to Vulnerabilities (identify, remediate, root cause) | Findings become stories through change management | **Reporting:** GitHub private vulnerability reporting on the repository (owner setting, §6) is the channel for outside reporters; agents report findings to the coordinator privately, never on GitHub (§7). **Triage:** the owner, helped by the security agent; a severity on the CVSS v4.0 scale (or the tester's scale mapped to critical / high / medium / low). **Target fix times (proposed; the owner decides on merge):** critical 7 days, high 30 days, medium 90 days, low in a planned sprint or accepted by the owner in writing; before the go-live every critical or high finding of CMP-063 is fixed or accepted in writing (owner decision, SPRINT_03_PLAN). Dependency alerts follow the same times by their severity. **Root cause:** each fixed finding's ticket says what let it in and whether a SAC criterion or a check is added |
 
