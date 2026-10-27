@@ -6,16 +6,17 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.7 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.8 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
   on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
   `contactOptIn`, owner 2026-10-26 — CMP-058; v1.6: §9 `ALERT_TO`, alert email to more than one
   address, owner 2026-10-22 — CMP-061; v1.7: §9 all-invalid `ALERT_TO` falls back to
-  `MAIL_REPLY_TO` — CMP-070)
+  `MAIL_REPLY_TO` — CMP-070; v1.8: §8 a `coupon` check on an unpublished code, §9 the failed
+  coupon check limit also applies to `register` with a coupon code — CMP-083)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
-  PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 Approved (on
-  merge of PR #61))
+  PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 on
+  merge of PR #61; v1.8 Approved (on merge of the CMP-083 PR))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-033)
 - Related stories: US-017..US-025
@@ -181,8 +182,8 @@ Same keys always:
 | Error code | When | Consumer behavior |
 |---|---|---|
 | `VALIDATION_ERROR` | Any field rule fails (§8 per field) | Show field messages, keep data |
-| `EVENT_NOT_FOUND` | Unknown or duplicated event code with no row to flag | Message, reload events |
-| `REGISTRATION_CLOSED` | `coupon` check on a closed event; or a `register` **without** a file (₡0) for a closed/unpublished event (BR-E13) | Message; a `register` **with** a file is stored and flagged instead (FFR-024) |
+| `EVENT_NOT_FOUND` | Unknown or duplicated event code with no row to flag; for a `coupon` check, also a code with no published row (v1.8) | Message, reload events |
+| `REGISTRATION_CLOSED` | `coupon` check on a closed published event; or a `register` **without** a file (₡0) for a closed/unpublished event (BR-E13) | Message; a `register` **with** a file is stored and flagged instead (FFR-024) |
 | `SOLD_OUT` | `register` **without** a file (₡0) when capacity is reached (BR-E13) | Show "Agotado / Sold out"; with a file → stored and flagged |
 | `ALREADY_REGISTERED` | Same email already has a counting row for this event | Show message (FFR-027) |
 | `COUPON_INVALID` | `coupon` check: unknown, inactive, expired or other event. `register`: unknown code for the event (any request) | Show message, full price |
@@ -222,7 +223,7 @@ shows the form for an event the last `events` response marked closed or sold out
 | `MAIL_FROM_ALIAS`, `MAIL_REPLY_TO` | Script property | Sender alias (if available) and `camila@lifetoolscr.com` |
 | `LIMIT_REGISTER_PER_MIN` = 20 | Script property | Max `register` calls per minute, all clients (fixed 1-minute window, `CacheService`); over → `RATE_LIMITED` |
 | `LIMIT_COUPON_CHECKS_PER_MIN` = 30 | Script property | Max `coupon` calls per minute, all clients; over → `RATE_LIMITED` |
-| `LIMIT_COUPON_FAILS_PER_MIN` = 10 | Script property | Max failed coupon checks per minute; over → `RATE_LIMITED` for coupon checks until the minute ends |
+| `LIMIT_COUPON_FAILS_PER_MIN` = 10 | Script property | Max failed coupon checks per minute, counting `coupon` checks and `register` requests that carry a coupon code; over → `RATE_LIMITED` for both until the minute ends (v1.8) |
 | `LIMIT_UPLOADS_PER_DAY` = 100 | Script property | Max stored screenshots per day (Costa Rica day, resets 00:00); over → `UPLOAD_CAP_REACHED` (₡0 registrations unaffected) |
 | `LIMIT_UPLOAD_MB_PER_DAY` = 300 | Script property | Max MB stored per day; over → `UPLOAD_CAP_REACHED` |
 | `ALERT_TO` | Script property | Comma-separated addresses that receive the daily alert email (FFR-029), for example the owner and camila@; empty → `MAIL_REPLY_TO`. Read only from script properties; an invalid address is skipped and logged without the address; if every address is invalid, the email goes to `MAIL_REPLY_TO` (v1.6; the all-invalid case v1.7) |
