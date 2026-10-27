@@ -299,6 +299,15 @@ nothing prints it.
 5. If the permissions (`oauthScopes` in `appsscript.json`) differ from the project's, the job
    summary says so: the owner must approve the new permissions (open the project, run any
    function once, allow) before the web app and the triggers work again.
+6. `clasp push` sends nothing when no file of the `apps-script/` folder differs from the project
+   ("Script is already up to date"), so a deploy whose only change is a file removed from the
+   folder would leave that file in the project, where it keeps running until the next push that
+   changes a file (that push replaces the whole file set). The deploy therefore checks before the
+   push: if the project holds files that the folder does not have, it forces a full push that
+   removes them and says so in the log and the job summary (the number, never the names). After
+   the push it checks again and warns if any file is still left; then compare the Files list in
+   the Apps Script editor with the folder and remove the extra file there (Files > the three dots
+   next to it > Remove). A `dry_run` pushes nothing and does not run these checks.
 A `dry_run` option (manual run) does the checks (it still needs the real secrets: it logs in and
 reads the project) and lists the files, and pushes nothing. A change to `apps-script/`, to the
 scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `main` deploys staging.
