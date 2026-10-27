@@ -90,7 +90,7 @@ Project Requirement → User Story → Acceptance Criterion → Implementation s
 | Page composition | `src/App.jsx` | Agent 2 |
 | Copy | `src/constants/i18n.js` (`UI_TEXT.events`) | Agent 2 (foundation); Agent 3 adds form keys after it merges |
 | Styles | `src/styles/global.css` | Agent 2 (foundation); Agent 3 appends form classes after it merges |
-| Logo fallback | `public/images/lifetools-logo.*` (Cami's file when it arrives; a marked placeholder until then) | Agent 2 |
+| Logo fallback | `public/images/lifetools-logo.*` (Cami's logo, `lifetools-logo.png` since CMP-067; a marked placeholder before) | Agent 2 |
 | Registration form | `src/components/EventRegistration.jsx` (new; stub created in CMP-029) | Agent 3 |
 | Hover fix (US-002) | `src/hooks/useReveal.js`, `src/components/Services.jsx` and/or `global.css` | Agent 2 |
 | Config example | `.env.example` (new, `VITE_EVENTS_API_URL=` empty) | Agent 2 |
