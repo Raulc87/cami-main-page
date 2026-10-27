@@ -2,8 +2,8 @@
 // `clasp push` sends nothing when no file of the repo differs from the project ("Script is already
 // up to date"), so a deploy whose only change is a file removed from `apps-script/` leaves that file
 // in the project, where it keeps being served and run until the next push that changes a file
-// (that push replaces the whole file set). After the push, the deploy warns when the
-// project still holds files that the repo does not have.
+// (that push replaces the whole file set). The deploy therefore forces a full push when the project
+// holds files that the repo does not have, and warns if any are still left afterwards.
 import { readdirSync } from 'node:fs';
 
 // The name Google gives a file: `Code.js` is `Code`, `appsscript.json` is `appsscript`.

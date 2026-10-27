@@ -40,8 +40,20 @@ if [ "$DRY_RUN" = "true" ]; then
 fi
 
 echo "::group::Push and deploy"
+# clasp sends nothing when no repo file differs from the project, so a file removed from the repo
+# would stay in the project. When the project holds files the repo lacks, make one file differ (a
+# trailing newline, on this runner's copy only) so that the push replaces the whole file set.
+EXTRA_FILES="$(CLASP_AUTH_FILE="$AUTH_FILE" node .github/scripts/apps-script-leftovers.mjs count || echo 0)"
+if [ "${EXTRA_FILES:-0}" -gt 0 ] 2>/dev/null; then
+  echo "The project holds $EXTRA_FILES file(s) that the repo does not have: forcing a full push so that they are removed."
+  printf '\n' >> apps-script/Code.js
+  {
+    echo "## Files removed from the project"
+    echo "The project held $EXTRA_FILES file(s) that the \`apps-script/\` folder does not have; this deploy forced a full push to remove them."
+  } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+fi
 "$CLASP" push --force
-CLASP_AUTH_FILE="$AUTH_FILE" node .github/scripts/apps-script-leftovers.mjs || true
+CLASP_AUTH_FILE="$AUTH_FILE" node .github/scripts/apps-script-leftovers.mjs warn || true
 "$CLASP" deploy --deploymentId "$DEPLOYMENT_ID" --description "${GITHUB_SHA::7} run ${GITHUB_RUN_NUMBER}"
 echo "::endgroup::"
 
