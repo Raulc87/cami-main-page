@@ -79,6 +79,10 @@ is sent before that authorization.
   in the CMP-066 cleanup list).
 - **Time window:** one window of up to 2 hours chosen by the owner, never during the CMP-064
   deploy and smoke, the CMP-053 burst or the CMP-065 iPhone check.
+- **SINPE values:** the staging `events` answer shows the SINPE number and account name set on
+  staging, so for the window the owner sets the test values (as for the GitHub Pages test window,
+  TECH_STACK §10) and restores the real ones after; the security agent never receives real SINPE
+  data.
 - **Alert settings:** before the window the owner raises the staging alert thresholds
   (`ALERT_HONEYPOT_PER_DAY`, `ALERT_THROTTLED_PER_DAY`), as for the Sprint 02 burst; right after,
   the owner restores them.
