@@ -40,15 +40,18 @@ function usesOf_(counting, couponCode) {
 
 // Failed coupon checks per minute (`LIMIT_COUPON_FAILS_PER_MIN`) cover every action that checks a
 // coupon code. A check takes its slot when it starts and gives it back when the code passes, so
-// checks that run at the same time are counted together. Returns false when the limit is reached.
+// checks that run at the same time are counted together. Returns the time the slot was taken, to
+// hand back to `giveBackCouponFailureSlot_` (the slot returns to the minute it came from), or null
+// when the limit is reached. A check that throws keeps its slot: it counts as a failure.
 function takeCouponFailureSlot_() {
-  if (bumpWindow_('couponfail') <= getNumberProp('LIMIT_COUPON_FAILS_PER_MIN')) return true;
-  dropWindowCount_('couponfail');
-  return false;
+  var takenMs = Date.now();
+  if (bumpWindow_('couponfail', takenMs) <= getNumberProp('LIMIT_COUPON_FAILS_PER_MIN')) return takenMs;
+  dropWindowCount_('couponfail', takenMs);
+  return null;
 }
 
-function giveBackCouponFailureSlot_() {
-  dropWindowCount_('couponfail');
+function giveBackCouponFailureSlot_(takenMs) {
+  dropWindowCount_('couponfail', takenMs);
 }
 
 // A coupon check ends with an answer and whether it counts as a failed check.
@@ -57,14 +60,15 @@ function couponAnswer_(response, failedCheck) {
 }
 
 function handleCoupon_(body) {
-  if (bumpWindow_('coupon') > getNumberProp('LIMIT_COUPON_CHECKS_PER_MIN') || !takeCouponFailureSlot_()) {
+  var slot = bumpWindow_('coupon') > getNumberProp('LIMIT_COUPON_CHECKS_PER_MIN') ? null : takeCouponFailureSlot_();
+  if (slot === null) {
     bumpMetric_('throttled', 1);
     checkAlertsSafely_();
     return fail('RATE_LIMITED');
   }
   var answer = checkCoupon_(body);
   if (answer.failedCheck) bumpMetric_('couponFailures', 1);
-  else giveBackCouponFailureSlot_();
+  else giveBackCouponFailureSlot_(slot);
   return answer.response;
 }
 

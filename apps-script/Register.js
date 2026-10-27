@@ -100,7 +100,8 @@ function handleRegister_(body) {
   // under the lock, because that depends on the registrations at that moment (BR-E13).
   var coupon = null;
   if (v.couponCode) {
-    if (!takeCouponFailureSlot_()) {
+    var slot = takeCouponFailureSlot_();
+    if (slot === null) {
       bumpMetric_('throttled', 1);
       checkAlertsSafely_();
       return fail('RATE_LIMITED');
@@ -110,7 +111,7 @@ function handleRegister_(body) {
       bumpMetric_('couponFailures', 1);
       return fail('COUPON_INVALID');
     }
-    giveBackCouponFailureSlot_(); // the code exists: a later refusal below counts it again
+    giveBackCouponFailureSlot_(slot); // the code exists: a later refusal below counts it again
   }
 
   var amountDue = coupon ? amountDue_(ev.priceCrc, coupon.discountPercent) : ev.priceCrc;
