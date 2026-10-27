@@ -298,7 +298,7 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 - The script runs as the owning Workspace account behind an anonymous endpoint, so each scope it
   holds is exposed if it is misused: the OAuth scopes are those in `apps-script/appsscript.json` (`oauthScopes`). Besides Sheets,
   Drive (full access to the owning account's files, needed to create folders and files and run
-  OCR), Docs, external requests and sending mail, the script holds a Gmail settings scope so it
+  OCR), Docs and sending mail, the script holds a Gmail settings scope so it
   can send as `no-reply@lifetoolscr.com` (owner, 2026-10-20); that scope lets it read and change
   the owning account's Gmail settings. The spike's alias test confirmed `gmail.settings.basic` is
   enough (2026-10-20); any scope broader than the one the owner accepted (e.g. full mailbox
