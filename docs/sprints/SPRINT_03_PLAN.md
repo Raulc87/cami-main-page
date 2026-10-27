@@ -102,7 +102,7 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 |---|---|---|---|---|---|
 | CMP-060 | This plan, the agent prompts, the Sprint 02 close and the pending decision records | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
 | CMP-061 | Contract v1.6 and FFR-029: alert recipients (`ALERT_TO`) | Coordinator | CMP-060 | coordinator branch | done |
-| CMP-056 | Security baseline (`docs/security/SECURITY_BASELINE.md`) | Agent 2 | — | `CMP-056-security-baseline` | todo |
+| CMP-056 | Security baseline (`docs/security/SECURITY_BASELINE.md`) | Agent 2 | — | `CMP-056-security-baseline` | done |
 | CMP-062 | Pen-test plan and written scope (`docs/security/PENTEST_PLAN.md`) | Agent 2 | CMP-056 | `CMP-062-pentest-plan` | todo |
 | CMP-063 | Pre-test security review: ASVS code review and an owner-authorized, staging-only scan; findings become tickets | Agent 2 | CMP-056 | `CMP-063-pretest-security-review` | todo |
 | CMP-052 | Alert email to more than one address | Agent 1 | CMP-061 | `CMP-052-alert-recipients` | todo |
@@ -115,7 +115,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-067 | Lifetools logo for events without their own picture | Agent 3 | Cami's logo file | `CMP-067-lifetools-logo` | todo |
 | CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | todo |
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
-| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, and every §3b gate | `CMP-068-events-release` | todo |
+| CMP-072 | SEC-001: security fix, tracked privately | Agent 3 | CMP-063 finding | `CMP-072-sec-001` | todo |
+| CMP-073..CMP-076 | SEC-002..SEC-005: security fixes, tracked privately (one PR each) | Agent 1 | CMP-063 findings | `CMP-07N-sec-00M` | todo |
+| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, CMP-072..CMP-076, and every §3b gate | `CMP-068-events-release` | todo |
 
 ### Ticket checks (acceptance criteria)
 - **CMP-061 (coordinator):** contract §9 gets an `ALERT_TO` script property (comma-separated
@@ -162,6 +164,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   alert email, so the scan is low-rate, application-level checks only, within Google's terms,
   never during the CMP-064 deploy and smoke, with the alert settings switched before and
   restored after as in the Sprint 02 burst; the owner's authorization names all of these.
+  **Changed (owner, 2026-10-27, Sprint Review Notes):** the staging scan is not run in
+  CMP-063; its checks wait for the PTES test (CMP-062). CMP-063 closes on the code review plus
+  the owner's checks of SAC-13 (site headers) and SAC-15 (sharing settings).
 - **CMP-064:** following runbook §2, §3 and §5.1 with the owner:
   - the production project `cami-events-production`, first upload, web-app deployment;
   - production script properties with the real SINPE values;
@@ -231,13 +236,14 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 |---|---|
 | `apps-script/**`, `.github/clasp/**`, `.github/scripts/deploy-apps-script.sh` and the other deploy scripts, `.github/workflows/deploy-apps-script.yml`, `.github/workflows/apps-script-check.yml`, [`docs/process/events-backend-runbook.md`](../process/events-backend-runbook.md) | Agent 1 |
 | `docs/security/**` | Agent 2 |
-| `src/**`, `public/**`, `index.html`, `package.json` (version, CMP-068), `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
+| `src/**`, `public/**`, `index.html`, `package.json` and `package-lock.json`, `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
 | [`TICKETS.md`](../../TICKETS.md) | Shared: each agent updates only its own rows; the coordinator adds rows |
 | `.github/workflows/docs-link-check.yml`, `.github/scripts/check_doc_links.py`, `docs/specs/**`, [`docs/process/release-checklist.md`](../process/release-checklist.md) and the other process docs, `docs/sprints/SPRINT_03_*.md` except the verification, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), `docs/decisions/**`, `docs/ux/**` | Coordinator (docs PRs) |
 
 ## Integration Contracts
 - [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.5, locked; v1.6 (CMP-061)
-  changes only §9 (`ALERT_TO`) and adds its §10 test.
+  changes only §9 (`ALERT_TO`) and adds its §10 test; v1.7 (CMP-070) adds the all-invalid
+  `ALERT_TO` fallback to §9.
 
 ## Merge / Integration Order
 Each line names what the PR waits for.
@@ -253,7 +259,8 @@ Each line names what the PR waits for.
 9. CMP-066 (verification, integration owner Agent 3) — every PR above, except one the owner
    moved to the next sprint.
 10. CMP-069 (deadline date) — CMP-056 and the go-live date from the owner.
-11. CMP-068 (go-live) — CMP-066, CMP-069 and every release-checklist §3b gate (so a moved
+11. CMP-072..CMP-076 (security fixes, tracked privately) — nothing but the private details.
+12. CMP-068 (go-live) — CMP-066, CMP-069, CMP-072..CMP-076 and every release-checklist §3b gate (so a moved
     CMP-065 or CMP-067 also moves CMP-068).
 
 Cycle check: every arrow points to a PR earlier in this list, so no PR waits, directly or
@@ -377,3 +384,18 @@ The human reviewer is the final approver.
     before launch, who confirms that no serious problem is still open?" — options: I confirm
     it in writing; the security agent confirms. Owner: **"I confirm it in writing
     (Recommended)"** (release-checklist §3b, CMP-068).
+- CMP-063 findings (2026-10-27): tracked privately outside the repository (public repository;
+  kit security templates); here they appear only as "SEC-00N: security fix, tracked privately".
+  The owner chose where the details are kept (privately) and the fix schedule: CMP-072 (Agent
+  3) and CMP-073..CMP-076 (Agent 1) are fixed in this sprint, before the go-live (CMP-068); one
+  finding is handled as recorded privately. The questions and answers are in the private
+  record.
+  - "The security agent asks for permission to run a gentle, slow check against STAGING only
+    [...]. Never against the live site. Allow it?" — Owner: **"Yes, allow it (Recommended)"**;
+    the written authorization with its window is on PR #62.
+  - Later: the security agent's session blocked the script for the staging check, so no request
+    was sent. Question as asked: "The security agent couldn't run the gentle staging check: its
+    session's safety controls blocked the script, so it sent nothing. What should happen to that
+    check?" — options: leave it to the tester; I'll run it by hand. Owner: **"Leave it to the
+    tester (Recommended)"**. The staging checks wait for the PTES test (CMP-062); CMP-063
+    closes on the code review plus the owner's checks of SAC-13 and SAC-15.

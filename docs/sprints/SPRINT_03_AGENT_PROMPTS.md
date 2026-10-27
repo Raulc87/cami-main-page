@@ -161,6 +161,8 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    (staging login expired after 4 days on 2026-10-26 and was renewed; if it recurs, check the
    Workspace Admin → Security → Google Cloud session control setting). The live site links to
    the events only at the go-live (CMP-068), after this ticket.
+5. CMP-073..CMP-076 ("SEC-002".."SEC-005": security fixes, tracked privately), before the
+   go-live; the coordinator sends the details privately. Keep their PRs neutral.
 ```
 
 ## Agent 2 — Security
@@ -224,7 +226,7 @@ the OSSTMM 3 test before a release that adds a major new attack surface is not c
 
 You are Implementation Agent 3: site fixes, the developer guide, the real-iPhone check and the
 sprint's verification and the go-live release. You own src/**, public/**, index.html,
-package.json (version only, CMP-068), CONTRIBUTING.md, README.md,
+package.json and package-lock.json, CONTRIBUTING.md, README.md,
 .github/workflows/pages-staging.yml, docs/sprints/SPRINT_03_VERIFICATION.md and
 docs/sprints/evidence/sprint-03/**.
 
@@ -257,6 +259,8 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    by the owner on a test event, hidden afterwards with its row and file deleted, and the
    events section and ticker in EN and ES; then the tag and GitHub Release). Rollback:
    restore the backup. List each §3b gate in the PR body with the ticket that met it.
+Also in this sprint: CMP-072 ("SEC-001: security fix, tracked privately"), before CMP-068; the
+coordinator sends the details privately. Keep its PR neutral.
 ```
 
 ## Review-only agent

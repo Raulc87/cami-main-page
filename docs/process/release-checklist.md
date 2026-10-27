@@ -82,6 +82,10 @@ upload; if one is not, do not release:
       events go-live);
       after that date, no release until the penetration test is done (AGENTS.md → Security
       baseline).
+- [ ] Owner settings from the security baseline §7 (CMP-056): GitHub secret scanning with push
+      protection, Dependabot alerts and private vulnerability reporting enabled on the
+      repository; two-factor sign-in on the owner's Google, GitHub and GoDaddy accounts and on
+      Cami's Google account. Recorded in the CMP-066 verification.
 - [ ] Pre-test security review done (CMP-063): no open critical or high finding, unless the
       owner accepted it in writing. The findings are tracked privately (public repository), so
       the owner confirms this gate with a dated statement in the release PR (CMP-068), "No
