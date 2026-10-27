@@ -1,13 +1,16 @@
 # Cami Hernandez — Personal Brand Website
 
 One-pager landing site for **Cami Hernandez** (motivational speaker, lifestyle coach, spiritual
-coach). React + Vite, 100% static frontend — no backend yet. Bilingual (English/Spanish) via a
+coach). React + Vite static frontend; the events and registration feature talks to a Google Apps Script
+backend (not yet released to the live site). Bilingual (English/Spanish) via a
 global language toggle in the nav.
 
-**Status:** live at [camihernandez.com](https://camihernandez.com) (v1.0.1); Sprint 01 closed,
-Sprint 02 (events) active — see [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
+**Status:** live at [camihernandez.com](https://camihernandez.com) (v1.0.1); Sprints 01 and 02
+closed, Sprint 03 (events go-live) active — see [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
 
 ## Quick start
+
+Setup, commands, checks and conventions: [CONTRIBUTING.md](CONTRIBUTING.md). In short:
 
 ```bash
 npm install
@@ -44,9 +47,10 @@ Full breakdown in [docs/specs/ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC
 
 ## Deploy
 
-Manual: `npm run build` generates `dist/`, upload its contents to GoDaddy shared hosting
-(`public_html/`). No CI/CD yet. Detail in
-[TECH_STACK.md](TECH_STACK.md).
+The site is built with `npm run build` and its `dist/` contents are uploaded by hand to GoDaddy
+shared hosting (`public_html/`). The events backend is deployed by a GitHub workflow
+([ADR-009](docs/decisions/ADR-009-apps-script-deploy-from-github.md)); details in
+[CONTRIBUTING.md](CONTRIBUTING.md) and [TECH_STACK.md](TECH_STACK.md).
 
 ## Working on this repo
 
