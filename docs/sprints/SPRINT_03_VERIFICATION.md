@@ -145,11 +145,15 @@ the cleanup list below.
 The baseline states the PTES deadline as a date (go-live date plus 60 days), merged before the
 upload. Result recorded when PR #85 merges.
 
-### Docs-only coordinator tickets
-CMP-055, CMP-058, CMP-060, CMP-061, CMP-070, CMP-077, CMP-078, CMP-080, CMP-081, CMP-083, CMP-085
-to CMP-089 are docs PRs by the coordinator (and CMP-059 backend copy, CMP-082 and CMP-088 by
-Agents 1 and 2). They carry no behavior to verify beyond the docs link check, which passed on each
-PR.
+### CMP-059 — Cami's approved copy changes (US-019, US-025; Agent 1)
+| Check | Result | Source |
+|---|---|---|
+| The approved emails, form wording, amount format (`₡15,000` in both languages) and the optional `contactOptIn` checkbox work on staging | Pass | Owner's staging check, 2026-10-26 ("all OK", staging v21), recorded in the CMP-060 row |
+
+### Docs-only tickets
+CMP-055, CMP-058, CMP-060, CMP-061, CMP-070, CMP-077, CMP-078, CMP-080, CMP-081, CMP-083 and
+CMP-085 to CMP-089 are docs PRs by the coordinator, and CMP-082 and CMP-088 are docs PRs by Agent 2.
+They carry no behavior to verify beyond the docs link check, which passed on each PR.
 
 ## 3. Fails and observations
 
@@ -161,6 +165,10 @@ PR.
 | 4 | `.htaccess` was not run on Apache (none available here); a host that disallows `Options` overrides answers every page with a 500 | Residual risk, not a Fail | Covered by the CMP-068 backup and the live check right after the upload |
 
 No Fail in the sprint's own checks is open.
+
+For the Sprint Review, the items that move on: the real-iPhone check and its HEIC follow-up decision
+(CMP-065, after the go-live), the PTES test (CMP-062, within 60 days of the go-live), and the
+dependency checks, Dependabot updates and SBOM proposed for Sprint 04 (CMP-071).
 
 ## 4. Staging cleanup list (for the owner)
 
@@ -179,8 +187,9 @@ Metrics rows, "yes, both").
 
 Other tests of the sprint left nothing to delete beyond what is listed: the CMP-052 alert test
 sent emails to the owner's inboxes only; the CMP-076 test row was removed by the owner (ticket
-row). The coupon checks of the CMP-079 run used an invalid code, so Agent 3 created no coupons; the
-owner confirms that the staging `Coupons` tab holds no test coupon from the other tests. Production
+row). The coupon checks of the CMP-079 run used an invalid code, so Agent 3 created no coupons;
+**to be confirmed by the owner before CMP-068:** that the staging `Coupons` tab holds no test coupon
+from the other tests (nothing recorded says one remains). Production
 holds no test data from this sprint: CMP-064 sent only a smoke request (read-only). The production
 test registration by the owner belongs to CMP-068, and is deleted afterwards (row and file).
 
