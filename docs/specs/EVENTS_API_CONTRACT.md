@@ -14,7 +14,7 @@ Change management: update this document first, bump the version, notify both own
   address, owner 2026-10-22 — CMP-061)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 Approved (on
-  merge of the CMP-061 PR))
+  merge of PR #57))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-033)
 - Related stories: US-017..US-025

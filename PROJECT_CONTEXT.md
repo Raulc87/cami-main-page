@@ -20,9 +20,9 @@
 - Project spec: [docs/specs/PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md)
 - User stories: [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md)
 - Feature specs: [FEATURE_SPEC_events_registration.md](docs/specs/FEATURE_SPEC_events_registration.md)
-  (v1.10 — events and registration, US-017..US-025); new ones from the kit's
+  (v1.11 — events and registration, US-017..US-025); new ones from the kit's
   `FEATURE_SPEC_TEMPLATE.md` (at the kit ref above) as `docs/specs/FEATURE_SPEC_<topic>.md`
-- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.5,
+- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.6,
   locked) — site ↔ events backend
 - Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058):
   [EVENTS_EMAILS_AND_PRIVACY.md](docs/ux/EVENTS_EMAILS_AND_PRIVACY.md)
@@ -78,8 +78,8 @@ they are not active paths.
   CMP-052..CMP-054. Sprint 02
   closed 2026-10-26 (review in its plan).
 - Goal: the events feature is live on `camihernandez.com`; the PTES test follows by its deadline
-- Start: 2026-10-28
-- End: 2026-11-05 (if the start moves: the 7th business day from the actual start)
+- Start: 2026-10-27
+- End: 2026-11-04 (if the start moves: the 7th business day from the actual start)
 - Agent prompts: [docs/sprints/SPRINT_03_AGENT_PROMPTS.md](docs/sprints/SPRINT_03_AGENT_PROMPTS.md)
 - Deliverable: evidence in `SPRINT_03_VERIFICATION.md`, then release v1.1.0 with the events
   live and every release-checklist §3b gate met (owner: "I don't want to wait for Cami to use

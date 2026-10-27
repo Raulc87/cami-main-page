@@ -83,7 +83,10 @@ upload; if one is not, do not release:
       after that date, no release until the penetration test is done (AGENTS.md → Security
       baseline).
 - [ ] Pre-test security review done (CMP-063): no open critical or high finding, unless the
-      owner accepted it in writing.
+      owner accepted it in writing. The findings are tracked privately (public repository), so
+      the owner confirms this gate with a dated statement in the release PR (CMP-068), "No
+      critical or high security finding is open", with no details, after checking the private
+      notes with the coordinator (owner, 2026-10-27).
 - [ ] Production Apps Script deployment updated per
       [events-backend-runbook.md](events-backend-runbook.md), and the site build points
       `VITE_EVENTS_API_URL` at the production `/exec` URL.

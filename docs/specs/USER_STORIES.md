@@ -790,7 +790,7 @@ So that I spot wrong payments before confirming
    Then the row stays `pending` and no "payment not validated" email is sent yet (the
    confirmation is still sent at save time); a retry every 10 minutes writes the final result
    and sends that email if needed; after 24 hours still `pending`, retries stop and the row is
-   listed in that day's alert email to camila@, which it triggers (FFR-029, FFR-032, owner
+   listed in that day's alert email, which it triggers (FFR-029, FFR-032, owner
    2026-10-20).
 7. Given a screenshot stored in its original format (conversion failed, FFR-014) that OCR cannot
    read
@@ -836,7 +836,7 @@ So that the site reflects them without waiting for a developer
 5. Given a `Coupons` row with a code that is not 8–20 characters `A-Z0-9`, or an invalid
    discount or max uses
    When coupons are read
-   Then that row is ignored and listed in that day's alert email to camila@, which it triggers
+   Then that row is ignored and listed in that day's alert email, which it triggers
    on its own (at most one per day, FFR-029).
 
 **Dependencies**

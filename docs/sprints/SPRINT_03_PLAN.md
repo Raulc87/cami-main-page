@@ -3,9 +3,9 @@
 ## Metadata
 - Sprint: 03
 - Status: Active (plan approved on merge of PR #54; owner's go-ahead 2026-10-27, Entry Gate 4)
-- Start: 2026-10-28 (Wednesday), or the first business day after the go-ahead if it comes later
-- End: 2026-11-05 (Thursday); if the start moves, the 7th business day counted from the actual
-  start
+- Start: 2026-10-27 (Tuesday), the day of the go-ahead and the launch of the sessions (planned
+  2026-10-28)
+- End: 2026-11-04 (Wednesday), the 7th business day from the actual start
 - Duration: 7 business days
 - Saturdays and Sundays excluded
 - Final human reviewer: Raul Casanas
@@ -201,7 +201,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   never committed), the upload with a backup of the current site, then on the live site one
   real registration by the owner on a test event (hidden afterwards, row and file deleted), the
   events section and ticker in EN and ES, then the tag and GitHub Release. Rollback: restore
-  the backup.
+  the backup. Before the upload, the owner writes in the PR a dated statement that no critical
+  or high security finding is open (no details), after checking the private notes with the
+  coordinator (release-checklist §3b, owner 2026-10-27).
 
 ## Parallel Workstreams
 ### Agent 1 — Events backend (fresh session)
@@ -235,7 +237,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 
 ## Integration Contracts
 - [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.5, locked; v1.6 (CMP-061)
-  changes only §9 (`ALERT_TO`).
+  changes only §9 (`ALERT_TO`) and adds its §10 test.
 
 ## Merge / Integration Order
 Each line names what the PR waits for.
@@ -357,3 +359,18 @@ The human reviewer is the final approver.
   So the backend agent can't show its staging test results before you merge. How should that
   work this sprint?" — options: merge, then test; test before merging (by hand, runbook
   emergency path). Owner: **"Merge, then test (Recommended)"** (Verification).
+- Questions as asked (2026-10-27, from the reviewer and Agent 1 on PR #55):
+  - "The counter fix (PR #55) relies on a Google behaviour we haven't proven yet. If it doesn't
+    hold, the counters get slightly worse, not better. Since we test after merging, should the
+    real (production) backend wait until the staging test of this fix passes, with a revert or
+    a fix first if it fails?" — options: yes, wait for the test; no, don't wait. Owner: **"No,
+    don't wait"**. CMP-064 does not wait for the CMP-053 staging burst; a failed burst becomes
+    a fix ticket, deployed to production like any other change.
+  - "The counter fix also means the daily Metrics row in the sheet can be up to 5 minutes
+    behind (it's updated by the 5-minute background job instead of on every request). The
+    alerts still work the same way. OK?" — options: OK, 5 minutes is fine; no, must be
+    instant. Owner: **"OK, 5 minutes is fine (Recommended)"** (FFR-029, FEATURE_SPEC v1.11).
+  - "Security problems found before launch are kept private (not in the public repo). So
+    before launch, who confirms that no serious problem is still open?" — options: I confirm
+    it in writing; the security agent confirms. Owner: **"I confirm it in writing
+    (Recommended)"** (release-checklist §3b, CMP-068).

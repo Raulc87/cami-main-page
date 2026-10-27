@@ -17,10 +17,11 @@
   v1.9: FFR-028 translations in a sheet tab, FFR-019 reserved name — CMP-046; v1.10: Cami's
   review of the texts, BR-E11 legal review by Cami (owner decision), amount format, optional
   contact checkbox (FFR-018, contract v1.5) — CMP-058; v1.11: FFR-029 alert email to every
-  address in `ALERT_TO`, owner 2026-10-22 — CMP-061)
+  address in `ALERT_TO`, owner 2026-10-22, and the `Metrics` row up to 5 minutes behind, owner
+  2026-10-27 — CMP-061)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
-  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 on merge of PR #52; v1.11 Approved (on merge of the CMP-061 PR))
+  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 on merge of PR #52; v1.11 Approved (on merge of PR #57))
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -207,7 +208,7 @@ Payment screenshot check
   still sent when the row is saved (FFR-026). A time-driven trigger retries the `pending` rows
   every 10 minutes; when a retry gets `ok`, `mismatch` or `unreadable`, it writes the result and
   sends the "not validated" email if FFR-017 requires it. A row still `pending` 24 hours after
-  it was saved is no longer retried and triggers that day's alert email to camila@ (FFR-029),
+  it was saved is no longer retried and triggers that day's alert email (FFR-029),
   which lists it for Cami to check by hand; its participant gets no "not validated" email. `pending` alone
   never sets `needsReview` (FFR-030). Owner, 2026-10-20 (spike finding, CMP-024); the
   10-minute interval and the 24-hour limit approved by the owner, 2026-10-20: "OK on the retry
@@ -275,6 +276,8 @@ Abuse metrics
   its limit (FFR-032). At most one alert email per day: it is sent at the first trigger of the
   day (Costa Rica time) and lists everything found so far; anything found after it goes into,
   and triggers, the next day's email (owner, 2026-10-20: "OK on the retry proposal").
+  The `Metrics` row may lag the requests by up to 5 minutes: the daily counters are written by
+  the 5-minute trigger (owner, 2026-10-27: "OK, 5 minutes is fine", CMP-053).
   **Captcha rule (Q-19):** no captcha at launch;
   enable Cloudflare Turnstile (free, verified server side) if alerts fire on 3+ days in a week or
   Cami marks more than 2 `spam` rows in a week.
@@ -327,7 +330,7 @@ Abuse metrics
 - Drive: one JPEG per paid registration (the original format if conversion fails, FFR-014), in
   the event's subfolder.
 - Sheets: one row per registration; `Metrics` daily rows.
-- Email: confirmation and "payment not validated" to participants; abuse alerts to camila@.
+- Email: confirmation and "payment not validated" to participants; abuse alerts to the `ALERT_TO` addresses (FFR-029).
 
 ## 9. Main Flow
 1. The site loads and requests events in the active language.
