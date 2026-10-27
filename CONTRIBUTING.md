@@ -19,7 +19,7 @@ feature backed by Google Apps Script. Details are in
 
 | Value | Where to get it |
 |---|---|
-| Node.js 20 and npm (CI uses Node 20) | [nodejs.org](https://nodejs.org); the stack is in [`TECH_STACK.md`](TECH_STACK.md) |
+| Node.js 20.19 or newer (or 22.12 or newer) and npm (Vite 7 requires it; CI uses Node 20) | [nodejs.org](https://nodejs.org); the stack is in [`TECH_STACK.md`](TECH_STACK.md) |
 | `VITE_EVENTS_API_URL` (the events backend `/exec` URL) | Optional. Create `.env.local` from [`.env.example`](.env.example) (git-ignored). Use the **staging** URL, from the owner. Never commit it, paste it in an issue, PR or chat |
 
 Without `VITE_EVENTS_API_URL` the site builds and runs without the events section and ticker,
@@ -83,7 +83,7 @@ CI runs the Apps Script check and the docs link check on every pull request; the
 must be green before merge.
 
 The events backend (`apps-script/`) is deployed by a workflow, not from your machine: staging on
-each merge to `main` that changes it, production only by a manual run the owner approves. Steps:
+each merge to `main` that changes `apps-script/`, `.github/clasp/`, `.github/scripts/` or the deploy workflow, production only by a manual run the owner approves. Steps:
 [`docs/process/events-backend-runbook.md`](docs/process/events-backend-runbook.md). The site
 itself is built locally and uploaded by hand:
 [`docs/process/release-checklist.md`](docs/process/release-checklist.md).
@@ -96,7 +96,7 @@ itself is built locally and uploaded by hand:
 | `src/constants/` | `data.jsx` (list content), `i18n.js` (`UI_TEXT` translations), `colors.js` (palette) |
 | `src/api/`, `src/hooks/`, `src/context/` | Events API client, hooks, the language context |
 | `src/styles/` | `global.css` |
-| `public/images/` | Photos and the Lifetools logo |
+| `public/images/` | Photos; the Lifetools logo is a marked placeholder until CMP-067 |
 | `apps-script/` | The events backend (Google Apps Script) |
 | `.github/workflows/`, `.github/scripts/` | CI, deploy and check workflows and their scripts |
 | `docs/specs/` | Specs and user stories: the source of truth for behavior |
@@ -130,6 +130,6 @@ Never commit secrets, deployment or spreadsheet IDs, or personal data.
 |---|---|---|
 | The site shows no events section or ticker | `VITE_EVENTS_API_URL` is empty, or the backend failed or has no events | Expected without the variable. To test events, set it in `.env.local` and restart `npm run dev` |
 | A change to `.env.local` has no effect | Vite reads it at start | Stop and restart `npm run dev` |
-| `npm install` fails on the Node version | Node older than 20 | Install Node 20 or newer |
+| `npm install` fails on the Node version | Node older than 20.19, or 21.x (Vite 7 supports `^20.19.0 \|\| >=22.12.0`) | Install Node 20.19 or newer, or 22.12 or newer |
 | Port 5173 is busy | Another dev server is running | Stop it, or Vite picks the next port and prints it |
 | Docs link check reports a broken link | A moved or renamed file or heading | Fix the link; run the check again |

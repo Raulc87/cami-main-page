@@ -1,11 +1,12 @@
 # Cami Hernandez — Personal Brand Website
 
 One-pager landing site for **Cami Hernandez** (motivational speaker, lifestyle coach, spiritual
-coach). React + Vite, 100% static frontend — no backend yet. Bilingual (English/Spanish) via a
+coach). React + Vite static frontend; the events and registration feature talks to a Google Apps Script
+backend (not yet released to the live site). Bilingual (English/Spanish) via a
 global language toggle in the nav.
 
-**Status:** live at [camihernandez.com](https://camihernandez.com) (v1.0.1); Sprint 01 closed,
-Sprint 02 (events) active — see [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
+**Status:** live at [camihernandez.com](https://camihernandez.com) (v1.0.1); Sprints 01 and 02
+closed, Sprint 03 (events go-live) active — see [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
 
 ## Quick start
 
