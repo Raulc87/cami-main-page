@@ -27,14 +27,23 @@ function releaseAfterFlush_(lock) {
   lock.releaseLock();
 }
 
-// Briefly takes the script lock; returns a function that releases it (a no-op if it was busy:
-// a limit that is slightly off is better than a request that fails).
-function tryShortLock_(waitMs) {
+// How long a counter update waits for the script lock. Registrations hold the lock while they
+// store a row and a screenshot, and a burst queues up behind them; a wait shorter than that queue
+// used to drop increments (CMP-053). A counter update is a short cache or sheet write, so the queue
+// drains well within these waits and the executions limit (6 min) is never near.
+var WINDOW_LOCK_WAIT_MS = 30000;
+var METRIC_LOCK_WAIT_MS = 60000;
+
+// Takes the script lock for a counter update; returns a function that releases it. If the lock
+// stays busy for the whole wait it returns a no-op and logs the miss (a count that is off by one
+// is better than a request that fails, but it must be visible in Executions, never silent).
+function tryShortLock_(waitMs, what) {
   var lock = LockService.getScriptLock();
   try {
     lock.waitLock(waitMs);
     return function () { releaseAfterFlush_(lock); };
   } catch (err) {
+    console.error('counter lock busy after ' + waitMs + ' ms, update may be missed: ' + what);
     return function () {};
   }
 }
@@ -56,7 +65,7 @@ function windowKey_(name, epochMs) {
 
 // Fixed one-minute window counter (CacheService): returns the count including this call.
 function bumpWindow_(name) {
-  var release = tryShortLock_(3000);
+  var release = tryShortLock_(WINDOW_LOCK_WAIT_MS, 'window ' + name);
   try {
     var cache = CacheService.getScriptCache();
     var key = windowKey_(name, Date.now());
@@ -102,7 +111,7 @@ function uploadCapReached_(date, bytes) {
 
 // Adds to one column of today's `Metrics` row (created on first use). Never throws.
 function bumpMetric_(field, amount) {
-  var release = tryShortLock_(5000);
+  var release = tryShortLock_(METRIC_LOCK_WAIT_MS, 'metric ' + field);
   try {
     var date = crDate_(Date.now());
     var sheet = getOrCreateSheet('Metrics', METRIC_HEADERS);
