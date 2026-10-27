@@ -82,8 +82,17 @@ function bumpWindow_(name) {
   }
 }
 
-function readWindow_(name) {
-  return Number(CacheService.getScriptCache().get(windowKey_(name, Date.now())) || 0);
+// Takes one count back from the current window (never below zero).
+function dropWindowCount_(name) {
+  var key = windowKey_(name, Date.now());
+  var release = takeCounterLock_('window drop ' + name) || releaseNothing_;
+  try {
+    var cache = CacheService.getScriptCache();
+    var n = Math.max(0, Number(cache.get(key) || 0) - 1);
+    cache.put(key, String(n), 120);
+  } finally {
+    release();
+  }
 }
 
 function readDaily_(prefix, date) {

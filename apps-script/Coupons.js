@@ -38,21 +38,38 @@ function usesOf_(counting, couponCode) {
   return counting.filter(function (r) { return str_(r.v.couponCode).trim().toUpperCase() === couponCode; });
 }
 
-function couponCheckFailed_(code) {
-  bumpWindow_('couponfail');
-  bumpMetric_('couponFailures', 1);
-  return fail(code);
+// Failed coupon checks per minute (`LIMIT_COUPON_FAILS_PER_MIN`) cover every action that checks a
+// coupon code. A check takes its slot when it starts and gives it back when the code passes, so
+// checks that run at the same time are counted together. Returns false when the limit is reached.
+function takeCouponFailureSlot_() {
+  if (bumpWindow_('couponfail') <= getNumberProp('LIMIT_COUPON_FAILS_PER_MIN')) return true;
+  dropWindowCount_('couponfail');
+  return false;
+}
+
+function giveBackCouponFailureSlot_() {
+  dropWindowCount_('couponfail');
+}
+
+// A coupon check ends with an answer and whether it counts as a failed check.
+function couponAnswer_(response, failedCheck) {
+  return { response: response, failedCheck: failedCheck };
 }
 
 function handleCoupon_(body) {
-  var maxChecks = getNumberProp('LIMIT_COUPON_CHECKS_PER_MIN');
-  var maxFails = getNumberProp('LIMIT_COUPON_FAILS_PER_MIN');
-  if (bumpWindow_('coupon') > maxChecks || readWindow_('couponfail') >= maxFails) {
+  if (bumpWindow_('coupon') > getNumberProp('LIMIT_COUPON_CHECKS_PER_MIN') || !takeCouponFailureSlot_()) {
     bumpMetric_('throttled', 1);
     checkAlertsSafely_();
     return fail('RATE_LIMITED');
   }
+  var answer = checkCoupon_(body);
+  if (answer.failedCheck) bumpMetric_('couponFailures', 1);
+  else giveBackCouponFailureSlot_();
+  return answer.response;
+}
 
+// The checks of the `coupon` action, after the limits.
+function checkCoupon_(body) {
   var fields = {};
   var eventCode = str_(body.eventCode).trim().toUpperCase();
   if (!EVENT_CODE_RE.test(eventCode)) fields.eventCode = 'required';
@@ -61,21 +78,21 @@ function handleCoupon_(body) {
   else if (email.length > 254 || !EMAIL_RE.test(email)) fields.email = 'invalid_email';
   var couponCode = str_(body.couponCode).trim().toUpperCase();
   if (!COUPON_CODE_RE.test(couponCode)) fields.couponCode = 'invalid_coupon_format';
-  if (Object.keys(fields).length) return fail('VALIDATION_ERROR', fields);
+  if (Object.keys(fields).length) return couponAnswer_(fail('VALIDATION_ERROR', fields), false);
 
   var found = lookupEventForRegister_(eventCode);
-  if (!found) return fail('EVENT_NOT_FOUND');
+  if (!found) return couponAnswer_(fail('EVENT_NOT_FOUND'), false);
   var nowMs = Date.now();
   if (!found.published || found.duplicated || nowMs >= found.event.startsAtMs - REGISTRATION_CLOSES_HOURS * 3600000) {
-    return fail('REGISTRATION_CLOSED');
+    return couponAnswer_(fail('REGISTRATION_CLOSED'), false);
   }
 
   var def = findCoupon_(eventCode, couponCode);
-  if (!def) return couponCheckFailed_('COUPON_INVALID');
+  if (!def) return couponAnswer_(fail('COUPON_INVALID'), true);
   var counting = countingRows_(readTable(eventCode));
   var holders = usesOf_(counting, couponCode);
   var emailUsed = holders.some(function (r) { return str_(r.v.email).trim().toLowerCase() === email; });
   var problem = couponProblem_(def, holders.length, emailUsed, nowMs);
-  if (problem) return couponCheckFailed_(problem);
-  return ok({ discountPercent: def.discountPercent, amountDueCrc: amountDue_(found.event.priceCrc, def.discountPercent) });
+  if (problem) return couponAnswer_(fail(problem), true);
+  return couponAnswer_(ok({ discountPercent: def.discountPercent, amountDueCrc: amountDue_(found.event.priceCrc, def.discountPercent) }), false);
 }

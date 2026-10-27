@@ -100,11 +100,17 @@ function handleRegister_(body) {
   // under the lock, because that depends on the registrations at that moment (BR-E13).
   var coupon = null;
   if (v.couponCode) {
+    if (!takeCouponFailureSlot_()) {
+      bumpMetric_('throttled', 1);
+      checkAlertsSafely_();
+      return fail('RATE_LIMITED');
+    }
     coupon = findCoupon_(v.eventCode, v.couponCode);
     if (!coupon) {
       bumpMetric_('couponFailures', 1);
       return fail('COUPON_INVALID');
     }
+    giveBackCouponFailureSlot_(); // the code exists: a later refusal below counts it again
   }
 
   var amountDue = coupon ? amountDue_(ev.priceCrc, coupon.discountPercent) : ev.priceCrc;
@@ -129,7 +135,10 @@ function handleRegister_(body) {
     releaseAfterFlush_(lock);
   }
   if (outcome.error) {
-    if (outcome.error.indexOf('COUPON_') === 0) bumpMetric_('couponFailures', 1);
+    if (outcome.error.indexOf('COUPON_') === 0) {
+      bumpMetric_('couponFailures', 1);
+      bumpWindow_('couponfail');
+    }
     if (outcome.error === 'UPLOAD_CAP_REACHED') checkAlertsSafely_();
     return fail(outcome.error);
   }
