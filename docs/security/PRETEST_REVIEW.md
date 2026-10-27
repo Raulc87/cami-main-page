@@ -11,8 +11,9 @@ production or the live site.
 
 ## Metadata
 - Reviewer: Implementation Agent 2 (security), Sprint 03
-- Status: Code review done; the staging check was not run and its items move to the PTES test
-  (§3, owner decision 2026-10-27); CMP-063 closes when the owner checks SAC-13 and SAC-15
+- Status: Done. Code review done; the staging check was not run and its items move to the PTES
+  test (§3, owner decision 2026-10-27); the owner's checks of SAC-13 and SAC-15 done 2026-10-27
+  (§2b)
 - Code reviewed: `main` at commit `5566e56` (2026-10-27), which includes CMP-053 and CMP-050
 - Last updated: 2026-10-27
 
@@ -55,13 +56,39 @@ means it is checked when a release is prepared.
 | SAC-10 Safe failure | Reviewed 2026-10-27 | PTES test |
 | SAC-11 Logs without personal data | Reviewed 2026-10-27 | — |
 | SAC-12 No secrets in the code or the bundle | Reviewed 2026-10-27 | Release check (CMP-068) |
-| SAC-13 HTTPS and browser protections on the site | Not checkable from the code (GoDaddy settings) | Owner check of the live site in the browser's developer tools |
+| SAC-13 HTTPS and browser protections on the site | Not checkable from the code (GoDaddy settings) | Owner check done 2026-10-27: **not met**, see §2b; fix CMP-079 before the go-live |
 | SAC-14 Known, current dependencies | Reviewed 2026-10-27 (the deploy tool's audit is CMP-050) | Release check (CMP-068) |
-| SAC-15 Private storage and minimal data in the browser | Reviewed 2026-10-27 | Owner check of the sharing of the spreadsheet and folder |
+| SAC-15 Private storage and minimal data in the browser | Reviewed 2026-10-27 | Owner check of staging done 2026-10-27: sharing met, see §2b; production after CMP-064; one open question on cookies (§2b) |
 | SAC-16 No email abuse beyond the accepted risk | Reviewed 2026-10-27 | PTES test |
 | SAC-17 Known endpoints | Reviewed 2026-10-27 | Release check (CMP-068) |
 
 The baseline §7 item on script scopes and editor-only helpers was reviewed too.
+
+## 2b. Owner checks (2026-10-27)
+
+The owner checked these in a normal browser (no scan), relayed by the coordinator. They concern
+the live site's public configuration, which anyone can see, so they are recorded here in full.
+
+- **SAC-13, the live site (`camihernandez.com`): not met.** `http://` does not redirect to
+  `https://`, and the responses carry none of `Strict-Transport-Security`,
+  `Content-Security-Policy`, `X-Content-Type-Options` or `Referrer-Policy` (only the standard
+  Apache headers). Fix: CMP-079 (Agent 3, an `.htaccess` file with the redirect and the headers),
+  before the go-live (CMP-068); the go-live release checklist confirms the headers on the live
+  site after the upload.
+- **SAC-15, staging: met.** The staging events spreadsheet and the screenshots folder are
+  "Restricted", shared only with the owner's account. The production spreadsheet and folder are
+  checked after they are created (CMP-064).
+- **SAC-15, open question: cookies on `camihernandez.com`.** The owner's browser sent three cookies
+  to the site (`_tccl_visitor`, `_tccl_visit`, `_scc_session`). The site's code sets no cookie and
+  loads no script except its own bundle (fonts come from Google Fonts' stylesheet), and the
+  responses the owner saw carried no `Set-Cookie`, so these were set by something else for that
+  domain: most likely a GoDaddy feature, now or from an earlier GoDaddy page on the domain. The
+  owner checks in a private browser window whether a fresh visit creates them (developer tools →
+  Application → Cookies, and any `Set-Cookie` header). If it does not, they are leftovers and change
+  nothing. If it does, the owner finds and turns off the GoDaddy feature that sets them (for example
+  site statistics or a site builder in the GoDaddy or cPanel settings); if it cannot be turned off,
+  the privacy notice may need to mention it, which goes to Cami (BR-E11), and SAC-15 is updated.
+  Tracked by the coordinator before the go-live.
 
 ## 3. Staging check: not run, moved to the PTES test
 
