@@ -315,6 +315,11 @@ scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `mai
    records it in ADR-009: it is the full reach of this token. (`npx @google/clasp@3.4.1 login`
    also works and was used at the first setup, but it does not use the repo's lockfile and it runs
    install scripts; prefer the repo route above for rotations.)
+   **The login can expire.** The staging login stopped working after 4 days on 2026-10-26 and the
+   owner renewed it (the deploy fails at the step that asks Google for the project's title, before
+   anything is pushed). If it happens again, first repeat this step and replace the
+   `CLASP_CREDENTIALS` secret of **both** environments; if it keeps expiring within days, ask the
+   Workspace admin to check the **Google Cloud session control** setting (Workspace Admin → Security).
 3. GitHub → repo **Settings → Environments**: create `staging` and `production`. For both, under
    *Deployment branches* choose **Selected branches → main**. For `production` also tick
    **Required reviewers** and add the owner.
