@@ -117,7 +117,8 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
 | CMP-072 | SEC-001: security fix, tracked privately | Agent 3 | CMP-063 finding | `CMP-072-sec-001` | done |
 | CMP-079 | HTTPS redirect and security headers on the live site (SAC-13): an `.htaccess` in `public/` | Agent 3 | — | `CMP-079-https-and-headers` | done |
-| CMP-073..CMP-076 | SEC-002..SEC-005: security fixes, tracked privately (one PR each) | Agent 1 | CMP-063 findings | `CMP-07N-sec-00M` | review (merged; staging check after merge) |
+| CMP-073..CMP-076 | SEC-002..SEC-005: security fixes, tracked privately (one PR each) | Agent 1 | CMP-063 findings | `CMP-07N-sec-00M` | done |
+| CMP-084 | Deploy checks the project's files against the repo (owner: "This sprint", "Remove automatically", 2026-10-27) | Agent 1 | — | `CMP-084-deploy-file-check` | done |
 | CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, CMP-072..CMP-076, CMP-079, and every §3b gate | `CMP-068-events-release` | todo |
 
 ### Ticket checks (acceptance criteria)
