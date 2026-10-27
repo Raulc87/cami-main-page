@@ -43,8 +43,31 @@ function outstandingAlertItems_(nowMs) {
   return items;
 }
 
+// Addresses of the daily alert (EVENTS_API_CONTRACT §9, `ALERT_TO`): comma-separated, read only from
+// script properties. An invalid address is skipped and logged without the address; with none left
+// (empty or all invalid) the alert goes to `MAIL_REPLY_TO`, so it never goes nowhere.
+function alertRecipients_() {
+  var seen = {};
+  var valid = [];
+  var skipped = 0;
+  str_(getProp('ALERT_TO')).split(',').forEach(function (raw) {
+    var address = raw.trim();
+    if (!address) return;
+    var key = address.toLowerCase();
+    if (address.length > 254 || !EMAIL_RE.test(address)) {
+      skipped++;
+    } else if (!seen[key]) {
+      seen[key] = true;
+      valid.push(address);
+    }
+  });
+  if (skipped) console.error('ALERT_TO: ' + skipped + ' invalid address(es) skipped');
+  if (!valid.length && getProp('ALERT_TO')) console.error('ALERT_TO has no valid address: using MAIL_REPLY_TO');
+  return valid.length ? valid : [getProp('MAIL_REPLY_TO')];
+}
+
 function sendAlertEmail_(items, date) {
-  var to = getProp('MAIL_REPLY_TO');
+  var to = alertRecipients_().join(',');
   var subject = 'Eventos: avisos del ' + date + ' / Events alerts for ' + date;
   var lines = items.map(function (i) { return '- ' + i.text; }).join('\n');
   var body = 'Hola Cami,\n\nHay cosas que revisar en el sistema de eventos:\n\n' + lines +
