@@ -98,6 +98,7 @@ and initial values are the contract (§9); do not rename them.
 | `SINPE_ACCOUNT_NAME` | until Cami confirms: `Nombre por confirmar` (BR-E01); then the real name |
 | `MAIL_FROM_ALIAS` | `no-reply@lifetoolscr.com`; the account that owns the project must have it as a verified "Send mail as" alias in Gmail (Settings → Accounts → Send mail as), (checked in the spike, step e); if sending from it fails, the fallback is `camila@lifetoolscr.com` |
 | `MAIL_REPLY_TO` | `camila@lifetoolscr.com` |
+| `ALERT_TO` | the addresses that receive the daily alert email, separated by commas: the owner's address and `camila@lifetoolscr.com` (the owner types their own address in the script properties; it is never written in the repo). Empty: the alert goes to `MAIL_REPLY_TO`. An invalid address is skipped and logged without the address; if none is valid, it goes to `MAIL_REPLY_TO` |
 | `LIMIT_REGISTER_PER_MIN` | `20` |
 | `LIMIT_COUPON_CHECKS_PER_MIN` | `30` |
 | `LIMIT_COUPON_FAILS_PER_MIN` | `10` |
@@ -153,11 +154,11 @@ may not see the events section.
    appears about every 5 minutes with status **Completed**. A **Failed** run: open it and read the
    log; the site keeps working from the last cache or rebuilds on demand.
 The same run also recounts the registrations Cami has marked `spam` in the `Metrics` tab, drops
-old daily counters, and sends the **daily alert email** to `MAIL_REPLY_TO` when something new
+old daily counters, and sends the **daily alert email** to every address in `ALERT_TO` (to `MAIL_REPLY_TO` when it is empty) when something new
 needs Cami's attention (an invalid `Events` or `Coupons` row, or a daily threshold crossed); at
 most one per day, and findings made after it go into the next day's email. While testing, point
-`MAIL_REPLY_TO` at your own address so that Cami does not receive test alerts, and set it back
-afterwards.
+`ALERT_TO` at your own address (or, with `ALERT_TO` empty, `MAIL_REPLY_TO`) so that Cami does not
+receive test alerts, and set it back afterwards.
 If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). The
 last good answer is also kept in script properties and used for up to 20 minutes if Google drops
 the cache early, so a short outage does not empty the page. That copy fits while the event list is
