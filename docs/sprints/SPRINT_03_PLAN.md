@@ -116,8 +116,9 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | todo |
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
 | CMP-072 | SEC-001: security fix, tracked privately | Agent 3 | CMP-063 finding | `CMP-072-sec-001` | done |
+| CMP-079 | HTTPS redirect and security headers on the live site (SAC-13): an `.htaccess` in `public/` | Agent 3 | — | `CMP-079-https-and-headers` | todo |
 | CMP-073..CMP-076 | SEC-002..SEC-005: security fixes, tracked privately (one PR each) | Agent 1 | CMP-063 findings | `CMP-07N-sec-00M` | todo |
-| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, CMP-072..CMP-076, and every §3b gate | `CMP-068-events-release` | todo |
+| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, CMP-072..CMP-076, CMP-079, and every §3b gate | `CMP-068-events-release` | todo |
 
 ### Ticket checks (acceptance criteria)
 - **CMP-061 (coordinator):** contract §9 gets an `ALERT_TO` script property (comma-separated
@@ -167,6 +168,20 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   **Changed (owner, 2026-10-27, Sprint Review Notes):** the staging scan is not run in
   CMP-063; its checks wait for the PTES test (CMP-062). CMP-063 closes on the code review plus
   the owner's checks of SAC-13 (site headers) and SAC-15 (sharing settings).
+- **CMP-079:** the owner's SAC-13 check (2026-10-27) found that `http://camihernandez.com` does
+  not redirect to HTTPS and that the live site sends none of `Strict-Transport-Security`,
+  `Content-Security-Policy`, `X-Content-Type-Options` and `Referrer-Policy`. An `.htaccess`
+  in `public/` (copied to `dist/` and uploaded with the site; GoDaddy runs Apache) adds the
+  301 redirect to HTTPS and the four headers as SAC-13 describes; the CSP allows only the site,
+  Google Fonts, the events backend and its redirect host, and `https:` images, with
+  `frame-ancestors`; HSTS is a plain `max-age` of at least one year, without
+  `includeSubDomains` or `preload`. Before the upload (`vite preview` does not read
+  `.htaccess`): the same headers are applied to a local serve of `dist/` (for example a small
+  local server or Apache container, not committed), and the whole page is exercised with the
+  browser console showing no CSP violation: the events section and ticker, the registration
+  form with a coupon check and a submission against staging, both languages, at 1280/900/375
+  px. Right after the CMP-068 upload: the redirect, the four headers and a clean console on the
+  live site; a server error or a broken page means restoring the backup.
 - **CMP-064:** following runbook §2, §3 and §5.1 with the owner:
   - the production project `cami-events-production`, first upload, web-app deployment;
   - production script properties with the real SINPE values;
@@ -259,8 +274,9 @@ Each line names what the PR waits for.
 9. CMP-066 (verification, integration owner Agent 3) — every PR above, except one the owner
    moved to the next sprint.
 10. CMP-069 (deadline date) — CMP-056 and the go-live date from the owner.
-11. CMP-072..CMP-076 (security fixes, tracked privately) — nothing but the private details.
-12. CMP-068 (go-live) — CMP-066, CMP-069, CMP-072..CMP-076 and every release-checklist §3b gate (so a moved
+11. CMP-072..CMP-076 (security fixes, tracked privately) — nothing but the private details;
+    CMP-079 (HTTPS and headers) — nothing.
+12. CMP-068 (go-live) — CMP-066, CMP-069, CMP-072..CMP-076, CMP-079 and every release-checklist §3b gate (so a moved
     CMP-065 or CMP-067 also moves CMP-068).
 
 Cycle check: every arrow points to a PR earlier in this list, so no PR waits, directly or
@@ -399,3 +415,7 @@ The human reviewer is the final approver.
     check?" — options: leave it to the tester; I'll run it by hand. Owner: **"Leave it to the
     tester (Recommended)"**. The staging checks wait for the PTES test (CMP-062); CMP-063
     closes on the code review plus the owner's checks of SAC-13 and SAC-15.
+- Owner checks for CMP-063 (2026-10-27): SAC-13 on the live site failed: `http://` stays on
+  HTTP and none of the four security headers is sent (CMP-079, before the go-live). SAC-15 on
+  staging passed: the spreadsheet and the screenshots folder are Restricted to the owner's
+  account; production is checked after CMP-064.
