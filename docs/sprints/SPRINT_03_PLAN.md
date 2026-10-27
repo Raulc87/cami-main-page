@@ -116,7 +116,8 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | todo |
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
 | CMP-072 | SEC-001: security fix, tracked privately | Agent 3 | CMP-063 finding | `CMP-072-sec-001` | todo |
-| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, CMP-072, and every §3b gate | `CMP-068-events-release` | todo |
+| CMP-073..CMP-076 | SEC-002..SEC-005: security fixes, tracked privately (one PR each) | Agent 1 | CMP-063 findings | `CMP-07N-sec-00M` | todo |
+| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, CMP-072..CMP-076, and every §3b gate | `CMP-068-events-release` | todo |
 
 ### Ticket checks (acceptance criteria)
 - **CMP-061 (coordinator):** contract §9 gets an `ALERT_TO` script property (comma-separated
@@ -389,6 +390,15 @@ The human reviewer is the final approver.
   - "One finding counts as 'high' [...]. The other five are 'low' [...]. Before launch, the
     rules only require the high one fixed. What do you want?" — options: high now, lows in
     Sprint 04; fix all before launch. Owner: **"High now, lows in Sprint 04 (Recommended)"**
-    (CMP-072 in this sprint, before CMP-068; CMP-073..CMP-076 for Sprint 04).
+    (CMP-072 in this sprint, before CMP-068; CMP-073..CMP-076 for Sprint 04, then moved into
+    this sprint by the next answer).
   - A third answer accepted one low finding by design (recorded privately; the security
     baseline §7 records it by ID when its details may be published).
+  - Later the same day, PR #62 briefly showed public text hinting where the low findings are
+    (fixed in that PR; the old text stays in GitHub's history). Question as asked: "[...] All 5
+    are low. Fix them sooner because of this?" — options: no, keep Sprint 04; yes, fix before
+    launch. Owner: **"Yes, fix before launch"**. CMP-073..CMP-076 move into Sprint 03 (Agent 1),
+    and CMP-068 waits for them.
+  - "The security agent asks for permission to run a gentle, slow check against STAGING only
+    [...]. Never against the live site. Allow it?" — Owner: **"Yes, allow it (Recommended)"**;
+    the written authorization with its window is on PR #62.
