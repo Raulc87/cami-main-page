@@ -367,7 +367,8 @@ This repository is **public**: an unfixed, exploitable vulnerability is never re
 any other tracked file, issue or PR. Findings of the pre-test review (CMP-063) and of the
 penetration test are sent privately to the coordinator, who arranges private tracking with the
 owner; only a neutral reference such as "SEC-001: security fix, tracked privately", with no
-severity, appears in a tracked file until the fix is released. No such finding is recorded today.
+severity, appears in a tracked file until the fix is released. The pre-test review's neutral IDs are
+listed in [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §4.
 
 | Item | Owner | Decision / due |
 |---|---|---|
