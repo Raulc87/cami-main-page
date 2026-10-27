@@ -1,0 +1,21 @@
+# Apache rules for the live site (GoDaddy shared hosting). Vite copies this file to dist/;
+# upload it with the rest of dist/ (release-checklist). SAC-13, CMP-079.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Redirect every HTTP request to HTTPS, keeping host and path.
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # Allowed: the site itself, Google Fonts, the events backend (Apps Script web app and its
+  # redirect host) and https images (event pictures). Inline styles are set by React through
+  # the style API, which CSP allows; the build has no inline script.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+</IfModule>
