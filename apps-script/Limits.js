@@ -28,25 +28,29 @@ function releaseAfterFlush_(lock) {
 }
 
 // Counter updates take the user lock, not the script lock that registrations hold while they store
-// a row and a screenshot: the web app runs as its owner, so every request shares one user lock and
-// the counters never queue behind a registration (CMP-053). Everything under it is a cache or
-// script-property write of a few milliseconds, so a short wait is enough and a request is never
-// held for long by a counter.
+// a row and a screenshot, so the counters never queue behind a registration (CMP-053). Everything
+// under it is a cache or script-property write of a few milliseconds, so a short wait is enough.
+// ASSUMED, not documented by Google: for an "execute as me" web app every anonymous request, and the
+// owner's trigger, resolve to the same user, hence one shared user lock. The CMP-053 burst on staging
+// must prove it (exact counts) before this code goes to production; a lock that is not shared fails
+// the burst and the counters go back to the script lock.
 var COUNTER_LOCK_WAIT_MS = 10000;
 
-// Takes the counter lock; returns a function that releases it. If the lock stays busy for the whole
-// wait it returns a no-op and logs the miss (a count that is off by one is better than a request
-// that fails, but it must be visible in Executions, never silent).
-function holdCounterLock_(what) {
-  var lock = LockService.getUserLock();
+// Takes the counter lock; returns a function that releases it, or null when it was not taken
+// (the log says whether it timed out or failed, with the error name and message). Callers that
+// must not fail a request carry on without it; the miss stays visible in Executions.
+function takeCounterLock_(what) {
   try {
+    var lock = LockService.getUserLock();
     lock.waitLock(COUNTER_LOCK_WAIT_MS);
     return function () { lock.releaseLock(); };
   } catch (err) {
-    console.error('counter lock busy after ' + COUNTER_LOCK_WAIT_MS + ' ms, update may be missed: ' + what);
-    return function () {};
+    console.error('counter lock not taken (' + err.name + ': ' + err.message + '), update may be missed: ' + what);
+    return null;
   }
 }
+
+function releaseNothing_() {}
 
 // Briefly takes the script lock; returns null when it stayed busy.
 function takeShortLock_(waitMs) {
@@ -67,7 +71,7 @@ function windowKey_(name, epochMs) {
 // window is chosen on arrival, so a request that waits for the lock still counts in its own minute.
 function bumpWindow_(name) {
   var key = windowKey_(name, Date.now());
-  var release = holdCounterLock_('window ' + name);
+  var release = takeCounterLock_('window ' + name) || releaseNothing_;
   try {
     var cache = CacheService.getScriptCache();
     var n = Number(cache.get(key) || 0) + 1;
@@ -124,7 +128,7 @@ function roundMetric_(value) {
 
 // Adds to one metric of today. Never throws.
 function bumpMetric_(field, amount) {
-  var release = holdCounterLock_('metric ' + field);
+  var release = takeCounterLock_('metric ' + field) || releaseNothing_;
   try {
     var key = pendingMetricKey_(crDate_(Date.now()), field);
     var props = PropertiesService.getScriptProperties();
@@ -184,8 +188,16 @@ function flushMetrics_() {
     });
   } finally {
     release();
+    subtractWritten_(written); // also after a failure partway: what reached the sheet must not be added again
   }
-  var unlockCounters = holdCounterLock_('metrics flush');
+}
+
+// Takes what was written to the sheet off the pending values. Skipped when the counter lock was not
+// taken: the sheet then keeps an over-count for one run instead of an increment being lost.
+function subtractWritten_(written) {
+  if (!written.length) return;
+  var unlock = takeCounterLock_('metrics flush');
+  if (!unlock) return;
   try {
     var props = PropertiesService.getScriptProperties();
     written.forEach(function (w) {
@@ -193,7 +205,7 @@ function flushMetrics_() {
       if (left > 0) props.setProperty(w.key, String(left)); else props.deleteProperty(w.key);
     });
   } finally {
-    unlockCounters();
+    unlock();
   }
 }
 

@@ -199,7 +199,9 @@ Triggers run the saved code (Head); visitors need a **New version** (section 5).
 ### 2.8 Script properties page is read-only (more than 50 properties)
 The Apps Script settings page lets you edit script properties only while there are 50 or fewer.
 The script itself keeps about 30 (the settings in 2.4 plus the cache copy, alert state and the
-counters of today and yesterday), so it normally stays well below. If the page ever says the
+counters of today and yesterday), plus up to five `METRIC_PENDING_<date>:<field>` properties per
+day that the 5-minute trigger empties (a few more around midnight, or many more if the trigger
+stops running), so it normally stays below. If the page ever says the
 properties are read-only:
 1. In the editor run `showPropertyUsage`: the log shows how many properties exist and which kinds
    (names only, no values).
