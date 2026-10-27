@@ -58,7 +58,7 @@ means it is checked when a release is prepared.
 | SAC-12 No secrets in the code or the bundle | Reviewed 2026-10-27 | Release check (CMP-068) |
 | SAC-13 HTTPS and browser protections on the site | Not checkable from the code (GoDaddy settings) | Owner check done 2026-10-27: **not met**, see §2b; fix CMP-079 before the go-live |
 | SAC-14 Known, current dependencies | Reviewed 2026-10-27 (the deploy tool's audit is CMP-050) | Release check (CMP-068) |
-| SAC-15 Private storage and minimal data in the browser | Reviewed 2026-10-27 | Owner check of staging done 2026-10-27: sharing met, see §2b; production after CMP-064; one open question on cookies (§2b) |
+| SAC-15 Private storage and minimal data in the browser | Reviewed 2026-10-27 | Owner check of staging done 2026-10-27: sharing met, see §2b; production met 2026-10-27 (CMP-064); cookies resolved 2026-10-27 (§2b), checked again after the go-live upload |
 | SAC-16 No email abuse beyond the accepted risk | Reviewed 2026-10-27 | PTES test |
 | SAC-17 Known endpoints | Reviewed 2026-10-27 | Release check (CMP-068) |
 
@@ -89,6 +89,15 @@ the live site's public configuration, which anyone can see, so they are recorded
   site statistics or a site builder in the GoDaddy or cPanel settings); if it cannot be turned off,
   the privacy notice may need to mention it, which goes to Cami (BR-E11), and SAC-15 is updated.
   Tracked by the coordinator before the go-live.
+
+  **Resolved 2026-10-27.** The owner's private-window check: a fresh visit still created
+  `_scc_session`, `_tccl_visit` and `_tccl_visitor`, all three set for `.camihernandez.com` and
+  marked HttpOnly (so sent by the server, not by the site's code). They belong to GoDaddy's visitor
+  statistics, which the owner turned off in GoDaddy (its message, as the owner shared it: "Real
+  User Metrics tracking disabled for camihernandez.com"; GoDaddy says the change can take up to
+  24 hours). A new private-window check right after showed no cookies (owner: "it shows no cookies
+  now"). SAC-15 needs no exception and the privacy notice no change; the release-checklist §3b
+  cookie gate is checked again after the go-live upload (CMP-068).
 
 ## 3. Staging check: not run, moved to the PTES test
 
