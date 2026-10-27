@@ -86,8 +86,8 @@ requirement text quoted from the official OWASP list. Summary by chapter:
 | `v5.0.0-16` Security Logging and Error Handling | Yes | Logs without personal data, counted security events, generic errors: SAC-10, SAC-11 |
 | `v5.0.0-17` WebRTC | No | No WebRTC |
 
-Totals: 83 requirements planned (designed in the specs or the code, verified by the pre-test
-security review CMP-063), 12 verified by document review, 13 accepted risks (provider-controlled
+Totals: 83 requirements planned (designed in the specs or the code; code reviewed by the pre-test
+security review CMP-063, behavior verified by the PTES test), 12 verified by document review, 13 accepted risks (provider-controlled
 or accepted gaps, §7) and 145 not applicable. The review-only agent and the sprint readiness
 check use this inventory.
 
@@ -97,8 +97,9 @@ Each risk that applies becomes acceptance criteria in the stories it touches. Th
 below as testable Given/When/Then statements (`SAC-NN`, security acceptance criteria) that name
 the ASVS requirements they verify by versioned ID. The coordinator adds them to
 [`USER_STORIES.md`](../specs/USER_STORIES.md) → Security in a docs PR, keeping these IDs so the
-inventory's references stay valid. CMP-063 verifies them against the code and on staging before
-the go-live (CMP-068).
+inventory's references stay valid. CMP-063 reviewed them against the code before the go-live
+(CMP-068); their behavior on a running system is verified by the PTES test (owner decision
+2026-10-27, [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §3).
 
 | Risk (Top 10:2025 / API Top 10:2023 ID and name) | Applies | Where it is covered (stories, ASVS requirements) | Reason if not |
 |---|---|---|---|
@@ -128,7 +129,7 @@ Review-only agent).
 
 ### Security acceptance criteria (proposed for USER_STORIES → Security)
 
-Verified against staging (never production) by CMP-063, with test data only.
+Code reviewed by CMP-063; verified on a running system by the PTES test, with test data only.
 
 - **SAC-01 Server-side validation** (US-019, US-020, US-021, US-023; A05, API3, API10;
   `v5.0.0-2.2.1`, `v5.0.0-2.2.2`, `v5.0.0-2.2.3`, `v5.0.0-1.1.1`, `v5.0.0-15.3.3`)
@@ -280,8 +281,8 @@ Verified against staging (never production) by CMP-063, with test data only.
   a new test scope) if they are built: lead capture or the intake questionnaire with persistence
   (US-011, US-012), a payment gateway or card payments, user accounts or an admin web panel, and
   the captcha (Cloudflare Turnstile, FFR-029) as a new outside service.
-- Plan: `docs/security/PENTEST_PLAN.md` (CMP-062, not written yet; from the kit's
-  `PENTEST_PLAN_TEMPLATE.md`; its scope covers production, since the test runs after the go-live).
+- Plan: [`PENTEST_PLAN.md`](PENTEST_PLAN.md) (CMP-062, from the kit's `PENTEST_PLAN_TEMPLATE.md`;
+  its scope covers production, since the test runs after the go-live).
 - Planned before release: **the PTES deadline is 60 days after the events go-live** (release
   v1.1.0, CMP-068), owner decision 2026-10-26 ("60 days after launch", SPRINT_03_PLAN → Sprint
   Review Notes). **Deadline date:** written here by CMP-069 as the go-live date plus 60 days, once
@@ -298,9 +299,9 @@ Verified against staging (never production) by CMP-063, with test data only.
 Penetration tests are run only by people the owner authorizes in writing, under a written scope
 signed by the owner (the pen-test plan). An implementation agent never runs a penetration test,
 and never runs attack tools or security scans against production. The security agent prepares
-and assists: the plan, the threat model, the ASVS review, and a low-rate, application-level scan
-of **staging only**, after the owner authorizes it in writing on the CMP-063 PR (scope, tool,
-rate, time window and alert settings).
+and assists: the plan, the threat model and the ASVS review. A low-rate check of staging was
+proposed in CMP-063 but not run; its items moved to the PTES test (owner decision 2026-10-27,
+[`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §3).
 
 ## 6. Secrets, dependencies and data
 
@@ -367,14 +368,15 @@ This repository is **public**: an unfixed, exploitable vulnerability is never re
 any other tracked file, issue or PR. Findings of the pre-test review (CMP-063) and of the
 penetration test are sent privately to the coordinator, who arranges private tracking with the
 owner; only a neutral reference such as "SEC-001: security fix, tracked privately", with no
-severity, appears in a tracked file until the fix is released. No such finding is recorded today.
+severity, appears in a tracked file until the fix is released. The pre-test review's neutral IDs are
+listed in [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §4.
 
 | Item | Owner | Decision / due |
 |---|---|---|
 | Classification "not high-risk" (§1) and the target fix times (§4 RV) | Owner | Decided 2026-10-27 (quoted in §1 and §4). ASVS level L2 (§2): approved on merge of this PR |
 | PTES deadline date (§5) | Agent 2 (CMP-069), from the owner's go-live date | Before the go-live upload |
 | GitHub secret scanning with push protection, Dependabot alerts and private vulnerability reporting enabled; two-factor on the owner's and Cami's accounts (§4, §6) | Owner (repository and account settings) | Before the go-live upload (CMP-068); recorded in the CMP-066 verification |
-| Site HTTPS and security headers (SAC-13): the owner checks the live site in the browser; any missing control becomes a ticket for the site owner (Agent 3, `public/`) | Owner, Agent 3 | Checked in CMP-063; a fix of a missing header is not a go-live blocker unless CMP-063 rates it critical or high |
+| Site HTTPS and security headers (SAC-13): the owner checks the live site in the browser; any missing control becomes a ticket for the site owner (Agent 3, `public/`) | Owner, Agent 3 | Checked by the owner 2026-10-27: not met (no HTTPS redirect, none of the headers; [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §2b); fix CMP-079 before the go-live |
 | Story: dependency audit check, Dependabot version updates and SBOM (§6) | Coordinator (allocates) | Sprint 04 (proposed), at the latest by the PTES deadline |
 | Script scopes and editor-only helpers in production (`v5.0.0-13.2.2`, `v5.0.0-15.2.3`) | Agent 2 (CMP-063 review), Agent 1 (any fix) | Reviewed in CMP-063 |
 | Accepted (ADR-008): the endpoint is anonymous and receives no client address or headers, so limits are global and the origin cannot be checked; one heavy client can use up the shared limits for everyone | Owner | Accepted 2026-10-19 (ADR-008); revisit with the captcha rule (FFR-029) |
@@ -383,6 +385,7 @@ severity, appears in a tracked file until the fix is released. No such finding i
 | Accepted (TECH_STACK §11, ADR-009): the script holds full Drive and Gmail settings scopes and runs as the owner; the deploy token reaches every Apps Script project the owner can edit, and a leaked staging secret can change production | Owner | Accepted 2026-10-20 and 2026-10-22; revisit: a staging-only Google account and an own OAuth client (ADR-009 follow-up) |
 | Accepted (provider): headers, CORS, cache control, HTTP parsing, TLS clients and logs of the Apps Script answers are Google's and cannot be configured; no antivirus run by the project on screenshots, which only Cami opens inside Google Drive ([`ASVS_INVENTORY.md`](ASVS_INVENTORY.md), rows marked Accepted risk) | Owner | Accepted. Owner, 2026-10-27 (relayed by the coordinator on PR #58), question as asked: "Three risks the project can't fully remove, proposed as 'accepted': (1) Google controls some web settings of the backend that we can't change; (2) payment screenshots aren't virus-scanned by us (Google Drive does its own scanning); (3) someone could use the form to make the site send a registration email to an address that isn't theirs, within the existing limits (20 sign-ups/minute, 100 uploads/day). Accept them?" Owner: "Accept all three (Recommended)" |
 | Accepted (Cami, 2026-10-26): no retention period in the privacy notice | Owner, Cami | Recorded in EVENTS_EMAILS_AND_PRIVACY §3; revisit if a lawyer reviews the notice |
+| SEC-006, accepted by the owner 2026-10-27 | Owner | Accepted (CMP-063, tracked privately) |
 | Live before the penetration test (SPRINT_03_PLAN → Risks): real participants' data and payment screenshots are stored before an outside tester has checked the system | Owner | Accepted 2026-10-26 with the 60-day deadline (§5) and the CMP-063 gate |
 
 ## 8. Approval

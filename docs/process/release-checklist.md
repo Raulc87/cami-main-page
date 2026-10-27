@@ -82,6 +82,20 @@ upload; if one is not, do not release:
       events go-live);
       after that date, no release until the penetration test is done (AGENTS.md → Security
       baseline).
+- [ ] Owner settings from the security baseline §7 (CMP-056): GitHub secret scanning with push
+      protection, Dependabot alerts and private vulnerability reporting enabled on the
+      repository; two-factor sign-in on the owner's Google, GitHub and GoDaddy accounts and on
+      Cami's Google account. Recorded in the CMP-066 verification.
+- [ ] Penetration-test release gate ([PENTEST_PLAN.md §8](../security/PENTEST_PLAN.md#8-findings-and-release-gate)):
+      from the PTES deadline in the security baseline on (60 days after the events go-live),
+      no release until the test has run and has no open critical or high finding, every medium
+      or low finding has a ticket or a risk the owner accepted in writing, and the fixes of
+      critical and high findings are retested by the testers.
+- [ ] Cookies on the live site (`docs/security/PRETEST_REVIEW.md` §2b, CMP-063): in a
+      private window, a fresh visit to the site creates no cookie; if one appears (for example
+      the `_tccl_*` and `_scc_session` cookies seen on 2026-10-27, which the site's code does
+      not set), the hosting feature that sets it is turned off, or Cami approves notice wording
+      that covers it (BR-E11) and the security baseline records the SAC-15 exception.
 - [ ] Pre-test security review done (CMP-063): no open critical or high finding, unless the
       owner accepted it in writing. The findings are tracked privately (public repository), so
       the owner confirms this gate with a dated statement in the release PR (CMP-068), "No

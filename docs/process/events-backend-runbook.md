@@ -122,7 +122,7 @@ A placeholder SINPE value is shown to visitors with the placeholder marker
 The limits can be changed here later without a contract change.
 
 ### 2.5 Authorize the script
-The first run asks for the permissions the code needs (Sheets, Drive, mail, external requests).
+The first run asks for the permissions the code needs (Sheets, Drive, Docs, mail).
 1. In the editor, select any function (for example the smoke function the code provides) and
    press **Run**.
 2. **Review permissions** → pick the Workspace account → **Advanced** → **Go to <project>
