@@ -86,6 +86,11 @@ upload; if one is not, do not release:
       protection, Dependabot alerts and private vulnerability reporting enabled on the
       repository; two-factor sign-in on the owner's Google, GitHub and GoDaddy accounts and on
       Cami's Google account. Recorded in the CMP-066 verification.
+- [ ] Penetration-test release gate ([PENTEST_PLAN.md §8](../security/PENTEST_PLAN.md#8-findings-and-release-gate)):
+      from the PTES deadline in the security baseline on (60 days after the events go-live),
+      no release until the test has run and has no open critical or high finding, every medium
+      or low finding has a ticket or a risk the owner accepted in writing, and the fixes of
+      critical and high findings are retested by the testers.
 - [ ] Pre-test security review done (CMP-063): no open critical or high finding, unless the
       owner accepted it in writing. The findings are tracked privately (public repository), so
       the owner confirms this gate with a dated statement in the release PR (CMP-068), "No

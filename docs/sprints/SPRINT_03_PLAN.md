@@ -103,19 +103,19 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-060 | This plan, the agent prompts, the Sprint 02 close and the pending decision records | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
 | CMP-061 | Contract v1.6 and FFR-029: alert recipients (`ALERT_TO`) | Coordinator | CMP-060 | coordinator branch | done |
 | CMP-056 | Security baseline (`docs/security/SECURITY_BASELINE.md`) | Agent 2 | — | `CMP-056-security-baseline` | done |
-| CMP-062 | Pen-test plan and written scope (`docs/security/PENTEST_PLAN.md`) | Agent 2 | CMP-056 | `CMP-062-pentest-plan` | todo |
+| CMP-062 | Pen-test plan and written scope (`docs/security/PENTEST_PLAN.md`) | Agent 2 | CMP-056 | `CMP-062-pentest-plan` | done |
 | CMP-063 | Pre-test security review: ASVS code review and an owner-authorized, staging-only scan; findings become tickets | Agent 2 | CMP-056 | `CMP-063-pretest-security-review` | todo |
-| CMP-052 | Alert email to more than one address | Agent 1 | CMP-061 | `CMP-052-alert-recipients` | todo |
-| CMP-053 | Exact daily counters and per-minute limiters under parallel requests | Agent 1 | — | `CMP-053-exact-counters` | todo |
-| CMP-050 | Deploy tool dependencies: `npm audit` in `.github/clasp`, bump `clasp` if a fixed release exists | Agent 1 | — | `CMP-050-clasp-audit` | todo |
+| CMP-052 | Alert email to more than one address | Agent 1 | CMP-061 | `CMP-052-alert-recipients` | review (merged; staging check after merge) |
+| CMP-053 | Exact daily counters and per-minute limiters under parallel requests | Agent 1 | — | `CMP-053-exact-counters` | review (merged; staging check after merge) |
+| CMP-050 | Deploy tool dependencies: `npm audit` in `.github/clasp`, bump `clasp` if a fixed release exists | Agent 1 | — | `CMP-050-clasp-audit` | review (merged; staging check after merge) |
 | CMP-064 | Production backend setup and first approved deploy | Agent 1 + owner | CMP-052, CMP-053 | `CMP-064-production-backend` | todo |
-| CMP-057 | Developer guide (`CONTRIBUTING.md`) | Agent 3 | — | `CMP-057-developer-guide` | todo |
-| CMP-054 | Missing `/favicon.svg` | Agent 3 | — | `CMP-054-favicon` | todo |
+| CMP-057 | Developer guide (`CONTRIBUTING.md`) | Agent 3 | — | `CMP-057-developer-guide` | done |
+| CMP-054 | Missing `/favicon.svg` | Agent 3 | — | `CMP-054-favicon` | done |
 | CMP-065 | Real-iPhone check on staging, then the test-site takedown | Agent 3 + owner | CMP-052, CMP-053 on staging | `CMP-065-real-iphone-check` | todo |
 | CMP-067 | Lifetools logo for events without their own picture | Agent 3 | Cami's logo file | `CMP-067-lifetools-logo` | todo |
 | CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | todo |
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
-| CMP-072 | SEC-001: security fix, tracked privately | Agent 3 | CMP-063 finding | `CMP-072-sec-001` | todo |
+| CMP-072 | SEC-001: security fix, tracked privately | Agent 3 | CMP-063 finding | `CMP-072-sec-001` | done |
 | CMP-073..CMP-076 | SEC-002..SEC-005: security fixes, tracked privately (one PR each) | Agent 1 | CMP-063 findings | `CMP-07N-sec-00M` | todo |
 | CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, CMP-072..CMP-076, and every §3b gate | `CMP-068-events-release` | todo |
 
