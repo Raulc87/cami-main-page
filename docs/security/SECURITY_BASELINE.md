@@ -86,8 +86,8 @@ requirement text quoted from the official OWASP list. Summary by chapter:
 | `v5.0.0-16` Security Logging and Error Handling | Yes | Logs without personal data, counted security events, generic errors: SAC-10, SAC-11 |
 | `v5.0.0-17` WebRTC | No | No WebRTC |
 
-Totals: 83 requirements planned (designed in the specs or the code, verified by the pre-test
-security review CMP-063), 12 verified by document review, 13 accepted risks (provider-controlled
+Totals: 83 requirements planned (designed in the specs or the code; code reviewed by the pre-test
+security review CMP-063, behavior verified by the PTES test), 12 verified by document review, 13 accepted risks (provider-controlled
 or accepted gaps, §7) and 145 not applicable. The review-only agent and the sprint readiness
 check use this inventory.
 
@@ -97,8 +97,9 @@ Each risk that applies becomes acceptance criteria in the stories it touches. Th
 below as testable Given/When/Then statements (`SAC-NN`, security acceptance criteria) that name
 the ASVS requirements they verify by versioned ID. The coordinator adds them to
 [`USER_STORIES.md`](../specs/USER_STORIES.md) → Security in a docs PR, keeping these IDs so the
-inventory's references stay valid. CMP-063 verifies them against the code and on staging before
-the go-live (CMP-068).
+inventory's references stay valid. CMP-063 reviewed them against the code before the go-live
+(CMP-068); their behavior on a running system is verified by the PTES test (owner decision
+2026-10-27, [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §3).
 
 | Risk (Top 10:2025 / API Top 10:2023 ID and name) | Applies | Where it is covered (stories, ASVS requirements) | Reason if not |
 |---|---|---|---|
@@ -128,7 +129,7 @@ Review-only agent).
 
 ### Security acceptance criteria (proposed for USER_STORIES → Security)
 
-Verified against staging (never production) by CMP-063, with test data only.
+Code reviewed by CMP-063; verified on a running system by the PTES test, with test data only.
 
 - **SAC-01 Server-side validation** (US-019, US-020, US-021, US-023; A05, API3, API10;
   `v5.0.0-2.2.1`, `v5.0.0-2.2.2`, `v5.0.0-2.2.3`, `v5.0.0-1.1.1`, `v5.0.0-15.3.3`)
@@ -298,9 +299,9 @@ Verified against staging (never production) by CMP-063, with test data only.
 Penetration tests are run only by people the owner authorizes in writing, under a written scope
 signed by the owner (the pen-test plan). An implementation agent never runs a penetration test,
 and never runs attack tools or security scans against production. The security agent prepares
-and assists: the plan, the threat model, the ASVS review, and a low-rate, application-level scan
-of **staging only**, after the owner authorizes it in writing on the CMP-063 PR (scope, tool,
-rate, time window and alert settings).
+and assists: the plan, the threat model and the ASVS review. A low-rate check of staging was
+proposed in CMP-063 but not run; its items moved to the PTES test (owner decision 2026-10-27,
+[`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §3).
 
 ## 6. Secrets, dependencies and data
 

@@ -11,8 +11,8 @@ production or the live site.
 
 ## Metadata
 - Reviewer: Implementation Agent 2 (security), Sprint 03
-- Status: In progress: code review done; the staging check waits for the owner's written
-  authorization on the CMP-063 PR (§3)
+- Status: Code review done; the staging check was not run and its items move to the PTES test
+  (§3, owner decision 2026-10-27); CMP-063 closes when the owner checks SAC-13 and SAC-15
 - Code reviewed: `main` at commit `5566e56` (2026-10-27), which includes CMP-053 and CMP-050
 - Last updated: 2026-10-27
 
@@ -37,64 +37,47 @@ network traffic to the project's systems).
 
 While findings are open, this public table records only **what was reviewed and what is left**,
 not whether each criterion is met: the result per criterion is in the private record (§1), and it
-is published here once the fixes are released. **Staging** means the behavior is confirmed by
-the staging check (§3); **Owner check** means a setting only the owner can see; **Release check**
+is published here once the fixes are released. **PTES test** means the behavior on a running
+system is checked by the penetration test (§3); **Owner check** means a setting only the owner can see; **Release check**
 means it is checked when a release is prepared.
 
 | Criterion | Code review | Still to do |
 |---|---|---|
-| SAC-01 Server-side validation | Reviewed 2026-10-27 | Staging |
-| SAC-02 No formulas from input | Reviewed 2026-10-27 | Staging |
-| SAC-03 Untrusted text shown as text | Reviewed 2026-10-27 | Staging |
-| SAC-04 Safe image links | Reviewed 2026-10-27 | Staging |
-| SAC-05 Upload checks | Reviewed 2026-10-27 | Staging |
-| SAC-06 Abuse limits | Reviewed 2026-10-27 | Staging (below the limits only; the CMP-053 burst covers the limits themselves) |
-| SAC-07 No double booking, no partial records | Reviewed 2026-10-27 | Staging |
-| SAC-08 Only the data each answer needs | Reviewed 2026-10-27 | Staging |
-| SAC-09 Only the public actions are reachable | Reviewed 2026-10-27 | Staging |
-| SAC-10 Safe failure | Reviewed 2026-10-27 | Staging |
+| SAC-01 Server-side validation | Reviewed 2026-10-27 | PTES test |
+| SAC-02 No formulas from input | Reviewed 2026-10-27 | PTES test |
+| SAC-03 Untrusted text shown as text | Reviewed 2026-10-27 | PTES test |
+| SAC-04 Safe image links | Reviewed 2026-10-27 | PTES test |
+| SAC-05 Upload checks | Reviewed 2026-10-27 | PTES test |
+| SAC-06 Abuse limits | Reviewed 2026-10-27 | PTES test (the CMP-053 burst on staging covers the limits themselves) |
+| SAC-07 No double booking, no partial records | Reviewed 2026-10-27 | PTES test |
+| SAC-08 Only the data each answer needs | Reviewed 2026-10-27 | PTES test |
+| SAC-09 Only the public actions are reachable | Reviewed 2026-10-27 | PTES test |
+| SAC-10 Safe failure | Reviewed 2026-10-27 | PTES test |
 | SAC-11 Logs without personal data | Reviewed 2026-10-27 | — |
 | SAC-12 No secrets in the code or the bundle | Reviewed 2026-10-27 | Release check (CMP-068) |
 | SAC-13 HTTPS and browser protections on the site | Not checkable from the code (GoDaddy settings) | Owner check of the live site in the browser's developer tools |
 | SAC-14 Known, current dependencies | Reviewed 2026-10-27 (the deploy tool's audit is CMP-050) | Release check (CMP-068) |
 | SAC-15 Private storage and minimal data in the browser | Reviewed 2026-10-27 | Owner check of the sharing of the spreadsheet and folder |
-| SAC-16 No email abuse beyond the accepted risk | Reviewed 2026-10-27 | Staging |
+| SAC-16 No email abuse beyond the accepted risk | Reviewed 2026-10-27 | PTES test |
 | SAC-17 Known endpoints | Reviewed 2026-10-27 | Release check (CMP-068) |
 
 The baseline §7 item on script scopes and editor-only helpers was reviewed too.
 
-## 3. Staging check (waiting for the owner's written authorization)
+## 3. Staging check: not run, moved to the PTES test
 
-Proposed, for the owner to authorize, change or refuse **in writing on the CMP-063 PR**. Nothing
-is sent before that authorization.
+A low-rate check of staging was proposed here for the owner's written authorization. The owner
+agreed to it in principle, but it was **not run**: the security agent's session controls blocked
+the script that would have sent the requests, so nothing was sent to staging or production, and
+the owner posted no authorization. Decision: Owner, 2026-10-27 (relayed by the coordinator), question as asked: "The security agent couldn't run the gentle staging check: its session's safety controls blocked the script, so it sent nothing. What should happen to that check?" (options: leave it to the tester; I'll run it by hand). Owner: "Leave it to the tester (Recommended)". So:
 
-- **Scope:** the **staging** Apps Script web app only, its three actions. Never production, the
-  live site, the GitHub Pages test site, or Google's or GoDaddy's systems.
-- **Tool:** a short script of the security agent (Node.js `fetch`, no third-party scanner), kept
-  outside the repository, that sends hand-written requests for the "Staging" items of §2. The
-  staging URL is given privately (through the coordinator) and never written to a tracked file,
-  a log or GitHub.
-- **Rate and volume:** at most 6 requests a minute and 120 in total; at most 15 registrations,
-  only on test events, and at most 8 uploads (small synthetic images, one near 5 MB). No request
-  is sent to pass a rate limit (the CMP-053 burst covers the limits).
-- **Emails:** registrations use only the test inbox the owner gives privately; at most 15
-  confirmation emails.
-- **Test data:** test events and one test coupon the owner creates on staging (codes given
-  privately): one free event, one paid, one paid with capacity 1. Afterwards the security agent
-  sends the list of every submission, and the owner deletes the rows, files and coupon use (also
-  in the CMP-066 cleanup list).
-- **Time window:** one window of up to 2 hours chosen by the owner, never during the CMP-064
-  deploy and smoke, the CMP-053 burst or the CMP-065 iPhone check.
-- **SINPE values:** the staging `events` answer shows the SINPE number and account name set on
-  staging, so for the window the owner sets the test values (as for the GitHub Pages test window,
-  TECH_STACK §10) and restores the real ones after; the security agent never receives real SINPE
-  data.
-- **Alert settings:** before the window the owner raises the staging alert thresholds
-  (`ALERT_HONEYPOT_PER_DAY`, `ALERT_THROTTLED_PER_DAY`), as for the Sprint 02 burst; right after,
-  the owner restores them.
-- **Quotas:** staging shares the owner's Google quotas with production; the volumes above are a
-  small part of the daily limits, and the check stops at the first sign of a quota or limit
-  error.
+- the "PTES test" items of §2 are checked by the human tester under
+  `docs/security/PENTEST_PLAN.md` (CMP-062), which already covers them (its §3 threat model and §4
+  methods), before the PTES deadline;
+- CMP-063 closes on the code review (§2) plus the owner's two checks: SAC-13 (the live site's HTTPS
+  and security headers, in the browser's developer tools) and SAC-15 (the spreadsheet and the
+  screenshots folder shared only with the owner's and Cami's accounts);
+- optionally, the owner may run the plain checklist in Appendix A by hand on staging before the
+  go-live; it is not required.
 
 ## 4. Findings
 
@@ -112,6 +95,28 @@ or accepted by the owner in writing; the others have a ticket or a written accep
 
 ## 5. Inventory update
 
-When the staging check is done, the rows of [`ASVS_INVENTORY.md`](ASVS_INVENTORY.md) marked
-"Planned (CMP-063)" that this review confirmed become "Verified <date> (CMP-063)", and the rest
-keep "Planned" with the reason, in this PR.
+The rows of [`ASVS_INVENTORY.md`](ASVS_INVENTORY.md) that this review covered now read
+"Planned (PTES test)": their code was reviewed here on 2026-10-27, and their behavior on a running
+system is verified by the penetration test (§3). The test, or a later review, records the date
+each one is verified.
+
+## Appendix A. Optional hand checklist for the owner (staging only)
+
+Nothing here is required (§3). If the owner wants an early look before the go-live, these are
+the checks a person can do in a normal browser on the GitHub Pages test site or a local
+`npm run dev` pointed at staging, with the test SINPE values set and the test events only. Write
+down what happened; do not post results that show a problem on GitHub (send them to the
+coordinator privately).
+
+1. Register for a free test event with a name that starts with `=` (for example `=1+1 Test`): the
+   row shows the text exactly as typed, not a calculated value (SAC-02).
+2. Register with a name containing `<b>Test</b>`: the confirmation email shows the characters as
+   typed, not bold text (SAC-03, SAC-16).
+3. Try to upload a text file renamed to `.jpg`, and a picture over 5 MB: the form refuses both, and
+   nothing appears in the Drive folder (SAC-05).
+4. Register twice with the same email for the same test event: the second time shows "You are
+   already registered for this event" (FFR-027).
+5. In the browser's developer tools (Network), open the answer of the events request: it lists
+   only the event fields and the SINPE block, with no email addresses, IDs or coupon codes (SAC-08).
+6. Afterwards, delete the test rows and files, unpublish the test events and restore the real SINPE
+   values on staging.
