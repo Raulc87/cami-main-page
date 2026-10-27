@@ -9,6 +9,8 @@ Sprint 02 (events) active — see [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
 
 ## Quick start
 
+Setup, commands, checks and conventions: [CONTRIBUTING.md](CONTRIBUTING.md). In short:
+
 ```bash
 npm install
 npm run dev       # http://localhost:5173
