@@ -233,7 +233,7 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 |---|---|
 | `apps-script/**`, `.github/clasp/**`, `.github/scripts/deploy-apps-script.sh` and the other deploy scripts, `.github/workflows/deploy-apps-script.yml`, `.github/workflows/apps-script-check.yml`, [`docs/process/events-backend-runbook.md`](../process/events-backend-runbook.md) | Agent 1 |
 | `docs/security/**` | Agent 2 |
-| `src/**`, `public/**`, `index.html`, `package.json` and `package-lock.json` (CMP-072; the version in CMP-068), `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
+| `src/**`, `public/**`, `index.html`, `package.json` and `package-lock.json`, `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
 | [`TICKETS.md`](../../TICKETS.md) | Shared: each agent updates only its own rows; the coordinator adds rows |
 | `.github/workflows/docs-link-check.yml`, `.github/scripts/check_doc_links.py`, `docs/specs/**`, [`docs/process/release-checklist.md`](../process/release-checklist.md) and the other process docs, `docs/sprints/SPRINT_03_*.md` except the verification, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), `docs/decisions/**`, `docs/ux/**` | Coordinator (docs PRs) |
 
@@ -256,7 +256,8 @@ Each line names what the PR waits for.
 9. CMP-066 (verification, integration owner Agent 3) — every PR above, except one the owner
    moved to the next sprint.
 10. CMP-069 (deadline date) — CMP-056 and the go-live date from the owner.
-11. CMP-068 (go-live) — CMP-066, CMP-069 and every release-checklist §3b gate (so a moved
+11. CMP-072..CMP-076 (security fixes, tracked privately) — nothing but the private details.
+12. CMP-068 (go-live) — CMP-066, CMP-069, CMP-072..CMP-076 and every release-checklist §3b gate (so a moved
     CMP-065 or CMP-067 also moves CMP-068).
 
 Cycle check: every arrow points to a PR earlier in this list, so no PR waits, directly or
@@ -380,25 +381,12 @@ The human reviewer is the final approver.
     before launch, who confirms that no serious problem is still open?" — options: I confirm
     it in writing; the security agent confirms. Owner: **"I confirm it in writing
     (Recommended)"** (release-checklist §3b, CMP-068).
-- CMP-063 findings (2026-10-27): six findings, none critical, tracked privately outside the
-  repository (public repository; kit security templates). In the repository they appear only as
-  "SEC-00N: security fix, tracked privately". Questions as asked:
-  - "The security agent's code review found 6 issues, none critical. Because the repo is public,
-    the details must be kept somewhere private. Where should I keep them?" — options: private
-    Google Doc; GitHub private advisory; just tell me in chat. Owner: **"Private Google Doc
-    (Recommended)"**.
-  - "One finding counts as 'high' [...]. The other five are 'low' [...]. Before launch, the
-    rules only require the high one fixed. What do you want?" — options: high now, lows in
-    Sprint 04; fix all before launch. Owner: **"High now, lows in Sprint 04 (Recommended)"**
-    (CMP-072 in this sprint, before CMP-068; CMP-073..CMP-076 for Sprint 04, then moved into
-    this sprint by the next answer).
-  - A third answer accepted one low finding by design (recorded privately; the security
-    baseline §7 records it by ID when its details may be published).
-  - Later the same day, PR #62 briefly showed public text hinting where the low findings are
-    (fixed in that PR; the old text stays in GitHub's history). Question as asked: "[...] All 5
-    are low. Fix them sooner because of this?" — options: no, keep Sprint 04; yes, fix before
-    launch. Owner: **"Yes, fix before launch"**. CMP-073..CMP-076 move into Sprint 03 (Agent 1),
-    and CMP-068 waits for them.
+- CMP-063 findings (2026-10-27): tracked privately outside the repository (public repository;
+  kit security templates); here they appear only as "SEC-00N: security fix, tracked privately".
+  The owner chose where the details are kept (privately) and the fix schedule: CMP-072 (Agent
+  3) and CMP-073..CMP-076 (Agent 1) are fixed in this sprint, before the go-live (CMP-068); one
+  finding is handled as recorded privately. The questions and answers are in the private
+  record.
   - "The security agent asks for permission to run a gentle, slow check against STAGING only
     [...]. Never against the live site. Allow it?" — Owner: **"Yes, allow it (Recommended)"**;
     the written authorization with its window is on PR #62.
