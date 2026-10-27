@@ -111,7 +111,7 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-064 | Production backend setup and first approved deploy | Agent 1 + owner | CMP-052, CMP-053 | `CMP-064-production-backend` | done |
 | CMP-057 | Developer guide (`CONTRIBUTING.md`) | Agent 3 | — | `CMP-057-developer-guide` | done |
 | CMP-054 | Missing `/favicon.svg` | Agent 3 | — | `CMP-054-favicon` | done |
-| CMP-065 | Real-iPhone check on staging, then the test-site takedown | Agent 3 + owner | CMP-052, CMP-053 on staging | `CMP-065-real-iphone-check` | todo |
+| CMP-065 | Real-iPhone check on staging, then the test-site takedown | Agent 3 + owner | CMP-052, CMP-053 on staging | `CMP-065-real-iphone-check` | moved after the go-live (owner) |
 | CMP-067 | Lifetools logo for events without their own picture | Agent 3 | Cami's logo file | `CMP-067-lifetools-logo` | todo |
 | CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | todo |
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
@@ -273,15 +273,17 @@ Each line names what the PR waits for.
 4. CMP-052 — CMP-061.
 5. CMP-062 and CMP-063 — CMP-056.
 6. CMP-064 (production) — CMP-052, CMP-053.
-7. CMP-065 (iPhone check) — CMP-052, CMP-053 deployed to staging.
+7. CMP-065 (iPhone check) — moved after the go-live (owner, 2026-10-27): the owner's test on
+   production with the first iPhone available; nothing waits for it.
 8. CMP-067 (logo) — Cami's file only.
 9. CMP-066 (verification, integration owner Agent 3) — every PR above, except one the owner
    moved to the next sprint.
 10. CMP-069 (deadline date) — CMP-056 and the go-live date from the owner.
 11. CMP-072..CMP-076 (security fixes, tracked privately) — nothing but the private details;
     CMP-079 (HTTPS and headers) — nothing.
-12. CMP-068 (go-live) — CMP-066, CMP-069, CMP-072..CMP-076, CMP-079 and every release-checklist §3b gate (so a moved
-    CMP-065 or CMP-067 also moves CMP-068).
+12. CMP-068 (go-live) — CMP-066, CMP-069, CMP-072..CMP-076, CMP-079 and every release-checklist §3b gate except
+    the real-iPhone gate, which the owner moved after the go-live (2026-10-27); a moved CMP-067
+    also moves CMP-068.
 
 Cycle check: every arrow points to a PR earlier in this list, so no PR waits, directly or
 through others, on a PR that waits on it.
@@ -437,3 +439,18 @@ The human reviewer is the final approver.
   still got three GoDaddy visitor-statistics cookies; the owner turned off GoDaddy's "Real User
   Metrics tracking" for the domain, and a new check showed none (owner: "it shows no cookies
   now"). CMP-068 repeats the check after the go-live upload.
+- CMP-065 moved after the go-live (owner, 2026-10-27). The owner proposed it: "what if we go
+  live without the iphone real test and as soon as I find someone who has an Iphone, I test it
+  the full thing with a live event? [...] we can treat this as a bug if we actually find one, it
+  also has a fallback which is the manual verification". Question as asked: "Go live without the
+  iPhone check? [...] A camera photo in Apple's HEIC format is already accepted and stored, but
+  it isn't auto-checked, so Cami reviews that payment by hand. The one thing the check would
+  catch: an iPhone that can't upload at all. Then that person couldn't register online and
+  would need to contact Cami. [...]" Owner: **"Go live, iPhone test after (Recommended)"**. The
+  release no longer waits for CMP-065. The test-site takedown (unpublish, real SINPE values on
+  staging, `STAGING_EVENTS_API_URL` secret deleted) is done now with the owner and recorded in
+  CMP-066's cleanup list; CMP-068 checks it before the upload. With the first iPhone available
+  the owner registers for a live event on production (Camera photo, the same photo from Files,
+  a screenshot, different test emails); those rows and files are test traffic, deleted
+  afterwards, and that day's Metrics counts include them; a problem becomes a bug ticket. The HEIC follow-up decision waits for that test. CMP-068 lists
+  it under Risks.
