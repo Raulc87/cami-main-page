@@ -433,3 +433,7 @@ The human reviewer is the final approver.
   GoDaddy accounts; "Cami on" answers the coordinator's request for two-factor on Cami's Google
   account). CMP-066 records it for the release-checklist
   §3b gate.
+- Cookie check (release-checklist §3b, PRETEST_REVIEW §2b), 2026-10-27: a fresh private visit
+  still got three GoDaddy visitor-statistics cookies; the owner turned off GoDaddy's "Real User
+  Metrics tracking" for the domain, and a new check showed none (owner: "it shows no cookies
+  now"). CMP-068 repeats the check after the go-live upload.
