@@ -112,7 +112,7 @@ the go-live (CMP-068).
 | A08:2025 Software or Data Integrity Failures | Yes | SAC-14 (deploy only from `main` through the workflow, ADR-009); SAC-07 (no partial registrations); `v5.0.0-2.3.3`, `v5.0.0-15.2.1` | |
 | A09:2025 Security Logging and Alerting Failures | Yes | SAC-11 (US-024); §6 logging inventory; `v5.0.0-16.2.5`, `v5.0.0-16.3.3`, `v5.0.0-16.4.1` | |
 | A10:2025 Mishandling of Exceptional Conditions | Yes | SAC-10 (US-019, US-021, US-022, US-025); `v5.0.0-16.5.1`, `v5.0.0-16.5.2`, `v5.0.0-16.5.3` | |
-| API1:2023 Broken Object Level Authorization | Yes | SAC-08 (US-021): no request returns another participant's data | |
+| API1:2023 Broken Object Level Authorization | Yes | SAC-08 (US-021): no request returns another participant's data; `v5.0.0-8.2.2`, `v5.0.0-8.3.1` | |
 | API2:2023 Broken Authentication | No | | The API has no authentication by design (anonymous, contract §2) |
 | API3:2023 Broken Object Property Level Authorization | Yes | SAC-08, SAC-01 (US-017, US-020, US-021): only contract §7 fields out, only validated fields in; `v5.0.0-15.3.1`, `v5.0.0-15.3.3` | |
 | API4:2023 Unrestricted Resource Consumption | Yes | SAC-05, SAC-06 (US-019, US-020, US-024): size, rate and daily caps; `v5.0.0-5.2.1`, `v5.0.0-2.4.1`, `v5.0.0-15.2.2` | |
@@ -120,8 +120,8 @@ the go-live (CMP-068).
 | API6:2023 Unrestricted Access to Sensitive Business Flows | Yes | SAC-06, SAC-07, SAC-16 (US-020, US-021, US-025): coupon guessing, taking every place, sending email to any address; `v5.0.0-2.3.2`, `v5.0.0-2.4.1` | |
 | API7:2023 Server Side Request Forgery | No | SAC-04 (the image URL is loaded by the browser, `https://` only) | The backend makes no outbound request built from input (`v5.0.0-1.3.6`) |
 | API8:2023 Security Misconfiguration | Yes | SAC-12, SAC-13, SAC-17; script scopes (TECH_STACK §11); `v5.0.0-13.2.2`, `v5.0.0-13.4.2` | |
-| API9:2023 Improper Inventory Management | Yes | SAC-17: the endpoints and deployments in §6 | |
-| API10:2023 Unsafe Consumption of APIs | Yes | SAC-01 (sheet rows Cami types are validated, contract §6), SAC-03 (OCR and translation text treated as untrusted) | |
+| API9:2023 Improper Inventory Management | Yes | SAC-17: the endpoints and deployments in §6; `v5.0.0-13.1.1`, `v5.0.0-13.4.5` | |
+| API10:2023 Unsafe Consumption of APIs | Yes | SAC-01 (sheet rows Cami types are validated, contract §6), SAC-03 (OCR and translation text treated as untrusted); `v5.0.0-2.2.1`, `v5.0.0-1.2.1`, `v5.0.0-1.2.9` | |
 
 The review-only agent checks every PR against these criteria ([`AGENTS.md`](../../AGENTS.md) →
 Review-only agent).
@@ -203,10 +203,11 @@ Verified against staging (never production) by CMP-063, with test data only.
   (FFR-032, US-025 AC3); the form keeps the visitor's data for a retry.
 - **SAC-11 Logs without personal data** (US-024; A09; `v5.0.0-16.2.5`, `v5.0.0-16.3.3`,
   `v5.0.0-16.3.4`, `v5.0.0-16.4.1`)
-  Given any request, valid or not
+  Given any request to the web app, valid or not
   When the backend logs it
   Then the Apps Script execution log holds only fixed messages and error names: no request
-  content, personal data, SINPE data, IDs or secrets; honeypot hits, throttled requests, failed
+  content, personal data, SINPE data, IDs or secrets (the editor-only spike helpers, which log
+  sample file names and error messages, are reviewed in CMP-063, §7); honeypot hits, throttled requests, failed
   coupon checks and upload-cap hits are counted in `Metrics` (FFR-029).
 - **SAC-12 No secrets in the code or the bundle** (all events stories; A02, API8;
   `v5.0.0-13.3.1`, `v5.0.0-13.4.1`, `v5.0.0-13.4.2`)
@@ -245,8 +246,8 @@ Verified against staging (never production) by CMP-063, with test data only.
 - **SAC-16 No email abuse beyond the accepted risk** (US-025; A05, API6; `v5.0.0-1.3.11`)
   Given a registration request
   When the backend sends an email
-  Then it goes only to the one validated address of a stored registration (no spaces, line
-  breaks, commas or second addresses), with the approved templates, plain text, and the
+  Then it goes only to the one validated address of a stored registration (a single `@`, no
+  spaces or line breaks, so no second recipient or extra header), with the approved templates, plain text, and the
   participant's name as the only text the visitor controls.
 - **SAC-17 Known endpoints** (all events stories; API9, A02; `v5.0.0-13.1.1`)
   Given the endpoint inventory in §6
