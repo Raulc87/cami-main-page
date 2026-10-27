@@ -204,9 +204,11 @@ Order of work (each one PR; checks in SPRINT_03_PLAN → Ticket checks):
    Sprint 02 burst (scan hits trigger the alert email). Every critical or high finding is
    fixed, or accepted by the owner in writing, before the go-live (CMP-068): report each one to
    the coordinator as soon as you find it. Ask the owner to authorize exactly
-   that: scope, tool, rate, time window and the alert settings. Record findings with a severity in
-   docs/security/PRETEST_REVIEW.md (no secrets, no exploit details beyond what a fix needs) and
-   send each to the coordinator as a proposed ticket.
+   that: scope, tool, rate, time window and the alert settings. The repository is public:
+   docs/security/PRETEST_REVIEW.md names an unfixed finding only by a neutral ID and wording
+   ("SEC-00N: security fix, tracked privately", no severity until the fix is released); send
+   the details of each finding to the coordinator privately (send_message, never GitHub) as a
+   proposed ticket.
 4. CMP-069-ptes-deadline-date — when the coordinator gives you the go-live date the owner set:
    write the PTES deadline in the baseline as a date (the go-live date plus 60 days). Small
    PR; it merges before the go-live upload.

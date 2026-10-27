@@ -151,8 +151,11 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
   owner finds and books the tester before the deadline (Sprint Review Notes).
 - **CMP-063:** an ASVS-based code review of `apps-script/` and the form, and a scan of
   **staging only**, run only after the owner authorizes it in writing in the PR (scope, tool,
-  time window), never against production; findings with a severity in
-  `docs/security/PRETEST_REVIEW.md`, each proposed as a ticket. No
+  time window), never against production. The repository is public, so
+  `docs/security/PRETEST_REVIEW.md` names an unfixed finding only by a neutral ID and wording
+  ("SEC-00N: security fix, tracked privately", no severity until the fix is released, as the
+  kit's security templates require); the details go to the coordinator privately and are
+  tracked outside the repository with the owner; each finding is proposed as a ticket. No
   attack on production; this is not the penetration test. Every critical or high finding is
   fixed (or the owner accepts it in writing) before the go-live (CMP-068). Staging and production share the
   owner's Google account quotas (MailApp, Drive, OCR, fetch) and a scan's hits trigger the
@@ -339,6 +342,8 @@ The human reviewer is the final approver.
     it (Recommended)"** (Entry Gates → readiness item 5, pen test).
 - Go-ahead (owner, 2026-10-27, after merging PR #54): "go ahead". The coordinator launched, from
   [SPRINT_03_AGENT_PROMPTS.md](SPRINT_03_AGENT_PROMPTS.md), the review-only session (Opus),
-  Agent 1 (Sonnet), Agent 2 (Opus) and Agent 3 (Sonnet), tagged `cmp-sprint-03`; Agents 2, 3
-  and the reviewer attach the kit themselves before reading its templates. The Sprint 02
+  Agent 1 (Sonnet), Agent 2 (Opus) and Agent 3 (Sonnet), tagged `cmp-sprint-03`. Agent 2's
+  attempt to attach the private kit was blocked by its session's permissions, so the
+  coordinator sent Agents 2 and 3 the kit templates they need verbatim from its checkout at
+  v1.2.0 (`bd756f9`). The Sprint 02
   sessions are archived.
