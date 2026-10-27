@@ -102,7 +102,7 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 |---|---|---|---|---|---|
 | CMP-060 | This plan, the agent prompts, the Sprint 02 close and the pending decision records | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
 | CMP-061 | Contract v1.6 and FFR-029: alert recipients (`ALERT_TO`) | Coordinator | CMP-060 | coordinator branch | done |
-| CMP-056 | Security baseline (`docs/security/SECURITY_BASELINE.md`) | Agent 2 | — | `CMP-056-security-baseline` | todo |
+| CMP-056 | Security baseline (`docs/security/SECURITY_BASELINE.md`) | Agent 2 | — | `CMP-056-security-baseline` | done |
 | CMP-062 | Pen-test plan and written scope (`docs/security/PENTEST_PLAN.md`) | Agent 2 | CMP-056 | `CMP-062-pentest-plan` | todo |
 | CMP-063 | Pre-test security review: ASVS code review and an owner-authorized, staging-only scan; findings become tickets | Agent 2 | CMP-056 | `CMP-063-pretest-security-review` | todo |
 | CMP-052 | Alert email to more than one address | Agent 1 | CMP-061 | `CMP-052-alert-recipients` | todo |

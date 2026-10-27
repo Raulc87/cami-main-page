@@ -224,7 +224,7 @@ shows the form for an event the last `events` response marked closed or sold out
 | `LIMIT_COUPON_FAILS_PER_MIN` = 10 | Script property | Max failed coupon checks per minute; over → `RATE_LIMITED` for coupon checks until the minute ends |
 | `LIMIT_UPLOADS_PER_DAY` = 100 | Script property | Max stored screenshots per day (Costa Rica day, resets 00:00); over → `UPLOAD_CAP_REACHED` (₡0 registrations unaffected) |
 | `LIMIT_UPLOAD_MB_PER_DAY` = 300 | Script property | Max MB stored per day; over → `UPLOAD_CAP_REACHED` |
-| `ALERT_TO` | Script property | Comma-separated addresses that receive the daily alert email (FFR-029), for example the owner and camila@; empty → `MAIL_REPLY_TO`. Read only from script properties; an invalid address is skipped and logged without the address (v1.6) |
+| `ALERT_TO` | Script property | Comma-separated addresses that receive the daily alert email (FFR-029), for example the owner and camila@; empty → `MAIL_REPLY_TO`. Read only from script properties; an invalid address is skipped and logged without the address; if every address is invalid, the email goes to `MAIL_REPLY_TO` (v1.6; the all-invalid case stated in CMP-070) |
 | `ALERT_HONEYPOT_PER_DAY` = 10 | Script property | Alert email when the day's honeypot hits exceed it (FFR-029) |
 | `ALERT_THROTTLED_PER_DAY` = 20 | Script property | Alert email when the day's throttled requests exceed it |
 

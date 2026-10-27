@@ -114,7 +114,8 @@ Read:
    ([`src/constants/i18n.js`](src/constants/i18n.js), [`src/constants/data.jsx`](src/constants/data.jsx))
    when the change touches visitor-facing copy
 6. [`TECH_STACK.md`](TECH_STACK.md)
-7. `docs/security/SECURITY_BASELINE.md`, once it exists (CMP-056)
+7. [`docs/security/SECURITY_BASELINE.md`](docs/security/SECURITY_BASELINE.md) and its
+   [ASVS inventory](docs/security/ASVS_INVENTORY.md)
 8. relevant ADRs in [`docs/decisions/`](docs/decisions/)
 9. [`docs/plans/IMPLEMENTATION_PLAN.md`](docs/plans/IMPLEMENTATION_PLAN.md) (or the story's own plan)
 10. the active sprint plan in [`docs/sprints/`](docs/sprints/)
@@ -495,8 +496,8 @@ What a kept rule may never override:
 ## Security baseline
 
 Every project, new or adopted, follows the kit's security baseline and records how in
-`docs/security/SECURITY_BASELINE.md` (here: planned as CMP-056 for the next sprint, approved by
-its end):
+[`docs/security/SECURITY_BASELINE.md`](docs/security/SECURITY_BASELINE.md) (here: approved on
+merge of PR #58, CMP-056):
 
 - **OWASP first.** The project chooses an OWASP ASVS level (5.0.0) and records an ASVS inventory
   in the baseline, scaled to the project: a simple project at ASVS level 1 that handles no
