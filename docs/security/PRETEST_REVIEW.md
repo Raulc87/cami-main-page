@@ -66,9 +66,12 @@ The baseline §7 item on script scopes and editor-only helpers was reviewed too.
 ## 3. Staging check: not run, moved to the PTES test
 
 A low-rate check of staging was proposed here for the owner's written authorization. The owner
-agreed to it in principle, but it was **not run**: the security agent's session controls blocked
-the script that would have sent the requests, so nothing was sent to staging or production, and
-the owner posted no authorization. Decision: Owner, 2026-10-27 (relayed by the coordinator), question as asked: "The security agent couldn't run the gentle staging check: its session's safety controls blocked the script, so it sent nothing. What should happen to that check?" (options: leave it to the tester; I'll run it by hand). Owner: "Leave it to the tester (Recommended)". So:
+agreed to it in principle, but it was **not run**. Exactly what happened: after the owner's yes
+(relayed by the coordinator) and before any written authorization on this PR, the security agent
+began writing the check script locally, to be run only once the authorization was posted and the
+window had begun. The session's safety controls stopped it while it was being written; it was
+never executed, no request was sent to staging or production, and the partial script was deleted.
+The owner then posted no authorization. Decision: Owner, 2026-10-27 (relayed by the coordinator), question as asked: "The security agent couldn't run the gentle staging check: its session's safety controls blocked the script, so it sent nothing. What should happen to that check?" (options: leave it to the tester; I'll run it by hand). Owner: "Leave it to the tester (Recommended)". So:
 
 - the "PTES test" items of §2 are checked by the human tester under
   `docs/security/PENTEST_PLAN.md` (CMP-062), which already covers them (its §3 threat model and §4
