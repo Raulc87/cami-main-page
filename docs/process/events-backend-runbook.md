@@ -303,7 +303,8 @@ nothing prints it.
    the log and the job summary warn with their number (never their names). `clasp push` sends
    nothing when no file of the folder differs from the project ("Script is already up to date"),
    so a deploy whose only change is a file removed from the folder leaves that file in the
-   project, where it keeps running. Compare the Files list in the Apps Script editor with the
+   project, where it keeps running until the next push that changes a file (that push
+   replaces the whole file set). Compare the Files list in the Apps Script editor with the
    folder and remove the extra file there (Files > the three dots next to it > Remove). Read this
    warning on the first production run and after every deploy that removes a file. A `dry_run`
    pushes nothing and does not run this check.
