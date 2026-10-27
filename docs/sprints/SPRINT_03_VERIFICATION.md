@@ -93,6 +93,13 @@ No detail here, by design. The checks recorded on each ticket:
 | CMP-075 (PR #73) | Checked on staging after the merge | Pass | The owner ran the permissions step; events in both languages and an invalid registration gave the usual answers; the 5-minute trigger completed |
 | CMP-076 (PR #74, evidence PR #79) | Checked on staging after the merge, with a test row added and removed by the owner | Pass | Answers as expected for the test row, an unknown code and a published event |
 
+### Owner settings of the security baseline §7 (CMP-086, CMP-088; release-checklist §3b)
+| Check | Result | Source |
+|---|---|---|
+| GitHub secret scanning, push protection, Dependabot alerts and private vulnerability reporting on the repository (the four switches) | Pass | Owner, 2026-10-27: "repo: all 4 on" (recorded in baseline §7, CMP-086) |
+| Two-factor sign-in on the owner's Google, GitHub and GoDaddy accounts and on Cami's Google account | Pass | Owner, 2026-10-27: "2FA: GitHub, Google, GoDaddy on; Cami on" |
+| No cookie set by a fresh visit to the live site (GoDaddy visitor statistics off) | Pass | Owner, 2026-10-27 (CMP-087, CMP-088); checked again before the CMP-068 upload |
+
 ### CMP-084 — Deploy checks the project's files against the repo (PR #78)
 | Check | Result | Source |
 |---|---|---|
