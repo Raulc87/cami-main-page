@@ -47,9 +47,10 @@ Full breakdown in [docs/specs/ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC
 
 ## Deploy
 
-Manual: `npm run build` generates `dist/`, upload its contents to GoDaddy shared hosting
-(`public_html/`). No CI/CD yet. Detail in
-[TECH_STACK.md](TECH_STACK.md).
+The site is built with `npm run build` and its `dist/` contents are uploaded by hand to GoDaddy
+shared hosting (`public_html/`). The events backend is deployed by a GitHub workflow
+([ADR-009](docs/decisions/ADR-009-apps-script-deploy-from-github.md)); details in
+[CONTRIBUTING.md](CONTRIBUTING.md) and [TECH_STACK.md](TECH_STACK.md).
 
 ## Working on this repo
 
