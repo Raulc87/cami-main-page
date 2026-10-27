@@ -273,15 +273,17 @@ Each line names what the PR waits for.
 4. CMP-052 — CMP-061.
 5. CMP-062 and CMP-063 — CMP-056.
 6. CMP-064 (production) — CMP-052, CMP-053.
-7. CMP-065 (iPhone check) — CMP-052, CMP-053 deployed to staging.
+7. CMP-065 (iPhone check) — moved after the go-live (owner, 2026-10-27): the owner's test on
+   production with the first iPhone available; nothing waits for it.
 8. CMP-067 (logo) — Cami's file only.
 9. CMP-066 (verification, integration owner Agent 3) — every PR above, except one the owner
    moved to the next sprint.
 10. CMP-069 (deadline date) — CMP-056 and the go-live date from the owner.
 11. CMP-072..CMP-076 (security fixes, tracked privately) — nothing but the private details;
     CMP-079 (HTTPS and headers) — nothing.
-12. CMP-068 (go-live) — CMP-066, CMP-069, CMP-072..CMP-076, CMP-079 and every release-checklist §3b gate (so a moved
-    CMP-065 or CMP-067 also moves CMP-068).
+12. CMP-068 (go-live) — CMP-066, CMP-069, CMP-072..CMP-076, CMP-079 and every release-checklist §3b gate except
+    the real-iPhone gate, which the owner moved after the go-live (2026-10-27); a moved CMP-067
+    also moves CMP-068.
 
 Cycle check: every arrow points to a PR earlier in this list, so no PR waits, directly or
 through others, on a PR that waits on it.
@@ -445,9 +447,10 @@ The human reviewer is the final approver.
   it isn't auto-checked, so Cami reviews that payment by hand. The one thing the check would
   catch: an iPhone that can't upload at all. Then that person couldn't register online and
   would need to contact Cami. [...]" Owner: **"Go live, iPhone test after (Recommended)"**. The
-  release no longer waits for CMP-065; the test site comes down now (unpublish, real SINPE
-  values on staging, `STAGING_EVENTS_API_URL` secret deleted); with the first iPhone available
+  release no longer waits for CMP-065. The test-site takedown (unpublish, real SINPE values on
+  staging, `STAGING_EVENTS_API_URL` secret deleted) is done now with the owner and recorded in
+  CMP-066's cleanup list; CMP-068 checks it before the upload. With the first iPhone available
   the owner registers for a live event on production (Camera photo, the same photo from Files,
-  a screenshot, different test emails), the test rows and files are deleted afterwards, and a
-  problem becomes a bug ticket. The HEIC follow-up decision waits for that test. CMP-068 lists
+  a screenshot, different test emails); those rows and files are test traffic, deleted
+  afterwards, and that day's Metrics counts include them; a problem becomes a bug ticket. The HEIC follow-up decision waits for that test. CMP-068 lists
   it under Risks.

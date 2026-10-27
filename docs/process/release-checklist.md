@@ -78,8 +78,9 @@ upload; if one is not, do not release:
       iPhone was available; the owner tests on production with the first iPhone available
       (a registration for a live event with a Camera photo, the same photo from Files and a
       screenshot, each with a different test email; those test rows and files deleted
-      afterwards), and any problem becomes a bug ticket. The test site comes down before the
-      release instead (unpublish, real SINPE values on staging, secret deleted).
+      afterwards; that day's Metrics counts include this test traffic), and any problem becomes
+      a bug ticket. The test site still comes down before the upload (unpublish, real SINPE
+      values on staging, secret deleted), recorded in the CMP-066 cleanup list.
 - [ ] Backend deploy to production through the approved deploy workflow (ADR-009), smoke
       request green; both time triggers installed once in production (runbook).
 - [ ] Lifetools logo in place for events without art (CMP-067).
