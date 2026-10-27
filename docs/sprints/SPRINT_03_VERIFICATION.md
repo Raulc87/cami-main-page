@@ -188,8 +188,8 @@ Metrics rows, "yes, both").
 Other tests of the sprint left nothing to delete beyond what is listed: the CMP-052 alert test
 sent emails to the owner's inboxes only; the CMP-076 test row was removed by the owner (ticket
 row). The coupon checks of the CMP-079 run used an invalid code, so Agent 3 created no coupons;
-**to be confirmed by the owner before CMP-068:** that the staging `Coupons` tab holds no test coupon
-from the other tests (nothing recorded says one remains). Production
+the owner confirmed (2026-10-27, relayed by the coordinator) that the staging `Coupons` tab holds no
+test coupon from the sprint's tests: "no test coupons at all, I removed them all". Production
 holds no test data from this sprint: CMP-064 sent only a smoke request (read-only). The production
 test registration by the owner belongs to CMP-068, and is deleted afterwards (row and file).
 
