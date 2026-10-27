@@ -115,7 +115,8 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-067 | Lifetools logo for events without their own picture | Agent 3 | Cami's logo file | `CMP-067-lifetools-logo` | todo |
 | CMP-069 | The PTES deadline date in the security baseline | Agent 2 | CMP-056, the go-live date set by the owner | `CMP-069-ptes-deadline-date` | todo |
 | CMP-066 | Sprint 03 verification and the staging cleanup list | Agent 3 | every PR above, or the owner moving it | `CMP-066-sprint-03-verification` | todo |
-| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, and every §3b gate | `CMP-068-events-release` | todo |
+| CMP-072 | SEC-001: security fix, tracked privately | Agent 3 | CMP-063 finding | `CMP-072-sec-001` | todo |
+| CMP-068 | Events go-live: release v1.1.0 | Agent 3 + owner | CMP-066, CMP-069, CMP-072, and every §3b gate | `CMP-068-events-release` | todo |
 
 ### Ticket checks (acceptance criteria)
 - **CMP-061 (coordinator):** contract §9 gets an `ALERT_TO` script property (comma-separated
@@ -231,13 +232,14 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 |---|---|
 | `apps-script/**`, `.github/clasp/**`, `.github/scripts/deploy-apps-script.sh` and the other deploy scripts, `.github/workflows/deploy-apps-script.yml`, `.github/workflows/apps-script-check.yml`, [`docs/process/events-backend-runbook.md`](../process/events-backend-runbook.md) | Agent 1 |
 | `docs/security/**` | Agent 2 |
-| `src/**`, `public/**`, `index.html`, `package.json` (version, CMP-068), `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
+| `src/**`, `public/**`, `index.html`, `package.json` and `package-lock.json` (CMP-072; the version in CMP-068), `CONTRIBUTING.md`, [`README.md`](../../README.md), `.github/workflows/pages-staging.yml`, `docs/sprints/SPRINT_03_VERIFICATION.md`, `docs/sprints/evidence/sprint-03/**` | Agent 3 |
 | [`TICKETS.md`](../../TICKETS.md) | Shared: each agent updates only its own rows; the coordinator adds rows |
 | `.github/workflows/docs-link-check.yml`, `.github/scripts/check_doc_links.py`, `docs/specs/**`, [`docs/process/release-checklist.md`](../process/release-checklist.md) and the other process docs, `docs/sprints/SPRINT_03_*.md` except the verification, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), `docs/decisions/**`, `docs/ux/**` | Coordinator (docs PRs) |
 
 ## Integration Contracts
 - [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.5, locked; v1.6 (CMP-061)
-  changes only §9 (`ALERT_TO`) and adds its §10 test.
+  changes only §9 (`ALERT_TO`) and adds its §10 test; v1.7 (CMP-070) adds the all-invalid
+  `ALERT_TO` fallback to §9.
 
 ## Merge / Integration Order
 Each line names what the PR waits for.
@@ -377,3 +379,16 @@ The human reviewer is the final approver.
     before launch, who confirms that no serious problem is still open?" — options: I confirm
     it in writing; the security agent confirms. Owner: **"I confirm it in writing
     (Recommended)"** (release-checklist §3b, CMP-068).
+- CMP-063 findings (2026-10-27): six findings, none critical, tracked privately outside the
+  repository (public repository; kit security templates). In the repository they appear only as
+  "SEC-00N: security fix, tracked privately". Questions as asked:
+  - "The security agent's code review found 6 issues, none critical. Because the repo is public,
+    the details must be kept somewhere private. Where should I keep them?" — options: private
+    Google Doc; GitHub private advisory; just tell me in chat. Owner: **"Private Google Doc
+    (Recommended)"**.
+  - "One finding counts as 'high' [...]. The other five are 'low' [...]. Before launch, the
+    rules only require the high one fixed. What do you want?" — options: high now, lows in
+    Sprint 04; fix all before launch. Owner: **"High now, lows in Sprint 04 (Recommended)"**
+    (CMP-072 in this sprint, before CMP-068; CMP-073..CMP-076 for Sprint 04).
+  - A third answer accepted one low finding by design (recorded privately; the security
+    baseline §7 records it by ID when its details may be published).
