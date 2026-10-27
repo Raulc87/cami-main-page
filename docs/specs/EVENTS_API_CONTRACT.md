@@ -16,7 +16,7 @@ Change management: update this document first, bump the version, notify both own
   coupon check limit also applies to `register` with a coupon code — CMP-083)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 on
-  merge of PR #61; v1.8 Approved (on merge of the CMP-083 PR))
+  merge of PR #61; v1.8 Approved (on merge of PR #77))
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-033)
 - Related stories: US-017..US-025
