@@ -70,10 +70,10 @@ say why):
 | Release / deployment runbook | [`docs/process/release-checklist.md`](docs/process/release-checklist.md) (kept rule: no `docs/runbooks/`) | Always (the site is live) |
 | Events backend deploy runbook | [`docs/process/events-backend-runbook.md`](docs/process/events-backend-runbook.md) | While the events backend exists (ADR-008, ADR-009) |
 | Branching and release ADR | [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md) | Always (the site is live) |
-| Local development | [`README.md`](README.md) until the developer guide exists | Always |
-| Security baseline | `docs/security/SECURITY_BASELINE.md` (from the kit's `SECURITY_BASELINE_TEMPLATE.md`) | Always. The project already writes code, so the baseline is a story in its next sprint (CMP-056) and is approved by the end of that sprint; until then its absence does not stop implementation |
-| Penetration-test plan | `docs/security/PENTEST_PLAN.md` (from the kit's `PENTEST_PLAN_TEMPLATE.md`) | When the security baseline requires a penetration test; approved before the sprint that releases to production while the test is due |
-| Developer guide | `CONTRIBUTING.md` at the repository root (from the kit's `docs/DEVELOPER_GUIDE_TEMPLATE.md`) | A story in the next sprint (CMP-057); until then [`README.md`](README.md) covers local development |
+| Local development | [`CONTRIBUTING.md`](CONTRIBUTING.md) (the developer guide) | Always |
+| Security baseline | [`docs/security/SECURITY_BASELINE.md`](docs/security/SECURITY_BASELINE.md) (from the kit's `SECURITY_BASELINE_TEMPLATE.md`) and its [ASVS inventory](docs/security/ASVS_INVENTORY.md) | Always. Approved on merge of PR #58 (CMP-056) |
+| Penetration-test plan | [`docs/security/PENTEST_PLAN.md`](docs/security/PENTEST_PLAN.md) (from the kit's `PENTEST_PLAN_TEMPLATE.md`) | When the security baseline requires a penetration test; approved before the sprint that releases to production while the test is due |
+| Developer guide | [`CONTRIBUTING.md`](CONTRIBUTING.md) at the repository root (from the kit's `docs/DEVELOPER_GUIDE_TEMPLATE.md`) | Written (CMP-057, PR #64); kept current by the PR that changes setup, commands or structure |
 
 **The project carries the kit's output, not the kit.** This repo keeps
 [`AGENTS.md`](AGENTS.md), [`CLAUDE.md`](CLAUDE.md), [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md),
