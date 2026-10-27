@@ -108,7 +108,7 @@ No new user stories: Sprint 03 is release work and backlog fixes on US-017..US-0
 | CMP-052 | Alert email to more than one address | Agent 1 | CMP-061 | `CMP-052-alert-recipients` | done |
 | CMP-053 | Exact daily counters and per-minute limiters under parallel requests | Agent 1 | — | `CMP-053-exact-counters` | done |
 | CMP-050 | Deploy tool dependencies: `npm audit` in `.github/clasp`, bump `clasp` if a fixed release exists | Agent 1 | — | `CMP-050-clasp-audit` | done |
-| CMP-064 | Production backend setup and first approved deploy | Agent 1 + owner | CMP-052, CMP-053 | `CMP-064-production-backend` | todo |
+| CMP-064 | Production backend setup and first approved deploy | Agent 1 + owner | CMP-052, CMP-053 | `CMP-064-production-backend` | done |
 | CMP-057 | Developer guide (`CONTRIBUTING.md`) | Agent 3 | — | `CMP-057-developer-guide` | done |
 | CMP-054 | Missing `/favicon.svg` | Agent 3 | — | `CMP-054-favicon` | done |
 | CMP-065 | Real-iPhone check on staging, then the test-site takedown | Agent 3 + owner | CMP-052, CMP-053 on staging | `CMP-065-real-iphone-check` | todo |
@@ -423,3 +423,12 @@ The human reviewer is the final approver.
   HTTP and none of the four security headers is sent (CMP-079, before the go-live). SAC-15 on
   staging passed: the spreadsheet and the screenshots folder are Restricted to the owner's
   account; production is checked after CMP-064.
+- CMP-064 done (PR #63, 2026-10-27): production runs the backend at version 2 after the owner's
+  approved deploy, smoke PASS, both triggers Completed. SAC-15 on production passed: the
+  spreadsheet and the screenshots folder are Restricted, with access for the owner and Cami only
+  (owner: "access only for Cami and me"). SAC-17: one deployment, Execute as Me, access Anyone.
+- Owner settings from SECURITY_BASELINE §7 done (2026-10-27). Owner: **"repo: all 4 on; 2FA:
+  GitHub, Google, GoDaddy on; Cami on"** (secret scanning, push protection, Dependabot alerts and
+  private vulnerability reporting on the repository; two-factor on the owner's GitHub, Google and
+  GoDaddy accounts and on Cami's Google account). CMP-066 records it for the release-checklist
+  §3b gate.
