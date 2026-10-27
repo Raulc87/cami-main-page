@@ -275,6 +275,11 @@ The human reviewer is the final approver.
 ## Verification
 - Each PR: `npm run build` (and `node --check` for `apps-script/`), its checks above against
   staging (production only for the CMP-064 smoke), evidence in the PR body.
+- Backend PRs (`apps-script/**`): staging deploys only from `main` (ADR-009), so their staging
+  checks run after the merge (owner decision, Sprint Review Notes). The PR merges after review
+  with its ticket row at `review`; after the automatic deploy the owning agent runs the checks
+  on staging and records the evidence and `done` in its next PR (the last ones in CMP-066). A
+  failed check becomes a new ticket.
 - CMP-066 collects the evidence in `SPRINT_03_VERIFICATION.md`; the owner checks inbox and sheet
   items as in Sprint 02.
 
@@ -347,3 +352,8 @@ The human reviewer is the final approver.
   coordinator sent Agents 2 and 3 the kit templates they need verbatim from its checkout at
   v1.2.0 (`bd756f9`). The Sprint 02
   sessions are archived.
+- Question as asked (2026-10-27, from the reviewer on PR #55): "Backend changes only reach the
+  test copy (staging) after you merge them, because staging updates automatically from main.
+  So the backend agent can't show its staging test results before you merge. How should that
+  work this sprint?" — options: merge, then test; test before merging (by hand, runbook
+  emergency path). Owner: **"Merge, then test (Recommended)"** (Verification).
