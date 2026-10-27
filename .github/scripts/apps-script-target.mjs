@@ -6,11 +6,14 @@
 //    request can put it back.
 // 3. Compares the permissions (`oauthScopes`) of the project as it is now with the repo's
 //    appsscript.json, and writes a note to the job summary when they differ.
+// 4. Warns, in the log and the job summary, when the project holds files the repo does not have
+//    (a push does not remove them). It prints how many, never their names.
 //
 // Environment: CLASP_AUTH_FILE, APPS_SCRIPT_ID, APPS_SCRIPT_DEPLOYMENT_ID, EXPECTED_ENV
 // ("staging" or "production"); GITHUB_OUTPUT and GITHUB_STEP_SUMMARY when run by Actions.
 import { appendFileSync, readFileSync } from 'node:fs';
 import { accessToken, scriptApi, stop } from './apps-script-api.mjs';
+import { filesOnlyInProject, localFileNames } from './apps-script-files.mjs';
 
 const authFile = process.env.CLASP_AUTH_FILE;
 const scriptId = (process.env.APPS_SCRIPT_ID || '').trim();
@@ -59,6 +62,12 @@ try {
       (added.length ? ' (new: ' + added.map((s) => '`' + s.replace('https://www.googleapis.com/auth/', '') + '`').join(', ') + ')' : '') +
       '. **The owner must approve the new permissions** (open the project in the Apps Script editor, run any function once, allow) before the web app and the triggers work again.\n';
     console.log('::warning::Permissions change: the owner must approve the new permissions after this deploy.');
+    if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, note);
+  }
+  const extra = filesOnlyInProject(content.files || [], localFileNames('apps-script'));
+  if (extra.length) {
+    const note = '## Files not in the repo\n\nThe project holds ' + extra.length + ' file(s) that the `apps-script/` folder does not have. A deploy does not remove them. Compare the Files list in the Apps Script editor with the folder and remove the extra file(s) there (Files > the three dots next to it > Remove).\n';
+    console.log('::warning::The project holds ' + extra.length + ' file(s) that the repo does not have: compare the editor Files list with apps-script/ and remove the extra ones.');
     if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, note);
   }
 } catch {
