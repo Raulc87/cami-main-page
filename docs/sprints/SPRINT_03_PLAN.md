@@ -277,11 +277,14 @@ The human reviewer is the final approver.
 ## Verification
 - Each PR: `npm run build` (and `node --check` for `apps-script/`), its checks above against
   staging (production only for the CMP-064 smoke), evidence in the PR body.
-- Backend PRs (`apps-script/**`): staging deploys only from `main` (ADR-009), so their staging
-  checks run after the merge (owner decision, Sprint Review Notes). The PR merges after review
+- PRs that deploy staging on merge (ADR-009: changes under `apps-script/**`,
+  `.github/clasp/**`, `.github/scripts/**` or the deploy workflow): staging deploys only from
+  `main`, so their staging checks run after the merge (owner decision, Sprint Review Notes). The PR merges after review
   with its ticket row at `review`; after the automatic deploy the owning agent runs the checks
   on staging and records the evidence and `done` in its next PR (the last ones in CMP-066). A
-  failed check becomes a new ticket.
+  failed check becomes a new ticket. CMP-064 does not wait for these checks (owner, 2026-10-27:
+  "No, don't wait", Sprint Review Notes); a fix found later reaches production like any other
+  change.
 - CMP-066 collects the evidence in `SPRINT_03_VERIFICATION.md`; the owner checks inbox and sheet
   items as in Sprint 02.
 
