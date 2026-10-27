@@ -137,7 +137,7 @@ npm run preview   # serves dist/ locally
   only backend value in the client bundle is the public `/exec` URL.
 - Script permissions: the OAuth scopes are those in `apps-script/appsscript.json` (`oauthScopes`). Besides Sheets,
   Drive (full access to the owning account's files, needed to create folders and files and run
-  OCR), Docs, external requests and sending mail, the script holds a Gmail settings scope so it
+  OCR), Docs and sending mail, the script holds a Gmail settings scope so it
   can send as `no-reply@lifetoolscr.com` (owner, 2026-10-20); that scope lets it read and change
   the owning account's Gmail settings. The spike's alias test confirmed `gmail.settings.basic` is
   enough (2026-10-20); any scope broader than the one the owner accepted (e.g. full mailbox

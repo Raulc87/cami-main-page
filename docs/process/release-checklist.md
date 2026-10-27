@@ -91,7 +91,7 @@ upload; if one is not, do not release:
       no release until the test has run and has no open critical or high finding, every medium
       or low finding has a ticket or a risk the owner accepted in writing, and the fixes of
       critical and high findings are retested by the testers.
-- [ ] Cookies on the live site (`docs/security/PRETEST_REVIEW.md` §2b, CMP-063): in a
+- [ ] Cookies on the live site ([PRETEST_REVIEW.md §2b](../security/PRETEST_REVIEW.md), CMP-063): in a
       private window, a fresh visit to the site creates no cookie; if one appears (for example
       the `_tccl_*` and `_scc_session` cookies seen on 2026-10-27, which the site's code does
       not set), the hosting feature that sets it is turned off, or Cami approves notice wording
