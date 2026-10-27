@@ -223,7 +223,7 @@ shows the form for an event the last `events` response marked closed or sold out
 | `MAIL_FROM_ALIAS`, `MAIL_REPLY_TO` | Script property | Sender alias (if available) and `camila@lifetoolscr.com` |
 | `LIMIT_REGISTER_PER_MIN` = 20 | Script property | Max `register` calls per minute, all clients (fixed 1-minute window, `CacheService`); over → `RATE_LIMITED` |
 | `LIMIT_COUPON_CHECKS_PER_MIN` = 30 | Script property | Max `coupon` calls per minute, all clients; over → `RATE_LIMITED` |
-| `LIMIT_COUPON_FAILS_PER_MIN` = 10 | Script property | Max failed coupon checks per minute, counting `coupon` checks and `register` requests that carry a coupon code; over → `RATE_LIMITED` for both until the minute ends (v1.8) |
+| `LIMIT_COUPON_FAILS_PER_MIN` = 10 | Script property | Max failed coupon checks per minute, counting failed `coupon` checks and `register` requests whose coupon code fails (a check in progress holds its place until it ends); over → `RATE_LIMITED` for both until the minute ends (v1.8) |
 | `LIMIT_UPLOADS_PER_DAY` = 100 | Script property | Max stored screenshots per day (Costa Rica day, resets 00:00); over → `UPLOAD_CAP_REACHED` (₡0 registrations unaffected) |
 | `LIMIT_UPLOAD_MB_PER_DAY` = 300 | Script property | Max MB stored per day; over → `UPLOAD_CAP_REACHED` |
 | `ALERT_TO` | Script property | Comma-separated addresses that receive the daily alert email (FFR-029), for example the owner and camila@; empty → `MAIL_REPLY_TO`. Read only from script properties; an invalid address is skipped and logged without the address; if every address is invalid, the email goes to `MAIL_REPLY_TO` (v1.6; the all-invalid case v1.7) |
