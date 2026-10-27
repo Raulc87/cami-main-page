@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext'
 import EventRegistration from './EventRegistration'
 import { cardId, formatCrc, formatEventDate } from './eventsShared'
 
-const LOGO = '/images/lifetools-logo.svg'
+const LOGO = '/images/lifetools-logo.png'
 
 // No `r()` scroll-reveal here: the section mounts after useReveal has scanned the page
 // (ARCHITECTURE_SPEC §7).
