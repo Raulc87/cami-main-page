@@ -35,7 +35,9 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Security baseline approved | Pass: approved (CMP-056), PTES deadline 2026-12-26 (CMP-069) |
 | 5. Stories touching an OWASP risk have verifying ACs **(blocking)** | Pass: CMP-093 (credentials, supply chain) and CMP-071 carry their security checks below |
 | 5. Secret and dependency scanning | Secret scanning on (owner, 2026-10-27); dependency checks are CMP-071 in this sprint |
-| 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; after it, no release until the test is done. CMP-095 prepares it |
+| 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; after it, no release other than a security hotfix until the test has run. CMP-095 prepares it |
+| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) | Not blocking: Sprint 04 releases nothing to production (owner, 2026-10-28, Sprint Review Notes). CMP-093's approved run re-uploads exactly the live v1.1.0 site, and CMP-094 stays on staging this sprint. The agent's run goes with CMP's next real release (CMP-098, CMP-099), or by the 2026-12-26 deadline |
+| 5. Written approval per agent scan; tester's authorization | Not blocking, for the same reason; planned in CMP-099 |
 | 6. Hosting runtime, local development, developer guide | Pass: ADR-002, ADR-008, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) |
 | 6. Test, lint and CI checks; required on `main` | Pass: `apps-script-check`, `docs-link-check`; CMP-071 adds the dependency check |
 | 6. Branching ADR and deployment runbook **(deploying sprint)** | Pass: ADR-007, ADR-009, the events-backend runbook; the site-upload decision is CMP-092 (ADR-010), merged before CMP-093 |
@@ -239,3 +241,12 @@ The human reviewer is the final approver.
   formats the existing tabs by hand.
 </content>
 </invoke>
+- Owner decision after the kit v1.3.0 sync (CMP-097, PR #92), 2026-10-28. Question as asked:
+  "Does Sprint 04 count as a production release under the new kit rules? The reviewer asks
+  because the PTES test is still due." Options: "No, not a release (Recommended)": the first run
+  of the upload workflow re-uploads exactly the live v1.1.0 site, and the event-tab change stays
+  on staging this sprint, reaching production with the next real release; "Yes, a release".
+  Owner: **"No, not a release (Recommended)"**. So Sprint 04 needs no pre-release security agent;
+  no production backend deploy runs this sprint, and CMP-094 reaches production with the next
+  release, which triggers CMP-098 and CMP-099 (or the 2026-12-26 deadline does, whichever comes
+  first).
