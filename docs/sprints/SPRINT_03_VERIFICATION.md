@@ -161,9 +161,9 @@ ID, participant or event name is recorded here.
 | 3-4 | Build; the bundle holds exactly one production URL (last six characters compared by eye) and the file is deleted | Pass | "build ok, 1, one line, matches production, file deleted" |
 | 5 | Cookie gate on the live site before the upload; backup saved outside `public_html/` and downloaded | Pass | "no cookies"; "backup saved and downloaded" |
 | 6-7 | Upload (with `.htaccess`) and a first look | Pass | "uploaded, site loads" |
-| 8 | HTTPS redirect, the four headers, clean console, no directory listing (SAC-13) | Pass | "307 yes, 4 headers yes, console clean, no listing"; server-side redirect: 301 to `https` (`curl -sI`) |
+| 8 | HTTPS redirect, the four headers, clean console, no directory listing (SAC-13) | Pass | "307 yes, 4 headers yes, console clean, no listing"; the server-side redirect (a 301 to `https`, from a `curl -sI` request) is as relayed by the coordinator, who ran it is not stated; the review agent's own read-only requests on 2026-10-28 00:08 UTC confirm it: `http://` answers 301 with an `https` location, `https://` carries `Strict-Transport-Security: max-age=31536000`, `X-Content-Type-Options: nosniff`, the `Referrer-Policy` and the CSP of PR #69 with no `Set-Cookie`, and `/assets/` answers 403 (no listing) |
 | 9 | Events section and ticker on the live site, EN and ES, phone and computer | Pass | "event shown and everything seems to work"; "email yes, EN/ES and phone yes". Before the check the owner added a real upcoming event of Cami's (published); it was first hidden because its date was in the past and shown once the owner fixed the date |
-| 10 | One real registration by the owner, with a coupon and a test receipt; cleanup | Pass | "I was able to subscribe to an event, apply coupons and validate a receipt (testing receipt of course)". **Deviation from the walk-through:** the registration went on that real event, not a separate test event. Cleanup: the test registration row(s) and test receipt file(s) deleted, the coupon use count restored or the test coupon deleted, the event left published; "cleanup done" |
+| 10 | One real registration by the owner, with a coupon and a test receipt; cleanup | Pass | "I was able to subscribe to an event, apply coupons and validate a receipt (testing receipt of course)". **Deviation from the walk-through:** the registration went on that real event, not a separate test event. The owner's words on cleanup: "cleanup done". The coordinator's relay adds that the test registration row(s) and receipt file(s) were deleted, the coupon use count was restored or the test coupon deleted, and the event left published; **the owner's own confirmation of those details (row(s) deleted from the event's tab, receipt file(s) from its Drive folder, which coupon was used) is still to be quoted** (review request, PR #90) |
 | 11 | Tag and GitHub Release | Pass | "release published"; the coordinator verified `v1.1.0` exists on GitHub (published 2026-10-28 00:06 UTC) |
 
 Gates, risks and the moved iPhone check are in the PR #88 body. Live traffic from this check is in the
@@ -182,7 +182,7 @@ They carry no behavior to verify beyond the docs link check, which passed on eac
 | 2 | CMP-050: 2 high `npm audit` warnings in the CI-only deploy tool remain (no fixed `clasp` release) | Accepted, recorded in the row | Re-check when `clasp` > 3.4.1 is published; cadence in CMP-071 (Sprint 04 proposal) |
 | 3 | `ARCHITECTURE_SPEC.md` and the events implementation plan still call the logo a placeholder | Doc lag | The coordinator updates them after PR #86 merges (coordinator, 2026-10-27) |
 | 4 | `.htaccess` was not run on Apache (none available here); a host that disallows `Options` overrides answers every page with a 500 | Residual risk, closed | The live site loaded and the headers were present after the upload (CMP-068 steps 7 and 8) |
-| 5 | The CMP-068 test registration went on a real event of Cami's instead of a separate test event | Deviation from the walk-through, cleaned up by the owner | None; for the next release, add a test event before the check (walk-through step 10) |
+| 5 | The CMP-068 test registration went on a real event of Cami's instead of a separate test event | Deviation from the walk-through; the owner reports "cleanup done", details to be confirmed | None; for the next release, add a test event before the check (walk-through step 10) |
 | 6 | The owner proposes automated site deploys (GitHub Actions to GoDaddy over FTP, with approval and a backup) | Improvement | A Sprint 04 ticket (the coordinator adds it) |
 
 No Fail in the sprint's own checks is open.
@@ -212,7 +212,7 @@ row). The coupon checks of the CMP-079 run used an invalid code, so Agent 3 crea
 the owner confirmed (2026-10-27, relayed by the coordinator) that the staging `Coupons` tab holds no
 test coupon from the sprint's tests: "no test coupons at all, I removed them all". Production
 holds no test data from this sprint: CMP-064 sent only a smoke request (read-only). The production
-test registration by the owner (CMP-068 step 10) was cleaned up by the owner on 2026-10-27 (row(s), receipt file(s), coupon use count).
+test registration by the owner (CMP-068 step 10) was reported cleaned up by the owner on 2026-10-27 ("cleanup done"; the details are to be confirmed by the owner, see §2, CMP-068, step 10).
 
 After the go-live, the iPhone check (CMP-065, moved) adds its own test rows and files on production,
 to be deleted by the owner afterwards.
