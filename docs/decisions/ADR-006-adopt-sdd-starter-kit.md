@@ -1,7 +1,7 @@
 # ADR-006 — Adopt the SDD starter kit structure and Scrum process
 
 - Status: Accepted (CMP-014 PR #14 approved and merged, 2026-10-18); Kit disposition table
-  added in CMP-055 (sync to kit v1.2.0)
+  added in CMP-055 (sync to kit v1.2.0), updated in CMP-097 (sync to kit v1.3.0)
 - Date: 2026-10-17 (amended 2026-10-26)
 - Decision owner: Raul Casanas
 - Related specs: all — see [PROJECT_CONTEXT.md](../../PROJECT_CONTEXT.md)
@@ -94,14 +94,14 @@ they are not rows here and still apply.
 
 | Kit file | Disposition | Reason |
 |---|---|---|
-| `AGENTS.md` | adapt | The kit's `v1.2.0` text is ported entirely, with the kept rules below merged in. |
+| `AGENTS.md` | adapt | The kit's `v1.3.0` text is ported entirely (CMP-097; `v1.2.0` in CMP-055), with the kept rules below merged in. |
 | `CLAUDE.md` | keep (kit text) | Points to [`AGENTS.md`](../../AGENTS.md) and [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md); now with links, as in the kit. |
-| `PROJECT_CONTEXT.md` | adapt | Written for this project from the kit's layout; Starter Kit line "Edition: Full · Synced to kit v1.2.0" and the repository visibility line. |
-| `docs/checklists/SPRINT_READINESS_CHECKLIST.md` | keep (kit text) | Taken unchanged from `v1.2.0`. The kept rules below say how its items map here (`CMP-XXX` branch names, PR body). |
+| `PROJECT_CONTEXT.md` | adapt | Written for this project from the kit's layout; Starter Kit line "Edition: Full · Synced to kit v1.3.0" and the repository visibility line. |
+| `docs/checklists/SPRINT_READINESS_CHECKLIST.md` | keep (kit text) | Taken unchanged from `v1.3.0` (CMP-097). The kept rules below say how its items map here (`CMP-XXX` branch names, PR body). |
 | `.github/pull_request_template.md` | skip | Kept rule **PR body**, below. |
-| `.github/scripts/check_doc_links.py` and `.github/workflows/docs-link-check.yml` | keep (kit text) | Added unchanged from `v1.2.0` in CMP-055 (optional item of kit #62); the repo's links already passed it. |
+| `.github/scripts/check_doc_links.py` and `.github/workflows/docs-link-check.yml` | keep (kit text) | Added unchanged from `v1.2.0` in CMP-055 (optional item of kit #62); the script updated to `v1.3.0`'s fixed version in CMP-097 (kit #66, #72). The kit's tests (`editions/tests/`, `link-check-tests.yml`) stay in the kit. |
 | `*_TEMPLATE.md` (`docs/specs/`, `docs/sprints/`, `docs/decisions/`, `docs/plans/`, `docs/runbooks/`, `docs/security/`, `docs/ux/`, `TECH_STACK_TEMPLATE.md`, `docs/DEVELOPER_GUIDE_TEMPLATE.md`) | skip: read from the kit | Kit-only (kit #29, #38). The former copies in `docs/templates/` were removed in CMP-055; they remain readable in the Git history, which cannot be recalled. |
-| Kit skills (`.claude/skills/project-kickoff`, `project-adopt`, `ux-proposals`) | skip: read from the kit | Kit-only; this repo never carried them. |
+| Kit skills (`.claude/skills/project-kickoff`, `project-adopt`, `ux-proposals`, `release-security`) | skip: read from the kit | Kit-only; this repo never carried them. |
 | Kit process guides (`docs/process/` in the kit) | skip: read from the kit | Kit-only. This repo's own [`docs/process/`](../process/) holds CMP's process documents (kept rules below). |
 | `.github/workflows/new-project.yml`, `install-kit.yml`, `basic-edition.yml` | skip | Kit-only workflows, for new and not-yet-adopted repositories (kit #53, #55). |
 | `editions/`, the kit's `README.md` | skip | Kit-only. This repo keeps its own [`README.md`](../../README.md). |
@@ -121,9 +121,10 @@ they are not rows here and still apply.
 | Merging and approval | adapt | Kit text, plus kept rule **Merge criteria**. |
 | Review-only agent (Review flow, Reviewer independence) | keep | Kit text; kept rule **Reviewers** names who runs. |
 | Coordinator session | adapt | Kit text; kept rule **Docs-PR author**; adopted by CMP-014 (the role `/project-adopt` plays today). |
+| Pre-release security agent | adapt | Kit `v1.3.0` text (CMP-097); its run for CMP's next release is planned in CMP-098 and CMP-099; this repo's release runbook is the release checklist (kept rule **Runbooks**). |
 | Automated PR reviewers | adapt | Kit text; kept rules **Reviewers** and **Thread resolution**. |
 | Kept project rules | keep | Kit text; this table is the list it points to. |
-| Security baseline, Code readability, Testing, Definition of Done, Change management | keep | Kit text, plus this repo's state (no test runner, formatter or linter yet; baseline planned as CMP-056). |
+| Security baseline, Code readability, Testing, Definition of Done, Change management | keep | Kit text (`v1.3.0`: post-release tests and agent scans, CMP-097), plus this repo's state (no test runner, formatter or linter yet; baseline approved in CMP-056, PTES deadline 2026-12-26; every host a third party's, so agent scans are passive baseline only, baseline §5.1). |
 
 ### Kept project rules
 

@@ -1,6 +1,6 @@
 # SPRINT 04 — Agent Kickoff Prompts
 
-From [SPRINT_AGENT_PROMPTS_TEMPLATE.md](https://github.com/Raulc87/sdd_starter_kit/blob/v1.2.0/docs/sprints/SPRINT_AGENT_PROMPTS_TEMPLATE.md). The
+From [SPRINT_AGENT_PROMPTS_TEMPLATE.md](https://github.com/Raulc87/sdd_starter_kit/blob/v1.3.0/docs/sprints/SPRINT_AGENT_PROMPTS_TEMPLATE.md). The
 coordinator launches these sessions after the plan is merged and the owner gives the go-ahead
 (Entry Gate 4 in [SPRINT_04_PLAN.md](SPRINT_04_PLAN.md)).
 
@@ -194,7 +194,7 @@ fix, tracked privately", with no severity. Your reviews name locations only and 
 a finding's details; send any disclosure concern to the coordinator privately, never on GitHub.
 
 The kit (Raulc87/sdd_starter_kit) is private. If a review needs one of its templates, ask the
-owner to attach it to your session read-only at tag v1.2.0; never edit it or comment on it.
+owner to attach it to your session read-only at tag v1.3.0; never edit it or comment on it.
 
 First read AGENTS.md, CLAUDE.md, PROJECT_CONTEXT.md, every document it lists, and
 docs/sprints/SPRINT_04_PLAN.md. Then wait for a review request.

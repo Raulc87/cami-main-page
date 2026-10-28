@@ -5,8 +5,8 @@
 - Project key: CMP (tickets, branches, PR titles; see [AGENTS.md](AGENTS.md#tickets-and-branches))
 - Repository: https://github.com/Raulc87/cami-main-page
 - Starter Kit: https://github.com/Raulc87/sdd_starter_kit (private: attach it to the sessions
-  that read its templates, guides and skills) · Edition: Full · Synced to kit v1.2.0 (tag on
-  commit `bd756f9`, CMP-055). Templates, guides and kit skills are read at this ref; each kit
+  that read its templates, guides and skills) · Edition: Full · Synced to kit v1.3.0 (tag on
+  commit `c01c098`, CMP-097; before: v1.2.0, CMP-055). Templates, guides and kit skills are read at this ref; each kit
   sync PR updates it.
 - Repository visibility: public (kept public as the owner's portfolio, kit #16) · current
   setting public (only the owner changes it)
