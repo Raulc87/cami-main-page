@@ -78,7 +78,8 @@ say why):
 **The project carries the kit's output, not the kit.** This repo keeps
 [`AGENTS.md`](AGENTS.md), [`CLAUDE.md`](CLAUDE.md), [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md),
 its own documents (the paths above) and the CI it runs. It carries no kit templates
-(`*_TEMPLATE.md`), kit skills (`project-kickoff`, `project-adopt`, `ux-proposals`), kit-only
+(`*_TEMPLATE.md`), kit skills (`project-kickoff`, `project-adopt`, `ux-proposals`,
+`release-security`), kit-only
 workflows or kit process guides. When the project needs one (a new sprint plan, agent prompts,
 an ADR, a feature spec, a guide or a kit skill such as `/ux-proposals`), the session reads it from
 the kit at the kit ref recorded in [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) (a release tag,
@@ -412,6 +413,11 @@ or an approver.
 - When an agent sends it an owner question ([Review flow](#review-flow)), the coordinator puts
   it to the owner straight away and relays the answer verbatim to the agent that asked,
   recording it on that issue or PR.
+- **It archives the previous sprint's sessions.** When a sprint ends and the next one starts,
+  the coordinator archives the previous sprint's agent sessions, the implementation agents and
+  the review-only agent, so the working space holds only the active sprint's sessions. It records
+  which sessions it archived in the new sprint's plan (Sprint Review Notes). If it cannot archive
+  sessions itself, it asks the owner to, naming them.
 - It never writes application code, never reviews code, and never merges, approves, or enables
   auto-merge (same rules as every agent).
 - It records every owner decision it relays in a docs PR ([`TICKETS.md`](TICKETS.md), the
@@ -425,6 +431,51 @@ or an approver.
   coordinator asks.
 - Agent sessions stay on one sprint each and are archived after it; the coordinator is
   long-lived.
+
+## Pre-release security agent
+
+Every project gets a pre-release security agent before its release, so the human penetration
+test finds as little as possible. It runs the kit skill `/release-security`, from the kit
+attached to its session ([Document map](#document-map): kit skills never ship in a project).
+
+- **When it starts.** When the project is getting ready for its release: the first production
+  release (for a project already in production when it adopts the baseline, as this one is, its
+  next production release), and every later release that needs a penetration test
+  ([Security baseline](#security-baseline), below). The owner, or the coordinator on the owner's
+  behalf, starts it while the go-live sprint is planned, so that the penetration-test plan it
+  drafts can be approved before that sprint starts. Here its run is planned in
+  [`TICKETS.md`](TICKETS.md) (CMP-098).
+- **Its own session.** It runs in its own session, separate from every implementation agent; a
+  session that has written code for the project never runs it.
+- **It never changes code.** It follows [Reviewer independence](#reviewer-independence) for the
+  project's code: no fixes, not even small ones, no patches or suggested changes. The only files
+  it writes are the security documents of steps 1 and 3, in a docs PR that the owner approves and
+  merges like any other.
+- **Its steps:**
+  1. Write or update [`docs/security/SECURITY_BASELINE.md`](docs/security/SECURITY_BASELINE.md)
+     from the template: the OWASP checklist and the risks that apply, and which staging case
+     applies (Security baseline → Agent scans).
+  2. Do a security code review of the project against that baseline, so that it covers the code
+     as released: a first review while the go-live sprint is planned, and, before the release is
+     cut, a review of every change merged since, up to the commit to be released.
+  3. Draft [`docs/security/PENTEST_PLAN.md`](docs/security/PENTEST_PLAN.md) and the written
+     scope for the tester, when the baseline requires a penetration test.
+  4. Scan, under every safeguard in [Security baseline](#security-baseline) (below): staging
+     before the release, when the project's staging can be scanned; production right after the
+     release, in every case.
+  5. Re-check the fixes: after the remediation stories land, and after the human tester's
+     report.
+- **Findings go to the coordinator.** It reports every finding to the coordinator (a one-off
+  scheduled message or a direct message, as in [Review flow](#review-flow)), which creates the
+  remediation stories. Implementation agents fix them through the normal sprint flow (a critical
+  finding as a hotfix); the security agent re-checks. It never creates the stories itself and
+  never fixes them. Without a coordinator, it reports to the owner. This repository is public: an
+  unfixed, exploitable finding is never written in a tracked file, issue or PR; it is tracked
+  privately ([`SECURITY_BASELINE.md`](docs/security/SECURITY_BASELINE.md) → Open items and
+  accepted risks).
+- **Owner questions** reach the coordinator as in [Review flow](#review-flow). It never merges,
+  approves or enables auto-merge ([Merging and approval](#merging-and-approval)), and ends what
+  it posts with an attribution line ([Attribution of agent posts](#attribution-of-agent-posts)).
 
 ## Automated PR reviewers
 
@@ -512,20 +563,84 @@ merge of PR #58, CMP-056):
 - **NIST SSDF (SP 800-218 v1.1)** for secure development: the baseline maps the workflow to the
   SSDF practice groups (PO, PS, PW, RV) and lists what the project adds, such as secret
   scanning, dependency scanning and how vulnerabilities are reported and fixed.
-- **Penetration tests**, both before the first production release and each on its own
-  condition: a **PTES** test when the project handles personal data, authentication or
-  payments; an **OSSTMM 3** test only when the baseline classifies the project as high-risk or
-  complex, and again before any later release that adds a major new attack surface. A project
-  that meets both conditions runs one test that follows both. Planned in
-  `docs/security/PENTEST_PLAN.md`. This repo is already in production, so it runs the required
-  test before its next production release, unless the owner records a dated deadline in the
-  baseline instead; once the deadline passes, the test gates every release.
-- **Who tests.** Penetration tests are run only by people the owner authorizes in writing,
-  under a written scope. An implementation agent never runs a penetration test, attack tools or
-  security scans against production.
+- **Penetration tests (human), on production right after the release**, each on its own
+  condition: a **PTES** test when the project handles personal data, authentication or payments;
+  an **OSSTMM 3** test when the baseline classifies the project as high-risk or complex, whether
+  or not it handles them. Each runs right after the first production release, and the OSSTMM 3
+  test again right after any later release that adds a major new attack surface (for example
+  authentication, payments or a new public API). A project that meets both conditions runs one
+  test that follows both. The authorized external tester runs the test against production and
+  writes a report. Planned in [`docs/security/PENTEST_PLAN.md`](docs/security/PENTEST_PLAN.md).
+  A project that is already in production when it adopts the baseline, as this one is, runs the
+  required test right after its next production release, unless the owner records a dated
+  deadline in the baseline instead (here: PTES by 2026-12-26, baseline §5); once the deadline
+  passes without the test, no release other than a security hotfix is cut until the test has
+  run, on the production already live, without waiting for a release.
+- **Agent scans (pre-release security agent only).** The
+  [pre-release security agent](#pre-release-security-agent) scans:
+  - **staging, before the release**, when the project's staging can be scanned: a staging
+    environment the project owns, or the project's own site on a third party's host (kit owner
+    decision on kit #63, 2026-10-27). On a third party's host whose terms do not expressly allow
+    security testing, such as **GitHub Pages**, the scan is limited to a passive, rate-limited
+    baseline scan of the project's own site (Safeguards, below). As the kit checked on
+    2026-10-27, GitHub's terms do not expressly allow security testing of a Pages site: the
+    [GitHub Acceptable Use Policies](https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies)
+    forbid "excessive automated bulk activity" and placing "undue burden on our servers through
+    automated means" (section 4, Spam and Inauthentic Activity), and using GitHub's servers "to
+    disrupt or to attempt to disrupt, or to gain or to attempt to gain unauthorized access to"
+    any service (section 5, Site Access and Safety), and
+    [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
+    apply rate limits to Pages sites. When the project has no staging, the agent skips the
+    staging scan. The baseline records which case applies and why (for a third party's host, the
+    terms checked and the date). Here every host is a third party's (Google Apps Script,
+    GoDaddy), so every scan is passive baseline only (baseline §5.1);
+  - **production, right after the release**, in every case, together with the human penetration
+    test when one is required. When production runs on a third party's host whose terms do not
+    expressly allow security testing, the scan still runs, limited to a passive, rate-limited
+    baseline scan of the project's own site.
+- **What starts the post-release work.** Both the agent's production scan and the human
+  penetration test start exactly after the release: their trigger is the production smoke test
+  of the release passing (the release runbook's post-release security step; here
+  [`release-checklist.md`](docs/process/release-checklist.md), step planned in CMP-098). Before
+  that release is cut, these are in place: the owner's written approval and scope for the scan,
+  with a time window that opens right after the release; for the human test, the tester's
+  written authorization and scope, with the same timing; and the person who can stop each one
+  named. The release runbook's post-release security step starts both.
+- **Safeguards for every agent scan**, staging and production:
+  - **Written approval for every run:** the owner signs a written approval and scope for each
+    scan, naming its time window. A standing approval does not count.
+  - **Passive scans by default:** passive or baseline scans only (for example the OWASP ZAP
+    baseline scan). Anything more active is allowed only when the owner's written approval for
+    that run names it, and never on a third party's host whose terms do not expressly allow
+    security testing (such as GitHub Pages), even with an approval.
+  - **Non-destructive only:** no denial-of-service or load testing; rate-limited; no destructive
+    payloads; no real users' personal data read, changed or exported.
+  - **Owned systems only:** only what the project owns. The project's own site on a third
+    party's host is in scope as above (passive baseline only, unless the host's terms expressly
+    allow testing). Any other third party's system (the hosting provider's own services, email,
+    payments) only if its terms allow testing.
+  - **Stop and rollback:** a named person who can stop the scan, and a rollback plan if
+    production degrades ([`release-checklist.md`](docs/process/release-checklist.md) →
+    Rollback).
+  - **Findings handling:** findings go to the coordinator, which creates the remediation
+    stories. A critical finding is fixed as a hotfix (release checklist and
+    [ADR-007](docs/decisions/ADR-007-branching-and-release-model.md)), and the agent re-checks
+    it after the fix and after the human tester's report.
+- **Release gate after the tests.** The next release (a security hotfix aside) is cut only when
+  no critical or high finding from the scans or the penetration test is open, every critical and
+  high fix has been re-checked (by the security agent, and by the tester for the tester's
+  findings), and every medium or low finding has a story or an accepted risk signed by the owner.
+  A project may make this stricter, never looser.
+- **Who tests.** Penetration tests are run only by people the owner authorizes in writing, under
+  a written scope. Security scans of a running system (staging or production) are run only by the
+  pre-release security agent, under the rules above; the secret and dependency scanning that CI
+  runs on the code (NIST SSDF, above) is not such a scan. Implementation agents, the review-only
+  agent and the coordinator never run penetration tests, attack tools or security scans, in any
+  environment.
 - **No certification claims.** Documents, copy and PRs never say the project is certified,
-  compliant or secure because it follows these standards; they say which requirements were
-  verified, how and when.
+  compliant or secure because it follows these standards, or that a tester or a scan certified
+  it; they say which requirements were verified, how and when. The tester runs the PTES test and
+  writes a report.
 
 ## Code readability
 

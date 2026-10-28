@@ -30,7 +30,7 @@ were verified.
   registration (FR-011, [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md))
 - Status: Approved (on merge of PR #58)
 - Owner: Raul Casanas (product owner, final approver)
-- Last updated: 2026-10-27 (CMP-069: PTES deadline date)
+- Last updated: 2026-10-28 (CMP-097: kit v1.3.0 sync, §5 deadline rule and §5.1 agent scans; owner's sync instruction); before: 2026-10-27 (CMP-069: PTES deadline date)
 - Versions used: ASVS 5.0.0 · Top 10 2025 · API Top 10 2023 · SSDF 1.1
 - Inventory appendix: [`ASVS_INVENTORY.md`](ASVS_INVENTORY.md)
 
@@ -292,19 +292,69 @@ Code reviewed by CMP-063; verified on a running system by the PTES test, with te
   actual upload date, and Agent 2 updates the date here.
 - Already in production when this baseline was adopted: **yes** (v1.0.0 at `camihernandez.com`,
   before the events feature). Under [`AGENTS.md`](../../AGENTS.md) → Security baseline, the owner
-  recorded the dated deadline above instead of testing before the events release. **Once the
-  deadline passes without a completed test, the test gates every release** until it is done, its
-  critical and high findings are fixed and retested, and every other finding has a story or a
-  risk the owner accepted in writing (the pen-test plan's release gate). Until the deadline,
+  recorded the dated deadline above instead of testing right after the events release. **Once the
+  deadline passes without the test, no release other than a security hotfix is cut until the test
+  has run**, on the production already live, without waiting for a release (kit v1.3.0); after
+  it, the next release waits until no critical or high finding is open, their fixes are re-checked,
+  and every other finding has a story or a risk the owner accepted in writing (the pen-test plan's
+  release gate). Until the deadline,
   releases follow the release checklist, with the CMP-063 critical and high findings fixed or
   accepted before the go-live.
 
-Penetration tests are run only by people the owner authorizes in writing, under a written scope
-signed by the owner (the pen-test plan). An implementation agent never runs a penetration test,
-and never runs attack tools or security scans against production. The security agent prepares
-and assists: the plan, the threat model and the ASVS review. A low-rate check of staging was
+The authorized external tester runs the test against production and writes a report. From the
+next release on, the test and the pre-release security agent's production scan start exactly
+after a release that needs them, when its production smoke test passes (the release runbook's
+post-release security step, planned in CMP-098). Penetration tests are run only by people the
+owner authorizes in writing, under a written scope signed by the owner (the pen-test plan).
+Security scans of a running system are run only by the pre-release security agent (§5.1);
+implementation agents, the review-only agent and the coordinator never run penetration tests,
+attack tools or security scans, in any environment. A low-rate check of staging was
 proposed in CMP-063 but not run; its items moved to the PTES test (owner decision 2026-10-27,
 [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §3).
+
+## 5.1 Agent scans (pre-release security agent)
+
+Added in the kit v1.3.0 sync (CMP-097). The pre-release security agent
+([`AGENTS.md`](../../AGENTS.md) → Pre-release security agent) scans staging before the release
+when staging can be scanned, and production right after the release in every case. No other
+agent runs penetration tests, attack tools or security scans, in any environment.
+
+**Staging case.** Every environment of this project runs on a third party's host, and neither
+host's terms expressly allow security testing (checked 2026-10-28):
+
+| Environment | Host | Who owns the host | Can it be scanned | Why (terms checked, 2026-10-28) |
+|---|---|---|---|---|
+| Staging backend (the `cami-events-staging` Apps Script web app) | Google Apps Script | A third party: Google | Yes, passive baseline only | Google's terms do not expressly allow security testing of its services; an earlier Google Apps acceptable use policy forbids testing "the Services in order to find limitations, vulnerabilities or evade filtering capabilities". The project's own deployment is in scope only as a passive, rate-limited baseline scan |
+| Staging site | None today (the temporary GitHub Pages test site was taken down, CMP-066) | — | No staging site | A new GitHub Pages test site would be passive baseline only ([`AGENTS.md`](../../AGENTS.md) → Security baseline, GitHub's terms as the kit checked them on 2026-10-27) |
+| Production site (`camihernandez.com`) | GoDaddy shared hosting | A third party: GoDaddy | Yes, passive baseline only | GoDaddy's [Hosting & Security Services Agreement](https://www.godaddy.com/legal/agreements/hosting-agreement) prohibits "server hacking or other perpetration of security breaches", and its vulnerability disclosure programme does not authorize testing in the name of its customers; nothing expressly allows testing |
+| Production backend (the `cami-events-production` Apps Script web app) | Google Apps Script | A third party: Google | Yes, passive baseline only | As for the staging backend |
+
+- Case: **staging scanned before the release (the backend web app, passive baseline only), and
+  production right after it (site and backend, passive baseline only)**. No scan of this project
+  is ever active, even with an approval, unless a host's terms change to allow it and this table
+  is updated first.
+- The PTES test by the human tester also stays within these terms (the pen-test plan's rules of
+  engagement).
+
+**Safeguards** (every scan, staging and production; [`AGENTS.md`](../../AGENTS.md) → Security
+baseline):
+- **Written approval for every run:** the owner signs a written approval and scope for each scan,
+  naming its time window; a standing approval does not count. Approvals are listed in
+  [`PENTEST_PLAN.md`](PENTEST_PLAN.md) §1.1.
+- **Passive baseline only** (for example the OWASP ZAP baseline scan), as the table says.
+- **Non-destructive only:** no denial-of-service or load testing; rate-limited to at most 1
+  request per second, and below the backend's own per-minute limits (contract §9), since staging
+  and production share the owner's Google quotas; no destructive payloads; no real users'
+  personal data read, changed or exported.
+- **Owned systems only:** in scope are this project's own site and its two Apps Script web apps.
+  Google's and GoDaddy's own services, Gmail and SINPE Móvil are out of scope.
+- **Stop and rollback:** the person who can stop a scan: the owner (Raul Casanas, contact on the
+  signed approval, kept privately); rollback plan if production degrades:
+  [`release-checklist.md`](../process/release-checklist.md) §7 (Rollback) for the site, and the
+  previous Apps Script version (runbook) for the backend.
+- **Findings handling:** findings go to the coordinator, which creates the remediation stories; a
+  critical finding is fixed as a hotfix and re-checked by the agent, after the fix and after the
+  human tester's report. This repository is public: findings follow §7.
 
 ## 6. Secrets, dependencies and data
 
