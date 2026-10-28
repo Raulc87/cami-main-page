@@ -6,10 +6,10 @@ or defect) and a ticket is proposed. Story statuses are not changed here; the co
 that after the owner approves the evidence. No acceptance criteria of a user story changed this
 sprint (the plan says "no new user stories"), so there is no story table.
 
-**Status of this document: complete for review.** CMP-067 (PR #86) and CMP-069 (PR #85, Agent 2)
-merged on 2026-10-27; no ticket is pending a merge. The only pending items are the live checks after
-the CMP-068 upload. **CMP-065 is moved after the go-live** (owner, 2026-10-27). CMP-068
-(the release) is not part of this document.
+**Status of this document: complete.** CMP-067 (PR #86) and CMP-069 (PR #85, Agent 2) merged on
+2026-10-27. CMP-068 (the release, PR #88) was uploaded and checked live by the owner on 2026-10-27
+(its results are in §2, CMP-068) and v1.1.0 was published on 2026-10-28 00:06 UTC. **CMP-065 is moved
+after the go-live** (owner, 2026-10-27).
 
 ## 1. Method
 
@@ -23,7 +23,7 @@ the CMP-068 upload. **CMP-065 is moved after the go-live** (owner, 2026-10-27). 
 | Public repository | Findings of the pre-test review appear only as neutral IDs ("SEC-00N, tracked privately"); no severity or detail is written here |
 
 Legend: **Pass**, **Fail**, **N/A** (cannot be exercised, with the reason), **Moved** (owner
-decision), **Pending** (waits on a merge).
+decision), **Pending** (waits on something not yet done).
 
 ## 2. Results per ticket
 
@@ -55,7 +55,7 @@ decision), **Pending** (waits on a merge).
 | Check | Result | Source / evidence |
 |---|---|---|
 | The `/favicon.svg` link resolves (an icon the owner approved) | Pass | Owner chose the proposed navy tile with a rose "C" (2026-10-27); `GET /favicon.svg` returns 200 `image/svg+xml` at 1280, 900 and 375 px; [`CMP-054-favicon-render.jpg`](evidence/sprint-03/CMP-054-favicon-render.jpg) |
-| No 404 on page load | Pass | No response with status 400 or above in the load, dev server. The live site gets the icon with the release upload (CMP-068) |
+| No 404 on page load | Pass | No response with status 400 or above in the load, dev server. The live site got the icon with the release upload (CMP-068, 2026-10-27) |
 
 ### CMP-057 — Developer guide (PR #64)
 | Check | Result | Source |
@@ -112,7 +112,7 @@ No detail here, by design. The checks recorded on each ticket:
 | 301 to HTTPS, HSTS (plain `max-age=31536000`, no `includeSubDomains`/`preload`), `nosniff`, `Referrer-Policy`, no directory listing | Pass (file reviewed; not run on Apache) | The reviewer checked each directive against SAC-13 and the plan; Apache is not available here |
 | CSP allows only the site, Google Fonts, the events backend and its redirect host, `https:` images, with `frame-ancestors 'none'` | Pass | Same file |
 | The whole page under exactly this CSP, no violation: events and ticker, a coupon check, a registration with an upload against staging, both languages, 1280/900/375 px | Pass | Local serve of `dist/` with the header (a small local server, not committed), headless Chromium: 7 staging events (one with an external `https:` picture) and the ticker, "Cupón no válido" for an invalid coupon, one test registration reaching "Inscripción recibida" (375 px), a duplicate refused on resubmit; console clean, no failed request. The events API was also mocked for the other widths. A control with `default-src 'none'` logs violations, so the check detects them |
-| After the CMP-068 upload: the redirect, the four headers and a clean console on the live site | Pending | CMP-068 |
+| After the CMP-068 upload: the redirect, the four headers and a clean console on the live site | Pass | Owner, 2026-10-27, on the live site (CMP-068 step 8): "307 yes, 4 headers yes, console clean, no listing". The 307 was the browser's own HTTPS upgrade (HSTS); the server's redirect, checked with `curl -sI http://camihernandez.com`, is a 301 with an `https` location |
 
 ### CMP-064 — Production backend setup and first approved deploy (PR #63, with the owner)
 | Check | Result | Source |
@@ -151,6 +151,24 @@ the cleanup list below.
 |---|---|---|
 | The approved emails, form wording, amount format (`₡15,000` in both languages) and the optional `contactOptIn` checkbox work on staging | Pass | Owner's staging check, 2026-10-26 ("all OK", staging v21), recorded in the CMP-060 row |
 
+### CMP-068 — Events go-live: release v1.1.0 (US-017..US-025; PR #88)
+Owner's reports, verbatim, 2026-10-27 (Costa Rica time; the upload was before 18:06, so the go-live date
+stays 2026-10-27 and the PTES deadline 2026-12-26 is unchanged), relayed by the coordinator. No URL,
+ID, participant or event name is recorded here.
+| Step | Check | Result | Owner's words |
+|---|---|---|---|
+| 1-2 | Clean `main` with version 1.1.0; production URL in an untracked file | Pass | "steps 1-2 ok" |
+| 3-4 | Build; the bundle holds exactly one production URL (last six characters compared by eye) and the file is deleted | Pass | "build ok, 1, one line, matches production, file deleted" |
+| 5 | Cookie gate on the live site before the upload; backup saved outside `public_html/` and downloaded | Pass | "no cookies"; "backup saved and downloaded" |
+| 6-7 | Upload (with `.htaccess`) and a first look | Pass | "uploaded, site loads" |
+| 8 | HTTPS redirect, the four headers, clean console, no directory listing (SAC-13) | Pass | "307 yes, 4 headers yes, console clean, no listing"; server-side redirect: 301 to `https` (`curl -sI`) |
+| 9 | Events section and ticker on the live site, EN and ES, phone and computer | Pass | "event shown and everything seems to work"; "email yes, EN/ES and phone yes". Before the check the owner added a real upcoming event of Cami's (published); it was first hidden because its date was in the past and shown once the owner fixed the date |
+| 10 | One real registration by the owner, with a coupon and a test receipt; cleanup | Pass | "I was able to subscribe to an event, apply coupons and validate a receipt (testing receipt of course)". **Deviation from the walk-through:** the registration went on that real event, not a separate test event. Cleanup: the test registration row(s) and test receipt file(s) deleted, the coupon use count restored or the test coupon deleted, the event left published; "cleanup done" |
+| 11 | Tag and GitHub Release | Pass | "release published"; the coordinator verified `v1.1.0` exists on GitHub (published 2026-10-28 00:06 UTC) |
+
+Gates, risks and the moved iPhone check are in the PR #88 body. Live traffic from this check is in the
+production `Metrics` row of 2026-10-27.
+
 ### Docs-only tickets
 CMP-055, CMP-058, CMP-060, CMP-061, CMP-070, CMP-077, CMP-078, CMP-080, CMP-081, CMP-083 and
 CMP-085 to CMP-089 are docs PRs by the coordinator, and CMP-082 and CMP-088 are docs PRs by Agent 2.
@@ -160,10 +178,12 @@ They carry no behavior to verify beyond the docs link check, which passed on eac
 
 | # | Item | Class | Proposal |
 |---|---|---|---|
-| 1 | The owner's SAC-13 check found no HTTPS redirect and no security headers on the live site | Defect found by the check (production is not changed until the release) | Fixed by CMP-079 (merged); the live check after the CMP-068 upload closes it |
+| 1 | The owner's SAC-13 check found no HTTPS redirect and no security headers on the live site | Defect found by the check | Fixed by CMP-079; the live check after the CMP-068 upload passed (2026-10-27): closed |
 | 2 | CMP-050: 2 high `npm audit` warnings in the CI-only deploy tool remain (no fixed `clasp` release) | Accepted, recorded in the row | Re-check when `clasp` > 3.4.1 is published; cadence in CMP-071 (Sprint 04 proposal) |
 | 3 | `ARCHITECTURE_SPEC.md` and the events implementation plan still call the logo a placeholder | Doc lag | The coordinator updates them after PR #86 merges (coordinator, 2026-10-27) |
-| 4 | `.htaccess` was not run on Apache (none available here); a host that disallows `Options` overrides answers every page with a 500 | Residual risk, not a Fail | Covered by the CMP-068 backup and the live check right after the upload |
+| 4 | `.htaccess` was not run on Apache (none available here); a host that disallows `Options` overrides answers every page with a 500 | Residual risk, closed | The live site loaded and the headers were present after the upload (CMP-068 steps 7 and 8) |
+| 5 | The CMP-068 test registration went on a real event of Cami's instead of a separate test event | Deviation from the walk-through, cleaned up by the owner | None; for the next release, add a test event before the check (walk-through step 10) |
+| 6 | The owner proposes automated site deploys (GitHub Actions to GoDaddy over FTP, with approval and a backup) | Improvement | A Sprint 04 ticket (the coordinator adds it) |
 
 No Fail in the sprint's own checks is open.
 
@@ -192,7 +212,7 @@ row). The coupon checks of the CMP-079 run used an invalid code, so Agent 3 crea
 the owner confirmed (2026-10-27, relayed by the coordinator) that the staging `Coupons` tab holds no
 test coupon from the sprint's tests: "no test coupons at all, I removed them all". Production
 holds no test data from this sprint: CMP-064 sent only a smoke request (read-only). The production
-test registration by the owner belongs to CMP-068, and is deleted afterwards (row and file).
+test registration by the owner (CMP-068 step 10) was cleaned up by the owner on 2026-10-27 (row(s), receipt file(s), coupon use count).
 
 After the go-live, the iPhone check (CMP-065, moved) adds its own test rows and files on production,
 to be deleted by the owner afterwards.
