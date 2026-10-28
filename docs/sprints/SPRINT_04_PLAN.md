@@ -20,14 +20,14 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 |---|---|---|
 | 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on this PR's head |
 | 2 | Readiness checklist has no open blocking items | Pass, except item 8 (the go-ahead), which is gate 4 |
-| 3 | Integration contracts locked | Pass: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.8, locked; no ticket changes it (CMP-094 changes only the look of the event tabs, not their columns or values) |
+| 3 | Integration contracts locked | Pass: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.9, locked (CMP-100 adds two trigger settings to §9 before CMP-101); CMP-094 changes only the look of the event tabs, not their columns or values |
 | 4 | Final go-ahead from the human owner | Pending |
 
 ### Readiness checklist result (2026-10-28)
 | Item | Result |
 |---|---|
 | 1. Paths, `AGENTS.md`/`CLAUDE.md`, project key, branch names **(blocking)** | Pass (unchanged since Sprint 03; branches in Selected tickets) |
-| 2. Docs agree on scope, names, behavior **(blocking)** | Pass: FEATURE_SPEC v1.11, contract v1.8 |
+| 2. Docs agree on scope, names, behavior **(blocking)** | Pass: FEATURE_SPEC v1.12, contract v1.9 (CMP-100) |
 | 3. Testable acceptance criteria **(blocking)** | Pass: each ticket below lists its checks; no new user stories |
 | 4. Locked contracts for shared interfaces **(blocking)** | Pass (gate 3) |
 | 4. Credentials rule | Pass: TECH_STACK §11, ADR-009; CMP-092 (ADR-010) sets the rule for the site-upload credentials before CMP-093 |
@@ -72,6 +72,8 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | CMP-094 | New event tabs get the status dropdown, the check-result colors and the needs-review highlight | Agent 1 | — | `CMP-094-event-tab-format` | todo |
 | CMP-071 | Dependency checks: `npm audit` on pull requests, Dependabot version updates, an SBOM | Agent 2 | — | `CMP-071-dependency-checks` | todo |
 | CMP-095 | PTES test preparation: the request pack for testers and the staging setup for the test | Agent 2 | — | `CMP-095-ptes-preparation` | todo |
+| CMP-100 | Contract v1.9: the time triggers' working hours and failure threshold (`TRIGGER_HOURS`, `TRIGGER_FAIL_ALERT_AFTER`) | Coordinator | — | coordinator branch | done |
+| CMP-101 | Time triggers work only in working hours and report a failure only after 10 failed runs in a row (contract v1.9) | Agent 1 | CMP-100 | `CMP-101-trigger-hours-and-failures` | todo |
 | CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
 
 Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone is available
@@ -135,12 +137,26 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
   - It also states what staging needs for the test: test SINPE values and a test event during
     the window, the alert settings, and the cleanup afterwards.
   - No staging URL, IDs or personal data in it.
+- **CMP-101:** `refreshEventsCache` and `retryPendingChecks` follow contract v1.9 §9:
+  - outside `TRIGGER_HOURS` (Costa Rica time) a run ends at once with no work and no error;
+  - a failed run is reported (Google's failure email) only at `TRIGGER_FAIL_ALERT_AFTER` failures
+    in a row of that function; earlier ones are logged by error name only; a success resets the
+    count;
+  - empty or invalid values fall back as the contract says;
+  - the daily work these runs do (Metrics flush, pruning, the daily alert email) still happens
+    every day, at the first run after the start hour if not before; say in the PR what moves.
+  - The runbook §2.4 lists both properties with their initial values (06-22, 10); the owner adds
+    them on staging and production.
+  - Staging check after the merge (contract §10), with the staging triggers re-created for the
+    check and deleted again afterwards (owner, 2026-10-28: staging triggers deleted while no
+    feature is tested). Like CMP-094, it stays on staging this sprint and reaches production with
+    the next release.
 - **CMP-096:** `docs/sprints/SPRINT_04_VERIFICATION.md` with the evidence of every ticket and
   the staging cleanup list.
 
 ## Parallel Workstreams
 ### Agent 1 — Events backend and deploys (fresh session)
-- CMP-094 at the go-ahead; CMP-093 once CMP-092 is merged; CMP-096 last.
+- CMP-094 and CMP-101 at the go-ahead; CMP-093 once CMP-092 is merged; CMP-096 last.
 
 ### Agent 2 — Security (fresh session)
 - CMP-071 and CMP-095 at the go-ahead.
@@ -170,15 +186,15 @@ CMP-093 needs release-checklist §4 and §7 changed: Agent 1 sends the text to t
 who changes it in a docs PR merged with or right after CMP-093.
 
 ## Integration Contracts
-- [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.8, locked; no change this
-  sprint.
+- [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.9, locked: CMP-100 adds the
+  two trigger settings to §9 and their test to §10, merged before CMP-101.
 
 ## Merge / Integration Order
 Each line names what the PR waits for.
 
 1. CMP-091 (this plan) — nothing.
 2. CMP-092 (ADR-010) — CMP-091.
-3. CMP-094, CMP-071, CMP-095 — nothing beyond the go-ahead.
+3. CMP-094, CMP-071, CMP-095 — nothing beyond the go-ahead; CMP-101 — CMP-100 (merged).
 4. CMP-093 (site upload) — CMP-092.
 5. CMP-096 (verification) — every PR above, except one the owner moved to the next sprint.
 
@@ -250,3 +266,18 @@ The human reviewer is the final approver.
   no production backend deploy runs this sprint, and CMP-094 reaches production with the next
   release, which triggers CMP-098 and CMP-099 (or the 2026-12-26 deadline does, whichever comes
   first).
+- Staging time triggers deleted by the owner (2026-10-28), after two one-off Google server errors
+  in staging's `refreshEventsCache` (2026-10-26 21:56 and 2026-10-27 11:41, Costa Rica time):
+  "since we are not actively working on a feature for cami besides being aware of any bug
+  happening. can we stop staging triggers to avoid this?" … "staging triggers deleted". Staging
+  answers `events` from its last saved list meanwhile; the triggers are re-created for each
+  staging check that needs them (CMP-101, the PTES window) and deleted again after. Production
+  keeps both triggers.
+- Owner decisions, 2026-10-28, questions as asked: "… Both need a small backend change. The
+  backend would (1) send the failure email only after N failures in a row, and (2) skip its work
+  outside working hours … Do you want it?" Owner: **"Add to Sprint 04 (Recommended)"**. "If we do
+  it: which hours should the triggers work (Costa Rica time)? …" Owner: **"6:00 to 22:00
+  (Recommended)"**. "And the failure email: after how many failures in a row?" Owner: **"10 in a
+  row (your number)"** (about 50 minutes with the 5-minute trigger). Contract v1.9 (CMP-100),
+  backend CMP-101; like CMP-094 it stays on staging this sprint, so Sprint 04 is still not a
+  production release.

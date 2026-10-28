@@ -139,14 +139,20 @@ Order of work (each one PR; checks in SPRINT_04_PLAN → Ticket checks):
    dropdown (warning mode, never reject), the checkResult colors and the needsReview row
    highlight. Columns, headers and values unchanged. Staging check after the merge with a new
    test event; tell the owner what to delete afterwards.
-2. CMP-093-site-upload-workflow — start only when ADR-010 (CMP-092) is merged; build exactly
+2. CMP-101-trigger-hours-and-failures — after contract v1.9 (CMP-100) is merged: the two time
+   triggers work only inside TRIGGER_HOURS and report a failure only after
+   TRIGGER_FAIL_ALERT_AFTER failed runs in a row (contract §9, §10; FFR-033). Runbook §2.4 lists
+   both properties. The staging triggers are deleted while no feature is tested: for the staging
+   check, ask the owner (through the coordinator) to re-create them, and to delete them again
+   after.
+3. CMP-093-site-upload-workflow — start only when ADR-010 (CMP-092) is merged; build exactly
    what it decides. Never print the production URL, the FTP host, user or password; the bundle
    check prints only masked values. Walk the owner through the cPanel FTP account, the GitHub
    environment and its secrets (they type them; never send them to you), a dry run, then one
    approved real run of the current main, then the live checks (site loads, 301 to https, the
    four headers, no cookies, events in EN and ES). Send the release-checklist §4/§7 text to the
    coordinator.
-3. CMP-096-sprint-04-verification — after every other Sprint 04 PR is merged:
+4. CMP-096-sprint-04-verification — after every other Sprint 04 PR is merged:
    SPRINT_04_VERIFICATION.md with the evidence of each ticket and the staging cleanup list.
 ```
 
