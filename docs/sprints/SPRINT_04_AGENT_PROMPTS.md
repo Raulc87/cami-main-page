@@ -23,8 +23,9 @@ Codex reviews every PR automatically when it opens (no session prompt needed).
 ## Launch order
 
 1. Review-only agent: start once, before the first PR is opened. Its session ID replaces
-   `<REVIEWER_SESSION>` in every implementation prompt; the coordinator's
-   (`session_01Bz1vUqhjanC9ePRd5t2u6j`) replaces `<COORDINATOR_SESSION>`.
+   `<REVIEWER_SESSION>` in every implementation prompt; the coordinator fills in its own
+   session ID (`session_01Bz1vUqhjanC9ePRd5t2u6j`) for `<COORDINATOR_SESSION>` in every
+   prompt, the reviewer's included, when it launches the session.
 2. Agents 1 and 2 at the go-ahead: each has work with no dependency (CMP-094; CMP-071, CMP-095).
 
 ## Coordination
@@ -188,6 +189,13 @@ Who may trigger a review: a PR's author agent after each push, the owner, or the
 the owner's behalf. Review when triggered; do not poll on your own. Do not subscribe to PR
 events (AGENTS.md → Review-only agent → Review flow).
 
+The repository is public. An unfixed security finding appears only as "SEC-00N: security
+fix, tracked privately", with no severity. Your reviews name locations only and never repeat
+a finding's details; send any disclosure concern to the coordinator privately, never on GitHub.
+
+The kit (Raulc87/sdd_starter_kit) is private. If a review needs one of its templates, ask the
+owner to attach it to your session read-only at tag v1.2.0; never edit it or comment on it.
+
 First read AGENTS.md, CLAUDE.md, PROJECT_CONTEXT.md, every document it lists, and
 docs/sprints/SPRINT_04_PLAN.md. Then wait for a review request.
 
@@ -202,7 +210,7 @@ For each PR:
   broken links, security (the baseline once merged; secrets, IDs, URLs and personal data in the
   repo or PR text; attack traffic to production), regressions and integration risk.
 - Before "Ready for human approval": every status that becomes true on merge is already in the
-  PR (ticket row `done`, each document it approves `Approved`/`Accepted` on merge).
+  PR (ticket row `done`, or `review` where the plan says the check runs after the merge, each document it approves `Approved`/`Accepted` on merge).
 - Triage every Codex comment, including collapsed or "previously missed" sections: valid /
   obsolete / invalid, with evidence. Do your own full review regardless.
 

@@ -90,7 +90,8 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
     never the server's own files or the backup);
   - how `.htaccess` is uploaded.
   TECH_STACK and the release checklist point to it. Merged before CMP-093.
-- **CMP-093:** a workflow (`.github/workflows/deploy-site.yml`) as ADR-010 says:
+- **CMP-093:** a workflow (`.github/workflows/deploy-site.yml`) as ADR-010 says, started
+  only by hand (`workflow_dispatch`, with a dry-run input), never on a push or a merge:
   - it builds `main` with the production URL from the environment secret;
   - it checks that the bundle points at production, not staging, printing only masked values;
   - it waits for the owner's approval, then uploads.
@@ -114,7 +115,11 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
 - **CMP-071:** Dependabot version updates for the site (`/`) and the deploy tools
   (`/.github/clasp`), and an `npm audit` check on every PR for both.
   - It runs at the level the security baseline §6 sets, and fails on a high or critical
-    advisory in the production dependencies.
+    advisory, except one recorded as an accepted exception: an allowlist entry in Agent 2's
+    files with the advisory ID, the package, the reason and a review date, accepted by the
+    owner in writing on the PR. The known `zod`/`@google/clasp` warnings in the CI-only deploy
+    tools (CMP-050, no fixed release yet) are proposed as the first entries; an expired review
+    date fails the check.
   - It also produces an SBOM for each release.
   - The two warnings in the deploy tools (CMP-050 notes): fixed if a release fixes them;
     otherwise recorded with the reason and a review date.
@@ -149,11 +154,15 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 
 | Path | Owner |
 |---|---|
-| `apps-script/**`, `.github/clasp/**` (except Dependabot's own pull requests), `.github/scripts/**`, `.github/workflows/deploy-apps-script.yml`, `.github/workflows/apps-script-check.yml`, `.github/workflows/deploy-site.yml` (new), [`docs/process/events-backend-runbook.md`](../process/events-backend-runbook.md), `docs/sprints/SPRINT_04_VERIFICATION.md`, `docs/sprints/evidence/sprint-04/**` | Agent 1 |
+| `apps-script/**`, `.github/clasp/**` (except Dependabot's own pull requests), `.github/scripts/**` except `check_doc_links.py`, `.github/workflows/deploy-apps-script.yml`, `.github/workflows/apps-script-check.yml`, `.github/workflows/deploy-site.yml` (new), [`docs/process/events-backend-runbook.md`](../process/events-backend-runbook.md), `docs/sprints/SPRINT_04_VERIFICATION.md`, `docs/sprints/evidence/sprint-04/**` | Agent 1 |
 | `docs/security/**`, `.github/dependabot.yml` (new), `.github/workflows/dependency-audit.yml` (new) | Agent 2 |
 | `src/**`, `public/**`, `index.html`, `package.json` and `package-lock.json`, `CONTRIBUTING.md`, [`README.md`](../../README.md) | No agent this sprint: a change goes through the coordinator to the owner |
 | [`TICKETS.md`](../../TICKETS.md) | Shared: each agent updates only its own rows; the coordinator adds rows |
 | `.github/workflows/docs-link-check.yml`, `.github/scripts/check_doc_links.py`, `docs/specs/**`, [`docs/process/release-checklist.md`](../process/release-checklist.md) and the other process docs, `docs/sprints/SPRINT_04_*.md` except the verification, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), [`TECH_STACK.md`](../../TECH_STACK.md), `docs/decisions/**`, `docs/ux/**` | Coordinator (docs PRs) |
+
+CMP-071 does not edit lockfiles or manifests: a fix in `.github/clasp` is Agent 1's (Agent 2
+asks through the coordinator); a fix in the site's `package.json`/`package-lock.json` comes
+only as a Dependabot pull request, which the owner merges after review.
 
 CMP-093 needs release-checklist §4 and §7 changed: Agent 1 sends the text to the coordinator,
 who changes it in a docs PR merged with or right after CMP-093.
