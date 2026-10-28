@@ -12,8 +12,8 @@
   setting public (only the owner changes it)
 - Kept project rules (instead of the kit's), with their reasons:
   [ADR-006 → Kit disposition](docs/decisions/ADR-006-adopt-sdd-starter-kit.md#kit-disposition)
-- Status: Live at `camihernandez.com` (v1.0.1); documentation homologated to the SDD starter
-  kit in CMP-014
+- Status: Live at `camihernandez.com` (v1.1.0, the events feature live since 2026-10-27);
+  documentation homologated to the SDD starter kit in CMP-014
 - Product owner / final reviewer: Raul Casanas
 
 ## Active documentation
@@ -35,10 +35,11 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md) (Active since the
-  owner's go-ahead, 2026-10-27); Sprints 01 and 02 are closed
+- Active sprint plan: [SPRINT_04_PLAN.md](docs/sprints/SPRINT_04_PLAN.md) (Draft until the
+  owner's go-ahead); Sprints 01 to 03 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
-  [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md), kept for their reviews)
+  [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
+  [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md), kept for their reviews)
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
   ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
@@ -75,32 +76,27 @@ Former spec file names (before CMP-014) are mapped in
 they are not active paths.
 
 ## Current sprint
-- Sprint: 03 — events go-live (security baseline, pre-test review, production backend,
-  real-iPhone check, Lifetools logo, release v1.1.0) and backlog fixes CMP-050,
-  CMP-052..CMP-054. Sprint 02
-  closed 2026-10-26 (review in its plan).
-- Goal: the events feature is live on `camihernandez.com`; the PTES test follows by its deadline
-- Start: 2026-10-27
-- End: 2026-11-04 (if the start moves: the 7th business day from the actual start)
-- Agent prompts: [docs/sprints/SPRINT_03_AGENT_PROMPTS.md](docs/sprints/SPRINT_03_AGENT_PROMPTS.md)
-- Deliverable: evidence in `SPRINT_03_VERIFICATION.md`, then release v1.1.0 with the events
-  live and every release-checklist §3b gate met (owner: "I don't want to wait for Cami to use
-  this in the meantime")
-- Status: Active — owner's go-ahead 2026-10-27: "go ahead"
+- Sprint: 04 — site upload from GitHub (ADR-010), dependency checks (CMP-071), event-tab
+  format, PTES test preparation. Sprint 03 closed 2026-10-28 with the events live (v1.1.0;
+  review in its plan).
+- Goal: safer, lighter releases after the go-live; the PTES test ready to hand to a tester
+  before its deadline (2026-12-26)
+- Start: 2026-10-28, or the day of the go-ahead
+- End: 2026-11-04
+- Agent prompts: [docs/sprints/SPRINT_04_AGENT_PROMPTS.md](docs/sprints/SPRINT_04_AGENT_PROMPTS.md)
+- Deliverable: one approved run of the site-upload workflow with the live checks; evidence in
+  `SPRINT_04_VERIFICATION.md`
+- Status: Draft — approved on merge of CMP-091; starts at the owner's go-ahead
 
 ## Agent allocation
-- Implementation Agent 1: events backend and production setup — CMP-053, CMP-050, CMP-052,
-  CMP-064 (session launched 2026-10-27)
-- Implementation Agent 2: security — CMP-056, CMP-062, CMP-063, CMP-069 (session launched
-  2026-10-27)
-- Implementation Agent 3: site, developer guide, iPhone check, logo, verification, go-live —
-  CMP-057, CMP-054, CMP-065, CMP-067, CMP-066, CMP-068 (session launched 2026-10-27)
-- Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 03, launched
-  2026-10-27; Codex runs as
+- Implementation Agent 1: events backend and deploys — CMP-094, CMP-093, CMP-096 (fresh
+  session at the Sprint 04 go-ahead)
+- Implementation Agent 2: security — CMP-071, CMP-095 (fresh session at the go-ahead)
+- Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 04; Codex runs as
   the automated reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-078
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-091, CMP-092
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

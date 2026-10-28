@@ -2,7 +2,8 @@
 
 ## Metadata
 - Sprint: 03
-- Status: Active (plan approved on merge of PR #54; owner's go-ahead 2026-10-27, Entry Gate 4)
+- Status: Closed 2026-10-28 (plan approved on merge of PR #54; owner's go-ahead 2026-10-27,
+  Entry Gate 4); the events went live with v1.1.0 on 2026-10-27
 - Start: 2026-10-27 (Tuesday), the day of the go-ahead and the launch of the sessions (planned
   2026-10-28)
 - End: 2026-11-04 (Wednesday), the 7th business day from the actual start
@@ -454,3 +455,9 @@ The human reviewer is the final approver.
   a screenshot, different test emails); those rows and files are test traffic, deleted
   afterwards, and that day's Metrics counts include them; a problem becomes a bug ticket. The HEIC follow-up decision waits for that test. CMP-068 lists
   it under Risks.
+- Sprint 03 closed (2026-10-28). The events went live with v1.1.0 on 2026-10-27 (CMP-068, PR #88;
+  the live checks in PR #90; tag `v1.1.0`). Every selected ticket is `done`, except CMP-065, the
+  real-iPhone check, moved after the go-live by the owner. The PTES deadline is 2026-12-26
+  (CMP-069). Carried to Sprint 04 by the owner: the site upload from GitHub (the owner's
+  proposal during the upload), CMP-071, the event-tab format and the PTES preparation
+  ([SPRINT_04_PLAN.md](SPRINT_04_PLAN.md)).
