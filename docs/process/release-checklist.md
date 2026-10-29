@@ -182,6 +182,8 @@ GoDaddy shared hosting — upload from the browser.
 7. Delete `release.zip` from `public_html/` after extracting (it must not remain publicly served).
 8. Confirm that `public_html/index.html` exists and is the new `index.html` (recent modification
    date).
+9. If `public_html/.deploy-site-manifest` exists (the upload workflow has run before), delete it:
+   it no longer matches the files, and the next workflow run then re-uploads everything.
 
 ## 5. Domain → hosting
 
@@ -288,7 +290,9 @@ re-upload). v1.1.0 has no kept build: rolling back to it is the manual restore b
 
 1. Delete the new content of `public_html/`.
 2. Re-upload and extract the backup `.zip` from §4.2 step 4.
-3. If the release had already been tagged on GitHub, don't delete the tag/release — document it as
+3. Delete `public_html/.deploy-site-manifest` if it is there (show hidden files), so the next
+   workflow run re-uploads everything instead of trusting a stale list.
+4. If the release had already been tagged on GitHub, don't delete the tag/release — document it as
    known and fix it with a following release (`v1.0.1`), unless the tag points to a broken commit
    that should never have been published.
 
