@@ -188,6 +188,16 @@ gh release create "$VERSION" \
   [TICKETS.md](../../TICKETS.md) included since the previous release (or all of them, if it's the
   first).
 
+## 6a. Caching check (since CMP-102)
+
+Right after an upload, in a private window with developer tools → Network (**Disable cache**
+off), reload the site and check the `Cache-Control` response header of three requests:
+- [ ] `index.html` (the page itself): `no-cache` (or `no-store`), so a new release shows at once.
+- [ ] One file under `assets/` (hashed name): a long lifetime (one year, `immutable`).
+- [ ] One image under `images/`: a long lifetime (one year).
+If a header is missing, the host ignored `public/.htaccess`: tell the coordinator (a ticket);
+the site still works, only slower.
+
 ## 6b. Post-release security (right after the release)
 
 Added for kit v1.3.0 (CMP-097; the step CMP-099 planned, written now for v1.1.1). Every

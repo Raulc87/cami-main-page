@@ -409,3 +409,21 @@ The human reviewer is the final approver.
   "Keep each release's build (Recommended)" (questions as asked in the ADR).
 - The "Agentic Browsing" section of the owner's PageSpeed run (1/2) fails on the same layout shift
   (CLS 0.596); CMP-102's fix must bring it to 2/2 (told to Agent 3 at launch).
+- Owner decisions, 2026-10-29, questions as asked:
+  - PTES (CMP-095): "PTES test (due by 26 Dec): will the project pay a tester? …" Owner: **"Free
+    options first"** ("Try a university program, a volunteer or community tester, or a friend
+    who's a certified tester first; decide on paying only if none is found by mid-November").
+    The coordinator checks back on 2026-11-13. "The request pack is in English. Do you want a
+    Spanish copy for local testers in Costa Rica?" Owner: **"Yes, add Spanish (Recommended)"**.
+  - Site performance (CMP-102, PR #100): the dusty-rose text → **"New darker rose
+    (Recommended)"** (`C.roseText` `#965965`, approved by the owner and Cami on PR #100's
+    preview); no events → **"Find a no-jump way (Recommended)"**; the registration form labels →
+    **"Yes, same PR (Recommended)"**.
+  - Dependabot titles: "Dependabot … opens PRs with its own titles … Allow that exception in our
+    PR rules?" Owner: **"Yes, allow it (Recommended)"** (pr-workflow §2).
+- The deploy login (`CLASP_CREDENTIALS`) expired again: staging deploys #19 (2026-10-28) and #20
+  (2026-10-29, CMP-094) stopped at the login check, nothing pushed; the owner renewed it in both
+  environments and re-ran #20 (owner, 2026-10-29: "login renewed, deploy re-run"). The coordinator
+  asked the owner to check the Workspace "Google Cloud session control" setting (runbook §5.1).
+- Staging scan for v1.1.1: skipped (above); the docs/security pointers to release-checklist §6b
+  were done by the pre-release security agent in PR #94.

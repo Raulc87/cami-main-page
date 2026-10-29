@@ -93,7 +93,9 @@ Events section
   (12 h before start, BR-E09) or the event is sold out (FFR-025).
 - FFR-004: When the page loads and there are no upcoming events, or the backend is unavailable
   or slower than 5 s, the section and the ticker are hidden (Q-10) and the rest of the page
-  renders normally. A later refresh (language change, or a stale-event refresh from the form)
+  renders normally. While the request is pending, their room is reserved, so the page does not
+  jump when events arrive; when none come back, the room closes smoothly, with no visible text
+  (CMP-102, owner 2026-10-29). A later refresh (language change, or a stale-event refresh from the form)
   that fails keeps the events already shown, so an open registration form and its typed data
   are not lost; the backend re-checks every registration anyway (BR-E13). Owner, 2026-10-20:
   "(a)" (keep the events shown on a failed refresh).

@@ -5,11 +5,12 @@
   §22 — in CMP-021; v1.2 adds `src/api/` and the events sections to §6, §7 and §22 — CMP-022;
   v1.3: §7 ticker props, §9 events placeholders, §13 two projects — CMP-035; v1.4: §7
   scroll-reveal wrapper rule, §12 script scopes — CMP-036; v1.5: §12 full Drive scope named,
-  §18 events cache — CMP-037; v1.6: §18 events wait 5 s — CMP-038)
+  §18 events cache — CMP-037; v1.6: §18 events wait 5 s — CMP-038; v1.7: §7 `Picture`,
+  `EventsSkeleton` and one `main` landmark, §16 performance — CMP-106, with CMP-102)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
   merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved on merge of PR #26; v1.4
-  Approved on merge of PR #30; v1.5 Approved on merge of PR #32; v1.6 Approved (on merge of
-  PR #34))
+  Approved on merge of PR #30; v1.5 Approved on merge of PR #32; v1.6 on merge of PR #34; v1.7
+  Approved on merge of the CMP-106 PR)
 - Owner: Raul Casanas
 
 ## 1. Purpose
@@ -87,6 +88,11 @@ content props from `App.jsx` (only `r`). **Exception (events):** `App.jsx` calls
 once and passes `events` to `EventsTicker` and `events` and `sinpe` to `Events` (the ticker
 does not need the SINPE data), so the page makes one `events` request. That data comes from the
 backend at runtime, not from `constants/`.
+
+Since CMP-102: while that request is pending, `EventsSkeleton` holds the room of the ticker and the
+section (FFR-004), closing over 0.4 s if no event comes back; `Picture` renders the site's images
+as WebP with a JPEG/PNG fallback and `srcset`; `App.jsx` wraps the sections in one `main`
+landmark.
 
 ### Global language (`LanguageContext`)
 
@@ -322,8 +328,11 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 - Events backend: `Metrics` tab and alert emails (FFR-029). Site analytics: none (US-014).
 
 ## 16. Performance
-- Single global `IntersectionObserver`; resized JPEG images; no runtime dependencies beyond
-  React.
+- Single global `IntersectionObserver`; images resized and served as WebP with a fallback
+  (`Picture`), the hero photo first and the rest lazy; fonts preloaded; long browser caching for
+  hashed assets and images in `public/.htaccess`, `index.html` not cached; no runtime
+  dependencies beyond React. Target: Lighthouse/PageSpeed 90+ desktop and mobile, CLS under 0.1
+  (CMP-102).
 
 ## 17. Scalability
 - Static files; scales with the host. Not a concern at current traffic.

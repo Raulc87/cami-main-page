@@ -42,7 +42,10 @@ EOF
 ```
 
 **The title must always start with the ticket ID** (`CMP-XXX:`) — that's what lets PRs be
-cross-referenced with [TICKETS.md](../../TICKETS.md) without an external tracker.
+cross-referenced with [TICKETS.md](../../TICKETS.md) without an external tracker. **Exception:**
+Dependabot's own pull requests (CMP-071) keep Dependabot's titles and get no ticket row; the
+checks and the review-only agent still apply, and the owner merges them as usual (owner,
+2026-10-29: "Yes, allow it").
 
 The 5 body sections (`Summary`, `User stories & acceptance criteria`, `Files`, `Verification`,
 `Risks`) are mandatory, in that order. If one doesn't apply (e.g. a documentation-only change has
