@@ -120,6 +120,7 @@ export default function Testimonials({ r }) {
                     src={featured.image}
                     widths={featured.imageWidths}
                     sizes="46px"
+                    loading="lazy"
                     alt={featured.name}
                     width={46}
                     height={46}

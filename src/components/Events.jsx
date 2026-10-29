@@ -72,6 +72,7 @@ export default function Events({ events, sinpe, onRefetch }) {
                       className={hasImage ? 'evt-card-img' : 'evt-card-img evt-card-img-logo'}
                       src={hasImage ? ev.imageUrl : LOGO}
                       widths={hasImage ? undefined : [400, 800]}
+                      loading="lazy"
                       sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 374px"
                       // The art is decorative: the event name is the card's heading.
                       alt={hasImage ? '' : t.logoAlt[lang]}
