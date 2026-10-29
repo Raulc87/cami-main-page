@@ -58,7 +58,7 @@ jobs:
           const used = new Set();
           for (const e of entries) {
             for (const k of ['advisory', 'package', 'lockfile', 'severity', 'reason', 'firstReported', 'review', 'acceptedBy']) {
-              if (!String(e[k] ?? '').trim()) fail(`Allowlist entry ${e.advisory ?? '?'}: "${k}" is empty (the owner's written acceptance goes in acceptedBy).`);
+              if (!String(e[k] ?? '').trim()) fail(`Allowlist entry ${e.advisory ?? '?'}: "${k}" is empty${k === 'acceptedBy' ? " (the owner's written acceptance goes here: name, date, link to the comment)" : ''}.`);
             }
             const isDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d ?? '');
             if (!isDate(e.review) || !isDate(e.firstReported)) fail(`Allowlist entry ${e.advisory}: review and firstReported must be YYYY-MM-DD dates.`);
@@ -88,7 +88,8 @@ jobs:
             console.log(`${lock}: ${report.metadata.vulnerabilities.high} high, ${report.metadata.vulnerabilities.critical} critical (counts include packages that only depend on a vulnerable one)`);
             for (const [id, via] of found) {
               const hit = entries.find((e) => e.advisory === id && e.lockfile === lock && e.package === via.name);
-              if (hit) { used.add(hit); console.log(`  ${id} ${via.name} (${via.severity}): allowed until ${hit.review}`); }
+              if (hit && hit.severity !== via.severity) fail(`${lock}: ${id} is now rated ${via.severity}, the entry says ${hit.severity}; renew the entry with the owner's written acceptance.`);
+              else if (hit) { used.add(hit); console.log(`  ${id} ${via.name} (${via.severity}): allowed until ${hit.review}`); }
               else fail(`${lock}: ${via.severity} advisory ${id} in ${via.name} (${via.title}) is not in the allowlist.`);
             }
           }

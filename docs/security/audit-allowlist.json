@@ -9,7 +9,7 @@
       "reason": "zod below 4.6.6 uses memory on oversized collections; it reaches the deploy tool through @google/clasp 3.4.1, the newest clasp release, which requires zod ^3.25.76 (CMP-050). The only audit fix installs clasp 2.5.0, a downgrade the deploy scripts do not support. Exposure: CI-only tool, installed with --ignore-scripts, serves no requests and reads no untrusted input.",
       "firstReported": "2026-10-22",
       "review": "2026-11-20",
-      "acceptedBy": ""
+      "acceptedBy": "Raul Casanas (owner), 2026-10-29, https://github.com/Raulc87/cami-main-page/pull/98#issuecomment-6503719194"
     }
   ]
 }
