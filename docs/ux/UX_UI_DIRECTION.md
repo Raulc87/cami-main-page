@@ -42,7 +42,7 @@ must be updated by hand** so they don't drift.
 | `C.navy` | `#1e2d42` | Primary dark color (main text, buttons, footer) |
 | `C.navyMid` | `#2c3e5a` | Mid navy (hover borders, gradients) |
 | `C.navyLight` | `#4a6178` | Body text, light navy |
-| `C.rose` | `#c9a4ab` | "Dusty rose" accent (badges, dots, italics) |
+| `C.rose` | `#c9a4ab` | "Dusty rose" accent (badges, dots, borders, pills, and italics or text on navy); rose **text** on light backgrounds uses `C.roseText` |
 | `C.roseLight` | `#e8d4d8` | Light rose (borders, stats bar backgrounds) |
 | `C.roseText` | `#965965` | Darker rose for **text** on light backgrounds (italic accents, kickers, the tagline and wordmark, the event status label, the form's discount line): 4.92:1 on `#f9f4f2`, 5.37:1 on white, 4.64:1 on `#f5ede8` (WCAG AA). `C.rose` stays for dots, borders, pills and text on navy (owner, 2026-10-29: "New darker rose", CMP-102) |
 | `C.cream` | `#f5ede8` | Intended for section alternation (`colors.js`); today used only in a gallery gradient |
@@ -156,7 +156,7 @@ code and in [ARCHITECTURE_SPEC.md §9](../specs/ARCHITECTURE_SPEC.md#9-logical-d
 
 ## 13. Events UI
 Direction for US-017..US-020 ([FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md)).
-It reuses the palette, type and shapes above; no new colors or fonts.
+It reuses the palette, type and shapes above (including `C.roseText`, §2); no other new colors or fonts.
 
 - **Placement.** The Events section sits right after the Hero, so the ticker's items scroll to
   something near the top. Both are absent (not empty) when there are no upcoming events

@@ -197,8 +197,9 @@ off), reload the site and check the `Cache-Control` response header of three req
 - [ ] One image under `images/`: a long lifetime (one year).
 - [ ] Once the upload workflow is used (ADR-010): `https://camihernandez.com/.deploy-site-manifest`
       answers 403 (or 404), never the file's contents.
-If a header is missing, or the manifest is served, the host ignored `public/.htaccess`: tell the
-coordinator (a ticket); the site still works, only slower.
+If a cache header is missing, the host ignored [`public/.htaccess`](../../public/.htaccess): tell
+the coordinator (a ticket); the site still works, only slower. If the manifest is served, tell the
+coordinator before the next upload: it lists the uploaded files and the workflow relies on it.
 
 ## 6b. Post-release security (right after the release)
 

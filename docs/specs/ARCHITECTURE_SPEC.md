@@ -89,9 +89,9 @@ once and passes `events` to `EventsTicker` and `events` and `sinpe` to `Events` 
 does not need the SINPE data), so the page makes one `events` request. That data comes from the
 backend at runtime, not from `constants/`.
 
-Since CMP-102: while that request is pending, `EventsSkeleton` holds the room of the ticker and the
+Since CMP-102: while that request is pending, a placeholder (`div.evt-ticker`) holds the ticker's room and `EventsSkeleton` the
 section (FFR-004), closing over 0.4 s if no event comes back; `Picture` renders the site's images
-as WebP with a JPEG/PNG fallback and `srcset`; `App.jsx` wraps the sections in one `main`
+as WebP with a JPEG/PNG fallback and `srcset`; [App.jsx](../../src/App.jsx) wraps the sections in one `main`
 landmark.
 
 ### Global language (`LanguageContext`)
