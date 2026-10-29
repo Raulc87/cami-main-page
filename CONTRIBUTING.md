@@ -77,10 +77,36 @@ by hand.
 | Site build | `npm run build` | Finishes without errors |
 | Apps Script syntax | `node --check apps-script/<file>.js` for each file you changed | No output (CI runs it on every file) |
 | Docs link check | `python3 .github/scripts/check_doc_links.py` | `0 broken` |
+| Speed (Lighthouse) | `npm run build`, `npm run preview`, then Lighthouse on `http://localhost:4173` with the desktop and the mobile preset (see below) | Performance 90+ on both, CLS under 0.1, Accessibility 100 |
 | Manual check | `npm run dev`, then the golden path in EN and ES at 1280, 900 and 375 px | Matches the acceptance criteria of the story |
 
 CI runs the Apps Script check and the docs link check on every pull request; the required ones
 must be green before merge.
+
+**Measuring speed (CMP-102).** Only ever on your own build, never on the live site or staging
+(AGENTS.md → Security baseline). Lighthouse is not a project dependency: run it from outside the
+repository (for example `npx lighthouse@13 http://localhost:4173 --preset=desktop` and again
+without `--preset` for mobile, with Chrome installed). The preview server answers any unknown
+path with `index.html`, so Lighthouse's `robots.txt`, `llms.txt` and ARD checks fail on it only;
+serve `dist/` with a server that returns 404 for missing files to see the real result. To see the
+events ticker and section (they come from the backend), build with `VITE_EVENTS_API_URL` pointing
+at a local stand-in that answers the contract's `events` request; never at staging.
+
+## Images
+
+Photos live in `public/images/` and are shown through `src/components/Picture.jsx`: WebP at the
+widths listed for each use, with the original JPEG/PNG as the fallback. For a new photo, keep the
+original (it is the fallback) and make the WebP widths the page needs, named `<name>-<width>.webp`
+(widths are the size it is shown at, doubled for sharp screens, and no wider than the original):
+
+```
+convert photo.jpg -resize 960x -quality 80 -define webp:method=6 photo-960.webp
+```
+
+Then pass `widths={[480, 960]}` and a `sizes` that says how wide it is shown, as in
+`Gallery.jsx`. The host caches images for a year (`public/.htaccess`), so a replaced photo needs a
+new file name; reusing the old name leaves returning visitors with the old picture. The photo at
+the top of the page (the hero) is also preloaded in `index.html`: change both together.
 
 The events backend (`apps-script/`) is deployed by a workflow, not from your machine: staging on
 each merge to `main` that changes `apps-script/`, `.github/clasp/`, `.github/scripts/` or the deploy workflow, production only by a manual run the owner approves. Steps:
@@ -96,7 +122,7 @@ itself is built locally and uploaded by hand:
 | `src/constants/` | `data.jsx` (list content), `i18n.js` (`UI_TEXT` translations), `colors.js` (palette) |
 | `src/api/`, `src/hooks/`, `src/context/` | Events API client, hooks, the language context |
 | `src/styles/` | `global.css` |
-| `public/images/` | Photos; the Lifetools logo is a marked placeholder until CMP-067 |
+| `public/images/` | Photos, each with its WebP sizes (see Images); the Lifetools logo is a marked placeholder until CMP-067 |
 | `apps-script/` | The events backend (Google Apps Script) |
 | `.github/workflows/`, `.github/scripts/` | CI, deploy and check workflows and their scripts |
 | `docs/specs/` | Specs and user stories: the source of truth for behavior |

@@ -3,6 +3,7 @@ import { C } from '../constants/colors'
 import { STATS } from '../constants/data'
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
+import Picture from './Picture'
 
 export default function Hero({ r }) {
   const [heroImgError, setHeroImgError] = useState(false)
@@ -50,7 +51,7 @@ export default function Hero({ r }) {
           <h1 {...r('hero-h1b', 110)} style={{ fontWeight: 900, fontSize: 50, lineHeight: 1.06, letterSpacing: '-0.035em', marginBottom: 28, color: C.navy }}>
             <span
               className="hero-h1-em"
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, fontSize: 60, color: C.rose }}
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, fontSize: 60, color: C.navyLight }}
             >
               {t.h1bEm[lang]}
             </span>{' '}
@@ -65,7 +66,7 @@ export default function Hero({ r }) {
           {/* CTA row */}
           <div {...r('hero-cta', 190)} style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>
             <a href="#contact" className="cta-btn">{t.cta[lang]}</a>
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: C.rose }}>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: C.navyLight }}>
               Disciplina hoy, libertad mañana.
             </span>
           </div>
@@ -91,11 +92,16 @@ export default function Hero({ r }) {
               }}
             />
             {!heroImgError && (
-              <img
+              <Picture
                 src="/images/cami-hero.jpg"
+                widths={[640, 960]}
+                // The photo is covered into a 360x460 frame (320x300 on phones): the browser
+                // needs it as wide as the scaled image, not as the frame.
+                sizes="(max-width: 640px) 450px, 691px"
                 alt="Cami Hernandez"
                 width={1200}
                 height={799}
+                fetchpriority="high"
                 onError={() => setHeroImgError(true)}
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />

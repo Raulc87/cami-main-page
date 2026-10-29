@@ -3,6 +3,7 @@ import { C } from '../constants/colors'
 import { TESTIMONIALS } from '../constants/data'
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
+import Picture from './Picture'
 
 const featured = TESTIMONIALS.find((t) => t.featured)
 const grid = TESTIMONIALS.filter((t) => !t.featured)
@@ -33,7 +34,7 @@ function SeeMoreButton({ expanded, onClick, lang, size = 'grid' }) {
         background: 'none', border: 'none', padding: 0,
         marginBottom: isFeatured ? 28 : 18,
         fontSize: isFeatured ? 12 : 11,
-        fontWeight: 700, letterSpacing: '0.04em', color: C.rose,
+        fontWeight: 700, letterSpacing: '0.04em', color: isFeatured ? C.rose : C.navyLight, // rose only on the navy card
         cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3,
       }}
     >
@@ -66,12 +67,12 @@ export default function Testimonials({ r }) {
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Heading */}
         <div {...r('test-hd')} style={{ marginBottom: 48 }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 12 }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.navyLight, fontWeight: 700, marginBottom: 12 }}>
             {t.kicker[lang]}
           </div>
           <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy, marginBottom: 14 }}>
             {t.headingPre[lang]}{' '}
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.rose }}>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.navyLight }}>
               {t.headingEm[lang]}
             </span>
           </h2>
@@ -115,9 +116,13 @@ export default function Testimonials({ r }) {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 {featured.image && !failedImages.has(featured.image) ? (
-                  <img
+                  <Picture
                     src={featured.image}
+                    widths={featured.imageWidths}
+                    sizes="46px"
                     alt={featured.name}
+                    width={46}
+                    height={46}
                     onError={() => setFailedImages((prev) => new Set(prev).add(featured.image))}
                     style={{ width: 46, height: 46, borderRadius: '50%', objectFit: 'cover' }}
                   />
@@ -127,7 +132,7 @@ export default function Testimonials({ r }) {
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, color: C.white }}>{featured.name}</div>
                   {featured.role && (
-                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>{featured.role}</div>
+                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.72)', marginTop: 3 }}>{featured.role}</div>
                   )}
                 </div>
               </div>
@@ -156,9 +161,13 @@ export default function Testimonials({ r }) {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   {item.image && !failedImages.has(item.image) ? (
-                    <img
+                    <Picture
                       src={item.image}
+                      widths={item.imageWidths}
+                      sizes="36px"
                       alt={item.name}
+                      width={36}
+                      height={36}
                       loading="lazy"
                       onError={() => setFailedImages((prev) => new Set(prev).add(item.image))}
                       style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}
@@ -169,7 +178,7 @@ export default function Testimonials({ r }) {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 13, color: C.navy }}>{item.name}</div>
                     {item.role && (
-                      <div style={{ fontSize: 11, color: C.textMuted, marginTop: 2 }}>{item.role}</div>
+                      <div style={{ fontSize: 11, color: C.navyLight, marginTop: 2 }}>{item.role}</div>
                     )}
                   </div>
                 </div>
