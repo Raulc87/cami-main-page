@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { C } from '../constants/colors'
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
+import Picture from './Picture'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Gallery — image placeholders
@@ -11,11 +12,11 @@ import { useLanguage } from '../context/LanguageContext'
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SLOTS = [
-  { label: 'On Stage',          labelEs: 'En el Escenario',   bg: `linear-gradient(155deg, ${C.navyLight} 0%, ${C.navy} 100%)`,      tall: true,  image: '/images/on-stage.jpg' },
-  { label: 'Workshop',          labelEs: 'Taller',            bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.rose} 100%)`,      tall: false, image: '/images/workshop.jpg' },
-  { label: '1-on-1 Session',    labelEs: 'Sesión Individual', bg: `linear-gradient(145deg, ${C.cream} 0%, ${C.roseLight} 100%)`,     tall: false, image: '/images/one-on-one-session.jpg' },
-  { label: 'Community',         labelEs: 'Comunidad',         bg: `linear-gradient(145deg, ${C.navyLight} 0%, ${C.navyMid} 100%)`,   tall: false, image: '/images/community.jpg' },
-  { label: 'Behind the Scenes', labelEs: 'Detrás de Cámaras', bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.navyLight} 100%)`, tall: false, image: '/images/behind-the-scenes.jpg' },
+  { label: 'On Stage',          labelEs: 'En el Escenario',   bg: `linear-gradient(155deg, ${C.navyLight} 0%, ${C.navy} 100%)`,      tall: true,  image: '/images/on-stage.jpg', widths: [640, 960, 1200] },
+  { label: 'Workshop',          labelEs: 'Taller',            bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.rose} 100%)`,      tall: false, image: '/images/workshop.jpg', widths: [480, 960] },
+  { label: '1-on-1 Session',    labelEs: 'Sesión Individual', bg: `linear-gradient(145deg, ${C.cream} 0%, ${C.roseLight} 100%)`,     tall: false, image: '/images/one-on-one-session.jpg', widths: [480, 666] },
+  { label: 'Community',         labelEs: 'Comunidad',         bg: `linear-gradient(145deg, ${C.navyLight} 0%, ${C.navyMid} 100%)`,   tall: false, image: '/images/community.jpg', widths: [480, 960] },
+  { label: 'Behind the Scenes', labelEs: 'Detrás de Cámaras', bg: `linear-gradient(145deg, ${C.roseLight} 0%, ${C.navyLight} 100%)`, tall: false, image: '/images/behind-the-scenes.jpg', widths: [480, 960] },
 ]
 
 export default function Gallery({ r }) {
@@ -33,17 +34,17 @@ export default function Gallery({ r }) {
           style={{ marginBottom: 36, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}
         >
           <div>
-            <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 10 }}>
+            <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.roseText, fontWeight: 700, marginBottom: 10 }}>
               {t.kicker[lang]}
             </div>
             <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy }}>
               {t.headingPre[lang]}{' '}
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.rose }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.roseText }}>
                 {t.headingEm[lang]}
               </span>
             </h2>
           </div>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.textMuted, paddingBottom: 4 }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.navyLight, paddingBottom: 4 }}>
             {t.empty[lang]}
           </span>
         </div>
@@ -65,8 +66,11 @@ export default function Gallery({ r }) {
               }}
             >
               {slot.image && !failedImages.has(slot.image) ? (
-                <img
+                <Picture
                   src={slot.image}
+                  widths={slot.widths}
+                  // Phones show two columns; the tall tile is two columns wide above that.
+                  sizes={slot.tall ? '(max-width: 640px) 50vw, (max-width: 1280px) 50vw, 570px' : '(max-width: 640px) 50vw, (max-width: 1280px) 25vw, 285px'}
                   alt={isEs ? slot.labelEs || slot.label : slot.label}
                   loading="lazy"
                   onError={() => setFailedImages((prev) => new Set(prev).add(slot.image))}

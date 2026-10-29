@@ -3,6 +3,7 @@ import { C } from '../constants/colors'
 import { UI_TEXT } from '../constants/i18n'
 import { useLanguage } from '../context/LanguageContext'
 import EventRegistration from './EventRegistration'
+import Picture from './Picture'
 import { cardId, formatCrc, formatEventDate } from './eventsShared'
 
 const LOGO = '/images/lifetools-logo.png'
@@ -49,7 +50,7 @@ export default function Events({ events, sinpe, onRefetch }) {
         >
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ marginBottom: 52 }}>
-              <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 12 }}>
+              <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.roseText, fontWeight: 700, marginBottom: 12 }}>
                 {t.kicker[lang]}
               </div>
               <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy }}>
@@ -67,15 +68,18 @@ export default function Events({ events, sinpe, onRefetch }) {
                   : formatCrc(ev.priceCrc)
                 return (
                   <article key={ev.eventCode} id={cardId(ev.eventCode)} className="evt-card" tabIndex={-1}>
-                    <img
+                    <Picture
                       className={hasImage ? 'evt-card-img' : 'evt-card-img evt-card-img-logo'}
                       src={hasImage ? ev.imageUrl : LOGO}
+                      widths={hasImage ? undefined : [400, 800]}
+                      loading="lazy"
+                      sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 374px"
                       // The art is decorative: the event name is the card's heading.
                       alt={hasImage ? '' : t.logoAlt[lang]}
                       onError={hasImage ? () => setImgFailed((f) => ({ ...f, [ev.eventCode]: true })) : undefined}
                     />
                     <div className="evt-card-body">
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.textMuted, marginBottom: 10 }}>
+                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: C.navyLight, marginBottom: 10 }}>
                         {formatEventDate(ev.date, lang)} · {ev.time}
                       </div>
                       <h3 style={{ fontWeight: 700, fontSize: 19, color: C.navy, marginBottom: 10 }}>{ev.name}</h3>

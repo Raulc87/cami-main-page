@@ -26,14 +26,14 @@ export default function Footer() {
       {/* Brand words */}
       <div style={{ display: 'flex', gap: 20 }}>
         {WORDS.map((w) => (
-          <span key={w} style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)' }}>
+          <span key={w} style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.72)' }}>
             {w}
           </span>
         ))}
       </div>
 
       {/* URL */}
-      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'rgba(255,255,255,0.30)' }}>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'rgba(255,255,255,0.72)' }}>
         camihernandez.com
       </div>
     </footer>

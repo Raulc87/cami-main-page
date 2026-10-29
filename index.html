@@ -9,6 +9,26 @@
     <meta property="og:title" content="Cami Hernandez — Speaker & Life Coach" />
     <meta property="og:description" content="Transform your beliefs. Live your truth." />
     <meta property="og:type" content="website" />
+    <!-- Early connections to the hosts the page needs first (CMP-102): the fonts and the events
+         backend and the host its answer is redirected to (anonymous CORS fetch, hence
+         crossorigin). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://script.google.com" crossorigin />
+    <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
+    <!-- The fonts stylesheet is fetched now but only applied by main.jsx, so it does not block
+         the first paint. A rel change instead of an inline onload, which the CSP forbids. -->
+    <link id="fonts-css" rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500&display=swap" />
+    <!-- The main photo (the largest element on screen) starts loading with the page, not after
+         the script has built it. Same candidates as Hero.jsx. -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+      imagesrcset="/images/cami-hero-640.webp 640w, /images/cami-hero-960.webp 960w, /images/cami-hero-1200.webp 1200w"
+      imagesizes="(max-width: 640px) 450px, 691px"
+    />
   </head>
   <body>
     <div id="root"></div>
