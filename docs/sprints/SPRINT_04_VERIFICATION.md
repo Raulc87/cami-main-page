@@ -88,7 +88,7 @@ decision), **Dropped** (owner decision), **Pending** (waits on something not yet
 ### CMP-098 — Pre-release security agent, steps 1–3 (PR #94; the delta records in PR #111 and PR #115; the scan records in PR #113 and PR #114)
 | Check | Result | Source |
 |---|---|---|
-| Baseline and pen-test plan updated; security code review before the go-ahead and again before each release up to the release commit | Pass | `TICKETS.md` row and baseline §7 (reviews `5566e56`..`fe72b17`, `fe72b17`..`a8622cc`, the deltas up to `72417e6`, and `72417e6`..`5d52c59` for v1.1.2): no new finding. Separately, the owner's dated statement "No critical or high security finding is open" on PR #110 and PR #119 |
+| Baseline and pen-test plan updated; security code review before the go-ahead and again before each release up to the release commit | Pass | `TICKETS.md` row, baseline §7 and, for the v1.1.2 delta, [CMP-109-live-checks.md](evidence/sprint-04/CMP-109-live-checks.md) (reviews `5566e56`..`fe72b17`, `fe72b17`..`a8622cc`, the deltas up to `72417e6`, and `72417e6`..`5d52c59` for v1.1.2): no new finding. Separately, the owner's dated statement "No critical or high security finding is open" on PR #110 and PR #119 |
 
 ### CMP-100 and CMP-106 — Contract v1.9; docs with CMP-102 (coordinator; PR #93, PR #101)
 | Check | Result | Source |
