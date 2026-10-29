@@ -3,6 +3,18 @@
 
 Options -Indexes
 
+# The upload workflow's state file (ADR-010, CMP-093) is never served. Works on Apache 2.4 and,
+# through the second block, on 2.2.
+<Files ".deploy-site-manifest">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</Files>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   # Redirect every HTTP request to HTTPS, keeping host and path.
