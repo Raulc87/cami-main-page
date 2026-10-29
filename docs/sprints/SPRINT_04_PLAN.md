@@ -2,10 +2,10 @@
 
 ## Metadata
 - Sprint: 04
-- Status: Draft (approved on merge of this PR, CMP-091; starts at the owner's go-ahead, Entry
+- Status: Active (plan approved on merge of PR #91, CMP-091; owner's go-ahead 2026-10-29, Entry
   Gate 4)
-- Start: 2026-10-28 (Wednesday), or the day of the go-ahead
-- End: 2026-11-04 (Wednesday)
+- Start: 2026-10-29 (Thursday), the day of the go-ahead
+- End: 2026-11-05 (Thursday), one week from the go-ahead (the owner's "1 week")
 - Duration: 1 week (owner, 2026-10-28: "1 week (Recommended)"); Saturdays and Sundays excluded
 - Final human reviewer: Raul Casanas
 - Plan from the kit's `SPRINT_PLAN_TEMPLATE.md` at the kit ref in
@@ -21,7 +21,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on this PR's head |
 | 2 | Readiness checklist has no open blocking items | Pass, except item 8 (the go-ahead), which is gate 4 |
 | 3 | Integration contracts locked | Pass: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.9, locked (CMP-100 adds two trigger settings to §9 before CMP-101); CMP-094 changes only the look of the event tabs, not their columns or values |
-| 4 | Final go-ahead from the human owner | Pending |
+| 4 | Final go-ahead from the human owner | Pass: "merged 94, go ahead with Sprint 04" (owner, 2026-10-29) |
 
 ### Readiness checklist result (2026-10-28)
 | Item | Result |
@@ -36,7 +36,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Stories touching an OWASP risk have verifying ACs **(blocking)** | Pass: CMP-093 (credentials, supply chain) and CMP-071 carry their security checks below |
 | 5. Secret and dependency scanning | Secret scanning on (owner, 2026-10-27); dependency checks are CMP-071 in this sprint |
 | 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; after it, no release other than a security hotfix until the test has run. Sprint 04 releases v1.1.1 (CMP-103) before the deadline; the owner keeps the deadline route for it (2026-10-29, Sprint Review Notes). CMP-095 prepares the test |
-| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) **(blocking: Sprint 04 releases v1.1.1)** | Pending: CMP-098, run by the pre-release security agent in its own session, started before the go-ahead (owner, 2026-10-29: "Follow the kit"). Steps 1 and 3 build on the baseline and pen-test plan updated in CMP-097; step 2 reviews the changes since CMP-063's review, then, before CMP-103, the changes merged in this sprint. The go-ahead waits for steps 1–3 |
+| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) **(blocking: Sprint 04 releases v1.1.1)** | Pass: PR #94 merged 2026-10-29 (baseline and pen-test plan updated; first review 5566e56..fe72b17, no new findings). Before the go-ahead, as planned: CMP-098, run by the pre-release security agent in its own session, started before the go-ahead (owner, 2026-10-29: "Follow the kit"). Steps 1 and 3 build on the baseline and pen-test plan updated in CMP-097; step 2 reviews the changes since CMP-063's review, then, before CMP-103, the changes merged in this sprint. The go-ahead waited for steps 1–3 |
 | 5. Written approval per agent scan; tester's authorization **(blocking: release sprint)** | The owner's written approval for the production scan right after v1.1.1 (CMP-104), signed before CMP-103, with the owner named as the person who can stop it; release-checklist §6b. The PTES tester's authorization is not needed for v1.1.1: the human test stays due by 2026-12-26 (CMP-099), as the kit allows for the human test only |
 | 6. Hosting runtime, local development, developer guide | Pass: ADR-002, ADR-008, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) |
 | 6. Test, lint and CI checks; required on `main` | Pass: `apps-script-check`, `docs-link-check`; CMP-071 adds the dependency check |
@@ -45,7 +45,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 7. Workstreams assigned, ≤ 3 agents **(blocking)** | Pass: Agents 1, 2 and 3 below |
 | 7. Ownership map, no dependency cycle **(blocking)** | Pass |
 | 7.1 Prompts: no merge or approve; reviewer independence; attribution **(blocking)** | Pass ([`SPRINT_04_AGENT_PROMPTS.md`](SPRINT_04_AGENT_PROMPTS.md)) |
-| 8. Go-ahead **(blocking)** | Pending (gate 4) |
+| 8. Go-ahead **(blocking)** | Pass (gate 4) |
 
 ## Sprint Goal
 - Make the site fast again after the events go-live (PageSpeed 90+ on desktop and mobile, no
@@ -71,7 +71,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
 | CMP-091 | This plan, the agent prompts, the Sprint 03 close | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
-| CMP-092 | ADR-010: upload the site from GitHub to GoDaddy (protocol, credentials, approval, backup and rollback) | Coordinator | CMP-091 | coordinator branch | todo |
+| CMP-092 | ADR-010: upload the site from GitHub to GoDaddy (protocol, credentials, approval, backup and rollback) | Coordinator | CMP-091 | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
 | CMP-093 | Site-upload workflow (ADR-010) | Agent 1 | CMP-092 | `CMP-093-site-upload-workflow` | todo |
 | CMP-094 | New event tabs get the status dropdown, the check-result colors and the needs-review highlight | Agent 1 | — | `CMP-094-event-tab-format` | todo |
 | CMP-071 | Dependency checks: `npm audit` on pull requests, Dependabot version updates, an SBOM | Agent 2 | — | `CMP-071-dependency-checks` | todo |
@@ -103,12 +103,17 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
   - how `.htaccess` is uploaded.
   TECH_STACK and the release checklist point to it. Merged before CMP-093.
 - **CMP-093:** a workflow (`.github/workflows/deploy-site.yml`) as ADR-010 says, started
-  only by hand (`workflow_dispatch`, with a dry-run input), never on a push or a merge:
-  - it builds `main` with the production URL from the environment secret;
-  - it checks that the bundle points at production, not staging, printing only masked values;
-  - it waits for the owner's approval, then uploads.
-  - A dry-run mode lists what would change and uploads nothing.
-  - Evidence: one dry run, then one approved real run that uploads the current `main`. Then
+  only by hand (`workflow_dispatch`: a tag, dry run, and `build` or `rollback` mode), never on a
+  push or a merge:
+  - it waits for the owner's approval (the `site-production` environment) before anything runs
+    with production values, so a dry run needs the approval click too;
+  - in `build` mode it builds the tag with the production URL from the environment secret,
+    checks that the bundle points at production, not staging, printing only masked values,
+    uploads, and keeps the `dist` zip on that tag's GitHub Release;
+  - in `rollback` mode it re-uploads a tag's kept zip, without building;
+  - a dry run lists what would change and uploads nothing.
+  - Evidence: one dry run; the first real run is release v1.1.1 (CMP-103), or, if v1.1.1 goes
+    by hand, one approved run of the v1.1.1 tag after it (the same files). Then
     the owner's live checks: the site loads, the 301 to https, the four headers, no cookies,
     the events in EN and ES.
   - The release checklist §4 and §7 describe the new way and keep the manual upload as the
@@ -323,8 +328,6 @@ The human reviewer is the final approver.
   next release".
 - The event-tab dropdown and colors were the owner's idea (2026-10-28); until CMP-094 the owner
   formats the existing tabs by hand.
-</content>
-</invoke>
 - Owner decision after the kit v1.3.0 sync (CMP-097, PR #92), 2026-10-28. Question as asked:
   "Does Sprint 04 count as a production release under the new kit rules? The reviewer asks
   because the PTES test is still due." Options: "No, not a release (Recommended)": the first run
@@ -388,3 +391,21 @@ The human reviewer is the final approver.
   **"Skip staging for v1.1.1"**, with the reason given in the question: no staging site, and
   v1.1.1's backend changes are small (CMP-094, CMP-101). Only the production scan right after
   the release runs (CMP-104); PENTEST_PLAN §1.1 run 1 is not used for v1.1.1.
+- Owner, 2026-10-29: "merged 94, go ahead with Sprint 04" (Entry Gate 4). Before it, the
+  pre-release security agent (session `session_01DVcaZw7gF9nG9af7Am5D6U`, own session, started
+  2026-10-29) did CMP-098 steps 1–3 in PR #94. Owner decision for that PR, question as asked: "The
+  security agent will update two security documents (the baseline and the pen-test plan), which
+  normally belong to the security implementation agent. That agent doesn't start until your
+  Sprint 04 go-ahead. May the security agent write them in its own docs PR now?" Owner: **"Yes,
+  its own docs PR (Recommended)"**.
+- Sessions at the go-ahead (2026-10-29). Archived by the coordinator (AGENTS.md → Coordinator
+  session), the Sprint 03 sessions: review-only agent `session_018VMrV4fuHbq5b2CzSFR4xW`, Agent 1
+  `session_012BaqhPUZdKuTrG7MkkurQW`, Agent 2 `session_01Nsk2BjjvxoFJjyDLAqJYjY`, Agent 3
+  `session_01Pr8Ladhxoja6rX7qyF3ecu`. Launched for Sprint 04: review-only agent
+  `session_01DVcaZyq7AycK36TTJwaZjT`, Agent 1 `session_01DVcaZvnBj2T3yLKjGx6HP6`, Agent 2
+  `session_01DVcaa1B5ypo6v1jPbeL1SX`, Agent 3 `session_01DVcaZzEni9vpxJadMkvcD9`; the
+  pre-release security agent stays until its re-checks are done.
+- ADR-010 (CMP-092), owner's answers of 2026-10-29: "FTPS, restricted account (Recommended)";
+  "Keep each release's build (Recommended)" (questions as asked in the ADR).
+- The "Agentic Browsing" section of the owner's PageSpeed run (1/2) fails on the same layout shift
+  (CLS 0.596); CMP-102's fix must bring it to 2/2 (told to Agent 3 at launch).
