@@ -22,14 +22,14 @@ export default function CTA({ r }) {
       />
 
       <div {...r('cta-sec')} style={{ maxWidth: 640, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.rose, fontWeight: 700, marginBottom: 20 }}>
+        <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.roseText, fontWeight: 700, marginBottom: 20 }}>
           {t.kicker[lang]}
         </div>
         <h2
           style={{ fontWeight: 900, fontSize: 44, letterSpacing: '-0.035em', color: C.navy, marginBottom: 20, lineHeight: 1.08 }}
         >
           {t.headingPre[lang]}{' '}
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, fontSize: 52, color: C.rose }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, fontSize: 52, color: C.roseText }}>
             {t.headingEm[lang]}
           </span>
         </h2>
@@ -39,7 +39,7 @@ export default function CTA({ r }) {
         <a href="mailto:camila@lifetoolscr.com" className="cta-btn">
           {t.link[lang]}
         </a>
-        <div style={{ marginTop: 20, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: C.textMuted }}>
+        <div style={{ marginTop: 20, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: C.navyLight }}>
           camila@lifetoolscr.com
         </div>
       </div>

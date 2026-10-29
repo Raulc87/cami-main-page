@@ -32,7 +32,7 @@ export default function Values({ r }) {
         {/* Chips */}
         <div className="vals-flex" style={{ display: 'flex', justifyContent: 'center', gap: 16 }}>
           {VALUES.map((v, i) => (
-            <div key={i} {...r(`val-${i}`, i * 70)} className="val-chip" style={{ color: C.roseLight }}>
+            <div key={i} {...r(`val-${i}`, i * 70)} className="val-chip">
               <span style={{ color: C.rose }}>{v.icon}</span>
               <div>
                 <div style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 20, fontWeight: 600, lineHeight: 1.1 }}>
@@ -40,7 +40,7 @@ export default function Values({ r }) {
                 </div>
                 <div
                   className="val-chip-sub"
-                  style={{ fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginTop: 2, transition: 'color 0.22s' }}
+                  style={{ fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: 2, transition: 'color 0.22s' }}
                 >
                   {v.en}
                 </div>

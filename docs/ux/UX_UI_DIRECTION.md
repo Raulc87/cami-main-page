@@ -2,9 +2,12 @@
 
 ## Metadata
 - Version: 1.2 (homologated from `docs/specs/02-design-system.md` in CMP-014; v1.1 adds the events
-  UI — §4, §13 — in CMP-022; v1.2: §13 form order and 24-hour times — CMP-036)
+  UI — §4, §13 — in CMP-022; v1.2: §13 form order and 24-hour times — CMP-036; v1.3: §2 the
+  `roseText` token for readable rose text, font loading, §13 the events room while loading,
+  images as WebP — CMP-106, with CMP-102)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
-  merge of PR #22; v1.2 Approved (on merge of PR #30))
+  merge of PR #22; v1.2 on merge of PR #30; v1.3 Approved on merge of PR #101; the
+  `roseText` shade approved on PR #100, 2026-10-29: "new color approved by Cami and myself")
 - Source: brand moodboard — *Elegance · Calm · Balance · Femininity*
 
 ## 1. Experience Goal
@@ -39,14 +42,17 @@ must be updated by hand** so they don't drift.
 | `C.navy` | `#1e2d42` | Primary dark color (main text, buttons, footer) |
 | `C.navyMid` | `#2c3e5a` | Mid navy (hover borders, gradients) |
 | `C.navyLight` | `#4a6178` | Body text, light navy |
-| `C.rose` | `#c9a4ab` | "Dusty rose" accent (badges, dots, italics) |
+| `C.rose` | `#c9a4ab` | "Dusty rose" accent (badges, dots, borders, pills, and italics or text on navy); rose **text** on light backgrounds uses `C.roseText` |
 | `C.roseLight` | `#e8d4d8` | Light rose (borders, stats bar backgrounds) |
+| `C.roseText` | `#965965` | Darker rose for **text** on light backgrounds (italic accents, kickers, the tagline and wordmark, the event status label, the form's discount line): 4.92:1 on `#f9f4f2`, 5.37:1 on white, 4.64:1 on `#f5ede8` (WCAG AA). `C.rose` stays for dots, borders, pills and text on navy (owner, 2026-10-29: "New darker rose", CMP-102) |
 | `C.cream` | `#f5ede8` | Intended for section alternation (`colors.js`); today used only in a gallery gradient |
 | `C.textMuted` | `#8a9aaa` | Muted labels/mono text |
 
 ### Typography
 
-Imported via the Google Fonts CDN in [global.css](../../src/styles/global.css) (line 1):
+Loaded from the Google Fonts CDN, preloaded from [index.html](../../index.html) and applied by
+[main.jsx](../../src/main.jsx) (since CMP-102; before, an `@import` in
+[global.css](../../src/styles/global.css) line 1, which blocked rendering):
 
 - **Outfit** (300–900) — main font for body and headings. `font-family: 'Outfit', sans-serif`.
 - **Cormorant Garamond** italic (400/600/700) — emotional accents: highlighted words in
@@ -150,7 +156,7 @@ code and in [ARCHITECTURE_SPEC.md §9](../specs/ARCHITECTURE_SPEC.md#9-logical-d
 
 ## 13. Events UI
 Direction for US-017..US-020 ([FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md)).
-It reuses the palette, type and shapes above; no new colors or fonts.
+It reuses the palette, type and shapes above (including `C.roseText`, §2); no other new colors or fonts.
 
 - **Placement.** The Events section sits right after the Hero, so the ticker's items scroll to
   something near the top. Both are absent (not empty) when there are no upcoming events
@@ -183,3 +189,9 @@ It reuses the palette, type and shapes above; no new colors or fonts.
   (owner, 2026-10-20).
 - **Placeholders.** The SINPE "placeholder / por confirmar" marker (BR-E01) and the draft
   privacy notice are visibly marked until the release gates pass (BR-002).
+- **Loading (CMP-102, owner 2026-10-29: "Find a no-jump way"):** the ticker and the events
+  section keep their room while the `events` request is pending, so nothing below them moves when
+  they arrive; when no event comes back (or the request fails), the room closes over 0.4 s, with no
+  new visible text (FFR-004).
+- **Images:** served as WebP with a JPEG/PNG fallback, at the sizes they are shown (`srcset`);
+  the hero photo loads first, the rest lazily.
