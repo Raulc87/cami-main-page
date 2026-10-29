@@ -116,6 +116,11 @@ upload; if one is not, do not release:
 
 ## 4. Upload to GoDaddy (cPanel File Manager)
 
+Once CMP-093 is merged, a release is uploaded by the owner-approved GitHub workflow instead
+([ADR-010](../decisions/ADR-010-site-upload-from-github.md): FTPS, a release tag, a dry run
+first, rollback by re-uploading a release's kept build); until then, and as its fallback, the
+manual upload below. The steps for the workflow are added here with CMP-093.
+
 GoDaddy shared hosting, with no FTP/SSH configured — upload from the browser.
 
 1. Compress the **contents** of `dist/` (not the `dist/` folder itself) into a `.zip`:

@@ -1,6 +1,6 @@
 # ADR-010 — Upload the site from GitHub to GoDaddy
 
-- Status: Accepted (on merge of the CMP-092 PR)
+- Status: Accepted (on merge of PR #97, CMP-092)
 - Date: 2026-10-29
 - Decision owner: Raul Casanas
 - Related: [ADR-002](ADR-002-godaddy-static-hosting.md) (GoDaddy static hosting),
@@ -51,8 +51,10 @@ GoDaddy's `public_html/`, instead of the manual build, zip and cPanel upload?
 ## Decision
 A manual GitHub Actions workflow, `.github/workflows/deploy-site.yml` (Agent 1, CMP-093):
 
-1. **Trigger:** `workflow_dispatch` only, with two inputs: the **tag** to deploy (for example
-   `v1.1.1`) and **dry run** (default on). Never on a push, a merge or a schedule.
+1. **Trigger:** `workflow_dispatch` only, with three inputs: the **tag** to deploy (for example
+   `v1.1.1`), **dry run** (default on), and **mode**: `build` (build the tag and upload it, the
+   normal release) or `rollback` (upload, unchanged, the `dist` zip kept on that tag's GitHub
+   Release, without building). Never on a push, a merge or a schedule.
 2. **Approval:** the job runs in a GitHub environment `site-production` whose required reviewer is
    the owner; nothing is built with the production URL or uploaded before the owner's approval
    click.
@@ -64,17 +66,25 @@ A manual GitHub Actions workflow, `.github/workflows/deploy-site.yml` (Agent 1, 
    host, user and password only as `site-production` environment secrets. Plain FTP is refused;
    certificate checks stay on.
 5. **What it may delete:** only files that an earlier run of this workflow uploaded and that the
-   new build no longer has (tracked by a state file the upload keeps on the server). It never
+   new build no longer has (tracked by a state file the upload keeps on the server; the state file
+   is not served to visitors: kept outside the web root, or denied by `.htaccess`, decided in
+   CMP-093 with Agent 3). It never
    deletes anything else in `public_html/` (the server's own files, a manual backup, other
    folders).
 6. **`.htaccess`:** uploaded from `dist/` like any other file (it comes from `public/`), so the
    CMP-079 security headers and the CMP-102 caching rules ship with each release.
-7. **Dry run:** builds and checks as above, then lists the files the upload would add, change or
+7. **Dry run:** after the approval click (the environment's reviewer applies to every run),
+   builds and checks as above, then lists the files the upload would add, change or
    delete, and uploads nothing.
-8. **Rollback:** each run attaches the built `dist/` as a zip to that tag's GitHub Release. To roll
-   back, run the workflow with the previous tag (same approval). The owner makes one manual cPanel
-   backup (release-checklist §4) before the first real run. The manual upload stays as the
-   fallback (release-checklist §4, §7).
+8. **Rollback:** each `build` run attaches the built `dist/` as a zip to that tag's GitHub Release
+   (the exact files it uploaded). To roll back, run the workflow in `rollback` mode with the
+   previous tag (same approval): it re-uploads that kept zip exactly, with no rebuild, as the
+   owner chose ("Keep each release's build"). The zip is public, like the repository's
+   Releases; it holds only what the live site already serves to every visitor, the production
+   events URL included (in the bundle, not a credential: Consequences), and no secret. v1.1.0 was
+   uploaded by hand and has no kept build, so the way back from the first automatic upload is the
+   manual cPanel backup the owner makes before it (release-checklist §4). The manual upload stays
+   as the fallback (release-checklist §4, §7).
 9. **Third-party code:** any action used is pinned to a full commit SHA, chosen and named in the
    CMP-093 PR (a maintained FTP deploy action that keeps a state file, or `lftp` from the runner's
    packages); Dependabot (CMP-071) proposes its updates.
@@ -88,8 +98,9 @@ A manual GitHub Actions workflow, `.github/workflows/deploy-site.yml` (Agent 1, 
   account, TLS, the environment's required reviewer, secret scanning, and the owner changing the
   password if a leak is suspected (and the run log never printing it).
 - The production events URL becomes a GitHub environment secret instead of only the owner's local
-  file. It is not a credential (the browser receives it), but it stays out of the repository and
-  logs as before.
+  file. It is not a credential (every visitor's browser receives it in the live bundle), but it
+  stays out of the repository files and logs as before. The release zips on GitHub contain it,
+  exactly as the live site does; the owner accepts that by approving this ADR (told so when asked to merge it).
 - A file changed by hand on the server is not backed up by the workflow; the manual backup covers
   the first run, and later hand changes should not happen (the repository is the source).
 - The first real run is release v1.1.1 (CMP-103), if CMP-093 is merged and its dry run passed;
@@ -101,5 +112,3 @@ A manual GitHub Actions workflow, `.github/workflows/deploy-site.yml` (Agent 1, 
   agent); a dry run.
 - The coordinator updates release-checklist §4 and §7 with the text Agent 1 sends, and TECH_STACK
   §9–§10.
-</content>
-</invoke>

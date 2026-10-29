@@ -35,8 +35,8 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_04_PLAN.md](docs/sprints/SPRINT_04_PLAN.md) (Draft until the
-  owner's go-ahead); Sprints 01 to 03 are closed
+- Active sprint plan: [SPRINT_04_PLAN.md](docs/sprints/SPRINT_04_PLAN.md) (Active since the
+  owner's go-ahead, 2026-10-29); Sprints 01 to 03 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
   [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md), kept for their reviews)
@@ -81,10 +81,11 @@ they are not active paths.
   review in its plan).
 - Goal: safer, lighter releases after the go-live; the PTES test ready to hand to a tester
   before its deadline (2026-12-26)
-- Start: 2026-10-28, or the day of the go-ahead
-- End: 2026-11-04
+- Start: 2026-10-29
+- End: 2026-11-05
 - Agent prompts: [docs/sprints/SPRINT_04_AGENT_PROMPTS.md](docs/sprints/SPRINT_04_AGENT_PROMPTS.md)
-- Deliverable: one approved run of the site-upload workflow with the live checks; evidence in
+- Deliverable: release v1.1.1 live (PageSpeed 90+), uploaded by the site-upload workflow if ready
+  or by hand; the pre-release security agent's production scan; evidence in
   `SPRINT_04_VERIFICATION.md`
 - Status: Active — owner's go-ahead 2026-10-29: "merged 94, go ahead with Sprint 04"
 

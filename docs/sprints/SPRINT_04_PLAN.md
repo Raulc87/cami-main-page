@@ -5,7 +5,7 @@
 - Status: Active (plan approved on merge of PR #91, CMP-091; owner's go-ahead 2026-10-29, Entry
   Gate 4)
 - Start: 2026-10-29 (Thursday), the day of the go-ahead
-- End: 2026-11-04 (Wednesday)
+- End: 2026-11-05 (Thursday), one week from the go-ahead (the owner's "1 week")
 - Duration: 1 week (owner, 2026-10-28: "1 week (Recommended)"); Saturdays and Sundays excluded
 - Final human reviewer: Raul Casanas
 - Plan from the kit's `SPRINT_PLAN_TEMPLATE.md` at the kit ref in
@@ -36,7 +36,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Stories touching an OWASP risk have verifying ACs **(blocking)** | Pass: CMP-093 (credentials, supply chain) and CMP-071 carry their security checks below |
 | 5. Secret and dependency scanning | Secret scanning on (owner, 2026-10-27); dependency checks are CMP-071 in this sprint |
 | 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; after it, no release other than a security hotfix until the test has run. Sprint 04 releases v1.1.1 (CMP-103) before the deadline; the owner keeps the deadline route for it (2026-10-29, Sprint Review Notes). CMP-095 prepares the test |
-| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) **(blocking: Sprint 04 releases v1.1.1)** | Pass: PR #94 merged 2026-10-29 (baseline and pen-test plan updated; first review 5566e56..fe72b17, no new findings). Plan before it: CMP-098, run by the pre-release security agent in its own session, started before the go-ahead (owner, 2026-10-29: "Follow the kit"). Steps 1 and 3 build on the baseline and pen-test plan updated in CMP-097; step 2 reviews the changes since CMP-063's review, then, before CMP-103, the changes merged in this sprint. The go-ahead waits for steps 1–3 |
+| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) **(blocking: Sprint 04 releases v1.1.1)** | Pass: PR #94 merged 2026-10-29 (baseline and pen-test plan updated; first review 5566e56..fe72b17, no new findings). Before the go-ahead, as planned: CMP-098, run by the pre-release security agent in its own session, started before the go-ahead (owner, 2026-10-29: "Follow the kit"). Steps 1 and 3 build on the baseline and pen-test plan updated in CMP-097; step 2 reviews the changes since CMP-063's review, then, before CMP-103, the changes merged in this sprint. The go-ahead waited for steps 1–3 |
 | 5. Written approval per agent scan; tester's authorization **(blocking: release sprint)** | The owner's written approval for the production scan right after v1.1.1 (CMP-104), signed before CMP-103, with the owner named as the person who can stop it; release-checklist §6b. The PTES tester's authorization is not needed for v1.1.1: the human test stays due by 2026-12-26 (CMP-099), as the kit allows for the human test only |
 | 6. Hosting runtime, local development, developer guide | Pass: ADR-002, ADR-008, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) |
 | 6. Test, lint and CI checks; required on `main` | Pass: `apps-script-check`, `docs-link-check`; CMP-071 adds the dependency check |
@@ -71,7 +71,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
 | CMP-091 | This plan, the agent prompts, the Sprint 03 close | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
-| CMP-092 | ADR-010: upload the site from GitHub to GoDaddy (protocol, credentials, approval, backup and rollback) | Coordinator | CMP-091 | coordinator branch | done |
+| CMP-092 | ADR-010: upload the site from GitHub to GoDaddy (protocol, credentials, approval, backup and rollback) | Coordinator | CMP-091 | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
 | CMP-093 | Site-upload workflow (ADR-010) | Agent 1 | CMP-092 | `CMP-093-site-upload-workflow` | todo |
 | CMP-094 | New event tabs get the status dropdown, the check-result colors and the needs-review highlight | Agent 1 | — | `CMP-094-event-tab-format` | todo |
 | CMP-071 | Dependency checks: `npm audit` on pull requests, Dependabot version updates, an SBOM | Agent 2 | — | `CMP-071-dependency-checks` | todo |
@@ -103,12 +103,17 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
   - how `.htaccess` is uploaded.
   TECH_STACK and the release checklist point to it. Merged before CMP-093.
 - **CMP-093:** a workflow (`.github/workflows/deploy-site.yml`) as ADR-010 says, started
-  only by hand (`workflow_dispatch`, with a dry-run input), never on a push or a merge:
-  - it builds `main` with the production URL from the environment secret;
-  - it checks that the bundle points at production, not staging, printing only masked values;
-  - it waits for the owner's approval, then uploads.
-  - A dry-run mode lists what would change and uploads nothing.
-  - Evidence: one dry run, then one approved real run that uploads the current `main`. Then
+  only by hand (`workflow_dispatch`: a tag, dry run, and `build` or `rollback` mode), never on a
+  push or a merge:
+  - it waits for the owner's approval (the `site-production` environment) before anything runs
+    with production values, so a dry run needs the approval click too;
+  - in `build` mode it builds the tag with the production URL from the environment secret,
+    checks that the bundle points at production, not staging, printing only masked values,
+    uploads, and keeps the `dist` zip on that tag's GitHub Release;
+  - in `rollback` mode it re-uploads a tag's kept zip, without building;
+  - a dry run lists what would change and uploads nothing.
+  - Evidence: one dry run; the first real run is release v1.1.1 (CMP-103), or, if v1.1.1 goes
+    by hand, one approved run of the v1.1.1 tag after it (the same files). Then
     the owner's live checks: the site loads, the 301 to https, the four headers, no cookies,
     the events in EN and ES.
   - The release checklist §4 and §7 describe the new way and keep the manual upload as the
@@ -323,8 +328,6 @@ The human reviewer is the final approver.
   next release".
 - The event-tab dropdown and colors were the owner's idea (2026-10-28); until CMP-094 the owner
   formats the existing tabs by hand.
-</content>
-</invoke>
 - Owner decision after the kit v1.3.0 sync (CMP-097, PR #92), 2026-10-28. Question as asked:
   "Does Sprint 04 count as a production release under the new kit rules? The reviewer asks
   because the PTES test is still due." Options: "No, not a release (Recommended)": the first run
