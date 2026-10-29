@@ -240,7 +240,7 @@ body::before {
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #4a6178;
+  color: #965965;
   font-weight: 700;
 }
 .cta-btn:disabled,
@@ -346,7 +346,7 @@ body::before {
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #8a9aaa;
+  color: #4a6178;
   font-weight: 700;
 }
 .evt-form-facts dd { font-size: 15px; color: #4a6178; }
@@ -367,7 +367,7 @@ body::before {
 .evt-form-pay-list { display: grid; gap: 10px; margin-top: 12px; }
 .evt-form-pay-list dd { font-size: 16px; font-weight: 600; color: #1e2d42; }
 .evt-form-amount { font-size: 20px !important; }
-.evt-form-discount { font-size: 13px; color: #c9a4ab; font-weight: 700; }
+.evt-form-discount { font-size: 13px; color: #965965; font-weight: 700; }
 .evt-form-placeholder {
   display: inline-block;
   margin-top: 14px;
@@ -399,9 +399,9 @@ body::before {
 .evt-form-input[aria-invalid='true'] { border-color: #1e2d42; }
 .evt-form-input[readonly] { background: #f9f4f2; }
 .evt-form-file { padding: 10px 12px; font-size: 13px; }
-.evt-form-hint { font-size: 12px; color: #8a9aaa; margin-top: 6px; line-height: 1.5; }
+.evt-form-hint { font-size: 12px; color: #4a6178; margin-top: 6px; line-height: 1.5; }
 .evt-form-error { font-size: 13px; color: #1e2d42; font-weight: 600; margin-top: 6px; line-height: 1.5; }
-.evt-form-error::before { content: '! '; color: #c9a4ab; font-weight: 800; }
+.evt-form-error::before { content: '! '; color: #965965; font-weight: 800; }
 .evt-form-error:empty,
 .evt-form-ok:empty { display: none; }
 .evt-form-error-box {

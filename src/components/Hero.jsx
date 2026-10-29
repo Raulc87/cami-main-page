@@ -51,7 +51,7 @@ export default function Hero({ r }) {
           <h1 {...r('hero-h1b', 110)} style={{ fontWeight: 900, fontSize: 50, lineHeight: 1.06, letterSpacing: '-0.035em', marginBottom: 28, color: C.navy }}>
             <span
               className="hero-h1-em"
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, fontSize: 60, color: C.navyLight }}
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, fontSize: 60, color: C.roseText }}
             >
               {t.h1bEm[lang]}
             </span>{' '}
@@ -66,7 +66,7 @@ export default function Hero({ r }) {
           {/* CTA row */}
           <div {...r('hero-cta', 190)} style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>
             <a href="#contact" className="cta-btn">{t.cta[lang]}</a>
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: C.navyLight }}>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: C.roseText }}>
               Disciplina hoy, libertad mañana.
             </span>
           </div>

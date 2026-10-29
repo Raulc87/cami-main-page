@@ -50,7 +50,7 @@ export default function Events({ events, sinpe, onRefetch }) {
         >
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ marginBottom: 52 }}>
-              <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.navyLight, fontWeight: 700, marginBottom: 12 }}>
+              <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.roseText, fontWeight: 700, marginBottom: 12 }}>
                 {t.kicker[lang]}
               </div>
               <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy }}>

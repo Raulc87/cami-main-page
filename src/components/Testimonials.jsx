@@ -34,7 +34,7 @@ function SeeMoreButton({ expanded, onClick, lang, size = 'grid' }) {
         background: 'none', border: 'none', padding: 0,
         marginBottom: isFeatured ? 28 : 18,
         fontSize: isFeatured ? 12 : 11,
-        fontWeight: 700, letterSpacing: '0.04em', color: isFeatured ? C.rose : C.navyLight, // rose only on the navy card
+        fontWeight: 700, letterSpacing: '0.04em', color: isFeatured ? C.rose : C.roseText, // plain rose only on the navy card
         cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3,
       }}
     >
@@ -67,12 +67,12 @@ export default function Testimonials({ r }) {
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Heading */}
         <div {...r('test-hd')} style={{ marginBottom: 48 }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.navyLight, fontWeight: 700, marginBottom: 12 }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.roseText, fontWeight: 700, marginBottom: 12 }}>
             {t.kicker[lang]}
           </div>
           <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy, marginBottom: 14 }}>
             {t.headingPre[lang]}{' '}
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.navyLight }}>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.roseText }}>
               {t.headingEm[lang]}
             </span>
           </h2>

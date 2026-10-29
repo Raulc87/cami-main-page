@@ -13,12 +13,12 @@ export default function Services({ r }) {
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Heading */}
         <div {...r('svc-hd')} style={{ marginBottom: 52 }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.navyLight, fontWeight: 700, marginBottom: 12 }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.roseText, fontWeight: 700, marginBottom: 12 }}>
             {t.kicker[lang]}
           </div>
           <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy }}>
             {t.headingPre[lang]}{' '}
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.navyLight }}>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.roseText }}>
               {t.headingEm[lang]}
             </span>
           </h2>
@@ -45,7 +45,7 @@ export default function Services({ r }) {
                     {s.icon}
                   </div>
 
-                  <div style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.navyLight, fontWeight: 700, marginBottom: 10 }}>
+                  <div style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.roseText, fontWeight: 700, marginBottom: 10 }}>
                     {isEs ? s.labelEs || s.label : s.label}
                   </div>
                   <h3 style={{ fontWeight: 700, fontSize: 19, color: C.navy, marginBottom: 12 }}>{isEs ? s.titleEs || s.title : s.title}</h3>

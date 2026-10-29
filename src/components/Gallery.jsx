@@ -34,12 +34,12 @@ export default function Gallery({ r }) {
           style={{ marginBottom: 36, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}
         >
           <div>
-            <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.navyLight, fontWeight: 700, marginBottom: 10 }}>
+            <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.roseText, fontWeight: 700, marginBottom: 10 }}>
               {t.kicker[lang]}
             </div>
             <h2 style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.03em', color: C.navy }}>
               {t.headingPre[lang]}{' '}
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.navyLight }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 600, color: C.roseText }}>
                 {t.headingEm[lang]}
               </span>
             </h2>
