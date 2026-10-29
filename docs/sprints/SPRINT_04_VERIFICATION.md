@@ -66,7 +66,7 @@ decision), **Dropped** (owner decision), **Pending** (waits on something not yet
 ### CMP-101 — Payment re-check in working hours; failure threshold (PR #96, contract v1.9 from CMP-100, PR #93)
 | Check | Result | Source |
 |---|---|---|
-| Outside `RETRY_CHECK_HOURS` the re-check ends at once, no work, no error; `refreshEventsCache` runs at every hour | Pass | Staging step 9: Completed with no error, `refreshEventsCache` kept running |
+| Outside `RETRY_CHECK_HOURS` the re-check ends at once, no work, no error; `refreshEventsCache` runs at every hour | Pass | Staging step 9: the re-check Completed with no error outside the window. The refresh has no hours guard (code, reviewer's review of PR #96) and kept running in step 10 |
 | A failure is reported only after `TRIGGER_FAIL_ALERT_AFTER` failures in a row (threshold 2); earlier ones are only logged; a success resets the count; each function counts on its own | Pass | Step 10: first run Completed, the next ones Failed; counts `refreshEventsCache` 4 and `retryPendingChecks` 2; step 11: success and the count property gone |
 | Failure count unchanged by a run skipped outside the hours | Pass (code) | The hours guard returns before the counter is touched (reviewer); not read off a staging property |
 | The failure email follows each trigger's own notification setting | Pass | No email arrived at once: the staging trigger was "Notify me daily". Recorded in the runbook §2.4. The arrival in the daily summary is the owner's follow-up (§4) |
@@ -85,12 +85,12 @@ decision), **Dropped** (owner decision), **Pending** (waits on something not yet
 | A request pack the owner can send to testers unchanged, and the staging setup for the test | Pass | [PTES_REQUEST_PACK.md](../security/PTES_REQUEST_PACK.md), [PTES_STAGING_SETUP.md](../security/PTES_STAGING_SETUP.md); the owner's decisions (free options first, Spanish copy) are in the plan's Review Notes |
 | The test itself | Pending | Due by 2026-12-26 (CMP-099); the tester, window and cost are the owner's |
 
-### CMP-098 — Pre-release security agent, steps 1–3 (PR #94 and the later review PRs)
+### CMP-098 — Pre-release security agent, steps 1–3 (PR #94; the delta records in PR #111 and PR #115; the scan records in PR #113 and PR #114)
 | Check | Result | Source |
 |---|---|---|
-| Baseline and pen-test plan updated; security code review before the go-ahead and again before each release up to the release commit | Pass | `TICKETS.md` row (reviews `5566e56`..`fe72b17`, `fe72b17`..`a8622cc`, the deltas up to `72417e6`, and `72417e6`..`5d52c59` for v1.1.2: no critical or high finding); the owner's dated statement "No critical or high security finding is open" on PR #110 and PR #119 |
+| Baseline and pen-test plan updated; security code review before the go-ahead and again before each release up to the release commit | Pass | `TICKETS.md` row and baseline §7 (reviews `5566e56`..`fe72b17`, `fe72b17`..`a8622cc`, the deltas up to `72417e6`, and `72417e6`..`5d52c59` for v1.1.2): no new finding. Separately, the owner's dated statement "No critical or high security finding is open" on PR #110 and PR #119 |
 
-### CMP-100 and CMP-106 — Contract v1.9; docs with CMP-102 (coordinator; PR #93, PR #100)
+### CMP-100 and CMP-106 — Contract v1.9; docs with CMP-102 (coordinator; PR #93, PR #101)
 | Check | Result | Source |
 |---|---|---|
 | Contract §9/§10 describe the two trigger settings and their test | Pass | [EVENTS_API_CONTRACT.md](../specs/EVENTS_API_CONTRACT.md), used by CMP-101 |
