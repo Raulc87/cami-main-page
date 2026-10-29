@@ -26,10 +26,13 @@ var CHECK_RESULT_COLORS = {
 };
 var NEEDS_REVIEW_ROW_COLOR = '#fdeaea';
 var REGISTRATION_STATUSES = ['new', 'confirmed', 'refund/cancelled', 'spam'];
+var CHECK_RESULT_VALUES = Object.keys(CHECK_RESULT_COLORS);
 
-// Formatting a new event tab (CMP-094): a `status` dropdown in warning mode (a value outside the list
-// is accepted with a warning, never rejected), `checkResult` colors and a light-red row when
-// `needsReview` is TRUE. Applied only when the tab is created; existing tabs are formatted by hand.
+// Formatting a new event tab (CMP-094, CMP-107): `status` and `checkResult` dropdowns in warning mode
+// (a value outside the list is accepted with a warning, never rejected), `checkResult` colors, a
+// `needsReview` checkbox and a light-red row when `needsReview` is TRUE. The backend keeps writing
+// and reading booleans and plain `checkResult` words, which the checkbox and the dropdown accept.
+// Applied only when the tab is created; existing tabs are formatted by hand.
 function formatNewEventTab_(sheet) {
   var maxRows = sheet.getMaxRows();
   if (maxRows < 2) return;
@@ -40,6 +43,12 @@ function formatNewEventTab_(sheet) {
     SpreadsheetApp.newDataValidation().requireValueInList(REGISTRATION_STATUSES, true).setAllowInvalid(true).build()
   );
   var checkResultRange = sheet.getRange(2, REGISTRATION_HEADERS.indexOf('checkResult') + 1, rowCount, 1);
+  checkResultRange.setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(CHECK_RESULT_VALUES, true).setAllowInvalid(true).build()
+  );
+  sheet.getRange(2, REGISTRATION_HEADERS.indexOf('needsReview') + 1, rowCount, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireCheckbox().setAllowInvalid(true).build()
+  );
   var rules = Object.keys(CHECK_RESULT_COLORS).map(function (value) {
     return SpreadsheetApp.newConditionalFormatRule()
       .whenTextEqualTo(value).setBackground(CHECK_RESULT_COLORS[value]).setRanges([checkResultRange]).build();
@@ -51,6 +60,9 @@ function formatNewEventTab_(sheet) {
       .setBackground(NEEDS_REVIEW_ROW_COLOR).setRanges([rowRange]).build()
   );
   sheet.setConditionalFormatRules(rules);
+  // The tab is new, so it holds only its header row. If the checkboxes wrote FALSE into the empty cells,
+  // getLastRow() would point past the data area and registrations would land at the bottom: clear them.
+  if (sheet.getLastRow() > 1) sheet.getRange(2, 1, rowCount, REGISTRATION_HEADERS.length).clearContent();
 }
 
 // 1 -> A, 26 -> Z, 27 -> AA.
