@@ -167,7 +167,7 @@ body::before {
   padding: 0 4px;
 }
 .evt-ticker-item:focus-visible {
-  outline: 2px solid #c9a4ab;
+  outline: 2px solid #965965;
   outline-offset: 2px;
 }
 .evt-ticker-dot {
@@ -327,7 +327,7 @@ body::before {
 .evt-form-btn-ghost:focus-visible,
 .evt-form-input:focus-visible,
 .evt-form-consent input:focus-visible {
-  outline: 2px solid #c9a4ab;
+  outline: 2px solid #965965;
   outline-offset: 2px;
 }
 .evt-form-summary { margin-bottom: 24px; padding-right: 36px; }
