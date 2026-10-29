@@ -79,9 +79,10 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | CMP-100 | Contract v1.9: the payment re-check's working hours and the time triggers' failure threshold (`RETRY_CHECK_HOURS`, `TRIGGER_FAIL_ALERT_AFTER`) | Coordinator | — | coordinator branch | done |
 | CMP-101 | The payment re-check works only in working hours; the time triggers report a failure only after 10 failed runs in a row (contract v1.9) | Agent 1 | CMP-100 | `CMP-101-trigger-hours-and-failures` | todo |
 | CMP-102 | Site performance: no layout jump, the main photo first, resized modern images, browser caching, early connections, text contrast | Agent 3 | — | `CMP-102-site-performance` | todo |
-| CMP-103 | Release v1.1.1 | Agent 3 + owner | CMP-102, CMP-094, CMP-101, CMP-071; CMP-093 if used | `CMP-103-release-v1-1-1` | todo |
+| CMP-103 | Release v1.1.1 | Agent 3 + owner | CMP-102, CMP-094, CMP-101, CMP-107, CMP-071; CMP-093 if used | `CMP-103-release-v1-1-1` | todo |
 | CMP-098 | Pre-release security agent, steps 1–3, for v1.1.1 (before the go-ahead; step 2's second review before CMP-103) | Pre-release security agent | — | `CMP-098-release-security` (docs PR, if its documents change) | todo |
 | CMP-104 | Pre-release security agent: passive production scan right after v1.1.1, then re-checks of any fixes | Pre-release security agent | CMP-103's live checks; the owner's signed approval for the run | — (findings to the coordinator) | todo |
+| CMP-107 | Event tabs: `checkResult` dropdown and `needsReview` checkbox (owner's follow-up to CMP-094) | Agent 1 | CMP-094 | `CMP-107-event-tab-dropdowns` | todo |
 | CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
 
 Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone is available
@@ -187,8 +188,17 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
     remaining item explained, Best practices and SEO stay 100.
   - No new library (NFR-004) unless TECH_STACK and an ADR say so; the image conversion is a
     one-time step whose files are committed.
+- **CMP-107:** new event tabs get a `checkResult` dropdown in warning mode (the contract's
+  values; any other value still saves, with the warning) and a `needsReview` checkbox (or a
+  TRUE/FALSE dropdown if the backend's writes need it); only new tabs, existing tabs unchanged;
+  columns and values unchanged (contract); the runbook says what the owner sees and that an
+  existing tab is formatted by hand.
+  - Staging check after the merge (staging deploys on merge, ADR-009): a new test event tab shows
+    the dropdown and the checkbox, and its first registration lands in row 2 (not below
+    pre-filled controls); then the cleanup. Like CMP-094, it reaches production with release
+    v1.1.1 (CMP-103), after its staging check.
 - **CMP-103:** `package.json` 1.1.1, the release checklist walked with the owner, the production
-  backend deployed through the approved workflow first (CMP-094, CMP-101; the owner adds the two
+  backend deployed through the approved workflow first (CMP-094, CMP-101, CMP-107; the owner adds the two
   v1.9 script properties to production before), then the site. Live checks: the release
   checklist's, the cookie gate, and PageSpeed 90+ desktop and mobile by the owner. Tag and
   GitHub Release. Followed by the post-release security step (release-checklist §6b): the
@@ -199,7 +209,7 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
   security agent), in its own session, running the kit's `/release-security`: 1. the security
   baseline updated (most of it done in CMP-097: §5.1, every host passive baseline only); 2. a
   security code review of the changes since CMP-063's review, before the go-ahead, and of the
-  changes merged in this sprint (CMP-094, CMP-101, CMP-102, CMP-071, CMP-093), before CMP-103 is
+  changes merged in this sprint (CMP-094, CMP-101, CMP-107, CMP-102, CMP-071, CMP-093), before CMP-103 is
   cut; 3. the pen-test plan kept current (the PTES test by 2026-12-26). Findings go to the
   coordinator only (public repository); it never changes code. In step 1 it also points the
   baseline §5 and the pen-test plan at the release checklist §6b. Its documents are Agent 2's
@@ -215,10 +225,11 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
 
 ## Parallel Workstreams
 ### Agent 1 — Events backend and deploys (fresh session)
-- CMP-094 and CMP-101 at the go-ahead; CMP-093 once CMP-092 is merged; CMP-096 last.
+- CMP-094 and CMP-101 at the go-ahead; CMP-093 once CMP-092 is merged; CMP-107 after CMP-094's
+  staging check; CMP-096 last.
 
 ### Agent 3 — Site performance and release (fresh session)
-- CMP-102 at the go-ahead; CMP-103 last, after CMP-102, CMP-094, CMP-101 and CMP-071 are
+- CMP-102 at the go-ahead; CMP-103 last, after CMP-102, CMP-094, CMP-101, CMP-107 and CMP-071 are
   merged (and CMP-093, if the release uses it).
 
 ### Agent 2 — Security (fresh session)
@@ -265,7 +276,7 @@ Each line names what the PR waits for.
 2. CMP-092 (ADR-010) — CMP-091.
 3. CMP-094, CMP-071, CMP-095 — nothing beyond the go-ahead; CMP-101 — CMP-100 (merged).
 4. CMP-093 (site upload) — CMP-092. CMP-102 (site performance) — nothing beyond the go-ahead.
-5. CMP-103 (release v1.1.1) — CMP-102, CMP-094, CMP-101, CMP-071, and CMP-093 if the release
+5. CMP-103 (release v1.1.1) — CMP-102, CMP-094, CMP-101, CMP-107, CMP-071, and CMP-093 if the release
    uses it; CMP-098 (its review reaches the release commit) and the owner's scan approval.
    CMP-104 (production scan) — CMP-103's live checks.
 6. CMP-096 (verification) — every PR above, except one the owner moved to the next sprint;
@@ -291,6 +302,8 @@ The human reviewer is the final approver.
   in the PR body.
 - CMP-094 deploys staging on merge (ADR-009): its staging check runs after the merge, and its
   row stays `review` until then (as in Sprint 03).
+- CMP-107 deploys staging on merge too: its staging check (new tab, controls, first registration
+  in row 2) runs after the merge, and its row stays `review` until then.
 - CMP-093: a dry run before the merge is not possible from a branch if the workflow runs only
   from `main`; the PR merges after review, then the dry run and the approved run follow, and
   the row stays `review` until the owner's live checks.
@@ -409,3 +422,26 @@ The human reviewer is the final approver.
   "Keep each release's build (Recommended)" (questions as asked in the ADR).
 - The "Agentic Browsing" section of the owner's PageSpeed run (1/2) fails on the same layout shift
   (CLS 0.596); CMP-102's fix must bring it to 2/2 (told to Agent 3 at launch).
+- Owner decisions, 2026-10-29, questions as asked:
+  - PTES (CMP-095): "PTES test (due by 26 Dec): will the project pay a tester? …" Owner: **"Free
+    options first"** ("Try a university program, a volunteer or community tester, or a friend
+    who's a certified tester first; decide on paying only if none is found by mid-November").
+    The coordinator checks back on 2026-11-13. "The request pack is in English. Do you want a
+    Spanish copy for local testers in Costa Rica?" Owner: **"Yes, add Spanish (Recommended)"**.
+  - Site performance (CMP-102, PR #100): the dusty-rose text → **"New darker rose
+    (Recommended)"** (`C.roseText` `#965965`; the shade approved on PR #100,
+    2026-10-29: "new color approved by Cami and myself"); no events → **"Find a no-jump way (Recommended)"**; the registration form labels →
+    **"Yes, same PR (Recommended)"**.
+  - Dependabot titles: "Dependabot … opens PRs with its own titles … Allow that exception in our
+    PR rules?" Owner: **"Yes, allow it (Recommended)"** (pr-workflow §2).
+- The deploy login (`CLASP_CREDENTIALS`) expired again: staging deploys #19 (2026-10-28) and #20
+  (2026-10-29, CMP-094) stopped at the login check, nothing pushed; the owner renewed it in both
+  environments and re-ran #20 (owner, 2026-10-29: "login renewed, deploy re-run"). The coordinator
+  asked the owner to check the Workspace "Google Cloud session control" setting (runbook §5.1).
+- Staging scan for v1.1.1: skipped (above); the docs/security pointers to release-checklist §6b
+  were done by the pre-release security agent in PR #94.
+- CMP-094 staging check by the owner (2026-10-29), verbatim: "I added the ZTEST1 / 1. ok / 2. ok,
+  we would need this as a drop as well / 3. ok / 4. ok, needs to be a dropdown or a check / 5. ok
+  / clean up done". The follow-up requests become CMP-107 (Agent 1, before v1.1.1): a
+  `checkResult` dropdown (warning mode) and a `needsReview` checkbox (or a TRUE/FALSE dropdown if
+  the backend's writes need it), on new tabs, columns and values unchanged.
