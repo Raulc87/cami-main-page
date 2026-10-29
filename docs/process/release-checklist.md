@@ -287,7 +287,7 @@ re-upload). v1.1.0 has no kept build: rolling back to it is the manual restore b
 **By hand (fallback)**, if something goes wrong after extracting into `public_html/`:
 
 1. Delete the new content of `public_html/`.
-2. Re-upload and extract the backup `.zip` from step 4 of the "Upload to GoDaddy" section above.
+2. Re-upload and extract the backup `.zip` from §4.2 step 4.
 3. If the release had already been tagged on GitHub, don't delete the tag/release — document it as
    known and fix it with a following release (`v1.0.1`), unless the tag points to a broken commit
    that should never have been published.
