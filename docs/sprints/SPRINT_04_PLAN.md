@@ -82,6 +82,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | CMP-103 | Release v1.1.1 | Agent 3 + owner | CMP-102, CMP-094, CMP-101, CMP-071; CMP-093 if used | `CMP-103-release-v1-1-1` | todo |
 | CMP-098 | Pre-release security agent, steps 1–3, for v1.1.1 (before the go-ahead; step 2's second review before CMP-103) | Pre-release security agent | — | `CMP-098-release-security` (docs PR, if its documents change) | todo |
 | CMP-104 | Pre-release security agent: passive production scan right after v1.1.1, then re-checks of any fixes | Pre-release security agent | CMP-103's live checks; the owner's signed approval for the run | — (findings to the coordinator) | todo |
+| CMP-107 | Event tabs: `checkResult` dropdown and `needsReview` checkbox (owner's follow-up to CMP-094) | Agent 1 | CMP-094 | `CMP-107-event-tab-controls` | todo |
 | CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
 
 Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone is available
@@ -265,7 +266,7 @@ Each line names what the PR waits for.
 2. CMP-092 (ADR-010) — CMP-091.
 3. CMP-094, CMP-071, CMP-095 — nothing beyond the go-ahead; CMP-101 — CMP-100 (merged).
 4. CMP-093 (site upload) — CMP-092. CMP-102 (site performance) — nothing beyond the go-ahead.
-5. CMP-103 (release v1.1.1) — CMP-102, CMP-094, CMP-101, CMP-071, and CMP-093 if the release
+5. CMP-103 (release v1.1.1) — CMP-102, CMP-094, CMP-101, CMP-107, CMP-071, and CMP-093 if the release
    uses it; CMP-098 (its review reaches the release commit) and the owner's scan approval.
    CMP-104 (production scan) — CMP-103's live checks.
 6. CMP-096 (verification) — every PR above, except one the owner moved to the next sprint;
@@ -427,3 +428,8 @@ The human reviewer is the final approver.
   asked the owner to check the Workspace "Google Cloud session control" setting (runbook §5.1).
 - Staging scan for v1.1.1: skipped (above); the docs/security pointers to release-checklist §6b
   were done by the pre-release security agent in PR #94.
+- CMP-094 staging check by the owner (2026-10-29), verbatim: "I added the ZTEST1 / 1. ok / 2. ok,
+  we would need this as a drop as well / 3. ok / 4. ok, needs to be a dropdown or a check / 5. ok
+  / clean up done". The follow-up requests become CMP-107 (Agent 1, before v1.1.1): a
+  `checkResult` dropdown (warning mode) and a `needsReview` checkbox (or a TRUE/FALSE dropdown if
+  the backend's writes need it), on new tabs, columns and values unchanged.
