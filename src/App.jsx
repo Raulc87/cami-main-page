@@ -1,6 +1,7 @@
 import { C } from './constants/colors'
 import { useReveal } from './hooks/useReveal'
 import { useEvents } from './hooks/useEvents'
+import { isEventsApiConfigured } from './api/events'
 import EventsTicker from './components/EventsTicker'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
@@ -23,6 +24,9 @@ export default function App() {
   // 'hidden' (FFR-004), the room closing smoothly (`.evt-reserve` in global.css).
   const { status, sinpe, events, refetch } = useEvents()
   const room = status === 'hidden' ? ' evt-reserve-closed' : ''
+  // The placeholders stay mounted after 'hidden': the room can only shrink while it still has
+  // content to measure, and an unmounted placeholder would close it at once.
+  const placeholders = isEventsApiConfigured() && status !== 'ready'
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden' }}>
@@ -44,7 +48,7 @@ export default function App() {
       <div className={`evt-reserve${room}`}>
         <div className="evt-reserve-inner">
           {status === 'ready' && <EventsTicker events={events} />}
-          {status === 'loading' && <div className="evt-ticker" aria-hidden="true" />}
+          {placeholders && <div className="evt-ticker" aria-hidden="true" />}
         </div>
       </div>
       <Nav />
@@ -53,7 +57,7 @@ export default function App() {
         <div className={`evt-reserve${room}`}>
           <div className="evt-reserve-inner">
             {status === 'ready' && <Events events={events} sinpe={sinpe} onRefetch={refetch} />}
-            {status === 'loading' && <EventsSkeleton />}
+            {placeholders && <EventsSkeleton />}
           </div>
         </div>
         <Services r={r} />
