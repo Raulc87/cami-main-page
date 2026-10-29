@@ -198,7 +198,15 @@ function fileIdFromUrl_(url) {
 
 // Time-driven trigger (every 10 minutes): runs the check again for rows still `pending`
 // (FFR-032). A row older than 24 hours is no longer retried; it is listed for the day's alert email.
+//
+// Works only inside `RETRY_CHECK_HOURS`; outside them the run ends at once, with no work, no error and
+// the failure count unchanged (contract §9).
 function retryPendingChecks() {
+  if (!insideRetryCheckHours_(Date.now())) return;
+  runTriggerGuarded_('retryPendingChecks', retryPendingChecksRun_);
+}
+
+function retryPendingChecksRun_() {
   drainEmailFailedQueue_();
   var started = Date.now();
   var stuck = [];

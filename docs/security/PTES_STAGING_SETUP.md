@@ -76,7 +76,7 @@ environment, time and reference). Then:
 | 3b | Delete what the backend created for each test event: its **registration tab** in the spreadsheet (made on the first registration) and its **Drive folder** `<eventCode>/` under the screenshots root. Only after step 1's check, on staging and, for the production test events, on production | |
 | 4 | `Metrics` has one row per day with no marker for test traffic. On **staging** (test traffic only) delete the rows of the window's days. On **production** keep them: they also hold real visitors' counts, and deleting them would erase that history and could affect the threshold alerts (which read today's and yesterday's rows). Note privately that those days include the test | |
 | 5 | Restore the real `SINPE_NUMBER` and `SINPE_ACCOUNT_NAME` on staging | |
-| 6 | Restore `ALERT_TO`, `ALERT_HONEYPOT_PER_DAY`, `ALERT_THROTTLED_PER_DAY` and `MAIL_REPLY_TO` on both environments | |
+| 6 | Restore `ALERT_TO`, `ALERT_HONEYPOT_PER_DAY`, `ALERT_THROTTLED_PER_DAY` and `MAIL_REPLY_TO` on both environments, and `RETRY_CHECK_HOURS` on staging if you widened it (step 12) | |
 | 7 | Delete the staging triggers again, if you created them | |
 | 8 | Get the tester's written confirmation that they deleted any data captured, once the report is accepted | |
 | 9 | Confirm the cleanup in writing (the plan asks for it) and keep it with the signed form, privately | |

@@ -19,6 +19,49 @@ function ensureRegistrationHeaders_(sheet) {
   sheet.getRange(1, have + 1, 1, missing.length).setValues([missing]);
 }
 
+// Colors of `checkResult` values and the row highlight for `needsReview` (CMP-094). Looks only:
+// columns, headers and values stay as in the contract (§7).
+var CHECK_RESULT_COLORS = {
+  'ok': '#b7e1cd', 'mismatch': '#f4c7c3', 'unreadable': '#fce5cd', 'pending': '#fff2cc', 'not-required': '#d9d9d9'
+};
+var NEEDS_REVIEW_ROW_COLOR = '#fdeaea';
+var REGISTRATION_STATUSES = ['new', 'confirmed', 'refund/cancelled', 'spam'];
+
+// Formatting a new event tab (CMP-094): a `status` dropdown in warning mode (a value outside the list
+// is accepted with a warning, never rejected), `checkResult` colors and a light-red row when
+// `needsReview` is TRUE. Applied only when the tab is created; existing tabs are formatted by hand.
+function formatNewEventTab_(sheet) {
+  var maxRows = sheet.getMaxRows();
+  if (maxRows < 2) return;
+  var rowCount = maxRows - 1;
+  var columnLetter = function (header) { return columnLetterOf_(REGISTRATION_HEADERS.indexOf(header) + 1); };
+  var statusRange = sheet.getRange(2, REGISTRATION_HEADERS.indexOf('status') + 1, rowCount, 1);
+  statusRange.setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(REGISTRATION_STATUSES, true).setAllowInvalid(true).build()
+  );
+  var checkResultRange = sheet.getRange(2, REGISTRATION_HEADERS.indexOf('checkResult') + 1, rowCount, 1);
+  var rules = Object.keys(CHECK_RESULT_COLORS).map(function (value) {
+    return SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo(value).setBackground(CHECK_RESULT_COLORS[value]).setRanges([checkResultRange]).build();
+  });
+  var rowRange = sheet.getRange(2, 1, rowCount, REGISTRATION_HEADERS.length);
+  rules.push(
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=$' + columnLetter('needsReview') + '2=TRUE')
+      .setBackground(NEEDS_REVIEW_ROW_COLOR).setRanges([rowRange]).build()
+  );
+  sheet.setConditionalFormatRules(rules);
+}
+
+// 1 -> A, 26 -> Z, 27 -> AA.
+function columnLetterOf_(columnNumber) {
+  var letters = '';
+  for (var n = columnNumber; n > 0; n = Math.floor((n - 1) / 26)) {
+    letters = String.fromCharCode(65 + ((n - 1) % 26)) + letters;
+  }
+  return letters;
+}
+
 // The event for a registration: the first row of its code that passes validation, wherever it is
 // published or not (a late paid registration is stored and flagged, BR-E13). `duplicated` is true
 // when the code appears in more than one row (FFR-019). null when no valid row exists.
@@ -271,7 +314,12 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
       screenshot ? 'pending' : 'not-required', notes.join('; '), flags.length > 0, 'new',
       "'" + timestamp, '', v.contactOptIn === true
     ];
+    var tabExisted = getSpreadsheet().getSheetByName(v.eventCode) !== null;
     var sheet = getOrCreateSheet(v.eventCode, REGISTRATION_HEADERS);
+    if (!tabExisted) {
+      // Looks only: a formatting failure must not lose the registration.
+      try { formatNewEventTab_(sheet); } catch (formatErr) { console.error('event tab format failed: ' + (formatErr && formatErr.name)); }
+    }
     ensureRegistrationHeaders_(sheet);
     var row = sheet.getLastRow() + 1;
     sheet.getRange(row, 1, 1, values.length).setValues([values]);
