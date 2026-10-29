@@ -221,6 +221,14 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
   request per second) of the live site and the production web app, never active (baseline
   §5.1); the owner can stop it; findings to the coordinator; the scan date in the v1.1.1 GitHub
   Release (release-checklist §6b).
+- **CMP-108** (owner, 2026-10-29; Review Notes)**:** more WebP widths with matching `sizes`
+  (gallery tiles 320, hero 800, logo 600; the community photo re-compressed) and the nav dot
+  animated with transform/opacity instead of `box-shadow`; files `src/**`, `public/images/**`,
+  `CONTRIBUTING.md`; no visual change (checked at 1280/900/375 px); local Lighthouse before and
+  after in the PR; no new library. Released as v1.1.2 with the release checklist, the upload
+  workflow and the pre-release security agent's code review of the delta before the tag; the
+  owner's PageSpeed on the live site is the final check (mobile 90+, desktop stays 90+). The
+  production scan for v1.1.2 needs a new signed approval or an owner decision as for CMP-104.
 - **CMP-096:** `docs/sprints/SPRINT_04_VERIFICATION.md` with the evidence of every ticket and
   the staging cleanup list.
 
@@ -280,6 +288,7 @@ Each line names what the PR waits for.
 5. CMP-103 (release v1.1.1) — CMP-102, CMP-094, CMP-101, CMP-107, CMP-071, and CMP-093 if the release
    uses it; CMP-098 (its review reaches the release commit) and the owner's scan approval.
    CMP-104 (production scan) — CMP-103's live checks.
+   CMP-108 (mobile image sizes, then release v1.1.2) — CMP-103; this plan's CMP-108 entry.
 6. CMP-096 (verification) — every PR above, except one the owner moved to the next sprint;
    CMP-103's live evidence follows it, as in Sprint 03.
 
@@ -308,6 +317,8 @@ The human reviewer is the final approver.
 - CMP-093: a dry run before the merge is not possible from a branch if the workflow runs only
   from `main`; the PR merges after review, then the dry run and the approved run follow, and
   the row stays `review` until the owner's live checks.
+- CMP-108: local Lighthouse in the PR; after v1.1.2 is live, the owner's PageSpeed run; its row
+  and CMP-102's stay `review` until mobile is 90+.
 - CMP-096 collects the evidence.
 
 ## Risks
@@ -457,8 +468,8 @@ The human reviewer is the final approver.
     read by the owner: no rule against a passive scan of their own site.
   - Production backend first (properties `06-22` and `10`, deploy green, smoke passed, both
     triggers present); owner's statement on #110: "No critical or high security finding is
-    open."; #110 merged; final security delta check: no new finding; tag `v1.1.1` and Release on
-    `72417e6`.
+    open."; #110 merged; final security delta check `df27a20`..`72417e6`: no new finding (docs
+    only); tag `v1.1.1` and Release on `72417e6`.
   - First automatic upload (ADR-010): dry run green (32 to add, 0 change, 0 delete); manual
     cPanel backup downloaded and removed from `public_html`; real run green, `site-v1.1.1.zip`
     on the Release.
@@ -468,8 +479,9 @@ The human reviewer is the final approver.
 - CMP-104 dropped: the pre-release security agent's session safety controls blocked the scan step
   (as in CMP-063); no scan ran, no results exist. Owner asked "How should we cover it?" and chose,
   verbatim, **"Leave it to the tester (Recommended)"**: the passive baseline is part of the PTES
-  test due by 2026-12-26 (CMP-099). The v1.1.1 Release says so (release-checklist §6b) instead of
-  a scan date. Recorded in PENTEST_PLAN §1.1 by the security agent (#114).
+  test due by 2026-12-26 (CMP-099). The v1.1.1 Release is to say so (release-checklist §6b)
+  instead of a scan date: the line was given to the owner on 2026-10-29, pending. Recorded in PENTEST_PLAN §1.1 by the security agent (#114).
 - Mobile below 90: the owner asked "Should we do it?" (Agent 3's image-size and nav-dot fix as
   v1.1.2) and chose, verbatim, **"Yes, small fix v1.1.2 (Recommended)"**. It becomes CMP-108
-  (Agent 3); CMP-102 stays `review` until mobile reaches 90+ after v1.1.2.
+  (Agent 3); CMP-102 stays `review` until mobile reaches 90+ after v1.1.2. The mobile 90+ target
+  moves from CMP-103 to CMP-108: CMP-103 (the v1.1.1 release itself) counts as done.
