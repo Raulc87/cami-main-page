@@ -416,8 +416,8 @@ The human reviewer is the final approver.
     The coordinator checks back on 2026-11-13. "The request pack is in English. Do you want a
     Spanish copy for local testers in Costa Rica?" Owner: **"Yes, add Spanish (Recommended)"**.
   - Site performance (CMP-102, PR #100): the dusty-rose text → **"New darker rose
-    (Recommended)"** (`C.roseText` `#965965`, approved by the owner and Cami on PR #100's
-    preview); no events → **"Find a no-jump way (Recommended)"**; the registration form labels →
+    (Recommended)"** (`C.roseText` `#965965`; the shade's approval by the owner and Cami on
+    PR #100's preview is pending); no events → **"Find a no-jump way (Recommended)"**; the registration form labels →
     **"Yes, same PR (Recommended)"**.
   - Dependabot titles: "Dependabot … opens PRs with its own titles … Allow that exception in our
     PR rules?" Owner: **"Yes, allow it (Recommended)"** (pr-workflow §2).

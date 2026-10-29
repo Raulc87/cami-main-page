@@ -6,8 +6,8 @@
   `roseText` token for readable rose text, font loading, §13 the events room while loading,
   images as WebP — CMP-106, with CMP-102)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
-  merge of PR #22; v1.2 on merge of PR #30; v1.3 Approved on merge of the CMP-106 PR, the
-  `roseText` shade after the owner's and Cami's approval of PR #100's preview)
+  merge of PR #22; v1.2 on merge of PR #30; v1.3 Approved on merge of PR #101; the
+  `roseText` shade needs the owner's and Cami's approval on PR #100 before both merge)
 - Source: brand moodboard — *Elegance · Calm · Balance · Femininity*
 
 ## 1. Experience Goal
@@ -50,8 +50,9 @@ must be updated by hand** so they don't drift.
 
 ### Typography
 
-Loaded from the Google Fonts CDN, preloaded from `index.html` and applied by `main.jsx` (since
-CMP-102; before, an `@import` in global.css line 1, which blocked rendering):
+Loaded from the Google Fonts CDN, preloaded from [index.html](../../index.html) and applied by
+[main.jsx](../../src/main.jsx) (since CMP-102; before, an `@import` in
+[global.css](../../src/styles/global.css) line 1, which blocked rendering):
 
 - **Outfit** (300–900) — main font for body and headings. `font-family: 'Outfit', sans-serif`.
 - **Cormorant Garamond** italic (400/600/700) — emotional accents: highlighted words in

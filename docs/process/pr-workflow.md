@@ -43,7 +43,7 @@ EOF
 
 **The title must always start with the ticket ID** (`CMP-XXX:`) — that's what lets PRs be
 cross-referenced with [TICKETS.md](../../TICKETS.md) without an external tracker. **Exception:**
-Dependabot's own pull requests (CMP-071) keep Dependabot's titles and get no ticket row; the
+Dependabot's own pull requests (CMP-071, [`.github/dependabot.yml`](../../.github/dependabot.yml)) keep Dependabot's titles and get no ticket row; the
 checks and the review-only agent still apply, and the owner merges them as usual (owner,
 2026-10-29: "Yes, allow it").
 

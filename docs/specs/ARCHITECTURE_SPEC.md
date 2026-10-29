@@ -10,7 +10,7 @@
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
   merge of PR #21; v1.2 Approved on merge of PR #22; v1.3 Approved on merge of PR #26; v1.4
   Approved on merge of PR #30; v1.5 Approved on merge of PR #32; v1.6 on merge of PR #34; v1.7
-  Approved on merge of the CMP-106 PR)
+  Approved on merge of PR #101)
 - Owner: Raul Casanas
 
 ## 1. Purpose
@@ -288,7 +288,8 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 
 ## 10. Interfaces and Integrations
 - `mailto:` contact link (CTA, nav).
-- Google Fonts CDN (`@import` in `global.css`).
+- Google Fonts CDN (preloaded from [index.html](../../index.html), applied by
+  [main.jsx](../../src/main.jsx), since CMP-102).
 - Events backend: [EVENTS_API_CONTRACT.md](EVENTS_API_CONTRACT.md) (locked before parallel
   work).
 
@@ -330,7 +331,7 @@ that feature's FEATURE_SPEC/architecture section (see US-011, US-012), not to
 ## 16. Performance
 - Single global `IntersectionObserver`; images resized and served as WebP with a fallback
   (`Picture`), the hero photo first and the rest lazy; fonts preloaded; long browser caching for
-  hashed assets and images in `public/.htaccess`, `index.html` not cached; no runtime
+  hashed assets and images in [public/.htaccess](../../public/.htaccess), `index.html` not cached; no runtime
   dependencies beyond React. Target: Lighthouse/PageSpeed 90+ desktop and mobile, CLS under 0.1
   (CMP-102).
 

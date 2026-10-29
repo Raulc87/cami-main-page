@@ -164,7 +164,8 @@ Kept rule (ADR-006 → Kit disposition): no external tracker
 - Every unit of work is a `CMP-XXX` ticket in [`TICKETS.md`](TICKETS.md) (source of truth for
   sequential numbering). A ticket implements one or more user stories, or is process /
   tech-debt work.
-- Branch: `CMP-XXX-short-slug` (e.g. `CMP-001-sdd-foundation`). PR title: `CMP-XXX: <summary>`.
+- Branch: `CMP-XXX-short-slug` (e.g. `CMP-001-sdd-foundation`). PR title: `CMP-XXX: <summary>`
+  (Dependabot's own PRs keep their titles: [`pr-workflow.md` §2](docs/process/pr-workflow.md#2-create-the-pr-with-gh)).
   Commit subject: `CMP-XXX: ...` recommended, not required
   ([`pr-workflow.md` §1](docs/process/pr-workflow.md#1-commit-and-push)).
 - Before starting, check [`TICKETS.md`](TICKETS.md), take the next free number, and add the row
