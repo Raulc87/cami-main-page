@@ -16,6 +16,7 @@ Per [model-cost-policy.md](../process/model-cost-policy.md).
 |---|---|---|---|
 | Agent 1 — Events backend and deploys | Sonnet | high | Specified changes; the upload workflow follows ADR-010 |
 | Agent 2 — Security | Sonnet | high | Configuration and a document built from the approved pen-test plan |
+| Agent 3 — Site performance and release | Sonnet | high | Specified fixes measured with Lighthouse, then the release walk-through |
 | Review-only agent | Opus | high | The upload credentials and the supply chain are where a missed risk is expensive |
 
 Codex reviews every PR automatically when it opens (no session prompt needed).
@@ -26,7 +27,8 @@ Codex reviews every PR automatically when it opens (no session prompt needed).
    `<REVIEWER_SESSION>` in every implementation prompt; the coordinator fills in its own
    session ID (`session_01Bz1vUqhjanC9ePRd5t2u6j`) for `<COORDINATOR_SESSION>` in every
    prompt, the reviewer's included, when it launches the session.
-2. Agents 1 and 2 at the go-ahead: each has work with no dependency (CMP-094; CMP-071, CMP-095).
+2. Agents 1, 2 and 3 at the go-ahead: each has work with no dependency (CMP-094; CMP-071, CMP-095;
+   CMP-102).
 
 ## Coordination
 
@@ -181,6 +183,30 @@ Order of work (each one PR; checks in SPRINT_04_PLAN → Ticket checks):
    cost question left to the owner) and the staging setup the test needs (test SINPE values and
    a test event during the window, the alert settings, the cleanup). No staging URL, IDs or
    personal data.
+```
+
+## Agent 3 — Site performance and release
+
+```
+[Common rules block]
+
+You are Implementation Agent 3: the site and the release. You own src/**, public/** (including
+public/.htaccess), index.html, package.json and package-lock.json, CONTRIBUTING.md and
+README.md.
+
+Order of work (each one PR; checks in SPRINT_04_PLAN → Ticket checks):
+1. CMP-102-site-performance — Lighthouse 90+ on desktop and mobile, measured on a local
+   production build (npm run build, npm run preview, Lighthouse with the desktop and mobile
+   presets) before and after, numbers in the PR: no layout jump while the events load (CLS under
+   0.1), the main photo first, resized WebP images with fallbacks, long caching in .htaccess for
+   hashed assets and images (index.html not cached; the CMP-079 headers unchanged), preconnect,
+   text contrast with approved colors only. No new library without an ADR. Never run Lighthouse
+   or any tool against the live site or staging; the owner runs PageSpeed on the live site.
+2. CMP-103-release-v1-1-1 — after CMP-102, CMP-094, CMP-101 and CMP-071 are merged (and CMP-093,
+   if the release uses it): package.json 1.1.1 and the release checklist with the owner, as in
+   v1.1.0 (CMP-068): the production backend deploy first (with the two v1.9 script properties
+   added by the owner), then the site, the live checks, the owner's PageSpeed run, the tag and
+   the GitHub Release. No post-release security step (the owner keeps the PTES deadline).
 ```
 
 ## Review-only agent

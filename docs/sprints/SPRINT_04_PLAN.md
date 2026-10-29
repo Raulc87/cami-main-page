@@ -35,28 +35,32 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Security baseline approved | Pass: approved (CMP-056), PTES deadline 2026-12-26 (CMP-069) |
 | 5. Stories touching an OWASP risk have verifying ACs **(blocking)** | Pass: CMP-093 (credentials, supply chain) and CMP-071 carry their security checks below |
 | 5. Secret and dependency scanning | Secret scanning on (owner, 2026-10-27); dependency checks are CMP-071 in this sprint |
-| 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; after it, no release other than a security hotfix until the test has run. CMP-095 prepares it |
-| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) | Not blocking: Sprint 04 releases nothing to production (owner, 2026-10-28, Sprint Review Notes). CMP-093's approved run re-uploads exactly the live v1.1.0 site, and CMP-094 stays on staging this sprint. The agent's run goes with CMP's next real release (CMP-098, CMP-099), or by the 2026-12-26 deadline |
-| 5. Written approval per agent scan; tester's authorization | Not blocking, for the same reason; planned in CMP-099 |
+| 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; after it, no release other than a security hotfix until the test has run. Sprint 04 releases v1.1.1 (CMP-103) before the deadline; the owner keeps the deadline route for it (2026-10-29, Sprint Review Notes). CMP-095 prepares the test |
+| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) | Not blocking: v1.1.1 (CMP-103) is a performance release with the event-tab and trigger changes, no new form, data or login, and the live project's test is not yet due: its recorded deadline is 2026-12-26. The owner keeps that deadline for the agent's run and the PTES test (2026-10-29; the 2026-10-28 "not a release" answer is superseded). CMP-098 and CMP-099 run by the deadline |
+| 5. Written approval per agent scan; tester's authorization | Not blocking, for the same reason; planned in CMP-099, by the deadline |
 | 6. Hosting runtime, local development, developer guide | Pass: ADR-002, ADR-008, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) |
 | 6. Test, lint and CI checks; required on `main` | Pass: `apps-script-check`, `docs-link-check`; CMP-071 adds the dependency check |
 | 6. Branching ADR and deployment runbook **(deploying sprint)** | Pass: ADR-007, ADR-009, the events-backend runbook; the site-upload decision is CMP-092 (ADR-010), merged before CMP-093 |
-| 6. Previews and tests use their own data | Pass: staging for the backend; CMP-093's first run is a dry run; its first real run uploads the same v1.1.0 site that is live |
-| 7. Workstreams assigned, ≤ 3 agents **(blocking)** | Pass: Agents 1 and 2 below |
+| 6. Previews and tests use their own data | Pass: staging for the backend; the site's changes are checked on a local build (CMP-102); CMP-093's first run is a dry run |
+| 7. Workstreams assigned, ≤ 3 agents **(blocking)** | Pass: Agents 1, 2 and 3 below |
 | 7. Ownership map, no dependency cycle **(blocking)** | Pass |
 | 7.1 Prompts: no merge or approve; reviewer independence; attribution **(blocking)** | Pass ([`SPRINT_04_AGENT_PROMPTS.md`](SPRINT_04_AGENT_PROMPTS.md)) |
 | 8. Go-ahead **(blocking)** | Pending (gate 4) |
 
 ## Sprint Goal
-- Make releases safer and lighter after the events go-live: the site uploads to GoDaddy from
+- Make the site fast again after the events go-live (PageSpeed 90+ on desktop and mobile, no
+  layout jump; owner, 2026-10-29: "REALLY important"), released as v1.1.1; and make releases
+  safer and lighter: the site uploads to GoDaddy from
   GitHub after the owner's approval, with a way back; dependency checks on every PR; new event
   tabs come with the status dropdown and the check-result colors; and the PTES penetration test
   is ready to hand to a tester before its 2026-12-26 deadline.
 
 ## Required Deliverable
-- The site-upload workflow (CMP-093) run once for real, with the owner's approval, uploading the
-  current `main` (the same site as v1.1.0); the live checks of CMP-068 steps 7–9 repeated and
-  passed.
+- Release v1.1.1 live (CMP-103): the performance fixes (CMP-102), with PageSpeed 90+ on desktop
+  and mobile on the live site, and the event-tab and trigger changes (CMP-094, CMP-101) deployed
+  to production with the owner's approval. Uploaded by the site-upload workflow (CMP-093) if it is
+  ready and its dry run passed, otherwise by hand as for v1.1.0; the live checks of the release
+  checklist passed.
 - Dependency checks running on every PR (CMP-071), and the two warnings in the deploy tools
   handled or recorded.
 - A new event tab on staging created with the dropdown, colors and highlight (CMP-094).
@@ -74,6 +78,8 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | CMP-095 | PTES test preparation: the request pack for testers and the staging setup for the test | Agent 2 | — | `CMP-095-ptes-preparation` | todo |
 | CMP-100 | Contract v1.9: the payment re-check's working hours and the time triggers' failure threshold (`RETRY_CHECK_HOURS`, `TRIGGER_FAIL_ALERT_AFTER`) | Coordinator | — | coordinator branch | done |
 | CMP-101 | The payment re-check works only in working hours; the time triggers report a failure only after 10 failed runs in a row (contract v1.9) | Agent 1 | CMP-100 | `CMP-101-trigger-hours-and-failures` | todo |
+| CMP-102 | Site performance: no layout jump, the main photo first, resized modern images, browser caching, early connections, text contrast | Agent 3 | — | `CMP-102-site-performance` | todo |
+| CMP-103 | Release v1.1.1 | Agent 3 + owner | CMP-102, CMP-094, CMP-101, CMP-071; CMP-093 if used | `CMP-103-release-v1-1-1` | todo |
 | CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
 
 Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone is available
@@ -150,8 +156,36 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
     them on staging and production.
   - Staging check after the merge (contract §10), with the staging triggers re-created for the
     check and deleted again afterwards (owner, 2026-10-28: staging triggers deleted while no
-    feature is tested). Like CMP-094, it stays on staging this sprint and reaches production with
-    the next release.
+    feature is tested). Like CMP-094, it reaches production with release v1.1.1 (CMP-103), after
+    its staging check.
+- **CMP-102:** measured with Lighthouse on a local production build (`npm run build` and
+  `npm run preview`) before and after each change, desktop and mobile presets, results in the PR;
+  the owner's PageSpeed run on the live site after CMP-103 is the final check.
+  - Cumulative Layout Shift under 0.1 on desktop and mobile: the events ticker and section keep
+    their space while the events load (today 0.60 on desktop, from the events arriving after the
+    page), and when no event is listed the space closes without a jump users see (FFR-004).
+  - The main photo (the LCP element) loads first: preloaded or `fetchpriority="high"`, never
+    lazy; images below the fold load lazily.
+  - Images resized to the sizes they are shown at (with `srcset` where the size changes by width)
+    and served as WebP with a JPEG/PNG fallback; Cami's logo included; no visible quality loss,
+    checked at 1280/900/375 px.
+  - Long browser caching in `public/.htaccess` for the hashed `assets/` files and the images
+    (for example one year, `immutable` for hashed files), and no caching of `index.html`; the
+    CMP-079 security headers unchanged.
+  - `preconnect` to the font hosts and the events backend host.
+  - Text contrast passes WCAG AA (4.5:1) for the labels Lighthouse lists (the menu, the event
+    cards, a section heading), with the colors approved in UX_UI_DIRECTION (a new color goes to
+    the owner first).
+  - Lighthouse on the local build: Performance 90+ desktop and mobile, Accessibility 100 or every
+    remaining item explained, Best practices and SEO stay 100.
+  - No new library (NFR-004) unless TECH_STACK and an ADR say so; the image conversion is a
+    one-time step whose files are committed.
+- **CMP-103:** `package.json` 1.1.1, the release checklist walked with the owner, the production
+  backend deployed through the approved workflow first (CMP-094, CMP-101; the owner adds the two
+  v1.9 script properties to production before), then the site. Live checks: the release
+  checklist's, the cookie gate, and PageSpeed 90+ desktop and mobile by the owner. Tag and
+  GitHub Release. Not followed by the post-release security step: the owner keeps the PTES
+  deadline (2026-12-26) for the agent's run and the test (CMP-098, CMP-099).
 - **CMP-096:** `docs/sprints/SPRINT_04_VERIFICATION.md` with the evidence of every ticket and
   the staging cleanup list.
 
@@ -159,11 +193,15 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
 ### Agent 1 — Events backend and deploys (fresh session)
 - CMP-094 and CMP-101 at the go-ahead; CMP-093 once CMP-092 is merged; CMP-096 last.
 
+### Agent 3 — Site performance and release (fresh session)
+- CMP-102 at the go-ahead; CMP-103 last, after CMP-102, CMP-094, CMP-101 and CMP-071 are
+  merged (and CMP-093, if the release uses it).
+
 ### Agent 2 — Security (fresh session)
 - CMP-071 and CMP-095 at the go-ahead.
 - Never runs a penetration test or attack tools, and never scans production.
 
-Maximum implementation agents in parallel: 2.
+Maximum implementation agents in parallel: 3.
 
 ## Foundation (before parallel work)
 - CMP-092 (coordinator): ADR-010, merged before CMP-093.
@@ -175,13 +213,13 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 |---|---|
 | `apps-script/**`, `.github/clasp/**` (except Dependabot's own pull requests), `.github/scripts/**` except `check_doc_links.py`, `.github/workflows/deploy-apps-script.yml`, `.github/workflows/apps-script-check.yml`, `.github/workflows/deploy-site.yml` (new), [`docs/process/events-backend-runbook.md`](../process/events-backend-runbook.md), `docs/sprints/SPRINT_04_VERIFICATION.md`, `docs/sprints/evidence/sprint-04/**` | Agent 1 |
 | `docs/security/**`, `.github/dependabot.yml` (new), `.github/workflows/dependency-audit.yml` (new) | Agent 2 |
-| `src/**`, `public/**`, `index.html`, `package.json` and `package-lock.json`, `CONTRIBUTING.md`, [`README.md`](../../README.md) | No agent this sprint: a change goes through the coordinator to the owner |
+| `src/**`, `public/**` (including `public/.htaccess`), `index.html`, `package.json` and `package-lock.json`, `CONTRIBUTING.md`, [`README.md`](../../README.md) | Agent 3 |
 | [`TICKETS.md`](../../TICKETS.md) | Shared: each agent updates only its own rows; the coordinator adds rows |
 | `.github/workflows/docs-link-check.yml`, `.github/scripts/check_doc_links.py`, `docs/specs/**`, [`docs/process/release-checklist.md`](../process/release-checklist.md) and the other process docs, `docs/sprints/SPRINT_04_*.md` except the verification, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), [`TECH_STACK.md`](../../TECH_STACK.md), `docs/decisions/**`, `docs/ux/**` | Coordinator (docs PRs) |
 
 CMP-071 does not edit lockfiles or manifests: a fix in `.github/clasp` is Agent 1's (Agent 2
-asks through the coordinator); a fix in the site's `package.json`/`package-lock.json` comes
-only as a Dependabot pull request, which the owner merges after review.
+asks through the coordinator); a fix in the site's `package.json`/`package-lock.json` is Agent
+3's, or a Dependabot pull request the owner merges after review.
 
 CMP-093 needs release-checklist §4 and §7 changed: Agent 1 sends the text to the coordinator,
 who changes it in a docs PR merged with or right after CMP-093.
@@ -196,8 +234,11 @@ Each line names what the PR waits for.
 1. CMP-091 (this plan) — nothing.
 2. CMP-092 (ADR-010) — CMP-091.
 3. CMP-094, CMP-071, CMP-095 — nothing beyond the go-ahead; CMP-101 — CMP-100 (merged).
-4. CMP-093 (site upload) — CMP-092.
-5. CMP-096 (verification) — every PR above, except one the owner moved to the next sprint.
+4. CMP-093 (site upload) — CMP-092. CMP-102 (site performance) — nothing beyond the go-ahead.
+5. CMP-103 (release v1.1.1) — CMP-102, CMP-094, CMP-101, CMP-071, and CMP-093 if the release
+   uses it.
+6. CMP-096 (verification) — every PR above, except one the owner moved to the next sprint;
+   CMP-103's live evidence follows it, as in Sprint 03.
 
 Cycle check: every arrow points to a PR earlier in this list.
 
@@ -288,3 +329,18 @@ The human reviewer is the final approver.
   "Re-check closing time per request", "Accept it". Owner: **"Keep events refresh on 24h
   (Recommended)"**. Only the payment re-check pauses from 22:00 to 06:00 (`RETRY_CHECK_HOURS`);
   the 10-failures rule applies to both triggers.
+- Owner, 2026-10-29: "we have to add something REALLY important to sprint 04. … this is alarming,
+  76 performance in desktop? 1/2 agentic searches? we need to take care of this" (PageSpeed for
+  `camihernandez.com`, desktop). The coordinator's Lighthouse run that day on the live site:
+  Performance 52 desktop and 85 mobile; Accessibility 96, Best practices 100, SEO 100 on both.
+  Desktop's main cause is a layout shift of 0.60 when the events arrive after the page; then
+  oversized JPEG/PNG images (about 0.5 MB), no browser caching, a late main photo, late
+  connections to the font and backend hosts, and a few low-contrast labels. Questions as asked:
+  - "Add a site-performance ticket to Sprint 04? …" Owner: **"Yes, release v1.1.1
+    (Recommended)"**.
+  - "Under the new kit rules, does v1.1.1 (a performance-only release, plus the event-tab and
+    trigger changes) start the security agent's run and the PTES test right after it?" Owner:
+    **"No, keep the deadline (Recommended)"**.
+  So CMP-102 and CMP-103 join (Agent 3), the release is v1.1.1, CMP-094 and CMP-101 reach
+  production with it, and the 2026-10-28 answer that Sprint 04 is not a production release is
+  superseded. The agentic-browsing item the owner saw is pending their details.
