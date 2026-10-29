@@ -7,8 +7,8 @@
 // Nothing else on the server is ever touched. Paths are public file names of the site.
 //
 // Usage: node site-plan.mjs <site folder> <manifest file or "-" for none> <plan output folder>
-// Writes <plan>/upload.txt (paths, in upload order), <plan>/delete.txt and <plan>/manifest.new,
-// and prints the plan.
+// Writes <plan>/upload.txt (paths, in upload order), <plan>/delete.txt, <plan>/manifest.new,
+// manifest.pending (see below) and prints the plan.
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
@@ -64,6 +64,15 @@ const toUpload = [...add, ...change].sort(order);
 mkdirSync(planDir, { recursive: true });
 writeFileSync(join(planDir, 'upload.txt'), toUpload.map((p) => p + '\n').join(''));
 writeFileSync(join(planDir, 'delete.txt'), remove.map((p) => p + '\n').join(''));
+// Written to the server BEFORE any file changes: every name of both builds, with no usable hash.
+// If the run stops half-way, the server's files match neither build, so no later run (a rollback
+// included) may trust a hash: it uploads everything again, and still knows which names to delete.
+const NO_HASH = '0'.repeat(64);
+const everyName = new Set([...built.keys(), ...uploaded.keys()]);
+writeFileSync(
+  join(planDir, 'manifest.pending'),
+  [...everyName].sort().map((path) => NO_HASH + '  ' + path + '\n').join('')
+);
 writeFileSync(
   join(planDir, 'manifest.new'),
   [...built].sort(([a], [b]) => a.localeCompare(b)).map(([path, hash]) => hash + '  ' + path + '\n').join('')

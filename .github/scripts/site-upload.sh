@@ -6,8 +6,8 @@
 # DRY_RUN (true|false), RUNNER_TEMP; GITHUB_STEP_SUMMARY when run by Actions.
 #
 # Explicit FTPS only: --ssl-reqd makes curl refuse to continue without TLS and --proto =ftp refuses
-# every other protocol; certificate checks stay on (no -k). The login goes through a netrc file
-# (mode 600, removed on exit), never the command line, so it is in no process list or log. Nothing
+# every other protocol; certificate checks stay on (no -k). The login goes through a curl config
+# file (mode 600, removed on exit), never the command line, so it is in no process list or log. Nothing
 # prints it: no `set -x`, no verbose curl. The FTP account is limited to public_html, so paths are
 # relative to the login folder.
 #
@@ -19,11 +19,13 @@ set -euo pipefail
 DRY_RUN="${DRY_RUN:-true}"
 MANIFEST_NAME=".deploy-site-manifest"
 WORK_DIR="$RUNNER_TEMP/site-upload"
-NETRC_FILE="$WORK_DIR/netrc"
+CURL_CONFIG="$WORK_DIR/curl.conf"
 
-# A host name only (no scheme, port or path) and a login with no spaces.
+# A host name only (no scheme, port or path); a login without ":"; no control characters anywhere
+# (they would break the config file).
 [[ "$FTP_HOST" =~ ^[A-Za-z0-9.-]+$ ]] || { echo "::error::FTP_HOST must be a host name only."; exit 1; }
-[[ "$FTP_USER" =~ ^[^[:space:]]+$ && "$FTP_PASSWORD" =~ ^[^[:space:]]+$ ]] || { echo "::error::FTP_USER and FTP_PASSWORD must not contain spaces."; exit 1; }
+[[ "$FTP_USER" != *:* && -n "$FTP_USER" ]] || { echo "::error::FTP_USER must not be empty or contain a colon."; exit 1; }
+if [[ "$FTP_USER$FTP_PASSWORD" =~ [[:cntrl:]] ]]; then echo "::error::FTP_USER and FTP_PASSWORD must not contain control characters or line breaks."; exit 1; fi
 echo "::add-mask::$FTP_HOST"
 echo "::add-mask::$FTP_USER"
 
@@ -31,11 +33,14 @@ cleanup() { rm -rf "$WORK_DIR"; }
 trap cleanup EXIT
 umask 077
 mkdir -p "$WORK_DIR/plan"
-printf 'machine %s login %s password %s\n' "$FTP_HOST" "$FTP_USER" "$FTP_PASSWORD" > "$NETRC_FILE"
+# curl config syntax: inside double quotes a backslash escapes the next character, so both \ and "
+# are escaped and the password is read literally.
+escape_for_curl_config() { local v="$1"; v="${v//\\/\\\\}"; printf '%s' "${v//\"/\\\"}"; }
+printf 'user = "%s:%s"\n' "$(escape_for_curl_config "$FTP_USER")" "$(escape_for_curl_config "$FTP_PASSWORD")" > "$CURL_CONFIG"
 
 ftp_curl() {
   curl --silent --show-error --fail --proto =ftp --ssl-reqd --tlsv1.2 --ftp-skip-pasv-ip \
-    --connect-timeout 20 --max-time 180 --retry 2 --netrc-file "$NETRC_FILE" "$@"
+    --connect-timeout 20 --max-time 180 --retry 2 --config "$CURL_CONFIG" "$@"
 }
 
 echo "::group::Manifest on the server"
@@ -62,7 +67,10 @@ if [ "$DRY_RUN" = "true" ]; then
   exit 0
 fi
 
+# Before any file changes: a manifest with no usable hashes. If this run stops half-way, no later run
+# (a rollback included) trusts the server's old hashes: it uploads everything again.
 echo "::group::Upload"
+ftp_curl -T "$WORK_DIR/plan/manifest.pending" "ftp://$FTP_HOST/$MANIFEST_NAME"
 count=0
 while IFS= read -r path; do
   [ -n "$path" ] || continue
@@ -74,15 +82,24 @@ echo "::endgroup::"
 
 echo "::group::Delete files an earlier run uploaded and this build no longer has"
 count=0
+undeleted=0
 while IFS= read -r path; do
   [ -n "$path" ] || continue
-  # A file already gone is not an error: the aim is that it is not there.
-  ftp_curl -o /dev/null -Q "-DELE $path" "ftp://$FTP_HOST/" || echo "Could not delete $path (continuing)."
-  count=$((count + 1))
+  if ftp_curl -o /dev/null -Q "-DELE $path" "ftp://$FTP_HOST/"; then
+    count=$((count + 1))
+  elif ftp_curl -I -o /dev/null "ftp://$FTP_HOST/$path"; then
+    # Still there: kept in the manifest (no hash) so the next run tries again, and the run fails below.
+    echo "::error::Could not delete $path from the server."
+    printf '%s  %s\n' "$(printf '0%.0s' {1..64})" "$path" >> "$WORK_DIR/plan/manifest.new"
+    undeleted=$((undeleted + 1))
+  else
+    echo "$path was already gone."
+  fi
 done < "$WORK_DIR/plan/delete.txt"
 echo "Deleted $count files."
 echo "::endgroup::"
 
 # Last: the manifest says what this run uploaded, so a run that stopped half-way is simply repeated.
 ftp_curl -T "$WORK_DIR/plan/manifest.new" "ftp://$FTP_HOST/$MANIFEST_NAME"
+[ "$undeleted" -eq 0 ] || { echo "::error::$undeleted obsolete file(s) could not be deleted; the manifest still tracks them. Fix the cause and run again."; exit 1; }
 echo "Manifest updated. Upload finished."
