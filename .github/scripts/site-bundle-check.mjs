@@ -36,6 +36,12 @@ const files = filesUnder(siteDir);
 const scripts = files.filter((f) => /\.(m?js)$/.test(f));
 if (!files.some((f) => f === join(siteDir, 'index.html'))) stop('The site has no index.html.');
 if (!scripts.length) stop('The site has no JavaScript files.');
+// The server's state file must never be served (ADR-010 decision 5): only builds whose .htaccess
+// denies it may be uploaded, so an older tag is refused rather than publishing the manifest.
+const htaccess = files.find((f) => f === join(siteDir, '.htaccess'));
+if (!htaccess || !readFileSync(htaccess, 'utf8').includes('.deploy-site-manifest')) {
+  stop('This build\'s .htaccess has no rule denying .deploy-site-manifest: only a release that carries it (v1.1.1 or later) may be uploaded.');
+}
 
 const idsFound = new Set();
 for (const file of files) {
