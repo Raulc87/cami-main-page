@@ -126,6 +126,8 @@ A run counted as a failure is shown as **Failed** in Executions; Google's failur
 each trigger's own **Failure notification settings** (Triggers → the trigger's menu), which are
 **daily** by default: with the default, the email arrives in the daily summary, not at once. Choose
 "Notify me immediately" there when the email should come as soon as the run is reported as failed.
+For the production triggers the owner chose **daily** (2026-10-29): one summary a day, up to a day
+late, instead of an email about every 5 minutes once a trigger is past 10 failures in a row.
 
 The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
 delete it from the staging project if it is still there. The limits above are enforced from
