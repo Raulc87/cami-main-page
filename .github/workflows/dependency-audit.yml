@@ -51,15 +51,18 @@ jobs:
           const LEVELS = new Set(['high', 'critical']);
           const today = new Date().toISOString().slice(0, 10);
           const entries = JSON.parse(readFileSync('docs/security/audit-allowlist.json', 'utf8')).entries;
+          const addDays = (d, n) => new Date(Date.parse(d) + n * 86400000).toISOString().slice(0, 10);
           let failed = false;
           const fail = (m) => { failed = true; console.log(`::error::${m}`); };
 
           const used = new Set();
           for (const e of entries) {
-            for (const k of ['advisory', 'package', 'lockfile', 'reason', 'review', 'acceptedBy']) {
+            for (const k of ['advisory', 'package', 'lockfile', 'severity', 'reason', 'firstReported', 'review', 'acceptedBy']) {
               if (!String(e[k] ?? '').trim()) fail(`Allowlist entry ${e.advisory ?? '?'}: "${k}" is empty (the owner's written acceptance goes in acceptedBy).`);
             }
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(e.review ?? '')) fail(`Allowlist entry ${e.advisory}: review is not a YYYY-MM-DD date.`);
+            const isDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d ?? '');
+            if (!isDate(e.review) || !isDate(e.firstReported)) fail(`Allowlist entry ${e.advisory}: review and firstReported must be YYYY-MM-DD dates.`);
+            else if (e.review > addDays(e.firstReported, e.severity === 'critical' ? 7 : 30)) fail(`Allowlist entry ${e.advisory}: review date ${e.review} is more than ${e.severity === 'critical' ? 7 : 30} days after it was first reported (baseline section 4).`);
             else if (e.review < today) fail(`Allowlist entry ${e.advisory} (${e.package}): review date ${e.review} has passed; fix the dependency or renew the entry with the owner's written acceptance.`);
           }
 

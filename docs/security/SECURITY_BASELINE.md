@@ -393,9 +393,10 @@ baseline):
     check on `main` (repository setting).
   - *Accepted exceptions:* one entry per advisory and lockfile: advisory ID, package, reason,
     first-reported date, a review date and the owner's written acceptance on the pull request that
-    adds it. An entry without that acceptance, or past its review date, fails the check. The review
-    date of a high advisory is at most 30 days after it was first reported (§4); renewing an entry
-    needs a new acceptance. An entry that matches nothing any more is reported and removed.
+    adds it, written as the owner's name, the date and a link to the acceptance comment. An entry
+    without that acceptance, or past its review date, fails the check, and so does a review date
+    more than 30 days (high) or 7 days (critical) after the first-reported date (§4). Renewing an
+    entry needs a new acceptance. An entry that matches nothing any more is reported and removed.
   - *Version updates:* [`dependabot.yml`](../../.github/dependabot.yml) opens weekly pull requests for the site
     (`/`), the deploy tool (`/.github/clasp`) and GitHub Actions, with a 7-day wait after a release is published
     (Dependabot security updates ignore the wait). The owner reviews and merges them; Dependabot
@@ -405,7 +406,9 @@ baseline):
   - *SBOM:* when a GitHub Release is published, the same workflow attaches two CycloneDX files
     (`sbom-site.cdx.json`, `sbom-deploy-tool.cdx.json`, made by `npm sbom` from the lockfiles at the
     release tag) to it (`v5.0.0-15.1.2`). For an earlier release, run the workflow by hand (Actions →
-    Dependency audit → Run workflow) and type the release tag.
+    Dependency audit → Run workflow) and type the release tag. A release created by another
+    workflow with the default `GITHUB_TOKEN` does not start the automatic run (GitHub's rule), so
+    use the manual run for it.
   - *Fixing:* CMP-071 never edits lockfiles or manifests: a fix in `.github/clasp` is the backend
     agent's, a fix in the site's `package.json` or lockfile is the site agent's or a Dependabot pull
     request the owner merges.
@@ -472,7 +475,7 @@ listed in [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §4.
 | PTES deadline date (§5) | Agent 2 (CMP-069), from the owner's go-live date | Done 2026-10-27: deadline 2026-12-26 (go-live 2026-10-27 plus 60 days; moves with the actual upload date: CMP-068 states it, Agent 2 updates §5) |
 | GitHub secret scanning with push protection, Dependabot alerts and private vulnerability reporting enabled; two-factor on the owner's and Cami's accounts (§4, §6) | Owner (repository and account settings) | Done 2026-10-27. Owner: "repo: all 4 on; 2FA: GitHub, Google, GoDaddy on; Cami on" (the four repository switches: secret scanning, push protection, Dependabot alerts and private vulnerability reporting; two-factor on the owner's GitHub, Google and GoDaddy accounts and, answering the coordinator's request for two-factor on Cami's Google account, "Cami on"). Recorded again in the CMP-066 verification |
 | Site HTTPS and security headers (SAC-13): the owner checks the live site in the browser; any missing control becomes a ticket for the site owner (Agent 3, `public/`) | Owner, Agent 3 | Checked by the owner 2026-10-27: not met (no HTTPS redirect, none of the headers; [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §2b); fix CMP-079 before the go-live |
-| Dependency audit check, Dependabot version updates and SBOM (§6) | Agent 2 (CMP-071) | Built in Sprint 04 (CMP-071), in review. The first allowlist entry (GHSA-mrhx-c7xc-m3w5, `.github/clasp`) needs the owner's written acceptance on its pull request; review by 2026-11-20 |
+| Dependency audit check, Dependabot version updates and SBOM (§6) | Agent 2 (CMP-071) | Done on merge of PR #98 (CMP-071). The first allowlist entry (GHSA-mrhx-c7xc-m3w5, `.github/clasp`) is accepted by the owner in writing on that pull request; review by 2026-11-20 |
 | Script scopes and editor-only helpers in production (`v5.0.0-13.2.2`, `v5.0.0-15.2.3`) | Agent 2 (CMP-063 review), Agent 1 (any fix) | Reviewed in CMP-063 |
 | Accepted (ADR-008): the endpoint is anonymous and receives no client address or headers, so limits are global and the origin cannot be checked; one heavy client can use up the shared limits for everyone | Owner | Accepted 2026-10-19 (ADR-008); revisit with the captcha rule (FFR-029) |
 | Accepted (BR-E13): anyone who attaches any image can get past a full or closed event; such rows are stored flagged and never confirmed automatically | Owner | Accepted 2026-10-19 (FEATURE_SPEC §20) |

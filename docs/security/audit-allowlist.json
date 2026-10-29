@@ -1,5 +1,5 @@
 {
-  "_comment": "Accepted exceptions for the dependency-audit check (.github/workflows/dependency-audit.yml; SECURITY_BASELINE.md section 6). An entry lets one advisory pass in one lockfile until its review date; after that date the check fails. Each entry needs the owner's written acceptance (acceptedBy), recorded on the pull request that adds or renews it. The review date of a high advisory is at most 30 days after it was first reported (baseline section 4).",
+  "_comment": "Accepted exceptions for the dependency-audit check (.github/workflows/dependency-audit.yml; SECURITY_BASELINE.md section 6). An entry lets one advisory pass in one lockfile until its review date; after that date the check fails. Each entry needs the owner's written acceptance (acceptedBy), recorded on the pull request that adds or renews it, in the form: owner's name, date, link to the acceptance comment. The check enforces that the review date is at most 30 days (high) or 7 days (critical) after firstReported (baseline section 4).",
   "entries": [
     {
       "advisory": "GHSA-mrhx-c7xc-m3w5",
