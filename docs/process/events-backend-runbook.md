@@ -54,6 +54,14 @@ Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a t
 1. In Google Drive (Workspace account), create the spreadsheet with the tabs from contract §6:
    `Events`, `Coupons`, `Metrics`, with the column headers exactly as listed there. Registration
    tabs (`<eventCode>`) are created by the script on the first registration.
+   When the script creates a registration tab it also formats it (CMP-094): a `status` dropdown
+   (`new`, `confirmed`, `refund/cancelled`, `spam`) in "show a warning" mode, so another value is
+   accepted with a warning and never rejected; `checkResult` colors (`ok` green, `mismatch` red,
+   `unreadable` orange, `pending` yellow, `not-required` grey); and a light-red row when
+   `needsReview` is TRUE. Columns, headers and values are unchanged. Tabs that already exist are
+   not touched: format those by hand. The same applies to a new tab whose formatting failed: the
+   registration is still stored and the log has an `event tab format failed` line (error name only);
+   later registrations do not retry it.
 2. Create the Drive root folder for screenshots. The script creates `<eventCode>/` subfolders.
 3. Copy the IDs (the long string in each URL: `.../d/<SPREADSHEET_ID>/edit` and
    `.../folders/<DRIVE_ROOT_FOLDER_ID>`). Keep them out of the repo and out of chat history you
