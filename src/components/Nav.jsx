@@ -29,7 +29,7 @@ export default function Nav() {
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
             fontWeight: 600,
-            color: C.rose,
+            color: C.roseText,
             fontSize: 22,
           }}
         >
