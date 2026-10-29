@@ -222,7 +222,7 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
   §5.1); the owner can stop it; findings to the coordinator; the scan date in the v1.1.1 GitHub
   Release (release-checklist §6b).
 - **CMP-108** (owner, 2026-10-29; Review Notes)**:** more WebP widths with matching `sizes`
-  (gallery tiles 320, hero 800, logo 600; the community photo re-compressed) and the nav dot
+  (gallery tiles 320, hero 800; the community photo re-compressed; logo 600 dropped by Agent 3 in #118: no byte gain over the 800 file) and the nav dot
   animated with transform/opacity instead of `box-shadow`; files `src/**`, `public/images/**`,
   `CONTRIBUTING.md`; no visual change (checked at 1280/900/375 px); local Lighthouse before and
   after in the PR; no new library. Released as v1.1.2 with the release checklist, the upload
