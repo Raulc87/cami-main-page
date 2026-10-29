@@ -116,12 +116,45 @@ upload; if one is not, do not release:
 
 ## 4. Upload to GoDaddy (cPanel File Manager)
 
-Once CMP-093 is merged, a release is uploaded by the owner-approved GitHub workflow instead
-([ADR-010](../decisions/ADR-010-site-upload-from-github.md): FTPS, a release tag, a dry run
-first, rollback by re-uploading a release's kept build); until then, and as its fallback, the
-manual upload below. The steps for the workflow are added here with CMP-093.
+### 4.1 With the upload workflow (CMP-093, [ADR-010](../decisions/ADR-010-site-upload-from-github.md))
 
-GoDaddy shared hosting, with no FTP/SSH configured — upload from the browser.
+**One-time setup (owner; you type every value, it never goes to an agent):**
+1. cPanel → **FTP Accounts** → create an account whose directory is exactly `public_html` (not
+   the home folder), with a strong generated password. Note the FTP server host name shown for
+   FTPS in the "Configure FTP Client" box (the name the certificate is issued for, usually the
+   server's name, not `camihernandez.com`), the user and the password. The workflow uses explicit
+   FTPS on port 21.
+2. GitHub → repository **Settings → Environments → New environment** `site-production`:
+   **Required reviewers** = the owner; **Deployment branches** = `main` only. Add these
+   **environment** secrets (not repository secrets): `VITE_EVENTS_API_URL` (the production
+   `/exec` URL), `STAGING_EVENTS_ID` (only the id part of the staging `/exec` URL, between
+   `/macros/s/` and `/exec`), `FTP_HOST` (host name only, no `ftp://`, no port), `FTP_USER`,
+   `FTP_PASSWORD`. The user name must not contain a colon.
+3. If a leak of the FTP password is suspected, change it in cPanel and in the GitHub secret.
+
+**Each release** (after the §3b gates, with the version commit on `main`):
+1. Create the **tag and its GitHub Release first** (§6): the workflow deploys a tag and keeps the
+   build on that Release. The tag must be on `main`. Only v1.1.1 or later can be deployed (the
+   bundle check refuses a build whose `.htaccess` does not deny `.deploy-site-manifest`).
+2. **Actions → Deploy site → Run workflow** (branch `main`): the tag, mode **build**, **dry run
+   on**. Approve **twice** when GitHub asks (the build job and the upload job). Expected: green;
+   the log shows "Bundle check passed: production backend id ending ...xxxxxx" (the last six
+   characters of the production id), "Manifest read" (or "No manifest on the server: first run")
+   and "Upload plan: N to add, N to change, N to delete". Nothing is uploaded.
+3. **First automatic upload only:** make one manual cPanel backup of `public_html` first (§4.2
+   step 4).
+4. Run it again with **dry run off**; approve twice. Expected: green, "Upload finished", and the
+   `keep-build` job attaches `site-vX.Y.Z.zip` to the Release. If only `keep-build` fails, re-run
+   that job alone.
+5. Live checks: §5, §6a (including `/.deploy-site-manifest` answering 403 or 404), the cookie
+   gate, and §6b.
+If the dry run fails at "Manifest on the server" with a login or certificate error, check
+`FTP_HOST` first (the certificate's name), then the account's directory; send the coordinator
+the error text only.
+
+### 4.2 Fallback: by hand in cPanel File Manager
+
+GoDaddy shared hosting — upload from the browser.
 
 1. Compress the **contents** of `dist/` (not the `dist/` folder itself) into a `.zip`:
    ```bash
@@ -165,6 +198,11 @@ specific guide of the chosen hosting provider).
       (AutoSSL/Let's Encrypt) but it may take a few minutes to activate after the first deploy.
 
 ## 6. Tag + GitHub Release
+
+**With the upload workflow (§4.1), this section comes before the upload:** create the tag and its
+Release first, then upload; after the live checks, only add the release notes and the
+post-release security record (§6b). Done by hand (§4.2), the order below stays: upload, check,
+then tag.
 
 With the site already verified in production, change the `VERSION` value to the real tag (e.g.
 `v1.0.1`) before running this — the commands below are a template; don't copy/paste literally
@@ -239,7 +277,14 @@ release gate after the tests).
 
 ## 7. Rollback
 
-If something goes wrong after extracting into `public_html/`:
+**With the upload workflow (ADR-010):** Actions → Deploy site → the **previous** release's tag
+(it must have a kept build, uploaded by this workflow), mode **rollback**, dry run on, then off;
+approve twice each time. It re-uploads that Release's `site-vX.Y.Z.zip` unchanged, with no
+rebuild, and deletes only files that an earlier run of the workflow uploaded. Then repeat the live
+checks. A run that stopped half-way is simply run again (the manifest then forces a full
+re-upload). v1.1.0 has no kept build: rolling back to it is the manual restore below.
+
+**By hand (fallback)**, if something goes wrong after extracting into `public_html/`:
 
 1. Delete the new content of `public_html/`.
 2. Re-upload and extract the backup `.zip` from step 4 of the "Upload to GoDaddy" section above.
