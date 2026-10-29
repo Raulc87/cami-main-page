@@ -122,6 +122,11 @@ and initial values are the contract (§9); do not rename them.
 | `RETRY_CHECK_HOURS` | `06-22`: working hours of the payment re-check trigger (`retryPendingChecks`) only, Costa Rica time, start hour inclusive to end hour exclusive. Outside them that trigger ends at once, with no work and no error; `refreshEventsCache` runs around the clock. Empty or invalid (for example `22-06`): the re-check runs at every hour |
 | `TRIGGER_FAIL_ALERT_AFTER` | `10`: a time trigger's failed run is reported (Google's failure email) only after this many failed runs of that function in a row; earlier ones are logged by error name only. A success resets the count. Empty or invalid: `1`, every failure is reported |
 
+A run counted as a failure is shown as **Failed** in Executions; Google's failure email for it follows
+each trigger's own **Failure notification settings** (Triggers → the trigger's menu), which are
+**daily** by default: with the default, the email arrives in the daily summary, not at once. Choose
+"Notify me immediately" there when the email should come as soon as the run is reported as failed.
+
 The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
 delete it from the staging project if it is still there. The limits above are enforced from
 CMP-027: over a per-minute limit the answer is `RATE_LIMITED`, over the daily screenshot count or
