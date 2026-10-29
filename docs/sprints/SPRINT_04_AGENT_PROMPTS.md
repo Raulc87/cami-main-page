@@ -299,11 +299,14 @@ Rules:
   listed in PENTEST_PLAN.md §1.1. No standing approval. Stop if it is missing.
 - Passive baseline only (for example OWASP ZAP baseline), at most 1 request per second: every
   host of this project (Google Apps Script, GoDaddy) is "passive baseline only" in the baseline
-  §5.1, so no approval can add an active scan. No staging scan: no staging site exists, and the
-  staging backend has no triggers now. Non-destructive only: no denial-of-service or load
+  §5.1, so no approval can add an active scan. Non-destructive only: no denial-of-service or load
   testing, no destructive payloads, no real users' personal data read, changed or exported.
   Only this project's own site and web apps; Google's and GoDaddy's own services, Gmail and
   SINPE Móvil are out of scope. The owner can stop you at any time.
+- No staging scan for v1.1.1: the owner skipped it (2026-10-29, SPRINT_04_PLAN → Sprint Review
+  Notes); only the production scan right after the release.
+- In step 1, also point the baseline §5 and the pen-test plan's timing note at the release
+  checklist §6b (the post-release security step now exists), instead of "planned in CMP-098".
 - Report every finding to the coordinator (<COORDINATOR_SESSION>) with a one-off scheduled
   message, about one minute ahead, or a direct message. The coordinator creates the
   remediation tickets; you never create or fix them. This repository is public: never write an

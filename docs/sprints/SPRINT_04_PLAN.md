@@ -190,13 +190,14 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
   agent's production scan (CMP-104); the human PTES test stays due by 2026-12-26 (CMP-099).
   Before it is cut: CMP-098's review covers the release commit, and the owner's scan approval is
   signed.
-- **CMP-098:** the pre-release security agent ([`AGENTS.md`](../../AGENTS.md) → Pre-release
+- **CMP-098** (no staging scan for v1.1.1: owner, 2026-10-29, Sprint Review Notes)**:** the pre-release security agent ([`AGENTS.md`](../../AGENTS.md) → Pre-release
   security agent), in its own session, running the kit's `/release-security`: 1. the security
   baseline updated (most of it done in CMP-097: §5.1, every host passive baseline only); 2. a
   security code review of the changes since CMP-063's review, before the go-ahead, and of the
   changes merged in this sprint (CMP-094, CMP-101, CMP-102, CMP-071, CMP-093), before CMP-103 is
   cut; 3. the pen-test plan kept current (the PTES test by 2026-12-26). Findings go to the
-  coordinator only (public repository); it never changes code. Its documents are Agent 2's
+  coordinator only (public repository); it never changes code. In step 1 it also points the
+  baseline §5 and the pen-test plan at the release checklist §6b. Its documents are Agent 2's
   files: the agent sends the text to Agent 2, or writes them in its own docs PR with the owner's
   OK, so no two sessions edit them at once.
 - **CMP-104:** right after CMP-103's live checks pass, inside the window of the owner's signed
@@ -381,3 +382,9 @@ The human reviewer is the final approver.
 - Live measurements of the site are the owner's PageSpeed runs from now on. The coordinator's
   one Lighthouse run on the live site (2026-10-29, above) was a single page load to read the
   owner's report, not a scan; agents measure local builds only.
+- Owner decision, 2026-10-29, on the staging scan before v1.1.1 (the baseline §5.1 says the
+  staging backend can be scanned, passive baseline only). Question as asked: "Before v1.1.1,
+  should the security agent also run a gentle passive scan of the STAGING backend? …" Owner:
+  **"Skip staging for v1.1.1"**, with the reason given in the question: no staging site, and
+  v1.1.1's backend changes are small (CMP-094, CMP-101). Only the production scan right after
+  the release runs (CMP-104); PENTEST_PLAN §1.1 run 1 is not used for v1.1.1.

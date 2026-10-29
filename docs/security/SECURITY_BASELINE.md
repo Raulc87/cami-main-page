@@ -304,7 +304,7 @@ Code reviewed by CMP-063; verified on a running system by the PTES test, with te
 The authorized external tester runs the test against production and writes a report. From the
 next release on, the test and the pre-release security agent's production scan start exactly
 after a release that needs them, when its production smoke test passes (the release runbook's
-post-release security step, release-checklist §6b). Penetration tests are run only by people the
+post-release security step, planned in CMP-098). Penetration tests are run only by people the
 owner authorizes in writing, under a written scope signed by the owner (the pen-test plan).
 Security scans of a running system are run only by the pre-release security agent (§5.1);
 implementation agents, the review-only agent and the coordinator never run penetration tests,
