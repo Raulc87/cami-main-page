@@ -82,7 +82,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | CMP-103 | Release v1.1.1 | Agent 3 + owner | CMP-102, CMP-094, CMP-101, CMP-071; CMP-093 if used | `CMP-103-release-v1-1-1` | todo |
 | CMP-098 | Pre-release security agent, steps 1–3, for v1.1.1 (before the go-ahead; step 2's second review before CMP-103) | Pre-release security agent | — | `CMP-098-release-security` (docs PR, if its documents change) | todo |
 | CMP-104 | Pre-release security agent: passive production scan right after v1.1.1, then re-checks of any fixes | Pre-release security agent | CMP-103's live checks; the owner's signed approval for the run | — (findings to the coordinator) | todo |
-| CMP-107 | Event tabs: `checkResult` dropdown and `needsReview` checkbox (owner's follow-up to CMP-094) | Agent 1 | CMP-094 | `CMP-107-event-tab-controls` | todo |
+| CMP-107 | Event tabs: `checkResult` dropdown and `needsReview` checkbox (owner's follow-up to CMP-094) | Agent 1 | CMP-094 | `CMP-107-event-tab-dropdowns` | todo |
 | CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
 
 Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone is available
