@@ -404,8 +404,8 @@ baseline):
     check that clasp still works (ADR-009).
   - *SBOM:* when a GitHub Release is published, the same workflow attaches two CycloneDX files
     (`sbom-site.cdx.json`, `sbom-deploy-tool.cdx.json`, made by `npm sbom` from the lockfiles at the
-    release tag) to it (`v5.0.0-15.1.2`). For an earlier release, run the workflow by hand from
-    the tag's commit.
+    release tag) to it (`v5.0.0-15.1.2`). For an earlier release, run the workflow by hand (Actions →
+    Dependency audit → Run workflow) and type the release tag.
   - *Fixing:* CMP-071 never edits lockfiles or manifests: a fix in `.github/clasp` is the backend
     agent's, a fix in the site's `package.json` or lockfile is the site agent's or a Dependabot pull
     request the owner merges.

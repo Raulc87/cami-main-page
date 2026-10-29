@@ -10,6 +10,12 @@ on:
   schedule:
     - cron: '23 12 * * 1'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build the SBOM for (empty: run only the audit)"
+        required: false
+        default: ''
+        type: string
   release:
     types: [published]
 
@@ -89,7 +95,7 @@ jobs:
 
   sbom:
     name: SBOM for the release
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.tag != '')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -97,7 +103,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
           persist-credentials: false
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -117,5 +123,5 @@ jobs:
       - name: Attach them to the release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.release.tag_name }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
         run: gh release upload "$TAG" sbom-site.cdx.json sbom-deploy-tool.cdx.json --clobber --repo "$GITHUB_REPOSITORY"
