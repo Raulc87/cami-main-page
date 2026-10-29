@@ -33,7 +33,7 @@ Léalo antes de cotizar.
 
 | Elemento | Fecha |
 |---|---|
-| Fecha límite: la prueba ya se realizó | **2026-12-26** (zona horaria `America/Costa_Rica`, UTC-6, sin horario de verano) |
+| Fecha límite: la prueba debe haberse realizado | **2026-12-26** (zona horaria `America/Costa_Rica`, UTC-6, sin horario de verano) |
 | Ventana de prueba | Acordada con usted y escrita en el formulario de autorización (punto 4): entre la firma y la fecha límite |
 | Entrega del informe | Acordada en el formulario (punto 9), con tiempo para corregir y volver a probar los hallazgos críticos y altos antes de la fecha límite |
 | Nueva prueba de las correcciones críticas y altas | Después de las correcciones, en fechas acordadas entonces |

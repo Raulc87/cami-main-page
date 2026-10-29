@@ -12,6 +12,26 @@ privately. Agents do none of this: the owner (or the tester, within the signed f
 
 Deadline: the test has run by **2026-12-26** ([`SECURITY_BASELINE.md`](SECURITY_BASELINE.md) §5).
 
+## 0. Choosing a tester
+
+*Owner only; not part of the pack sent to testers.* The owner confirms any name before contacting
+it; this list is a starting point, not a recommendation of a person or firm.
+
+- Costa Rica: local information-security consultancies and independent penetration testers;
+  university information-security groups and their alumni; security communities and conferences
+  held in the country.
+- Remote: freelance marketplaces and professional networks, filtering for PTES or OWASP-based web
+  and API testing and a verifiable track record; certified individuals (for example OSCP, GPEN,
+  CPTS or equivalent) are easier to compare.
+- Free or low-cost routes (the project's zero-licensing-cost rule, NFR-003, applies to tools; a
+  tester's fee is a separate decision): community and student testers, or a volunteer, under the
+  same signed form and report. Judge every candidate on the questions in the pack, section 7.
+
+**Cost (owner decision, 2026-10-29, PR #99):** "Free options first": try a university program, a
+volunteer or community tester, or a friend who is a certified tester first; decide on paying only
+if none is found by mid-November. The plan does not require a company; it requires a person the
+owner authorizes in writing. Window and report date stay open until a tester is chosen.
+
 ## 1. Before the window
 
 | # | Step | Where | Done |
@@ -27,7 +47,7 @@ Deadline: the test has run by **2026-12-26** ([`SECURITY_BASELINE.md`](SECURITY_
 | 9 | **Alert settings:** test traffic triggers the daily alert email. Raise `ALERT_HONEYPOT_PER_DAY` and `ALERT_THROTTLED_PER_DAY` for the window, and point `ALERT_TO` at your own address only (on both environments) so Cami receives no test alerts. Write the original values privately first, to restore them | Script properties (runbook §2.4, §2.6) | |
 | 10 | **Mail:** set `MAIL_REPLY_TO` to your own address during the window (runbook §2.7), so replies never reach a participant | Script properties | |
 | 11 | **Limits:** the backend's own limits (`LIMIT_REGISTER_PER_MIN` 20, `LIMIT_COUPON_CHECKS_PER_MIN` 30, `LIMIT_COUPON_FAILS_PER_MIN` 10, `LIMIT_UPLOADS_PER_DAY` 100, `LIMIT_UPLOAD_MB_PER_DAY` 300) stay as they are. Write on the form, **well below** them, the requests per minute, the production registrations and uploads, the staging registrations and MB per day, and the email volume. These numbers are yours to choose; both environments share your Google quotas | Form, item 5 | |
-| 12 | **Triggers on staging:** staging has none while no feature is tested. If the tester should reach payment-check retries, create `refreshEventsCache` (5 min) and `retryPendingChecks` (10 min) for the window (runbook §2.6, §2.7) and delete them after. Otherwise leave them off and say so on the form | Staging script editor | |
+| 12 | **Triggers on staging:** staging has none while no feature is tested. If the tester should reach payment-check retries, create `refreshEventsCache` (5 min) and `retryPendingChecks` (10 min) for the window (runbook §2.6, §2.7) and delete them after. Once contract v1.9 is deployed, `retryPendingChecks` works only inside `RETRY_CHECK_HOURS` (initially 06-22, Costa Rica time): tell the tester, or widen the staging value for the window and restore it. Otherwise leave the triggers off and say so on the form | Staging script editor | |
 | 13 | Send the tester, privately and only after both signatures: the production and staging backend addresses, the test event and coupon codes, the marker, the limits and your emergency contact | Private channel | |
 | 14 | Confirm the request pack ([`PTES_REQUEST_PACK.md`](PTES_REQUEST_PACK.md)) went out with the plan and nothing private was added to it | | |
 
@@ -53,6 +73,7 @@ environment, time and reference). Then:
 | 1 | Unpublish the production test events; check each test event's tab for any registration without the marker before deleting anything | |
 | 2 | Delete the marked registration rows and their screenshot files, on staging and on production, from the tester's list | |
 | 3 | Delete the test events and the test coupons (or their uses) | |
+| 3b | Delete what the backend created for each test event: its **registration tab** in the spreadsheet (made on the first registration) and its **Drive folder** `<eventCode>/` under the screenshots root. Only after step 1's check, on staging and, for the production test events, on production | |
 | 4 | `Metrics` has one row per day with no marker for test traffic. On **staging** (test traffic only) delete the rows of the window's days. On **production** keep them: they also hold real visitors' counts, and deleting them would erase that history and could affect the threshold alerts (which read today's and yesterday's rows). Note privately that those days include the test | |
 | 5 | Restore the real `SINPE_NUMBER` and `SINPE_ACCOUNT_NAME` on staging | |
 | 6 | Restore `ALERT_TO`, `ALERT_HONEYPOT_PER_DAY`, `ALERT_THROTTLED_PER_DAY` and `MAIL_REPLY_TO` on both environments | |

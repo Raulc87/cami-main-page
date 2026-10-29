@@ -1,10 +1,10 @@
 # PTES_REQUEST_PACK
 
 Request for a penetration test of the Cami Hernandez website and its event registration backend.
-The owner sends this page, unchanged, to each tester he contacts, with the plan it points to
+The owner sends this page, unchanged, to each tester the owner contacts, with the plan it points to
 ([`PENTEST_PLAN.md`](PENTEST_PLAN.md), which holds the scope, the rules of engagement and the
-authorization form in its Appendix A). Written for CMP-095. The owner's own checklist for the
-staging side is in [`PTES_STAGING_SETUP.md`](PTES_STAGING_SETUP.md) and is not sent.
+authorization form in its Appendix A). Written for CMP-095. The owner's own checklist (staging setup, cleanup, where to look for a tester) is
+[`PTES_STAGING_SETUP.md`](PTES_STAGING_SETUP.md) and is not sent.
 
 A Spanish copy for local testers: [`PTES_REQUEST_PACK.es.md`](PTES_REQUEST_PACK.es.md) (the plan it points to is in English).
 
@@ -103,20 +103,3 @@ writing.
 6. Whether you can sign the confidentiality terms on the form (item 10).
 
 The owner chooses the tester and decides about cost; nothing is agreed until the form is signed.
-
-## 8. Where the owner can look for a tester (not sent to testers)
-
-*This section is for the owner; delete it before sending if you prefer.* The owner confirms any
-name before contacting it; this list is a starting point, not a recommendation of a person or firm.
-
-- Costa Rica: local information-security consultancies and independent penetration testers;
-  university information-security groups and their alumni; security communities and conferences
-  held in the country.
-- Remote: freelance marketplaces and professional networks, filtering for PTES or OWASP-based web
-  and API testing and a verifiable track record; certified individuals (for example OSCP, GPEN,
-  CPTS or equivalent) are easier to compare.
-- Free or low-cost routes (the project's zero-licensing-cost rule, NFR-003, applies to tools; a
-  tester's fee is a separate decision): community and student testers, or a volunteer, under the
-  same signed form and report. Judge them on the same questions as section 7.
-
-**Cost (owner decision, 2026-10-29, PR #99):** "Free options first": try a university program, a volunteer or community tester, or a friend who is a certified tester first; decide on paying only if none is found by mid-November. The plan does not require a company; it requires a person the owner authorizes in writing.
