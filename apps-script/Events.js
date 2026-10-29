@@ -163,6 +163,10 @@ function rebuildEventsCache_() {
 // counters to `Metrics`, recounts the `spam` metric, prunes old daily counters and sends the day's
 // alert email when there is something new.
 function refreshEventsCache() {
+  runTriggerGuarded_('refreshEventsCache', refreshEventsCacheRun_);
+}
+
+function refreshEventsCacheRun_() {
   var error = null;
   try {
     rebuildEventsCache_();
