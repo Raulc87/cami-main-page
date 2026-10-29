@@ -54,6 +54,14 @@ Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a t
 1. In Google Drive (Workspace account), create the spreadsheet with the tabs from contract §6:
    `Events`, `Coupons`, `Metrics`, with the column headers exactly as listed there. Registration
    tabs (`<eventCode>`) are created by the script on the first registration.
+   When the script creates a registration tab it also formats it (CMP-094): a `status` dropdown
+   (`new`, `confirmed`, `refund/cancelled`, `spam`) in "show a warning" mode, so another value is
+   accepted with a warning and never rejected; `checkResult` colors (`ok` green, `mismatch` red,
+   `unreadable` orange, `pending` yellow, `not-required` grey); and a light-red row when
+   `needsReview` is TRUE. Columns, headers and values are unchanged. Tabs that already exist are
+   not touched: format those by hand. The same applies to a new tab whose formatting failed: the
+   registration is still stored and the log has an `event tab format failed` line (error name only);
+   later registrations do not retry it.
 2. Create the Drive root folder for screenshots. The script creates `<eventCode>/` subfolders.
 3. Copy the IDs (the long string in each URL: `.../d/<SPREADSHEET_ID>/edit` and
    `.../folders/<DRIVE_ROOT_FOLDER_ID>`). Keep them out of the repo and out of chat history you
@@ -106,6 +114,8 @@ and initial values are the contract (§9); do not rename them.
 | `LIMIT_UPLOAD_MB_PER_DAY` | `300` |
 | `ALERT_HONEYPOT_PER_DAY` | `10` |
 | `ALERT_THROTTLED_PER_DAY` | `20` |
+| `RETRY_CHECK_HOURS` | `06-22`: working hours of the payment re-check trigger (`retryPendingChecks`) only, Costa Rica time, start hour inclusive to end hour exclusive. Outside them that trigger ends at once, with no work and no error; `refreshEventsCache` runs around the clock. Empty or invalid (for example `22-06`): the re-check runs at every hour |
+| `TRIGGER_FAIL_ALERT_AFTER` | `10`: a time trigger's failed run is reported (Google's failure email) only after this many failed runs of that function in a row; earlier ones are logged by error name only. A success resets the count. Empty or invalid: `1`, every failure is reported |
 
 The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
 delete it from the staging project if it is still there. The limits above are enforced from
@@ -161,7 +171,8 @@ needs Cami's attention (an invalid `Events` or `Coupons` row, or a daily thresho
 most one per day, and findings made after it go into the next day's email. While testing, point
 `ALERT_TO` at your own address (or, with `ALERT_TO` empty, `MAIL_REPLY_TO`) so that Cami does not
 receive test alerts, and set it back afterwards.
-If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). The
+If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). Only from the
+`TRIGGER_FAIL_ALERT_AFTER`th failure in a row, though; earlier failures are only logged (see 2.4). The
 last good answer is also kept in script properties and used for up to 20 minutes if Google drops
 the cache early, so a short outage does not empty the page. That copy fits while the event list is
 under about 9 KB (roughly 6 to 8 events with full-length texts); beyond that the run is reported
@@ -190,6 +201,7 @@ no longer retried and is listed in that day's alert email (at most one per day).
    **Minutes timer**. Interval: **Every 10 minutes**. **Save** (allow the permissions if asked).
 3. Check: after about 10 minutes **Executions** shows a `retryPendingChecks` run with status
    **Completed** (it ends at once when no row is `pending`).
+   Outside `RETRY_CHECK_HOURS` (2.4) a run also ends at once and **Completed**, without checking anything.
 The check needs `SINPE_NUMBER` and/or `SINPE_ACCOUNT_NAME` in the script properties (2.4). While
 `SINPE_NUMBER` still holds the placeholder and no account name is set, no check runs and rows stay
 `pending`. Participant emails go from `MAIL_FROM_ALIAS` (or the account itself if the alias fails)

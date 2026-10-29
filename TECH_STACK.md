@@ -23,7 +23,8 @@ contract. Before v1.2 the project was **Simple** (static page, no backend).
 - Hosting provider: GoDaddy **Web Hosting** (shared hosting, cPanel) — not the Airo site
   builder product (see [release-checklist.md](docs/process/release-checklist.md)).
 - Control panel/runtime: cPanel File Manager; static files only for this project.
-- Deployment restrictions: manual upload of `dist/` to `public_html/` (the site); the Apps Script
+- Deployment restrictions: `dist/` goes to `public_html/` by hand (release-checklist §4) or, once
+  CMP-093 is merged, by the approved GitHub upload workflow over FTPS (ADR-010); the Apps Script
   backend is deployed by a GitHub workflow (ADR-009).
 - Cost constraints: zero license budget — free tier first (PROJECT_SPEC NFR-003).
 - Portability constraints: output is plain static files, portable to any static host.
@@ -109,7 +110,8 @@ npm run preview   # serves dist/ locally
   [AGENTS.md → Review-only agent](AGENTS.md#review-only-agent)).
 
 ## 10. Hosting / Deployment
-- `npm run build` generates `dist/`; its contents are uploaded manually to `public_html/`.
+- `npm run build` generates `dist/`; its contents go to `public_html/` by hand, or by the manual,
+  owner-approved upload workflow over FTPS from a release tag (ADR-010, CMP-093).
 - The events backend is deployed separately: two standalone Apps Script projects (staging and
   production), each with one web-app deployment (ADR-008), updated by the deploy workflow in §9
   (ADR-009; the owner approves production runs), per
