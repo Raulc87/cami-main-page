@@ -12,7 +12,8 @@
   setting public (only the owner changes it)
 - Kept project rules (instead of the kit's), with their reasons:
   [ADR-006 → Kit disposition](docs/decisions/ADR-006-adopt-sdd-starter-kit.md#kit-disposition)
-- Status: Live at `camihernandez.com` (v1.1.0, the events feature live since 2026-10-27);
+- Status: Live at `camihernandez.com` (v1.1.1 since 2026-10-29, the first release uploaded by the
+  site-upload workflow; the events feature live since 2026-10-27);
   documentation homologated to the SDD starter kit in CMP-014
 - Product owner / final reviewer: Raul Casanas
 
@@ -86,7 +87,9 @@ they are not active paths.
 - Agent prompts: [docs/sprints/SPRINT_04_AGENT_PROMPTS.md](docs/sprints/SPRINT_04_AGENT_PROMPTS.md)
 - Deliverable: release v1.1.1 live (PageSpeed 90+), uploaded by the site-upload workflow if ready
   or by hand; the pre-release security agent's production scan; evidence in
-  `SPRINT_04_VERIFICATION.md`
+  `SPRINT_04_VERIFICATION.md`. v1.1.1 live 2026-10-29 (desktop 99, mobile 86–89); the mobile
+  target moves to v1.1.2 (CMP-108); the production scan did not run and is covered by the PTES
+  test (owner, 2026-10-29; plan Review Notes)
 - Status: Active — owner's go-ahead 2026-10-29: "merged 94, go ahead with Sprint 04"
 
 ## Agent allocation
