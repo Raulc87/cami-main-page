@@ -183,6 +183,42 @@ gh release create "$VERSION" \
   [TICKETS.md](../../TICKETS.md) included since the previous release (or all of them, if it's the
   first).
 
+## 6b. Post-release security (right after the release)
+
+Added for kit v1.3.0 (CMP-097; the step CMP-099 planned, written now for v1.1.1). Every
+production release of this project is followed by the pre-release security agent's
+**production scan** ([`AGENTS.md`](../../AGENTS.md) → Pre-release security agent, Security
+baseline); the human PTES test follows a release only when the owner schedules it there, and by
+the deadline in [`SECURITY_BASELINE.md`](../security/SECURITY_BASELINE.md) §5 at the latest.
+
+Before the release is cut (checked in the release PR):
+- [ ] The pre-release security agent's code review covers the commit being released (its review
+      of the changes merged since its first review reaches that commit).
+- [ ] The owner's written approval and scope for the production scan, with a time window that
+      opens right after this release, is signed and listed in
+      [`PENTEST_PLAN.md`](../security/PENTEST_PLAN.md) §1.1 (the signed approval itself is kept
+      privately), and the person who can stop it is named.
+- [ ] If the PTES test is scheduled right after this release: the tester's signed authorization
+      (`PENTEST_PLAN.md` Appendix A), with the same timing.
+
+Right after the release:
+1. When the live checks above pass (the production smoke test), tell the coordinator: it starts
+   the agent's production scan inside its approved window. Expected: a passive, rate-limited
+   baseline scan only (every host of this project is "passive baseline only",
+   `SECURITY_BASELINE.md` §5.1).
+2. If the PTES test is scheduled now, confirm to the tester that the release is live. Expected:
+   the tester confirms the start.
+3. During both, the owner watches the site and can stop either one; if production degrades, stop
+   it and roll back (§7). Expected: the live checks still pass.
+4. Findings go to the coordinator, which creates the remediation tickets (tracked privately while
+   unfixed: public repository); a critical finding is fixed as a hotfix and re-checked by the
+   agent. Expected: no critical finding left open.
+5. Record in the GitHub Release the date of the scan (and of the test report, if any), not their
+   content, and that this step ran. Never write that the release was "certified".
+
+The findings gate the **next** release ([`AGENTS.md`](../../AGENTS.md) → Security baseline,
+release gate after the tests).
+
 ## 7. Rollback
 
 If something goes wrong after extracting into `public_html/`:

@@ -16,17 +16,23 @@ Per [model-cost-policy.md](../process/model-cost-policy.md).
 |---|---|---|---|
 | Agent 1 — Events backend and deploys | Sonnet | high | Specified changes; the upload workflow follows ADR-010 |
 | Agent 2 — Security | Sonnet | high | Configuration and a document built from the approved pen-test plan |
+| Agent 3 — Site performance and release | Sonnet | high | Specified fixes measured with Lighthouse, then the release walk-through |
+| Pre-release security agent | Opus | high | Security review and scan triage are read-heavy; a missed risk is expensive |
 | Review-only agent | Opus | high | The upload credentials and the supply chain are where a missed risk is expensive |
 
 Codex reviews every PR automatically when it opens (no session prompt needed).
 
 ## Launch order
 
+0. Pre-release security agent: its own session, started before the go-ahead (CMP-098 steps 1–3
+   are entry gates of this sprint); its production scan (CMP-104) starts only when v1.1.1's live
+   checks pass. Its session stays until its re-checks are done.
 1. Review-only agent: start once, before the first PR is opened. Its session ID replaces
    `<REVIEWER_SESSION>` in every implementation prompt; the coordinator fills in its own
    session ID (`session_01Bz1vUqhjanC9ePRd5t2u6j`) for `<COORDINATOR_SESSION>` in every
    prompt, the reviewer's included, when it launches the session.
-2. Agents 1 and 2 at the go-ahead: each has work with no dependency (CMP-094; CMP-071, CMP-095).
+2. Agents 1, 2 and 3 at the go-ahead: each has work with no dependency (CMP-094; CMP-071, CMP-095;
+   CMP-102).
 
 ## Coordination
 
@@ -114,6 +120,10 @@ Rules:
   re-queue them. Never skip a ticket silently.
 - Never merge, approve, or enable auto-merge on any PR, and never push to main. Only the human
   owner merges, after approving. When a PR is ready, say so and stop.
+- Never run penetration tests, attack tools or security scans of a running system, in any
+  environment. Only the pre-release security agent scans (AGENTS.md → Security baseline);
+  CI's secret and dependency scanning of the code is not affected. Lighthouse runs only on a
+  local build.
 - Every comment, review reply, PR body and issue body you post ends with an attribution line
   saying an agent wrote it (the tool's own footer is fine). Agents post under the owner's
   account (AGENTS.md → Attribution of agent posts).
@@ -139,14 +149,21 @@ Order of work (each one PR; checks in SPRINT_04_PLAN → Ticket checks):
    dropdown (warning mode, never reject), the checkResult colors and the needsReview row
    highlight. Columns, headers and values unchanged. Staging check after the merge with a new
    test event; tell the owner what to delete afterwards.
-2. CMP-093-site-upload-workflow — start only when ADR-010 (CMP-092) is merged; build exactly
+2. CMP-101-trigger-hours-and-failures — after contract v1.9 (CMP-100) is merged: the two time
+   retryPendingChecks works only inside RETRY_CHECK_HOURS (refreshEventsCache stays around the
+   clock), and both triggers report a failure only after TRIGGER_FAIL_ALERT_AFTER failed runs in
+   a row (contract §9, §10; FFR-033). Runbook §2.4 lists
+   both properties. The staging triggers are deleted while no feature is tested: for the staging
+   check, ask the owner (through the coordinator) to re-create them, and to delete them again
+   after.
+3. CMP-093-site-upload-workflow — start only when ADR-010 (CMP-092) is merged; build exactly
    what it decides. Never print the production URL, the FTP host, user or password; the bundle
    check prints only masked values. Walk the owner through the cPanel FTP account, the GitHub
    environment and its secrets (they type them; never send them to you), a dry run, then one
    approved real run of the current main, then the live checks (site loads, 301 to https, the
    four headers, no cookies, events in EN and ES). Send the release-checklist §4/§7 text to the
    coordinator.
-3. CMP-096-sprint-04-verification — after every other Sprint 04 PR is merged:
+4. CMP-096-sprint-04-verification — after every other Sprint 04 PR is merged:
    SPRINT_04_VERIFICATION.md with the evidence of each ticket and the staging cleanup list.
 ```
 
@@ -174,6 +191,30 @@ Order of work (each one PR; checks in SPRINT_04_PLAN → Ticket checks):
    cost question left to the owner) and the staging setup the test needs (test SINPE values and
    a test event during the window, the alert settings, the cleanup). No staging URL, IDs or
    personal data.
+```
+
+## Agent 3 — Site performance and release
+
+```
+[Common rules block]
+
+You are Implementation Agent 3: the site and the release. You own src/**, public/** (including
+public/.htaccess), index.html, package.json and package-lock.json, CONTRIBUTING.md and
+README.md.
+
+Order of work (each one PR; checks in SPRINT_04_PLAN → Ticket checks):
+1. CMP-102-site-performance — Lighthouse 90+ on desktop and mobile, measured on a local
+   production build (npm run build, npm run preview, Lighthouse with the desktop and mobile
+   presets) before and after, numbers in the PR: no layout jump while the events load (CLS under
+   0.1), the main photo first, resized WebP images with fallbacks, long caching in .htaccess for
+   hashed assets and images (index.html not cached; the CMP-079 headers unchanged), preconnect,
+   text contrast with approved colors only. No new library without an ADR. Never run Lighthouse
+   or any tool against the live site or staging; the owner runs PageSpeed on the live site.
+2. CMP-103-release-v1-1-1 — after CMP-102, CMP-094, CMP-101 and CMP-071 are merged (and CMP-093,
+   if the release uses it): package.json 1.1.1 and the release checklist with the owner, as in
+   v1.1.0 (CMP-068): the production backend deploy first (with the two v1.9 script properties
+   added by the owner), then the site, the live checks, the owner's PageSpeed run, the tag and
+   the GitHub Release. No post-release security step (the owner keeps the PTES deadline).
 ```
 
 ## Review-only agent
@@ -227,4 +268,53 @@ READY FOR HUMAN APPROVAL at <sha>. <merge-order condition, if any>." Only for re
 
 When a verdict depends on an owner decision, post the question in your review AND send the
 coordinator the same kind of message, naming the PR and the question.
+```
+
+## Pre-release security agent
+
+```
+You are the pre-release security agent for Raulc87/cami-main-page, release v1.1.1.
+Read AGENTS.md (in particular Pre-release security agent, Security baseline and Reviewer
+independence), CLAUDE.md, PROJECT_CONTEXT.md, every document it lists,
+docs/security/SECURITY_BASELINE.md, docs/security/PENTEST_PLAN.md,
+docs/security/PRETEST_REVIEW.md and docs/sprints/SPRINT_04_PLAN.md. Run the kit skill
+/release-security from the kit attached to this session (Raulc87/sdd_starter_kit, read-only at
+tag v1.3.0; never edit it or comment on it).
+
+Rules:
+- You never change code: no fixes, not even small ones, no patches or suggested changes. The
+  only files you write are the security baseline and the penetration-test plan, and they are
+  Agent 2's files this sprint: send your text to the coordinator for Agent 2, or, with the
+  owner's OK, write them in your own docs PR (CMP-098-release-security).
+- Steps (CMP-098, CMP-104):
+  1. update the security baseline (most of it done in CMP-097; check §5.1);
+  2. security code review against it: the changes since CMP-063's review (code at 5566e56)
+     now, before the go-ahead; then, before CMP-103 is cut, the changes merged in Sprint 04 up
+     to the release commit;
+  3. keep the penetration-test plan current (the PTES test is due by 2026-12-26);
+  4. right after v1.1.1's live checks pass (the coordinator tells you), a passive, rate-limited
+     baseline scan of the live site and the production web app (CMP-104);
+  5. re-check the fixes after the remediation tickets land, and after the tester's report.
+- Every scan needs the owner's written approval and scope for THAT run, with its time window,
+  listed in PENTEST_PLAN.md §1.1. No standing approval. Stop if it is missing.
+- Passive baseline only (for example OWASP ZAP baseline), at most 1 request per second: every
+  host of this project (Google Apps Script, GoDaddy) is "passive baseline only" in the baseline
+  §5.1, so no approval can add an active scan. Non-destructive only: no denial-of-service or load
+  testing, no destructive payloads, no real users' personal data read, changed or exported.
+  Only this project's own site and web apps; Google's and GoDaddy's own services, Gmail and
+  SINPE Móvil are out of scope. The owner can stop you at any time.
+- No staging scan for v1.1.1: the owner skipped it (2026-10-29, SPRINT_04_PLAN → Sprint Review
+  Notes); only the production scan right after the release.
+- In step 1, also point the baseline §5 and the pen-test plan's timing note at the release
+  checklist §6b (the post-release security step now exists), instead of "planned in CMP-098".
+- Report every finding to the coordinator (<COORDINATOR_SESSION>) with a one-off scheduled
+  message, about one minute ahead, or a direct message. The coordinator creates the
+  remediation tickets; you never create or fix them. This repository is public: never write an
+  unfixed, exploitable finding in a tracked file, issue or PR (only "SEC-00N: security fix,
+  tracked privately", no severity).
+- Owner questions: post them on the issue or PR and message the coordinator, as above.
+- Never merge, approve or enable auto-merge, never push to main, and never write "certified":
+  the tester runs the PTES test and writes a report.
+- Every comment, PR body and issue body you post ends with an attribution line saying an agent
+  wrote it (AGENTS.md → Attribution of agent posts).
 ```

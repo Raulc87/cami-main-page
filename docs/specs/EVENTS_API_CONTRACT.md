@@ -6,17 +6,19 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.8 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.9 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
   on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
   `contactOptIn`, owner 2026-10-26 — CMP-058; v1.6: §9 `ALERT_TO`, alert email to more than one
   address, owner 2026-10-22 — CMP-061; v1.7: §9 all-invalid `ALERT_TO` falls back to
   `MAIL_REPLY_TO` — CMP-070; v1.8: §8 a `coupon` check on an unpublished code, §9 the failed
-  coupon check limit also applies to `register` with a coupon code — CMP-083)
+  coupon check limit also applies to `register` with a coupon code — CMP-083; v1.9: §9 the time
+  payment re-check's working hours and the time triggers' failure threshold, owner 2026-10-28
+  and 2026-10-29 — CMP-100)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 on
-  merge of PR #61; v1.8 Approved (on merge of PR #77))
+  merge of PR #61; v1.8 on merge of PR #77; v1.9 Approved on merge of the CMP-100 PR)
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-033)
 - Related stories: US-017..US-025
@@ -229,6 +231,8 @@ shows the form for an event the last `events` response marked closed or sold out
 | `ALERT_TO` | Script property | Comma-separated addresses that receive the daily alert email (FFR-029), for example the owner and camila@; empty → `MAIL_REPLY_TO`. Read only from script properties; an invalid address is skipped and logged without the address; if every address is invalid, the email goes to `MAIL_REPLY_TO` (v1.6; the all-invalid case v1.7) |
 | `ALERT_HONEYPOT_PER_DAY` = 10 | Script property | Alert email when the day's honeypot hits exceed it (FFR-029) |
 | `ALERT_THROTTLED_PER_DAY` = 20 | Script property | Alert email when the day's throttled requests exceed it |
+| `RETRY_CHECK_HOURS` = `06-22` | Script property | Working hours of the pending payment re-check trigger (`retryPendingChecks`) only, Costa Rica time, start hour inclusive to end hour exclusive. Outside them its run ends at once, doing nothing; it neither counts as a failure nor resets the failure count. `refreshEventsCache` runs around the clock, so the events list and its open/closed and sold-out flags stay current at night (owner, 2026-10-29). Empty or invalid → always on, logged without failing (v1.9) |
+| `TRIGGER_FAIL_ALERT_AFTER` = 10 | Script property | A time trigger's run is reported as failed (so Google sends its failure email) only when that trigger function has failed this many runs in a row; earlier failures are logged (error name only) and counted. Each function keeps its own count in a script property; a successful run resets it, a run skipped outside `RETRY_CHECK_HOURS` leaves it unchanged. Empty or invalid → 1, i.e. every failure is reported as before (v1.9) |
 
 Initial values above; the owner may change them in script properties without a contract change
 (the names are the contract). A paid `register` refused by `RATE_LIMITED` or
@@ -255,6 +259,12 @@ The checklist must cover:
 - `ALERT_TO` (v1.6): with two valid addresses, the day's alert email reaches both (one email
   per day, as before); with `ALERT_TO` empty it reaches `MAIL_REPLY_TO`; with one invalid
   address, the valid one still receives it and the log names no address.
+- Re-check hours and failure threshold (v1.9): a `retryPendingChecks` run outside
+  `RETRY_CHECK_HOURS` does no work and ends without error, and the failure count is unchanged;
+  inside, it works as before; `refreshEventsCache` works at every hour. With `TRIGGER_FAIL_ALERT_AFTER` = 2 on staging and a
+  forced failure (for example a wrong `SPREADSHEET_ID` for two runs), the first failed run ends
+  without error and is logged, the second is reported failed; a successful run resets the count;
+  each trigger function counts on its own.
 - `contactOptIn` (v1.5): ticked → `TRUE` in the row; unticked or missing → `FALSE`; a
   non-boolean value → `FALSE`, not refused; a registration in an event tab created before v1.5
   adds the `contactOptIn` header as the last column, and that tab's older rows stay blank.

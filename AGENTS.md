@@ -601,7 +601,7 @@ merge of PR #58, CMP-056):
 - **What starts the post-release work.** Both the agent's production scan and the human
   penetration test start exactly after the release: their trigger is the production smoke test
   of the release passing (the release runbook's post-release security step; here
-  [`release-checklist.md`](docs/process/release-checklist.md), step planned in CMP-098). Before
+  [`release-checklist.md`](docs/process/release-checklist.md), §6b). Before
   that release is cut, these are in place: the owner's written approval and scope for the scan,
   with a time window that opens right after the release; for the human test, the tester's
   written authorization and scope, with the same timing; and the person who can stop each one
