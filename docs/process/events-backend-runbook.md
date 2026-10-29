@@ -163,7 +163,8 @@ needs Cami's attention (an invalid `Events` or `Coupons` row, or a daily thresho
 most one per day, and findings made after it go into the next day's email. While testing, point
 `ALERT_TO` at your own address (or, with `ALERT_TO` empty, `MAIL_REPLY_TO`) so that Cami does not
 receive test alerts, and set it back afterwards.
-If a rebuild fails, that run is shown as **Failed** (from the `TRIGGER_FAIL_ALERT_AFTER`th failure in a row; earlier failures are only logged, see 2.4; the other language is still attempted). The
+If a rebuild fails, that run is shown as **Failed** (the other language is still attempted). Only from the
+`TRIGGER_FAIL_ALERT_AFTER`th failure in a row, though; earlier failures are only logged (see 2.4). The
 last good answer is also kept in script properties and used for up to 20 minutes if Google drops
 the cache early, so a short outage does not empty the page. That copy fits while the event list is
 under about 9 KB (roughly 6 to 8 events with full-length texts); beyond that the run is reported

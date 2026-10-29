@@ -14,13 +14,12 @@ function parseRetryCheckHours_(raw) {
   return start < end && end <= 24 ? { start: start, end: end } : null;
 }
 
-// True when `retryPendingChecks` may work now. An invalid setting is logged (no value) and never fails the run.
+// True when `retryPendingChecks` may work now. An empty or invalid setting is logged (no value) and never fails the run.
 function insideRetryCheckHours_(nowMs) {
   var raw = getProp('RETRY_CHECK_HOURS');
-  if (raw === null || str_(raw).trim() === '') return true;
   var hours = parseRetryCheckHours_(raw);
   if (!hours) {
-    console.error('RETRY_CHECK_HOURS is invalid; the payment re-check runs at every hour');
+    console.error('RETRY_CHECK_HOURS is empty or invalid; the payment re-check runs at every hour');
     return true;
   }
   var hour = new Date(nowMs - CR_OFFSET_HOURS * 3600000).getUTCHours();
