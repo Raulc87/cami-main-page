@@ -83,6 +83,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | CMP-098 | Pre-release security agent, steps 1–3, for v1.1.1 (before the go-ahead; step 2's second review before CMP-103) | Pre-release security agent | — | `CMP-098-release-security` (docs PR, if its documents change) | todo |
 | CMP-104 | Pre-release security agent: passive production scan right after v1.1.1, then re-checks of any fixes | Pre-release security agent | CMP-103's live checks; the owner's signed approval for the run | — (findings to the coordinator) | dropped (owner, 2026-10-29: covered by the PTES test; Review Notes) |
 | CMP-108 | Mobile image sizes and nav dot animation (follow-up to CMP-102; release v1.1.2) | Agent 3 | CMP-103 | `CMP-108-mobile-image-sizes` | todo |
+| CMP-109 | Release v1.1.2 | Agent 3 + owner | CMP-108 | `CMP-109-release-v1-1-2` | todo |
 | CMP-107 | Event tabs: `checkResult` dropdown and `needsReview` checkbox (owner's follow-up to CMP-094) | Agent 1 | CMP-094 | `CMP-107-event-tab-dropdowns` | todo |
 | CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
 
@@ -289,6 +290,7 @@ Each line names what the PR waits for.
    uses it; CMP-098 (its review reaches the release commit) and the owner's scan approval.
    CMP-104 (production scan) — CMP-103's live checks.
    CMP-108 (mobile image sizes, then release v1.1.2) — CMP-103; this plan's CMP-108 entry.
+   CMP-109 (release v1.1.2) — CMP-108; the security agent's delta review reaches its commit.
 6. CMP-096 (verification) — every PR above, except one the owner moved to the next sprint;
    CMP-103's live evidence follows it, as in Sprint 03.
 
@@ -485,3 +487,13 @@ The human reviewer is the final approver.
   v1.1.2) and chose, verbatim, **"Yes, small fix v1.1.2 (Recommended)"**. It becomes CMP-108
   (Agent 3); CMP-102 stays `review` until mobile reaches 90+ after v1.1.2. The mobile 90+ target
   moves from CMP-103 to CMP-108: CMP-103 (the v1.1.1 release itself) counts as done.
+- Release v1.1.2 (CMP-108 #118, CMP-109 #119), 2026-10-29. Owner asked "For the v1.1.2 release
+  … How should we handle it?" (the scan) and chose, verbatim, **"Same as v1.1.1: tester
+  (Recommended)"**: no agent scan, the passive baseline is covered by the PTES test due by
+  2026-12-26; asked whether to release "now … or another day": **"Now"**. Security agent's
+  reviews `72417e6`..`4957717` (CMP-108) and `4957717`..`5d52c59` (version only): no new finding.
+  Owner's statement on #119: "No critical or high security finding is open." Tag `v1.1.2` on
+  `5d52c59`; dry run green (10 add, 1 change, 4 delete, 29 unchanged, matching the build diff);
+  real run green, `site-v1.1.2.zip` on the Release (v1.1.1's kept build is the way back). Live
+  checks passed (301, four headers, cache headers, manifest 403, old image 404, private window,
+  phone). PageSpeed on the live site: mobile 97 / 90 / 97, desktop 99: the CMP-102 target is met.
