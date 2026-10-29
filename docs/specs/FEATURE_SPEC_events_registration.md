@@ -18,8 +18,8 @@
   review of the texts, BR-E11 legal review by Cami (owner decision), amount format, optional
   contact checkbox (FFR-018, contract v1.5) — CMP-058; v1.11: FFR-029 alert email to every
   address in `ALERT_TO`, owner 2026-10-22, and the `Metrics` row up to 5 minutes behind, owner
-  2026-10-27 — CMP-061; v1.12: FFR-033 the triggers work 06:00–22:00 Costa Rica time and report
-  a failure only after 10 in a row, owner 2026-10-28 — CMP-100)
+  2026-10-27 — CMP-061; v1.12: FFR-033 the payment re-check works 06:00–22:00 Costa Rica time and
+  the triggers report a failure only after 10 in a row, owner 2026-10-28/29 — CMP-100)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
   PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 on merge of PR #52; v1.11 on merge of PR #57; v1.12 Approved on merge of the CMP-100 PR)
@@ -255,11 +255,11 @@ Administration (Cami)
 - FFR-033: To answer within the 5 s limit (FNFR-003), the backend serves the `events` response
   from a cache that a time-driven trigger refreshes every 5 minutes (one entry per language).
   Changes Cami makes in the `Events`/`Coupons` tabs therefore show on the site within 5 minutes.
-  The time triggers work only from 06:00 to 22:00 Costa Rica time (contract §9 `TRIGGER_HOURS`,
-  owner 2026-10-28): a change made at night shows after 06:00, an event that starts after 22:00
-  stays listed until then (its registration is still refused by `register`), and pending payment
-  checks wait for the morning. A trigger's failure is reported (Google's email) only after 10
-  failed runs in a row (`TRIGGER_FAIL_ALERT_AFTER`).
+  This refresh runs around the clock, so an event's registration closes on the site on time,
+  also at night. Only the pending payment re-check (FFR-032) works just from 06:00 to 22:00 Costa
+  Rica time (contract §9 `RETRY_CHECK_HOURS`, owner 2026-10-28 and 2026-10-29): a payment check
+  still pending at night is retried after 06:00. A time trigger's failure is reported (Google's
+  email) only after 10 failed runs in a row (`TRIGGER_FAIL_ALERT_AFTER`).
   A registration that changes an event's availability (e.g. sells it out) rebuilds the cache
   after the lock is released (like OCR and emails, FFR-025) and before it answers, rather than
   clearing it, so the next visitor never waits for a cold

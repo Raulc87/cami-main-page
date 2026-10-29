@@ -72,8 +72,8 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | CMP-094 | New event tabs get the status dropdown, the check-result colors and the needs-review highlight | Agent 1 | — | `CMP-094-event-tab-format` | todo |
 | CMP-071 | Dependency checks: `npm audit` on pull requests, Dependabot version updates, an SBOM | Agent 2 | — | `CMP-071-dependency-checks` | todo |
 | CMP-095 | PTES test preparation: the request pack for testers and the staging setup for the test | Agent 2 | — | `CMP-095-ptes-preparation` | todo |
-| CMP-100 | Contract v1.9: the time triggers' working hours and failure threshold (`TRIGGER_HOURS`, `TRIGGER_FAIL_ALERT_AFTER`) | Coordinator | — | coordinator branch | done |
-| CMP-101 | Time triggers work only in working hours and report a failure only after 10 failed runs in a row (contract v1.9) | Agent 1 | CMP-100 | `CMP-101-trigger-hours-and-failures` | todo |
+| CMP-100 | Contract v1.9: the payment re-check's working hours and the time triggers' failure threshold (`RETRY_CHECK_HOURS`, `TRIGGER_FAIL_ALERT_AFTER`) | Coordinator | — | coordinator branch | done |
+| CMP-101 | The payment re-check works only in working hours; the time triggers report a failure only after 10 failed runs in a row (contract v1.9) | Agent 1 | CMP-100 | `CMP-101-trigger-hours-and-failures` | todo |
 | CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
 
 Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone is available
@@ -138,13 +138,14 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
     the window, the alert settings, and the cleanup afterwards.
   - No staging URL, IDs or personal data in it.
 - **CMP-101:** `refreshEventsCache` and `retryPendingChecks` follow contract v1.9 §9:
-  - outside `TRIGGER_HOURS` (Costa Rica time) a run ends at once with no work and no error;
+  - outside `RETRY_CHECK_HOURS` (Costa Rica time) a `retryPendingChecks` run ends at once with no
+    work and no error, leaving its failure count unchanged; `refreshEventsCache` runs at every
+    hour, as now;
   - a failed run is reported (Google's failure email) only at `TRIGGER_FAIL_ALERT_AFTER` failures
     in a row of that function; earlier ones are logged by error name only; a success resets the
     count;
   - empty or invalid values fall back as the contract says;
-  - the daily work these runs do (Metrics flush, pruning, the daily alert email) still happens
-    every day, at the first run after the start hour if not before; say in the PR what moves.
+  - each function keeps its own failure count in a script property;
   - The runbook §2.4 lists both properties with their initial values (06-22, 10); the owner adds
     them on staging and production.
   - Staging check after the merge (contract §10), with the staging triggers re-created for the
@@ -281,3 +282,9 @@ The human reviewer is the final approver.
   row (your number)"** (about 50 minutes with the 5-minute trigger). Contract v1.9 (CMP-100),
   backend CMP-101; like CMP-094 it stays on staging this sprint, so Sprint 04 is still not a
   production release.
+- Owner decision, 2026-10-29, after the review of PR #93 found that pausing the events refresh at
+  night would keep showing "Register" for an event whose registration closes overnight. Question
+  as asked: "… How should we handle it?" Options: "Keep events refresh on 24h (Recommended)",
+  "Re-check closing time per request", "Accept it". Owner: **"Keep events refresh on 24h
+  (Recommended)"**. Only the payment re-check pauses from 22:00 to 06:00 (`RETRY_CHECK_HOURS`);
+  the 10-failures rule applies to both triggers.

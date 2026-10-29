@@ -140,8 +140,9 @@ Order of work (each one PR; checks in SPRINT_04_PLAN → Ticket checks):
    highlight. Columns, headers and values unchanged. Staging check after the merge with a new
    test event; tell the owner what to delete afterwards.
 2. CMP-101-trigger-hours-and-failures — after contract v1.9 (CMP-100) is merged: the two time
-   triggers work only inside TRIGGER_HOURS and report a failure only after
-   TRIGGER_FAIL_ALERT_AFTER failed runs in a row (contract §9, §10; FFR-033). Runbook §2.4 lists
+   retryPendingChecks works only inside RETRY_CHECK_HOURS (refreshEventsCache stays around the
+   clock), and both triggers report a failure only after TRIGGER_FAIL_ALERT_AFTER failed runs in
+   a row (contract §9, §10; FFR-033). Runbook §2.4 lists
    both properties. The staging triggers are deleted while no feature is tested: for the staging
    check, ask the owner (through the coordinator) to re-create them, and to delete them again
    after.
