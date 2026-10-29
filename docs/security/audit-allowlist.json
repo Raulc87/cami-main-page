@@ -1,0 +1,15 @@
+{
+  "_comment": "Accepted exceptions for the dependency-audit check (.github/workflows/dependency-audit.yml; SECURITY_BASELINE.md section 6). An entry lets one advisory pass in one lockfile until its review date; after that date the check fails. Each entry needs the owner's written acceptance (acceptedBy), recorded on the pull request that adds or renews it. The review date of a high advisory is at most 30 days after it was first reported (baseline section 4).",
+  "entries": [
+    {
+      "advisory": "GHSA-mrhx-c7xc-m3w5",
+      "package": "zod",
+      "lockfile": ".github/clasp/package-lock.json",
+      "severity": "high",
+      "reason": "zod below 4.6.6 uses memory on oversized collections; it reaches the deploy tool through @google/clasp 3.4.1, the newest clasp release, which requires zod ^3.25.76 (CMP-050). The only audit fix installs clasp 2.5.0, a downgrade the deploy scripts do not support. Exposure: CI-only tool, installed with --ignore-scripts, serves no requests and reads no untrusted input.",
+      "firstReported": "2026-10-22",
+      "review": "2026-11-20",
+      "acceptedBy": ""
+    }
+  ]
+}

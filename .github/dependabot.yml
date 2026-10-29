@@ -1,0 +1,48 @@
+# Dependabot version updates (CMP-071; security baseline §6). Alerts and security updates are
+# separate repository settings and stay on. Dependabot opens pull requests only: the owner
+# reviews and merges them, and an update never changes a file by itself.
+# `.github/clasp` pull requests are the deploy tool's: the staging deploy on merge is the check
+# that clasp still works (ADR-009).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: America/Costa_Rica
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      site-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: "/.github/clasp"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: America/Costa_Rica
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: America/Costa_Rica
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*"

@@ -383,10 +383,38 @@ baseline):
   same date as above) cover the site's `package-lock.json` and the deploy tool's
   `.github/clasp/package-lock.json`; `npm audit` results are recorded with each release and for
   `.github/clasp` in CMP-050. Alerts are fixed within the §4 times by the agent that owns the
-  file (Sprint 03 ownership map), merged by the owner. **Proposed story (Sprint 04, at the latest
-  by the PTES deadline):** a pull-request check that runs `npm audit --audit-level=high` on both
-  lockfiles, Dependabot version updates for npm and GitHub Actions, and an exported SBOM
-  (`v5.0.0-15.1.2`); its files belong to the workflow owners, so the coordinator allocates it.
+  file (Sprint 03 ownership map), merged by the owner. **Dependency checks (CMP-071, Sprint 04):**
+  - *Audit on every pull request:* [`dependency-audit.yml`](../../.github/workflows/dependency-audit.yml)
+    runs `npm audit` on both lockfiles (the site's and `.github/clasp`'s), reading the lockfiles
+    only (nothing is installed, no package script runs). It fails on a **high or critical**
+    advisory, the level of the §4 times, unless the advisory is an accepted exception in
+    [`audit-allowlist.json`](audit-allowlist.json). It also runs weekly, so a new advisory or an
+    expired review date shows up while no pull request is open. The owner can make it a required
+    check on `main` (repository setting).
+  - *Accepted exceptions:* one entry per advisory and lockfile: advisory ID, package, reason,
+    first-reported date, a review date and the owner's written acceptance on the pull request that
+    adds it. An entry without that acceptance, or past its review date, fails the check. The review
+    date of a high advisory is at most 30 days after it was first reported (§4); renewing an entry
+    needs a new acceptance. An entry that matches nothing any more is reported and removed.
+  - *Version updates:* [`dependabot.yml`](../../.github/dependabot.yml) opens weekly pull requests for the site
+    (`/`), the deploy tool (`/.github/clasp`) and GitHub Actions, with a 7-day wait after a release is published
+    (Dependabot security updates ignore the wait). The owner reviews and merges them; Dependabot
+    pull requests keep Dependabot's titles (the only pull requests without a `CMP-XXX` title).
+    The pull request on `.github/clasp` is deploy-tool work: its staging deploy on merge is the
+    check that clasp still works (ADR-009).
+  - *SBOM:* when a GitHub Release is published, the same workflow attaches two CycloneDX files
+    (`sbom-site.cdx.json`, `sbom-deploy-tool.cdx.json`, made by `npm sbom` from the lockfiles at the
+    release tag) to it (`v5.0.0-15.1.2`). For an earlier release, run the workflow by hand from
+    the tag's commit.
+  - *Fixing:* CMP-071 never edits lockfiles or manifests: a fix in `.github/clasp` is the backend
+    agent's, a fix in the site's `package.json` or lockfile is the site agent's or a Dependabot pull
+    request the owner merges.
+  - *The two warnings in the deploy tool (CMP-050), re-checked 2026-10-29:* `npm audit` still
+    reports 2 high, both one advisory, GHSA-mrhx-c7xc-m3w5 (`zod` below 4.6.6, reached through
+    `@google/clasp` 3.4.1). npm's newest clasp is still 3.4.1 and it requires `zod ^3.25.76`, so
+    there is no fix; the only audit fix is a downgrade to clasp 2.5.0 that the deploy scripts do not
+    support. Recorded as the first allowlist entry, review date 2026-11-20 (not after the §4 limit,
+    2026-11-21); the owner's acceptance is in the entry once given. The site's lockfile reports 0.
 - **Personal data handling:** data classes and their protection (`v5.0.0-14.1.1`,
   `v5.0.0-14.1.2`):
 
@@ -444,7 +472,7 @@ listed in [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §4.
 | PTES deadline date (§5) | Agent 2 (CMP-069), from the owner's go-live date | Done 2026-10-27: deadline 2026-12-26 (go-live 2026-10-27 plus 60 days; moves with the actual upload date: CMP-068 states it, Agent 2 updates §5) |
 | GitHub secret scanning with push protection, Dependabot alerts and private vulnerability reporting enabled; two-factor on the owner's and Cami's accounts (§4, §6) | Owner (repository and account settings) | Done 2026-10-27. Owner: "repo: all 4 on; 2FA: GitHub, Google, GoDaddy on; Cami on" (the four repository switches: secret scanning, push protection, Dependabot alerts and private vulnerability reporting; two-factor on the owner's GitHub, Google and GoDaddy accounts and, answering the coordinator's request for two-factor on Cami's Google account, "Cami on"). Recorded again in the CMP-066 verification |
 | Site HTTPS and security headers (SAC-13): the owner checks the live site in the browser; any missing control becomes a ticket for the site owner (Agent 3, `public/`) | Owner, Agent 3 | Checked by the owner 2026-10-27: not met (no HTTPS redirect, none of the headers; [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §2b); fix CMP-079 before the go-live |
-| Story: dependency audit check, Dependabot version updates and SBOM (§6) | Coordinator (allocates) | Sprint 04 (proposed), at the latest by the PTES deadline |
+| Dependency audit check, Dependabot version updates and SBOM (§6) | Agent 2 (CMP-071) | Built in Sprint 04 (CMP-071), in review. The first allowlist entry (GHSA-mrhx-c7xc-m3w5, `.github/clasp`) needs the owner's written acceptance on its pull request; review by 2026-11-20 |
 | Script scopes and editor-only helpers in production (`v5.0.0-13.2.2`, `v5.0.0-15.2.3`) | Agent 2 (CMP-063 review), Agent 1 (any fix) | Reviewed in CMP-063 |
 | Accepted (ADR-008): the endpoint is anonymous and receives no client address or headers, so limits are global and the origin cannot be checked; one heavy client can use up the shared limits for everyone | Owner | Accepted 2026-10-19 (ADR-008); revisit with the captcha rule (FFR-029) |
 | Accepted (BR-E13): anyone who attaches any image can get past a full or closed event; such rows are stored flagged and never confirmed automatically | Owner | Accepted 2026-10-19 (FEATURE_SPEC §20) |
