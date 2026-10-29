@@ -167,7 +167,7 @@ body::before {
   padding: 0 4px;
 }
 .evt-ticker-item:focus-visible {
-  outline: 2px solid #965965;
+  outline: 2px solid #c9a4ab;
   outline-offset: 2px;
 }
 .evt-ticker-dot {
