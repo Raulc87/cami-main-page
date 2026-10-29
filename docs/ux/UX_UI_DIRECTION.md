@@ -7,7 +7,7 @@
   images as WebP — CMP-106, with CMP-102)
 - Status: Approved by the product owner (2026-10-18, CMP-014 PR #14 merged; v1.1 Approved on
   merge of PR #22; v1.2 on merge of PR #30; v1.3 Approved on merge of PR #101; the
-  `roseText` shade needs the owner's and Cami's approval on PR #100 before both merge)
+  `roseText` shade approved on PR #100, 2026-10-29: "new color approved by Cami and myself")
 - Source: brand moodboard — *Elegance · Calm · Balance · Femininity*
 
 ## 1. Experience Goal
