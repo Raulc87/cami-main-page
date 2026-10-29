@@ -121,7 +121,7 @@ they are not rows here and still apply.
 | Merging and approval | adapt | Kit text, plus kept rule **Merge criteria**. |
 | Review-only agent (Review flow, Reviewer independence) | keep | Kit text; kept rule **Reviewers** names who runs. |
 | Coordinator session | adapt | Kit text; kept rule **Docs-PR author**; adopted by CMP-014 (the role `/project-adopt` plays today). |
-| Pre-release security agent | adapt | Kit `v1.3.0` text (CMP-097); its run for CMP's next release is planned in CMP-098 and CMP-099; this repo's release runbook is the release checklist (kept rule **Runbooks**). |
+| Pre-release security agent | adapt | Kit `v1.3.0` text (CMP-097); its run for v1.1.1 is CMP-098 and CMP-104 (Sprint 04), the PTES test CMP-099; this repo's release runbook is the release checklist (kept rule **Runbooks**). |
 | Automated PR reviewers | adapt | Kit text; kept rules **Reviewers** and **Thread resolution**. |
 | Kept project rules | keep | Kit text; this table is the list it points to. |
 | Security baseline, Code readability, Testing, Definition of Done, Change management | keep | Kit text (`v1.3.0`: post-release tests and agent scans, CMP-097), plus this repo's state (no test runner, formatter or linter yet; baseline approved in CMP-056, PTES deadline 2026-12-26; every host a third party's, so agent scans are passive baseline only, baseline §5.1). |

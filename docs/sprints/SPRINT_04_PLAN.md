@@ -36,8 +36,8 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Stories touching an OWASP risk have verifying ACs **(blocking)** | Pass: CMP-093 (credentials, supply chain) and CMP-071 carry their security checks below |
 | 5. Secret and dependency scanning | Secret scanning on (owner, 2026-10-27); dependency checks are CMP-071 in this sprint |
 | 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; after it, no release other than a security hotfix until the test has run. Sprint 04 releases v1.1.1 (CMP-103) before the deadline; the owner keeps the deadline route for it (2026-10-29, Sprint Review Notes). CMP-095 prepares the test |
-| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) | Not blocking: v1.1.1 (CMP-103) is a performance release with the event-tab and trigger changes, no new form, data or login, and the live project's test is not yet due: its recorded deadline is 2026-12-26. The owner keeps that deadline for the agent's run and the PTES test (2026-10-29; the 2026-10-28 "not a release" answer is superseded). CMP-098 and CMP-099 run by the deadline |
-| 5. Written approval per agent scan; tester's authorization | Not blocking, for the same reason; planned in CMP-099, by the deadline |
+| 5. Pre-release security agent's first three steps (kit v1.3.0, CMP-097) **(blocking: Sprint 04 releases v1.1.1)** | Pending: CMP-098, run by the pre-release security agent in its own session, started before the go-ahead (owner, 2026-10-29: "Follow the kit"). Steps 1 and 3 build on the baseline and pen-test plan updated in CMP-097; step 2 reviews the changes since CMP-063's review, then, before CMP-103, the changes merged in this sprint. The go-ahead waits for steps 1–3 |
+| 5. Written approval per agent scan; tester's authorization **(blocking: release sprint)** | The owner's written approval for the production scan right after v1.1.1 (CMP-104), signed before CMP-103, with the owner named as the person who can stop it; release-checklist §6b. The PTES tester's authorization is not needed for v1.1.1: the human test stays due by 2026-12-26 (CMP-099), as the kit allows for the human test only |
 | 6. Hosting runtime, local development, developer guide | Pass: ADR-002, ADR-008, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) |
 | 6. Test, lint and CI checks; required on `main` | Pass: `apps-script-check`, `docs-link-check`; CMP-071 adds the dependency check |
 | 6. Branching ADR and deployment runbook **(deploying sprint)** | Pass: ADR-007, ADR-009, the events-backend runbook; the site-upload decision is CMP-092 (ADR-010), merged before CMP-093 |
@@ -80,6 +80,8 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | CMP-101 | The payment re-check works only in working hours; the time triggers report a failure only after 10 failed runs in a row (contract v1.9) | Agent 1 | CMP-100 | `CMP-101-trigger-hours-and-failures` | todo |
 | CMP-102 | Site performance: no layout jump, the main photo first, resized modern images, browser caching, early connections, text contrast | Agent 3 | — | `CMP-102-site-performance` | todo |
 | CMP-103 | Release v1.1.1 | Agent 3 + owner | CMP-102, CMP-094, CMP-101, CMP-071; CMP-093 if used | `CMP-103-release-v1-1-1` | todo |
+| CMP-098 | Pre-release security agent, steps 1–3, for v1.1.1 (before the go-ahead; step 2's second review before CMP-103) | Pre-release security agent | — | `CMP-098-release-security` (docs PR, if its documents change) | todo |
+| CMP-104 | Pre-release security agent: passive production scan right after v1.1.1, then re-checks of any fixes | Pre-release security agent | CMP-103's live checks; the owner's signed approval for the run | — (findings to the coordinator) | todo |
 | CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
 
 Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone is available
@@ -184,8 +186,24 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
   backend deployed through the approved workflow first (CMP-094, CMP-101; the owner adds the two
   v1.9 script properties to production before), then the site. Live checks: the release
   checklist's, the cookie gate, and PageSpeed 90+ desktop and mobile by the owner. Tag and
-  GitHub Release. Not followed by the post-release security step: the owner keeps the PTES
-  deadline (2026-12-26) for the agent's run and the test (CMP-098, CMP-099).
+  GitHub Release. Followed by the post-release security step (release-checklist §6b): the
+  agent's production scan (CMP-104); the human PTES test stays due by 2026-12-26 (CMP-099).
+  Before it is cut: CMP-098's review covers the release commit, and the owner's scan approval is
+  signed.
+- **CMP-098:** the pre-release security agent ([`AGENTS.md`](../../AGENTS.md) → Pre-release
+  security agent), in its own session, running the kit's `/release-security`: 1. the security
+  baseline updated (most of it done in CMP-097: §5.1, every host passive baseline only); 2. a
+  security code review of the changes since CMP-063's review, before the go-ahead, and of the
+  changes merged in this sprint (CMP-094, CMP-101, CMP-102, CMP-071, CMP-093), before CMP-103 is
+  cut; 3. the pen-test plan kept current (the PTES test by 2026-12-26). Findings go to the
+  coordinator only (public repository); it never changes code. Its documents are Agent 2's
+  files: the agent sends the text to Agent 2, or writes them in its own docs PR with the owner's
+  OK, so no two sessions edit them at once.
+- **CMP-104:** right after CMP-103's live checks pass, inside the window of the owner's signed
+  approval: a passive, rate-limited baseline scan (for example OWASP ZAP baseline, at most 1
+  request per second) of the live site and the production web app, never active (baseline
+  §5.1); the owner can stop it; findings to the coordinator; the scan date in the v1.1.1 GitHub
+  Release (release-checklist §6b).
 - **CMP-096:** `docs/sprints/SPRINT_04_VERIFICATION.md` with the evidence of every ticket and
   the staging cleanup list.
 
@@ -201,7 +219,12 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
 - CMP-071 and CMP-095 at the go-ahead.
 - Never runs a penetration test or attack tools, and never scans production.
 
-Maximum implementation agents in parallel: 3.
+### Pre-release security agent (own session, started before the go-ahead)
+- CMP-098 steps 1–3 now; step 2's second review before CMP-103; CMP-104 right after v1.1.1; the
+  re-checks of any fixes. Its session stays until its re-checks are done.
+
+Maximum implementation agents in parallel: 3 (the pre-release security agent is not one of
+them).
 
 ## Foundation (before parallel work)
 - CMP-092 (coordinator): ADR-010, merged before CMP-093.
@@ -231,12 +254,14 @@ who changes it in a docs PR merged with or right after CMP-093.
 ## Merge / Integration Order
 Each line names what the PR waits for.
 
+0. CMP-098 steps 1–3 (pre-release security agent) — nothing; before the go-ahead.
 1. CMP-091 (this plan) — nothing.
 2. CMP-092 (ADR-010) — CMP-091.
 3. CMP-094, CMP-071, CMP-095 — nothing beyond the go-ahead; CMP-101 — CMP-100 (merged).
 4. CMP-093 (site upload) — CMP-092. CMP-102 (site performance) — nothing beyond the go-ahead.
 5. CMP-103 (release v1.1.1) — CMP-102, CMP-094, CMP-101, CMP-071, and CMP-093 if the release
-   uses it.
+   uses it; CMP-098 (its review reaches the release commit) and the owner's scan approval.
+   CMP-104 (production scan) — CMP-103's live checks.
 6. CMP-096 (verification) — every PR above, except one the owner moved to the next sprint;
    CMP-103's live evidence follows it, as in Sprint 03.
 
@@ -344,3 +369,15 @@ The human reviewer is the final approver.
   So CMP-102 and CMP-103 join (Agent 3), the release is v1.1.1, CMP-094 and CMP-101 reach
   production with it, and the 2026-10-28 answer that Sprint 04 is not a production release is
   superseded. The agentic-browsing item the owner saw is pending their details.
+- Owner decision, 2026-10-29, after the review of PR #93 found that the "keep the deadline" route
+  covers only the human test under the kit rules adopted in CMP-097. Question as asked: "The
+  reviewer is right about the kit rules we adopted yesterday. Before each production release (so
+  before v1.1.1), the security agent must review the code. Right after the release, it runs a
+  gentle passive scan of the live site, with your written OK for that scan. Only the outside
+  tester's PTES test may wait for the 26 Dec deadline. How should we handle v1.1.1?" Owner:
+  **"Follow the kit (Recommended)"**. CMP-098 (steps 1–3, before the go-ahead) and CMP-104 (the
+  passive production scan right after v1.1.1) join Sprint 04; the PTES test stays due by
+  2026-12-26 (CMP-099); the release checklist gets the post-release security step (§6b).
+- Live measurements of the site are the owner's PageSpeed runs from now on. The coordinator's
+  one Lighthouse run on the live site (2026-10-29, above) was a single page load to read the
+  owner's report, not a scan; agents measure local builds only.
