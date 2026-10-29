@@ -30,7 +30,7 @@ were verified.
   registration (FR-011, [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md))
 - Status: Approved (on merge of PR #58)
 - Owner: Raul Casanas (product owner, final approver)
-- Last updated: 2026-10-28 (CMP-097: kit v1.3.0 sync, §5 deadline rule and §5.1 agent scans; owner's sync instruction); before: 2026-10-27 (CMP-069: PTES deadline date)
+- Last updated: 2026-10-29 (CMP-098, pre-release security agent for v1.1.1: §5.1 terms re-checked and the staging case for v1.1.1, §5 and §5.1 pointed at release-checklist §6b, §7 code review record); before: 2026-10-28 (CMP-097: kit v1.3.0 sync, §5 deadline rule and §5.1 agent scans; owner's sync instruction)
 - Versions used: ASVS 5.0.0 · Top 10 2025 · API Top 10 2023 · SSDF 1.1
 - Inventory appendix: [`ASVS_INVENTORY.md`](ASVS_INVENTORY.md)
 
@@ -304,7 +304,11 @@ Code reviewed by CMP-063; verified on a running system by the PTES test, with te
 The authorized external tester runs the test against production and writes a report. From the
 next release on, the test and the pre-release security agent's production scan start exactly
 after a release that needs them, when its production smoke test passes (the release runbook's
-post-release security step, planned in CMP-098). Penetration tests are run only by people the
+post-release security step,
+[`release-checklist.md` §6b](../process/release-checklist.md#6b-post-release-security-right-after-the-release)).
+For v1.1.1 (CMP-103), the next release, that step runs the agent's production scan only (CMP-104);
+the PTES test stays due by the deadline above (CMP-099; owner, 2026-10-29, SPRINT_04_PLAN →
+Sprint Review Notes). Penetration tests are run only by people the
 owner authorizes in writing, under a written scope signed by the owner (the pen-test plan).
 Security scans of a running system are run only by the pre-release security agent (§5.1);
 implementation agents, the review-only agent and the coordinator never run penetration tests,
@@ -320,19 +324,29 @@ when staging can be scanned, and production right after the release in every cas
 agent runs penetration tests, attack tools or security scans, in any environment.
 
 **Staging case.** Every environment of this project runs on a third party's host, and neither
-host's terms expressly allow security testing (checked 2026-10-28):
+host's terms expressly allow security testing (checked 2026-10-28; re-checked 2026-10-29 by the
+pre-release security agent, CMP-098: see the last column):
 
-| Environment | Host | Who owns the host | Can it be scanned | Why (terms checked, 2026-10-28) |
+| Environment | Host | Who owns the host | Can it be scanned | Why (terms checked 2026-10-28, re-checked 2026-10-29) |
 |---|---|---|---|---|
-| Staging backend (the `cami-events-staging` Apps Script web app) | Google Apps Script | A third party: Google | Yes, passive baseline only | Google's terms do not expressly allow security testing of its services; an earlier Google Apps acceptable use policy forbids testing "the Services in order to find limitations, vulnerabilities or evade filtering capabilities". The project's own deployment is in scope only as a passive, rate-limited baseline scan |
+| Staging backend (the `cami-events-staging` Apps Script web app) | Google Apps Script | A third party: Google | Yes, passive baseline only | Google's terms do not expressly allow security testing of its services; an earlier Google Apps acceptable use policy forbids testing "the Services in order to find limitations, vulnerabilities or evade filtering capabilities". The project's own deployment is in scope only as a passive, rate-limited baseline scan. Re-checked 2026-10-29: the [Google Terms of Service](https://policies.google.com/terms) (effective 2026-07-30) forbid to "abuse, harm, interfere with, or disrupt our services or systems", for example by "hacking, or bypassing our systems or protective measures", and the [Apps Script terms](https://developers.google.com/apps-script/terms) (last updated 2025-11-14) say nothing that allows it; neither expressly allows security testing |
 | Staging site | None today (the temporary GitHub Pages test site was taken down, CMP-066) | — | No staging site | A new GitHub Pages test site would be passive baseline only ([`AGENTS.md`](../../AGENTS.md) → Security baseline, GitHub's terms as the kit checked them on 2026-10-27) |
-| Production site (`camihernandez.com`) | GoDaddy shared hosting | A third party: GoDaddy | Yes, passive baseline only | GoDaddy's [Hosting & Security Services Agreement](https://www.godaddy.com/legal/agreements/hosting-agreement) prohibits "server hacking or other perpetration of security breaches", and its vulnerability disclosure programme does not authorize testing in the name of its customers; nothing expressly allows testing |
+| Production site (`camihernandez.com`) | GoDaddy shared hosting | A third party: GoDaddy | Yes, passive baseline only | GoDaddy's [Hosting & Security Services Agreement](https://www.godaddy.com/legal/agreements/hosting-agreement) prohibits "server hacking or other perpetration of security breaches", and its vulnerability disclosure programme does not authorize testing in the name of its customers; nothing expressly allows testing. Re-check 2026-10-29: GoDaddy's legal pages answered HTTP 403 to the agent's session, so the 2026-10-28 reading stands, not re-read; the owner confirms it before signing the production scan's approval ([`PENTEST_PLAN.md`](PENTEST_PLAN.md) §1.1, run 2). The case does not change either way: passive baseline only is the most a host without an express allowance permits |
 | Production backend (the `cami-events-production` Apps Script web app) | Google Apps Script | A third party: Google | Yes, passive baseline only | As for the staging backend |
 
-- Case: **staging scanned before the release (the backend web app, passive baseline only), and
-  production right after it (site and backend, passive baseline only)**. No scan of this project
-  is ever active, even with an approval, unless a host's terms change to allow it and this table
-  is updated first.
+- Case: **staging can be scanned before a release (the backend web app, passive baseline only),
+  and production is scanned right after it (site and backend, passive baseline only)**. No scan
+  of this project is ever active, even with an approval, unless a host's terms change to allow it
+  and this table is updated first.
+- **v1.1.1 (CMP-103): the staging scan is skipped**; only the production scan right after the
+  release runs (CMP-104, [`PENTEST_PLAN.md`](PENTEST_PLAN.md) §1.1 run 2). Owner, 2026-10-29
+  (SPRINT_04_PLAN → Sprint Review Notes), question as asked: "Before v1.1.1, should the security
+  agent also run a gentle passive scan of the STAGING backend? …" Owner: "Skip staging for
+  v1.1.1", with the reason given in the question: there is no staging site, and v1.1.1's backend
+  changes are small (CMP-094, CMP-101).
+- When the production scan starts: when the release's production smoke test passes, inside the
+  window the owner signed
+  ([`release-checklist.md` §6b](../process/release-checklist.md#6b-post-release-security-right-after-the-release)).
 - The PTES test by the human tester also stays within these terms (the pen-test plan's rules of
   engagement).
 
@@ -439,6 +453,7 @@ listed in [`PRETEST_REVIEW.md`](PRETEST_REVIEW.md) §4.
 | Accepted (provider): headers, CORS, cache control, HTTP parsing, TLS clients and logs of the Apps Script answers are Google's and cannot be configured; no antivirus run by the project on screenshots, which only Cami opens inside Google Drive ([`ASVS_INVENTORY.md`](ASVS_INVENTORY.md), rows marked Accepted risk) | Owner | Accepted. Owner, 2026-10-27 (relayed by the coordinator on PR #58), question as asked: "Three risks the project can't fully remove, proposed as 'accepted': (1) Google controls some web settings of the backend that we can't change; (2) payment screenshots aren't virus-scanned by us (Google Drive does its own scanning); (3) someone could use the form to make the site send a registration email to an address that isn't theirs, within the existing limits (20 sign-ups/minute, 100 uploads/day). Accept them?" Owner: "Accept all three (Recommended)" |
 | Accepted (Cami, 2026-10-26): no retention period in the privacy notice | Owner, Cami | Recorded in EVENTS_EMAILS_AND_PRIVACY §3; revisit if a lawyer reviews the notice |
 | SEC-006, accepted by the owner 2026-10-27 | Owner | Accepted (CMP-063, tracked privately) |
+| Security code review for v1.1.1 (CMP-098 step 2; [`AGENTS.md`](../../AGENTS.md) → Pre-release security agent), against §3 and the inventory | Pre-release security agent | First review 2026-10-29: every change merged since CMP-063's review, from `5566e56` to `main` at `fe72b17` (backend coupon-check limits, alert recipients, removed editor helpers and script scope, deploy file check, site `.htaccess`, dependency lockfiles), with `npm audit` on both lockfiles and a local production build: no new finding. Second review, of the changes merged in Sprint 04 up to the v1.1.1 commit: before CMP-103 is cut. New findings, if any, are numbered from SEC-007 and listed here only as "SEC-00N: security fix, tracked privately" |
 | Live before the penetration test (SPRINT_03_PLAN → Risks): real participants' data and payment screenshots are stored before an outside tester has checked the system | Owner | Accepted 2026-10-26 with the 60-day deadline (§5) and the CMP-063 gate |
 
 ## 8. Approval
