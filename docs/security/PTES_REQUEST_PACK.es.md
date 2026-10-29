@@ -1,5 +1,7 @@
 # PTES_REQUEST_PACK (español)
 
+Aprobada por el dueño, Raul Casanas, el 2026-10-29 (comentario en el PR #99: https://github.com/Raulc87/cami-main-page/pull/99#issuecomment-6505064827).
+
 Copia en español de [`PTES_REQUEST_PACK.md`](PTES_REQUEST_PACK.md) para testers locales. Si hay
 diferencias, manda la versión en inglés. El dueño envía esta página, sin cambios, a cada tester
 que contacte, junto con el plan al que remite ([`PENTEST_PLAN.md`](PENTEST_PLAN.md), en inglés, que
