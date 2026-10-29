@@ -31,7 +31,7 @@ main thread. No backend change: no production backend step, no new script proper
 | Reviewer's verdict on PR #119 | "Ready for human approval" at `2e5e5a1`; Codex: no findings |
 | The owner's dated statement | "No critical or high security finding is open. — Raul Casanas, 2026-10-29": [PR #119 comment 6511089759](https://github.com/Raulc87/cami-main-page/pull/119#issuecomment-6511089759) (the owner confirmed to the coordinator that they posted it) |
 | Pre-release security review covering the release commit | The pre-release security agent checked the chain of commits `72417e6` → `4957717` (PR #118, the only code change) → `5d52c59` (PR #119, the version bump) before the tag: no finding. The coordinator checked that the tag points to `5d52c59` |
-| Scan decision | The owner's answer above; recorded in PENTEST_PLAN §1.1 by the coordinator's records PR |
+| Scan decision | The owner's answer above, with the questions as asked, recorded in the SPRINT_04_PLAN Review Notes (PR #120) and in the v1.1.2 GitHub Release's notes ("no production scan was run for this release") |
 | Site-production environment, secrets, production backend and script properties | In place since v1.1.1 (see [CMP-103-live-checks.md](CMP-103-live-checks.md)) |
 
 ## Live checks
