@@ -1,0 +1,131 @@
+# Dependency audit on every pull request and an SBOM for each release (CMP-071; security baseline
+# §6). No secrets. The audit reads only the two lockfiles and installs nothing, so no package
+# script runs. It fails on a high or critical advisory unless
+# docs/security/audit-allowlist.json holds an unexpired entry the owner accepted in writing.
+# A weekly run catches new advisories and expired review dates while no pull request is open.
+name: Dependency audit
+
+on:
+  pull_request:
+  schedule:
+    - cron: '23 12 * * 1'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build the SBOM for (empty: run only the audit)"
+        required: false
+        default: ''
+        type: string
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: npm audit (high and critical)
+    if: github.event_name != 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+
+      - name: Audit both lockfiles against the allowlist
+        run: |
+          node --input-type=module - <<'EOF'
+          import { execFileSync } from 'node:child_process';
+          import { readFileSync } from 'node:fs';
+
+          const LOCKS = ['package-lock.json', '.github/clasp/package-lock.json'];
+          const LEVELS = new Set(['high', 'critical']);
+          const today = new Date().toISOString().slice(0, 10);
+          const entries = JSON.parse(readFileSync('docs/security/audit-allowlist.json', 'utf8')).entries;
+          const addDays = (d, n) => new Date(Date.parse(d) + n * 86400000).toISOString().slice(0, 10);
+          let failed = false;
+          const fail = (m) => { failed = true; console.log(`::error::${m}`); };
+
+          const used = new Set();
+          for (const e of entries) {
+            for (const k of ['advisory', 'package', 'lockfile', 'severity', 'reason', 'firstReported', 'review', 'acceptedBy']) {
+              if (!String(e[k] ?? '').trim()) fail(`Allowlist entry ${e.advisory ?? '?'}: "${k}" is empty${k === 'acceptedBy' ? " (the owner's written acceptance goes here: name, date, link to the comment)" : ''}.`);
+            }
+            const isDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d ?? '');
+            if (!isDate(e.review) || !isDate(e.firstReported)) fail(`Allowlist entry ${e.advisory}: review and firstReported must be YYYY-MM-DD dates.`);
+            else if (e.review > addDays(e.firstReported, e.severity === 'critical' ? 7 : 30)) fail(`Allowlist entry ${e.advisory}: review date ${e.review} is more than ${e.severity === 'critical' ? 7 : 30} days after it was first reported (baseline section 4).`);
+            else if (e.review < today) fail(`Allowlist entry ${e.advisory} (${e.package}): review date ${e.review} has passed; fix the dependency or renew the entry with the owner's written acceptance.`);
+          }
+
+          for (const lock of LOCKS) {
+            const dir = lock.includes('/') ? lock.slice(0, lock.lastIndexOf('/')) : '.';
+            let out;
+            try {
+              out = execFileSync('npm', ['audit', '--json'], { cwd: dir, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+            } catch (err) {
+              out = err.stdout; // npm audit exits non-zero when it finds anything
+            }
+            let report;
+            try { report = JSON.parse(out); } catch { fail(`${lock}: npm audit gave no readable report.`); continue; }
+            if (report.error || !report.vulnerabilities) { fail(`${lock}: npm audit failed (${report.error?.code ?? 'no vulnerabilities field'}).`); continue; }
+
+            const found = new Map();
+            for (const v of Object.values(report.vulnerabilities)) {
+              for (const via of v.via) {
+                if (typeof via === 'string' || !LEVELS.has(via.severity)) continue;
+                found.set(via.url.split('/').pop(), via);
+              }
+            }
+            console.log(`${lock}: ${report.metadata.vulnerabilities.high} high, ${report.metadata.vulnerabilities.critical} critical (counts include packages that only depend on a vulnerable one)`);
+            for (const [id, via] of found) {
+              const hit = entries.find((e) => e.advisory === id && e.lockfile === lock && e.package === via.name);
+              if (hit && hit.severity !== via.severity) fail(`${lock}: ${id} is now rated ${via.severity}, the entry says ${hit.severity}; renew the entry with the owner's written acceptance.`);
+              else if (hit) { used.add(hit); console.log(`  ${id} ${via.name} (${via.severity}): allowed until ${hit.review}`); }
+              else fail(`${lock}: ${via.severity} advisory ${id} in ${via.name} (${via.title}) is not in the allowlist.`);
+            }
+          }
+          for (const e of entries) if (!used.has(e)) console.log(`::notice::Allowlist entry ${e.advisory} (${e.package}) matched no advisory; remove it.`);
+          process.exit(failed ? 1 : 0);
+          EOF
+
+  sbom:
+    name: SBOM for the release
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.tag != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # only to attach the two SBOM files to this release
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+
+      - name: Generate CycloneDX files from the lockfiles
+        run: |
+          npm sbom --package-lock-only --sbom-format cyclonedx --sbom-type application > sbom-site.cdx.json
+          # The deploy tool's package.json has no version, which npm sbom needs; work on a copy with one
+          # (this job never edits the repository's manifests).
+          mkdir "$RUNNER_TEMP/deploy-tool"
+          cp .github/clasp/package-lock.json "$RUNNER_TEMP/deploy-tool/"
+          node -e 'const p=require("./.github/clasp/package.json"); p.version="0.0.0"; require("fs").writeFileSync(process.env.RUNNER_TEMP+"/deploy-tool/package.json", JSON.stringify(p))'
+          (cd "$RUNNER_TEMP/deploy-tool" && npm sbom --package-lock-only --sbom-format cyclonedx --sbom-type application) > sbom-deploy-tool.cdx.json
+
+      - name: Attach them to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: gh release upload "$TAG" sbom-site.cdx.json sbom-deploy-tool.cdx.json --clobber --repo "$GITHUB_REPOSITORY"
