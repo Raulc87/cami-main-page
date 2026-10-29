@@ -33,9 +33,25 @@ body::before {
 }
 
 /* ── Animations ────────────────────────────────────────── */
+/* The availability dot's pulse: a ring behind the dot that grows from the dot's size to 5 px
+   beyond it while it fades, drawn with transform and opacity so the browser can animate it off
+   the main thread (a box-shadow animation cannot be, CMP-108). */
+.nav-dot {
+  position: relative;
+  isolation: isolate;
+}
+.nav-dot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  background: rgba(201, 164, 171, 0.5);
+  animation: dot-pulse 2.2s ease-in-out infinite;
+}
 @keyframes dot-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 164, 171, 0.5); }
-  50%       { box-shadow: 0 0 0 5px rgba(201, 164, 171, 0); }
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(2.43); opacity: 0; }
 }
 
 /* ── Service cards ─────────────────────────────────────── */

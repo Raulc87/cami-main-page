@@ -40,12 +40,12 @@ export default function Nav() {
       {/* Availability badge */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <div
+          className="nav-dot"
           style={{
             width: 7,
             height: 7,
             borderRadius: '50%',
             background: C.rose,
-            animation: 'dot-pulse 2.2s ease-in-out infinite',
           }}
         />
         <span

@@ -107,9 +107,11 @@ original (it is the fallback) and make the WebP widths the page needs, named `<n
 convert photo.jpg -resize 960x -quality 80 -define webp:method=6 photo-960.webp
 ```
 
-Then pass `widths={[480, 960]}` and a `sizes` that says how wide it is shown, as in
+Include a small width (about 320) for phones, which show gallery tiles at about 180 px. Then pass
+`widths={[320, 480, 960]}` and a `sizes` that says how wide it is shown, as in
 `Gallery.jsx`. The host caches images for a year (`public/.htaccess`), so a replaced photo needs a
-new file name; reusing the old name leaves returning visitors with the old picture. The photo at
+new file name (also a re-encoded size: the community photo's 470 and 940 px files replaced 480
+and 960 for this reason); reusing the old name leaves returning visitors with the old picture. The photo at
 the top of the page (the hero) is also preloaded in `index.html`: change both together.
 
 The events backend (`apps-script/`) is deployed by a workflow, not from your machine: staging on
