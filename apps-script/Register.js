@@ -28,10 +28,11 @@ var NEEDS_REVIEW_ROW_COLOR = '#fdeaea';
 var REGISTRATION_STATUSES = ['new', 'confirmed', 'refund/cancelled', 'spam'];
 var CHECK_RESULT_VALUES = Object.keys(CHECK_RESULT_COLORS);
 
-// Formatting a new event tab (CMP-094, CMP-107): `status` and `checkResult` dropdowns in warning mode (a
-// value outside the list is accepted with a warning, never rejected), `checkResult` colors, a
+// Formatting a new event tab (CMP-094, CMP-107): `status` and `checkResult` dropdowns in warning mode
+// (a value outside the list is accepted with a warning, never rejected), `checkResult` colors, a
 // `needsReview` checkbox and a light-red row when `needsReview` is TRUE. The backend keeps writing
-// and reading booleans and plain `checkResult` words, which the checkbox and the dropdown accept. Applied only when the tab is created; existing tabs are formatted by hand.
+// and reading booleans and plain `checkResult` words, which the checkbox and the dropdown accept.
+// Applied only when the tab is created; existing tabs are formatted by hand.
 function formatNewEventTab_(sheet) {
   var maxRows = sheet.getMaxRows();
   if (maxRows < 2) return;

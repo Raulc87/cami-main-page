@@ -64,6 +64,9 @@ Times in the `Events` tab are written in 24 h `HH:mm` (for example `18:30`); a t
    already exist are not touched: format those by hand. The same applies to a new tab whose
    formatting failed: the registration is still stored and the log has an `event tab format failed`
    line (error name only); later registrations do not retry it.
+   Do not tick `needsReview` boxes in empty rows: an unticked box left behind is a `FALSE` value,
+   so the next registration lands below it, after a gap. Nothing breaks; clear the stray `FALSE`
+   cells if the gap bothers you.
 2. Create the Drive root folder for screenshots. The script creates `<eventCode>/` subfolders.
 3. Copy the IDs (the long string in each URL: `.../d/<SPREADSHEET_ID>/edit` and
    `.../folders/<DRIVE_ROOT_FOLDER_ID>`). Keep them out of the repo and out of chat history you
