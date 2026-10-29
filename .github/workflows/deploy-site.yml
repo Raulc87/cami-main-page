@@ -1,0 +1,135 @@
+# Uploads the site (a tagged main commit) to GoDaddy's public_html/ over FTPS (CMP-093, ADR-010).
+#
+# - Started by hand only (workflow_dispatch), from main only. Never on a push, merge or schedule.
+# - The job waits for the owner's approval on the `site-production` GitHub environment before it
+#   builds with the production address or touches the server (the environment's required reviewer
+#   applies to dry runs too).
+# - mode `build`: builds the tag, checks the bundle, uploads it, then attaches the built site as a
+#   zip to the tag's GitHub Release. mode `rollback`: uploads the zip kept on that tag's Release,
+#   unchanged, without building.
+# - dry_run (default on): does everything up to the plan, uploads and deletes nothing.
+#
+# Environment secrets of `site-production` (never repository secrets; the owner types them in):
+#   VITE_EVENTS_API_URL  the production events /exec address (public in the live bundle, kept out of the repo and logs)
+#   STAGING_EVENTS_ID    the id inside the staging /exec address: the bundle must not contain it
+#   FTP_HOST, FTP_USER, FTP_PASSWORD  a cPanel FTP account limited to public_html (host name only)
+# The FTP password reaches only the upload step, through a netrc file that is removed afterwards.
+# Third-party code: the two pinned actions below, and curl/zip/gh from the runner image.
+#
+# Prerequisite for a build: the tag exists, is on main, and has a GitHub Release (the kept build is
+# attached to it). Walk-through: the CMP-093 pull request; steps in docs/process/release-checklist.md §4.
+name: Deploy site
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to deploy (for example v1.1.1)
+        type: string
+        required: true
+      mode:
+        description: build = build the tag and upload it; rollback = upload the kept build of that tag
+        type: choice
+        options: [build, rollback]
+        default: build
+      dry_run:
+        description: Dry run (check and list what would change, upload nothing)
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-site
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Only the main branch may deploy (the environment also allows only main).
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: site-production
+    permissions:
+      contents: write # only to attach the built site to the tag's Release (that step alone gets the token)
+    env:
+      TAG: ${{ inputs.tag }}
+      MODE: ${{ inputs.mode }}
+      DRY_RUN: ${{ inputs.dry_run }}
+    steps:
+      - name: Check the inputs
+        run: |
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::The tag must look like v1.2.3."
+            exit 1
+          fi
+          echo "Deploying $TAG, mode $MODE, dry run $DRY_RUN"
+
+      # The scripts always come from main (this workflow's own commit), never from the tag.
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: The tag is on main and has a Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git rev-parse --verify --quiet "refs/tags/$TAG^{commit}" > /dev/null || { echo "::error::Tag $TAG does not exist."; exit 1; }
+          git merge-base --is-ancestor "refs/tags/$TAG^{commit}" origin/main || { echo "::error::Tag $TAG is not on main: only a reviewed main commit may go live."; exit 1; }
+          gh release view "$TAG" > /dev/null || { echo "::error::Tag $TAG has no GitHub Release; create it first (the kept build is attached to it)."; exit 1; }
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        if: inputs.mode == 'build'
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+          path: site-src
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: site-src/package-lock.json
+        if: inputs.mode == 'build'
+
+      - name: Build the tag
+        if: inputs.mode == 'build'
+        working-directory: site-src
+        env:
+          VITE_EVENTS_API_URL: ${{ secrets.VITE_EVENTS_API_URL }}
+        run: |
+          [ -n "$VITE_EVENTS_API_URL" ] || { echo "::error::VITE_EVENTS_API_URL is missing in the site-production environment."; exit 1; }
+          npm ci --ignore-scripts
+          npm run build
+
+      - name: Take the kept build of the tag
+        if: inputs.mode == 'rollback'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p site-src
+          gh release download "$TAG" --pattern "site-$TAG.zip" --dir "$RUNNER_TEMP/kept"
+          unzip -q "$RUNNER_TEMP/kept/site-$TAG.zip" -d site-src/dist
+
+      - name: Check the bundle
+        env:
+          VITE_EVENTS_API_URL: ${{ secrets.VITE_EVENTS_API_URL }}
+          STAGING_EVENTS_ID: ${{ secrets.STAGING_EVENTS_ID }}
+        run: node .github/scripts/site-bundle-check.mjs site-src/dist
+
+      - name: Upload (or dry run)
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          SITE_DIR: site-src/dist
+        run: .github/scripts/site-upload.sh
+
+      - name: Keep the build on the Release
+        if: inputs.mode == 'build' && inputs.dry_run == false
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          (cd site-src/dist && zip -q -X -r "$RUNNER_TEMP/site-$TAG.zip" .)
+          gh release upload "$TAG" "$RUNNER_TEMP/site-$TAG.zip" --clobber
