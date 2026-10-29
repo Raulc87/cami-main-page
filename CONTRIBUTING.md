@@ -77,11 +77,15 @@ by hand.
 | Site build | `npm run build` | Finishes without errors |
 | Apps Script syntax | `node --check apps-script/<file>.js` for each file you changed | No output (CI runs it on every file) |
 | Docs link check | `python3 .github/scripts/check_doc_links.py` | `0 broken` |
+| Dependency audit | `npm audit --audit-level=high` (run in the repo root and in `.github/clasp`) | No high or critical advisory; CI also accepts one with an unexpired entry in `docs/security/audit-allowlist.json` |
 | Speed (Lighthouse) | `npm run build`, `npm run preview`, then Lighthouse on `http://localhost:4173` with the desktop and the mobile preset (see below) | Performance 90+ on both, CLS under 0.1, Accessibility 100 |
 | Manual check | `npm run dev`, then the golden path in EN and ES at 1280, 900 and 375 px | Matches the acceptance criteria of the story |
 
 CI runs the Apps Script check and the docs link check on every pull request; the required ones
-must be green before merge.
+must be green before merge. CI also runs the Dependency audit check on every pull request. To
+accept or renew an exception for an advisory you cannot fix, follow
+[`docs/security/SECURITY_BASELINE.md` §6](docs/security/SECURITY_BASELINE.md#6-secrets-dependencies-and-data)
+(the owner's written acceptance goes in the allowlist entry).
 
 **Measuring speed (CMP-102).** Only ever on your own build, never on the live site or staging
 (AGENTS.md → Security baseline). Lighthouse is not a project dependency: run it from outside the
