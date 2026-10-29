@@ -479,8 +479,8 @@ The human reviewer is the final approver.
 - CMP-104 dropped: the pre-release security agent's session safety controls blocked the scan step
   (as in CMP-063); no scan ran, no results exist. Owner asked "How should we cover it?" and chose,
   verbatim, **"Leave it to the tester (Recommended)"**: the passive baseline is part of the PTES
-  test due by 2026-12-26 (CMP-099). The v1.1.1 Release is to say so (release-checklist §6b)
-  instead of a scan date: the line was given to the owner on 2026-10-29, pending. Recorded in PENTEST_PLAN §1.1 by the security agent (#114).
+  test due by 2026-12-26 (CMP-099). The v1.1.1 Release says so (release-checklist §6b) instead
+  of a scan date (added by the owner, 2026-10-29: "release line added"). Recorded in PENTEST_PLAN §1.1 by the security agent (#114).
 - Mobile below 90: the owner asked "Should we do it?" (Agent 3's image-size and nav-dot fix as
   v1.1.2) and chose, verbatim, **"Yes, small fix v1.1.2 (Recommended)"**. It becomes CMP-108
   (Agent 3); CMP-102 stays `review` until mobile reaches 90+ after v1.1.2. The mobile 90+ target
