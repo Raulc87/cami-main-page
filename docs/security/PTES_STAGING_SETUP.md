@@ -53,7 +53,7 @@ environment, time and reference). Then:
 | 1 | Unpublish the production test events; check each test event's tab for any registration without the marker before deleting anything | |
 | 2 | Delete the marked registration rows and their screenshot files, on staging and on production, from the tester's list | |
 | 3 | Delete the test events and the test coupons (or their uses) | |
-| 4 | Delete the `Metrics` rows of the window's days (test counts only) | |
+| 4 | `Metrics` has one row per day with no marker for test traffic. On **staging** (test traffic only) delete the rows of the window's days. On **production** keep them: they also hold real visitors' counts, and deleting them would erase that history and could affect the threshold alerts (which read today's and yesterday's rows). Note privately that those days include the test | |
 | 5 | Restore the real `SINPE_NUMBER` and `SINPE_ACCOUNT_NAME` on staging | |
 | 6 | Restore `ALERT_TO`, `ALERT_HONEYPOT_PER_DAY`, `ALERT_THROTTLED_PER_DAY` and `MAIL_REPLY_TO` on both environments | |
 | 7 | Delete the staging triggers again, if you created them | |
