@@ -191,8 +191,8 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
 - **CMP-107:** new event tabs get a `checkResult` dropdown in warning mode (the contract's
   values; any other value still saves, with the warning) and a `needsReview` checkbox (or a
   TRUE/FALSE dropdown if the backend's writes need it); only new tabs, existing tabs unchanged;
-  columns and values unchanged (contract); the runbook says what the owner sees and how to add
-  the controls to an existing tab by hand.
+  columns and values unchanged (contract); the runbook says what the owner sees and that an
+  existing tab is formatted by hand.
   - Staging check after the merge (staging deploys on merge, ADR-009): a new test event tab shows
     the dropdown and the checkbox, and its first registration lands in row 2 (not below
     pre-filled controls); then the cleanup. Like CMP-094, it reaches production with release
@@ -225,7 +225,8 @@ Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone
 
 ## Parallel Workstreams
 ### Agent 1 — Events backend and deploys (fresh session)
-- CMP-094 and CMP-101 at the go-ahead; CMP-093 once CMP-092 is merged; CMP-096 last.
+- CMP-094 and CMP-101 at the go-ahead; CMP-093 once CMP-092 is merged; CMP-107 after CMP-094's
+  staging check; CMP-096 last.
 
 ### Agent 3 — Site performance and release (fresh session)
 - CMP-102 at the go-ahead; CMP-103 last, after CMP-102, CMP-094, CMP-101, CMP-107 and CMP-071 are
