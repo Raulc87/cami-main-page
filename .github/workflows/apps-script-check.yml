@@ -9,6 +9,7 @@ on:
       - '.github/clasp/**'
       - '.github/workflows/deploy-apps-script.yml'
       - '.github/workflows/apps-script-check.yml'
+      - '.github/workflows/deploy-site.yml'
 
 permissions:
   contents: read
@@ -30,6 +31,9 @@ jobs:
           status=0
           for f in apps-script/*.js .github/scripts/*.mjs; do
             node --check "$f" || status=1
+          done
+          for f in .github/scripts/*.sh; do
+            bash -n "$f" || status=1
           done
           exit $status
 
