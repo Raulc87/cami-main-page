@@ -94,7 +94,7 @@ export default function Hero({ r }) {
             {!heroImgError && (
               <Picture
                 src="/images/cami-hero.jpg"
-                widths={[640, 960, 1200]}
+                widths={[640, 800, 960, 1200]}
                 // The photo is covered into a 360x460 frame (320x300 on phones): the browser
                 // needs it as wide as the scaled image, not as the frame.
                 sizes="(max-width: 640px) 450px, 691px"
