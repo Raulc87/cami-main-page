@@ -6,6 +6,8 @@ The owner sends this page, unchanged, to each tester he contacts, with the plan 
 authorization form in its Appendix A). Written for CMP-095. The owner's own checklist for the
 staging side is in [`PTES_STAGING_SETUP.md`](PTES_STAGING_SETUP.md) and is not sent.
 
+A Spanish copy for local testers: [`PTES_REQUEST_PACK.es.md`](PTES_REQUEST_PACK.es.md) (the plan it points to is in English).
+
 Nothing in this page is private: no address, ID, contact or personal data. The tester receives
 those separately, after the authorization is signed (section 5).
 
@@ -117,5 +119,4 @@ name before contacting it; this list is a starting point, not a recommendation o
   tester's fee is a separate decision): community and student testers, or a volunteer, under the
   same signed form and report. Judge them on the same questions as section 7.
 
-**Cost question for the owner** (not answered here): will the project pay a tester, and up to what
-amount? The plan does not require a company; it requires a person the owner authorizes in writing.
+**Cost (owner decision, 2026-10-29, PR #99):** "Free options first": try a university program, a volunteer or community tester, or a friend who is a certified tester first; decide on paying only if none is found by mid-November. The plan does not require a company; it requires a person the owner authorizes in writing.
