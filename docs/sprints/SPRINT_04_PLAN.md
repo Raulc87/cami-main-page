@@ -72,20 +72,20 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 |---|---|---|---|---|---|
 | CMP-091 | This plan, the agent prompts, the Sprint 03 close | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (assigned session branch) | done |
 | CMP-092 | ADR-010: upload the site from GitHub to GoDaddy (protocol, credentials, approval, backup and rollback) | Coordinator | CMP-091 | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
-| CMP-093 | Site-upload workflow (ADR-010) | Agent 1 | CMP-092 | `CMP-093-site-upload-workflow` | todo |
-| CMP-094 | New event tabs get the status dropdown, the check-result colors and the needs-review highlight | Agent 1 | — | `CMP-094-event-tab-format` | todo |
-| CMP-071 | Dependency checks: `npm audit` on pull requests, Dependabot version updates, an SBOM | Agent 2 | — | `CMP-071-dependency-checks` | todo |
-| CMP-095 | PTES test preparation: the request pack for testers and the staging setup for the test | Agent 2 | — | `CMP-095-ptes-preparation` | todo |
+| CMP-093 | Site-upload workflow (ADR-010) | Agent 1 | CMP-092 | `CMP-093-site-upload-workflow` | done |
+| CMP-094 | New event tabs get the status dropdown, the check-result colors and the needs-review highlight | Agent 1 | — | `CMP-094-event-tab-format` | done |
+| CMP-071 | Dependency checks: `npm audit` on pull requests, Dependabot version updates, an SBOM | Agent 2 | — | `CMP-071-dependency-checks` | done |
+| CMP-095 | PTES test preparation: the request pack for testers and the staging setup for the test | Agent 2 | — | `CMP-095-ptes-preparation` | done |
 | CMP-100 | Contract v1.9: the payment re-check's working hours and the time triggers' failure threshold (`RETRY_CHECK_HOURS`, `TRIGGER_FAIL_ALERT_AFTER`) | Coordinator | — | coordinator branch | done |
-| CMP-101 | The payment re-check works only in working hours; the time triggers report a failure only after 10 failed runs in a row (contract v1.9) | Agent 1 | CMP-100 | `CMP-101-trigger-hours-and-failures` | todo |
-| CMP-102 | Site performance: no layout jump, the main photo first, resized modern images, browser caching, early connections, text contrast | Agent 3 | — | `CMP-102-site-performance` | todo |
-| CMP-103 | Release v1.1.1 | Agent 3 + owner | CMP-102, CMP-094, CMP-101, CMP-107, CMP-071; CMP-093 if used | `CMP-103-release-v1-1-1` | todo |
-| CMP-098 | Pre-release security agent, steps 1–3, for v1.1.1 (before the go-ahead; step 2's second review before CMP-103) | Pre-release security agent | — | `CMP-098-release-security` (docs PR, if its documents change) | todo |
+| CMP-101 | The payment re-check works only in working hours; the time triggers report a failure only after 10 failed runs in a row (contract v1.9) | Agent 1 | CMP-100 | `CMP-101-trigger-hours-and-failures` | done |
+| CMP-102 | Site performance: no layout jump, the main photo first, resized modern images, browser caching, early connections, text contrast | Agent 3 | — | `CMP-102-site-performance` | done |
+| CMP-103 | Release v1.1.1 | Agent 3 + owner | CMP-102, CMP-094, CMP-101, CMP-107, CMP-071; CMP-093 if used | `CMP-103-release-v1-1-1` | done |
+| CMP-098 | Pre-release security agent, steps 1–3, for v1.1.1 (before the go-ahead; step 2's second review before CMP-103) | Pre-release security agent | — | `CMP-098-release-security` (docs PR, if its documents change) | done |
 | CMP-104 | Pre-release security agent: passive production scan right after v1.1.1, then re-checks of any fixes | Pre-release security agent | CMP-103's live checks; the owner's signed approval for the run | — (findings to the coordinator) | dropped (owner, 2026-10-29: covered by the PTES test; Review Notes) |
-| CMP-108 | Mobile image sizes and nav dot animation (follow-up to CMP-102; release v1.1.2) | Agent 3 | CMP-103 | `CMP-108-mobile-image-sizes` | todo |
-| CMP-109 | Release v1.1.2 | Agent 3 + owner | CMP-108 | `CMP-109-release-v1-1-2` | todo |
-| CMP-107 | Event tabs: `checkResult` dropdown and `needsReview` checkbox (owner's follow-up to CMP-094) | Agent 1 | CMP-094 | `CMP-107-event-tab-dropdowns` | todo |
-| CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | todo |
+| CMP-108 | Mobile image sizes and nav dot animation (follow-up to CMP-102; release v1.1.2) | Agent 3 | CMP-103 | `CMP-108-mobile-image-sizes` | done |
+| CMP-109 | Release v1.1.2 | Agent 3 + owner | CMP-108 | `CMP-109-release-v1-1-2` | done |
+| CMP-107 | Event tabs: `checkResult` dropdown and `needsReview` checkbox (owner's follow-up to CMP-094) | Agent 1 | CMP-094 | `CMP-107-event-tab-dropdowns` | done |
+| CMP-096 | Sprint 04 verification | Agent 1 | every PR above, or the owner moving it | `CMP-096-sprint-04-verification` | done |
 
 Outside the sprint goal: CMP-065, the real-iPhone check, runs whenever an iPhone is available
 (owner, 2026-10-28: "Do it when an iPhone appears"); the HEIC decision follows it.
