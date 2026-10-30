@@ -504,6 +504,9 @@ The human reviewer is the final approver.
   [`SPRINT_04_VERIFICATION.md`](SPRINT_04_VERIFICATION.md)). Owner, verbatim: "merged 123, yes
   close sprint 04". Open follow-ups (verification §4): the daily failure email check, the first
   real rollback run, the deploy login session setting, the PTES test by 2026-12-26 (CMP-099;
-  tester search check-in 2026-11-13), the clasp audit exception expiring 2026-11-20. Sessions
-  archived at closing: Agents 1–3 and the review-only agent; the pre-release security agent stays
+  tester search check-in 2026-11-13), the clasp audit exception expiring 2026-11-20. Carried to
+  the next sprint: five open Dependabot PRs (#104 react 19, #105 react-dom 19, #106 vite 8, #107
+  plugin-react 6, all major upgrades that may need TECH_STACK/ADR changes; #109 actions), each
+  needing the review-only agent before the owner merges (pr-workflow §2). Sessions
+  archived at closing: Agents 1–3 (2026-10-29) and the review-only agent after this record merged; the pre-release security agent stays
   for its step-5 re-checks after the PTES report.
