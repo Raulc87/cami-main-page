@@ -2,8 +2,8 @@
 
 ## Metadata
 - Sprint: 04
-- Status: Active (plan approved on merge of PR #91, CMP-091; owner's go-ahead 2026-10-29, Entry
-  Gate 4)
+- Status: Closed 2026-10-29 (owner: "merged 123, yes close sprint 04"); plan approved on merge
+  of PR #91, CMP-091; owner's go-ahead 2026-10-29, Entry Gate 4
 - Start: 2026-10-29 (Thursday), the day of the go-ahead
 - End: 2026-11-05 (Thursday), one week from the go-ahead (the owner's "1 week")
 - Duration: 1 week (owner, 2026-10-28: "1 week (Recommended)"); Saturdays and Sundays excluded
@@ -497,3 +497,13 @@ The human reviewer is the final approver.
   real run green, `site-v1.1.2.zip` on the Release (v1.1.1's kept build is the way back). Live
   checks passed (301, four headers, cache headers, manifest 403, old image 404, private window,
   phone). PageSpeed on the live site: mobile 97 / 90 / 97, desktop 99: the CMP-102 target is met.
+- Sprint closed 2026-10-29, ahead of its 2026-11-05 end. Definition of Done: every selected ticket
+  `done` except CMP-104, `dropped` by the owner (covered by the PTES test); the Required
+  Deliverable shown (v1.1.1 and v1.1.2 live, PageSpeed mobile 90–97 and desktop 99, both uploaded
+  by the site-upload workflow) and its evidence approved by merging CMP-096 (#122,
+  [`SPRINT_04_VERIFICATION.md`](SPRINT_04_VERIFICATION.md)). Owner, verbatim: "merged 123, yes
+  close sprint 04". Open follow-ups (verification §4): the daily failure email check, the first
+  real rollback run, the deploy login session setting, the PTES test by 2026-12-26 (CMP-099;
+  tester search check-in 2026-11-13), the clasp audit exception expiring 2026-11-20. Sessions
+  archived at closing: Agents 1–3 and the review-only agent; the pre-release security agent stays
+  for its step-5 re-checks after the PTES report.
