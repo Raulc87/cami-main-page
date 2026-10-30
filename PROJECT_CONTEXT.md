@@ -90,9 +90,12 @@ they are not active paths.
   `SPRINT_04_VERIFICATION.md`. v1.1.1 live 2026-10-29 (desktop 99, mobile 86–89); the mobile
   target moves to v1.1.2 (CMP-108); the production scan did not run and is covered by the PTES
   test (owner, 2026-10-29; plan Review Notes)
-- Status: Active — owner's go-ahead 2026-10-29: "merged 94, go ahead with Sprint 04"
+- Status: Closed 2026-10-29 (owner: "merged 123, yes close sprint 04"); evidence in
+  [docs/sprints/SPRINT_04_VERIFICATION.md](docs/sprints/SPRINT_04_VERIFICATION.md). The next
+  sprint is planned with the owner; until then, open items are in the verification's §4
 
 ## Agent allocation
+- Sprint 04 sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
 - Implementation Agent 1: events backend and deploys — CMP-094, CMP-101, CMP-093, CMP-096
   (session launched 2026-10-29)
 - Implementation Agent 2: security — CMP-071, CMP-095 (session launched 2026-10-29)
