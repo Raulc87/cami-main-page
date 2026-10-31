@@ -39,7 +39,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Secret and dependency scanning | Pass: secret scanning on; dependency checks run on every PR (CMP-071) |
 | 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26. This sprint changes the production backend before it (CMP-114) |
 | 5. Pre-release security agent **(blocking: production change)** | Pass: its session stays open since Sprint 04 (step 5); its review of the backend changes merged in this sprint (`5d52c59` → the deploy commit) is planned before CMP-114 |
-| 5. Written approval per agent scan **(blocking: production change)** | Pending, not blocking the go-ahead: the owner decides before CMP-114, as for v1.1.1 and v1.1.2 (a signed window, or leaving it to the PTES test); CMP-114 waits for it |
+| 5. Written approval per agent scan **(blocking: production change)** | Pass: the owner decided before CMP-114, "Same as v1.1.1: tester (Recommended)" (2026-10-31; Review Notes): no agent scan, covered by the PTES test due by 2026-12-26 |
 | 6. Hosting runtime, local development, developer guide | Pass: ADR-008, ADR-009, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) |
 | 6. Test, lint and CI checks; required on `main` | Pass: `apps-script-check`, `docs-link-check`, dependency audit |
 | 6. Branching ADR and deployment runbook **(deploying sprint)** | Pass: ADR-007, ADR-009, the events-backend runbook |

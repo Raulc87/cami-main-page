@@ -130,6 +130,15 @@ each trigger's own **Failure notification settings** (Triggers → the trigger's
 "Notify me immediately" there when the email should come as soon as the run is reported as failed.
 For the production triggers the owner chose **daily** (2026-10-29): one summary a day, up to a day
 late, instead of an email about every 5 minutes once a trigger is past 10 failures in a row.
+Google sends the failure email to the **Google account that created the trigger**, not to the project
+owner or to `ALERT_TO`, and at the frequency set on that trigger. Seen on staging (CMP-113, 2026-10-31):
+a `refreshEventsCache` trigger created with "Notify me immediately" and `TRIGGER_FAIL_ALERT_AFTER` at
+1, run with a deliberately wrong `SPREADSHEET_ID`, ended **Failed**, and the email arrived in the
+creating account's inbox (sender Apps Script, a subject about the failure). The Sprint 04 staging email
+most likely never came because those triggers were deleted before Google's daily summary. So create each
+production trigger while signed in as the account whose inbox should get the failure email (check it
+under Triggers: the owner column), and delete a staging trigger only after its email has arrived.
+Owner decision (2026-10-31), asked whose inbox the production failure emails should reach (they go to the account that created the production triggers, with the "daily" setting): "Leave as is".
 
 The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
 delete it from the staging project if it is still there. The limits above are enforced from
