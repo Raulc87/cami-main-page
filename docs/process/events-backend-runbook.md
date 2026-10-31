@@ -138,6 +138,7 @@ creating account's inbox (sender Apps Script, a subject about the failure). The 
 most likely never came because those triggers were deleted before Google's daily summary. So create each
 production trigger while signed in as the account whose inbox should get the failure email (check it
 under Triggers: the owner column), and delete a staging trigger only after its email has arrived.
+Owner decision (2026-10-31), asked whose inbox the production failure emails should reach (they go to the account that created the production triggers, with the "daily" setting): "Leave as is".
 
 The `SPIKE_ENABLED` property of the CMP-024 spike is gone with the spike `register` stub (CMP-026);
 delete it from the staging project if it is still there. The limits above are enforced from
