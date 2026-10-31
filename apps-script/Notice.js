@@ -46,8 +46,9 @@ function buildRegistrationNotice_(ctx) {
   var needsEn = 'no';
   if (ctx.state.needsReview) {
     var reasons = ctx.state.reasons.map(function (i) { return NOTICE_REASONS[i]; });
-    needsEs = 'sí: ' + reasons.map(function (r) { return r[1]; }).join(', ');
-    needsEn = 'yes: ' + reasons.map(function (r) { return r[2]; }).join(', ');
+    // A flagged row whose flags match no listed reason (for example a flag added later) must not end the line empty.
+    needsEs = reasons.length ? 'sí: ' + reasons.map(function (r) { return r[1]; }).join(', ') : 'sí';
+    needsEn = reasons.length ? 'yes: ' + reasons.map(function (r) { return r[2]; }).join(', ') : 'yes';
   }
   return {
     subject: 'Nueva inscripción: ' + ctx.eventNameEs + ' / New registration: ' + ctx.eventNameEn,
