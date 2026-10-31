@@ -60,6 +60,16 @@ Staging check of 2026-10-31: [CMP-112-CMP-113-staging-check.md](evidence/sprint-
 | Where Google sends it | Pass | To the account that created the trigger, at that trigger's frequency (runbook §2.4); the Sprint 04 staging email most likely never came because those triggers were deleted before the daily summary |
 | Owner's decision for production | Recorded | Asked whose inbox production failure emails should reach: "Leave as is" (the account that created the production triggers, "daily") |
 
+### CMP-116 — Sprint 05 go-ahead records (coordinator; PR #126)
+| Check | Result | Source |
+|---|---|---|
+| The plan and `PROJECT_CONTEXT.md` record the owner's go-ahead ("merged 125, go ahead with Sprint 05"), the dates and the sessions; the notice's last line points to the event-code tab (§2c) | Pass | PR #126; the copy fix came from the review of PR #127 |
+
+### CMP-118 — Sprint 05 plan: the unplanned CMP-117 (coordinator; PR #129)
+| Check | Result | Source |
+|---|---|---|
+| The plan records CMP-117 (row, check, order before CMP-114), the owner's three answers quoted ("Yes, add it (Recommended)", "Yes, the passing retry is enough (Recommended)", "Leave as is"), and the scan decision | Pass | PR #129; plan → Selected tickets and Review Notes |
+
 ### CMP-117 — OCR failure reason in the log (unplanned, owner's OK; PR #128)
 | Check | Result | Source |
 |---|---|---|
@@ -72,7 +82,7 @@ Staging check of 2026-10-31: [CMP-112-CMP-113-staging-check.md](evidence/sprint-
 | Check | Result | Source |
 |---|---|---|
 | Cami's OK of the notice text | Pass | CMP-112 step 9 |
-| Pre-release security agent's code review of the sprint's backend changes (`5d52c59` → `31f1db3`), no open critical or high finding | Pass | Coordinator: "found nothing new" |
+| Pre-release security agent's code review of the sprint's backend changes (`5d52c59` → `31f1db3`), no open critical or high finding | Pass | The security agent's review found nothing new (report relayed by the coordinator, 2026-10-31), so no critical or high finding is open from it. A neutral statement only; details, if any, are tracked privately |
 | The owner's scan decision recorded | Pass | "Same as v1.1.1: tester (Recommended)": no agent scan; covered by the PTES test due by 2026-12-26 |
 | Production login renewed | Pass | The owner renewed the deploy login on 2026-10-31 and replaced `CLASP_CREDENTIALS` in both environments (staging deploy of PR #127 had failed on the expired token) |
 | Step 1: `NOTIFY_REGISTRATION_TO` set to Cami's address in the production script properties | Pass | Owner: "production step 1 ok" |
@@ -104,7 +114,7 @@ Production keeps its two triggers (the "daily" failure notification setting unch
 |---|---|---|
 | Cami's confirmation of the first real production notice (CMP-114 step 5) | Coordinator / Cami | The only check pending in this sprint |
 | PTES test by 2026-12-26 (CMP-099); the tester check-in on 2026-11-13 | Owner / coordinator | Also covers what an agent scan of production would have |
-| Allowlist review of the accepted deploy-tool advisory by 2026-11-20 | Owner / Agent 2 | CMP-071 |
+| Allowlist review of the accepted deploy-tool advisory by 2026-11-20 | Owner (next sprint's agent) | CMP-071 |
 | Exact subject line of Google's failure email | Owner | Optional; the sender and the arrival are recorded |
 | The cause of the two transient staging OCR failures | Owner | Unknown; if a paid check stays `pending` again, read the `ocr failed` line in Executions (runbook §2.7) |
 | The five open Dependabot PRs (#104–#107, #109), a first real `rollback` run of the site-upload workflow | Owner | Next sprint (plan → Selected tickets) |

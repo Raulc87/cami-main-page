@@ -1,4 +1,4 @@
-# CMP-112, CMP-113 and CMP-117 staging check
+# CMP-112 and CMP-113 staging check (with CMP-117's re-check)
 
 Run by the owner on 2026-10-31 on staging, after the staging deploys of PR #127 (run 25, re-run after
 the login renewal, deployed version 35) and PR #128 (run 26, version 36); both smoke requests passed.
@@ -30,8 +30,8 @@ Notes:
   the two earlier failures stays unknown (transient). The owner accepted the passing re-check in place
   of a read reason (SPRINT_05_PLAN → Review Notes).
 - The reasons line was read in a real inbox for one reason only (`mismatch`). The other reasons of §2c
-  (`event closed at submit`, `sold out at submit`, `coupon changed`, `duplicate event code`,
-  `email failed`) were not provoked on staging; they are covered by the local run of the text builder
+  (`unreadable`, `event closed at submit`, `sold out at submit`, `coupon changed`,
+  `duplicate event code`, `email failed`) were not provoked on staging; they are covered by the local run of the text builder
   and the review.
 - A validation error, a ₡0 `SOLD_OUT`, a rate limit and a honeypot hit were not run on staging for the
   notice; in the code each returns before the notice is called (reviewer, `Register.js`). An invalid
