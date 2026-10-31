@@ -221,6 +221,9 @@ The check needs `SINPE_NUMBER` and/or `SINPE_ACCOUNT_NAME` in the script propert
 `pending`. Participant emails go from `MAIL_FROM_ALIAS` (or the account itself if the alias fails)
 with reply-to `MAIL_REPLY_TO`; while testing, set `MAIL_REPLY_TO` to your own address, and use test
 registrations with your own email address, so that no real participant is written to.
+A check that stays `pending` although the receipt is readable: open the **Executions** log of the request or of
+`retryPendingChecks` and read the line `ocr failed: <error type> <HTTP status> <reason>` (for example `403 accessNotConfigured`;
+only the status and the reason code are logged, never Google's message). Status and reason are missing when Google's error carries none.
 Triggers run the saved code (Head); visitors need a **New version** (section 5).
 
 ### 2.8 Script properties page is read-only (more than 50 properties)
