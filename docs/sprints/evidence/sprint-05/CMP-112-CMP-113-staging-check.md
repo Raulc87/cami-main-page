@@ -34,6 +34,6 @@ Notes:
   `duplicate event code`, `email failed`) were not provoked on staging; they are covered by the local run of the text builder
   and the review.
 - A validation error, a ₡0 `SOLD_OUT`, a rate limit and a honeypot hit were not run on staging for the
-  notice; in the code each returns before the notice is called (reviewer, `Register.js`). An invalid
+  notice; in the code each returns before the notice is called (reviewer, [`apps-script/Register.js`](../../../../apps-script/Register.js)). An invalid
   address, a send failure and a quota below the reserve were not provoked on staging either (covered by
   the code review).
