@@ -317,8 +317,8 @@ Abuse metrics
     it is never in the repo). Empty → no notice is sent (the default on staging unless a test
     sets it); an invalid address is skipped and logged without the address. It does not fall
     back to `ALERT_TO` or `MAIL_REPLY_TO`.
-  - **Failure:** sending it never delays, fails or changes the registration, its response or
-    the participant's email; a failure is logged by error name only and does not set
+  - **Failure:** sending it never fails or changes the registration, its response or the
+    participant's email (it adds only the time of one email, measured in CMP-112); a failure is logged by error name only and does not set
     `needsReview` (the row is still in the sheet). The participant emails come first: when
     Google's remaining daily email quota is below the reserve `NOTIFY_QUOTA_RESERVE` (20,
     contract §9), the notice is skipped and
