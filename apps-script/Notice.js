@@ -37,7 +37,7 @@ function noticeRowState_(storedRow) {
   return { checkResult: checkResult, needsReview: flagged, reasons: reasonIndexes };
 }
 
-// ctx: { eventNameEs, eventNameEn, startsAtMs, name, amountDueCrc, reference, state } (state: noticeRowState_)
+// ctx: { eventCode (the event's tab, FFR-015), eventNameEs, eventNameEn, startsAtMs, name, amountDueCrc, reference, state } (state: noticeRowState_)
 function buildRegistrationNotice_(ctx) {
   var dateEs = formatEventDate_(ctx.startsAtMs, 'es').date;
   var dateEn = formatEventDate_(ctx.startsAtMs, 'en').date;
@@ -55,11 +55,11 @@ function buildRegistrationNotice_(ctx) {
     body: 'Hola Cami,\n\nNueva inscripción a ' + ctx.eventNameEs + ' (' + dateEs + '):\n\n' +
       '- Nombre: ' + ctx.name + '\n- Monto: ' + formatAmount_(ctx.amountDueCrc, 'es') + '\n' +
       '- Revisión del pago: ' + checkText[0] + '\n- Necesita revisión: ' + needsEs + '\n- Referencia: ' + ctx.reference + '\n\n' +
-      'Los demás datos (correo, WhatsApp, comprobante) están en la pestaña de ' + ctx.eventNameEs + '.\n\n' +
+      'Los demás datos (correo, WhatsApp, comprobante) están en la pestaña ' + ctx.eventCode + ' de la hoja.\n\n' +
       'Hi Cami,\n\nNew registration for ' + ctx.eventNameEn + ' (' + dateEn + '):\n\n' +
       '- Name: ' + ctx.name + '\n- Amount: ' + formatAmount_(ctx.amountDueCrc, 'en') + '\n' +
       '- Payment check: ' + checkText[1] + '\n- Needs review: ' + needsEn + '\n- Reference: ' + ctx.reference + '\n\n' +
-      'The other details (email, WhatsApp, receipt) are in the ' + ctx.eventNameEn + ' tab.\n\nLifetools'
+      'The other details (email, WhatsApp, receipt) are in the ' + ctx.eventCode + ' tab of the sheet.\n\nLifetools'
   };
 }
 
@@ -89,7 +89,7 @@ function sendRegistrationNoticeSafely_(v, found, amountDue, outcome) {
     var stored = readTable(v.eventCode).filter(function (r) { return str_(r.v.submissionId) === v.submissionId; })[0];
     if (!stored) return;
     var mail = buildRegistrationNotice_({
-      eventNameEs: found.event.name, eventNameEn: eventNameFor_(found.event, 'en'), startsAtMs: found.event.startsAtMs,
+      eventCode: v.eventCode, eventNameEs: found.event.name, eventNameEn: eventNameFor_(found.event, 'en'), startsAtMs: found.event.startsAtMs,
       name: v.participantName, amountDueCrc: amountDue, reference: outcome.reference, state: noticeRowState_(stored.v)
     });
     sendMail_(list.valid.join(','), mail.subject, mail.body);
