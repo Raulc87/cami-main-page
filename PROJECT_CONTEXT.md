@@ -37,8 +37,8 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md) (Proposed; approved on
-  merge of the CMP-111 PR, then the owner's go-ahead); Sprints 01 to 04 are closed
+- Active sprint plan: [SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md) (Active since the
+  owner's go-ahead, 2026-10-31); Sprints 01 to 04 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
   [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md),
@@ -85,21 +85,22 @@ they are not active paths.
 - Plan: [docs/sprints/SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md); agent prompts:
   [docs/sprints/SPRINT_05_AGENT_PROMPTS.md](docs/sprints/SPRINT_05_AGENT_PROMPTS.md)
 - Goal: Cami gets a short email for each new registration; the failure email seen arriving
-- Start: the day of the go-ahead; End: three working days later
+- Start: 2026-10-31; End: 2026-11-04 (three working days, a one-off exception; plan Metadata)
 - Deliverable: the notice live on the production backend (no site release); evidence in
   `SPRINT_05_VERIFICATION.md`
-- Status: Proposed (approved on merge of the CMP-111 PR; then the owner's go-ahead)
+- Status: Active — owner's go-ahead 2026-10-31: "merged 125, go ahead with Sprint 05"
 
 ## Agent allocation
-- Sprint 05 (filled in at the go-ahead): Implementation Agent 1, events backend — CMP-112..CMP-115;
-  review-only agent: a fresh Opus session launched 2026-10-31 to review the plan; the
+- Sprint 05: Implementation Agent 1, events backend — CMP-112..CMP-115 (Sonnet session
+  launched 2026-10-31 at the go-ahead); review-only agent: a fresh Opus session launched
+  2026-10-31 (it reviewed the plan); the
   pre-release security agent keeps its Sprint 04 session (review before CMP-114, step-5
   re-checks). Codex runs as the automated reviewer on every PR (ADR-006 → Kit disposition,
   kept rule Reviewers)
 - Sprint 04 sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-111
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-116
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

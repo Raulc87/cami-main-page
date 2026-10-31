@@ -148,3 +148,4 @@ it can be migrated to Linear (it has a free tier) by importing these same rows.
 | CMP-113 | Trigger failure email seen in a real inbox (staging) | — | todo | `CMP-113-failure-email-check` | 2026-10-31 | Sprint 05, Agent 1 with the owner; the Sprint 04 staging failure email did not arrive (owner, 2026-10-31). |
 | CMP-114 | Production backend deploy of the registration notice | — | todo | — | 2026-10-31 | Sprint 05, Agent 1 with the owner; after CMP-112's staging check, the security agent's review and the owner's scan decision. |
 | CMP-115 | Sprint 05 verification | — | todo | `CMP-115-sprint-05-verification` | 2026-10-31 | Sprint 05, Agent 1. |
+| CMP-116 | Sprint 05 go-ahead records: plan and PROJECT_CONTEXT Active, dates, sessions | — | done | `cmp-014-sdd-starter-kit-homologation-rqviz9` | 2026-10-31 | Coordinator; owner, 2026-10-31: "merged 125, go ahead with Sprint 05". Done on merge. |
