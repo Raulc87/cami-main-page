@@ -212,7 +212,10 @@ function handleRegister_(body) {
       console.error('events refresh after registration failed: ' + err.name);
     }
   }
-  if (!outcome.duplicateSubmission) afterStore_(v, found, amountDue, coupon, outcome);
+  if (!outcome.duplicateSubmission) {
+    afterStore_(v, found, amountDue, coupon, outcome);
+    sendRegistrationNoticeSafely_(v, found, amountDue, outcome); // last step: after the participant's email and the payment check (FFR-034)
+  }
   return ok({ reference: outcome.reference, flagged: outcome.flagged, duplicateSubmission: outcome.duplicateSubmission });
 }
 

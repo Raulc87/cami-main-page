@@ -112,6 +112,8 @@ and initial values are the contract (§9); do not rename them.
 | `MAIL_FROM_ALIAS` | `no-reply@lifetoolscr.com`; the account that owns the project must have it as a verified "Send mail as" alias in Gmail (Settings → Accounts → Send mail as), (checked in the spike, step e); if sending from it fails, the fallback is `camila@lifetoolscr.com` |
 | `MAIL_REPLY_TO` | `camila@lifetoolscr.com` |
 | `ALERT_TO` | the addresses that receive the daily alert email, separated by commas: the owner's address and `camila@lifetoolscr.com` (the owner types their own address in the script properties; it is never written in the repo). Empty: the alert goes to `MAIL_REPLY_TO`. An invalid address is skipped and logged without the address; if none is valid, it goes to `MAIL_REPLY_TO` |
+| `NOTIFY_REGISTRATION_TO` | the address that receives one short notice per newly stored registration (FFR-034): **empty on staging** (a test sets it to the owner's test inbox, then empties it), **Cami's address on production**, typed by the owner and never written in the repo. Empty: no notice. An invalid address is skipped and logged without the address; there is no fallback to `ALERT_TO` or `MAIL_REPLY_TO` |
+| `NOTIFY_QUOTA_RESERVE` | `20`: the notice is skipped, and logged by error name only, when Google's remaining daily email quota is below this, so the participants' emails keep the rest. Empty or invalid: `20` |
 | `LIMIT_REGISTER_PER_MIN` | `20` |
 | `LIMIT_COUPON_CHECKS_PER_MIN` | `30` |
 | `LIMIT_COUPON_FAILS_PER_MIN` | `10` |
