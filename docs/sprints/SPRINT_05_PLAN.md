@@ -2,9 +2,11 @@
 
 ## Metadata
 - Sprint: 05
-- Status: Proposed (approved on merge of the CMP-111 PR; the owner's go-ahead is Entry Gate 4)
-- Start: the day of the go-ahead
-- End: three working days after the go-ahead. A one-off exception to the 7-business-day cadence
+- Status: Active (plan approved on merge of PR #125, CMP-111; owner's go-ahead 2026-10-31, Entry
+  Gate 4: "merged 125, go ahead with Sprint 05")
+- Start: 2026-10-31 (Saturday), the day of the go-ahead; working days count from Monday
+  2026-11-02
+- End: 2026-11-04 (Wednesday), the third working day (Saturdays and Sundays excluded). A one-off exception to the 7-business-day cadence
   (AGENTS.md, PROJECT_SPEC §14, ADR-006), for this sprint only; the rule itself is unchanged
   (owner, 2026-10-31: "3 days, one-off exception"; Review Notes)
 - Final human reviewer: Raul Casanas
@@ -19,9 +21,9 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | # | Gate | Status |
 |---|---|---|
 | 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on this PR's head |
-| 2 | Readiness checklist has no open blocking items | Pass, except item 8 (the go-ahead), which is gate 4 |
+| 2 | Readiness checklist has no open blocking items | Pass |
 | 3 | Integration contracts locked | Pass on merge: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.10 (this PR) adds one script property; the API's requests and responses do not change |
-| 4 | Final go-ahead from the human owner | Pending |
+| 4 | Final go-ahead from the human owner | Pass: "merged 125, go ahead with Sprint 05" (owner, 2026-10-31) |
 
 ### Readiness checklist result (2026-10-31)
 | Item | Result |
@@ -46,7 +48,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 7. Workstreams assigned, ≤ 3 agents **(blocking)** | Pass: one implementation agent (Agent 1) |
 | 7. Ownership map, no dependency cycle **(blocking)** | Pass |
 | 7.1 Prompts: no merge or approve; reviewer independence; attribution **(blocking)** | Pass ([`SPRINT_05_AGENT_PROMPTS.md`](SPRINT_05_AGENT_PROMPTS.md)) |
-| 8. Go-ahead **(blocking)** | Pending (gate 4) |
+| 8. Go-ahead **(blocking)** | Pass (gate 4) |
 
 ## Sprint Goal
 Cami gets a short email each time someone registers to an event (US-026, FFR-034), and the
@@ -218,3 +220,14 @@ The human reviewer is the final approver.
   - "Our rules set every sprint at 7 business days. The plan said 3 days for this small sprint.
     Which do you prefer?" Owner: **"3 days, one-off exception"** (the other option: keep 7
     days, may end early). Recorded in Metadata; the rule is unchanged.
+- Go-ahead, 2026-10-31 (owner, verbatim): "merged 125, go ahead with Sprint 05". Sessions:
+  Implementation Agent 1 `session_01DVcaZxBZvRq8tBwr1wDFo4` (Sonnet, launched at the go-ahead);
+  review-only agent `session_01DVcaZzhjSRSDQbHi3cDcNx` (Opus, launched 2026-10-31 to review this
+  plan); the pre-release security agent keeps its Sprint 04 session
+  `session_01DVcaZw7gF9nG9af7Am5D6U`. Sprint 04 sessions archived at its closing (2026-10-29):
+  Agent 1 `session_01DVcaZvnBj2T3yLKjGx6HP6`, Agent 2 `session_01DVcaa1B5ypo6v1jPbeL1SX`, Agent 3
+  `session_01DVcaZzEni9vpxJadMkvcD9`, review-only agent `session_01DVcaZyq7AycK36TTJwaZjT`.
+- §2c copy fix (coordinator, CMP-116, found by Agent 1 on #127): the notice's last line pointed
+  to "the {event} tab", but event tabs are named by the event code (FFR-015); it now says "the
+  {code} tab of the sheet" / "la pestaña {código} de la hoja". Part of the text Cami reviews at
+  the staging check.

@@ -156,7 +156,8 @@ Sent to the address(es) in `NOTIFY_REGISTRATION_TO` (Cami's; empty → none; con
 once per newly stored registration, as the last step of the request (after the participant's
 email and, when paid, the payment check). One message in both languages. `{evento}` is the
 event's Spanish name; `{event}` its English name (`Translations` tab), or the Spanish name when
-there is none. `{fecha}`/`{date}` and `{monto}`/`{amount}` use the participant emails' formats
+there is none. `{código}`/`{code}` is the event code, which names its tab (FFR-015).
+`{fecha}`/`{date}` and `{monto}`/`{amount}` use the participant emails' formats
 (§1, Amount format).
 
 **Asunto / Subject:** Nueva inscripción: {evento} / New registration: {event}
@@ -171,7 +172,7 @@ Nueva inscripción a {evento} ({fecha}):
 - Necesita revisión: {necesita}
 - Referencia: {referencia}
 
-Los demás datos (correo, WhatsApp, comprobante) están en la pestaña de {evento}.
+Los demás datos (correo, WhatsApp, comprobante) están en la pestaña {código} de la hoja.
 
 Hi Cami,
 
@@ -183,7 +184,7 @@ New registration for {event} ({date}):
 - Needs review: {needs}
 - Reference: {reference}
 
-The other details (email, WhatsApp, receipt) are in the {event} tab.
+The other details (email, WhatsApp, receipt) are in the {code} tab of the sheet.
 
 Lifetools
 
