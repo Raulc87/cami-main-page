@@ -47,11 +47,20 @@ function outstandingAlertItems_(nowMs) {
 // script properties. An invalid address is skipped and logged without the address; with none left
 // (empty or all invalid) the alert goes to `MAIL_REPLY_TO`, so it never goes nowhere.
 function alertRecipients_() {
+  var list = parseAddressList_(getProp('ALERT_TO'));
+  if (list.skipped) console.error('ALERT_TO: ' + list.skipped + ' invalid address(es) skipped');
+  if (!list.valid.length && getProp('ALERT_TO')) console.error('ALERT_TO has no valid address: using MAIL_REPLY_TO');
+  return list.valid.length ? list.valid : [getProp('MAIL_REPLY_TO')];
+}
+
+// A comma-separated address property -> { valid: [unique addresses], skipped: count of invalid ones }.
+// Callers log the count only, never an address.
+function parseAddressList_(raw) {
   var seen = {};
   var valid = [];
   var skipped = 0;
-  str_(getProp('ALERT_TO')).split(',').forEach(function (raw) {
-    var address = raw.trim();
+  str_(raw).split(',').forEach(function (part) {
+    var address = part.trim();
     if (!address) return;
     var key = address.toLowerCase();
     if (address.length > 254 || !EMAIL_RE.test(address)) {
@@ -61,9 +70,7 @@ function alertRecipients_() {
       valid.push(address);
     }
   });
-  if (skipped) console.error('ALERT_TO: ' + skipped + ' invalid address(es) skipped');
-  if (!valid.length && getProp('ALERT_TO')) console.error('ALERT_TO has no valid address: using MAIL_REPLY_TO');
-  return valid.length ? valid : [getProp('MAIL_REPLY_TO')];
+  return { valid: valid, skipped: skipped };
 }
 
 function sendAlertEmail_(items, date) {
