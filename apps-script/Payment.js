@@ -29,12 +29,16 @@ function appendDetail_(details, extra) {
 // " 403 accessNotConfigured", so a failed check can be told apart in Executions. Never the message
 // text, which can carry file or account details. Empty when the error has neither.
 function googleErrorCode_(err) {
-  var details = (err && err.details) || {};
-  var first = details.errors && details.errors[0];
-  var parts = [details.code, first && first.reason].filter(function (part) {
-    return /^[A-Za-z0-9_.-]{1,60}$/.test(String(part == null ? '' : part));
-  });
-  return parts.length ? ' ' + parts.join(' ') : '';
+  try {
+    var details = (err && err.details) || {};
+    var first = details.errors && details.errors[0];
+    var parts = [details.code, first && first.reason].filter(function (part) {
+      return /^[A-Za-z0-9_.-]{1,60}$/.test(String(part == null ? '' : part));
+    });
+    return parts.length ? ' ' + parts.join(' ') : '';
+  } catch (ignored) {
+    return ''; // logging detail must never stop the check from returning its result
+  }
 }
 
 // OCR of one stored file: { text } or { service: true } when Google refuses for a service reason
