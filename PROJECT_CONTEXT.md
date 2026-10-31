@@ -77,22 +77,16 @@ Former spec file names (before CMP-014) are mapped in
 they are not active paths.
 
 ## Current sprint
-- Sprint: 04 — site upload from GitHub (ADR-010), dependency checks (CMP-071), event-tab
-  format, PTES test preparation. Sprint 03 closed 2026-10-28 with the events live (v1.1.0;
-  review in its plan).
-- Goal: safer, lighter releases after the go-live; the PTES test ready to hand to a tester
-  before its deadline (2026-12-26)
-- Start: 2026-10-29
-- End: 2026-11-05
-- Agent prompts: [docs/sprints/SPRINT_04_AGENT_PROMPTS.md](docs/sprints/SPRINT_04_AGENT_PROMPTS.md)
-- Deliverable: release v1.1.1 live (PageSpeed 90+), uploaded by the site-upload workflow if ready
-  or by hand; the pre-release security agent's production scan; evidence in
-  `SPRINT_04_VERIFICATION.md`. v1.1.1 live 2026-10-29 (desktop 99, mobile 86–89); the mobile
-  target moves to v1.1.2 (CMP-108); the production scan did not run and is covered by the PTES
-  test (owner, 2026-10-29; plan Review Notes)
-- Status: Closed 2026-10-29 (owner: "merged 123, yes close sprint 04"); evidence in
-  [docs/sprints/SPRINT_04_VERIFICATION.md](docs/sprints/SPRINT_04_VERIFICATION.md). The next
-  sprint is planned with the owner; until then, open items are in the verification's §4
+- Sprint: 05 — registration notice to Cami (FFR-034, US-026) and the trigger failure email
+  check. Sprint 04 closed 2026-10-29 with v1.1.1 and v1.1.2 live (review in its plan, evidence in
+  [docs/sprints/SPRINT_04_VERIFICATION.md](docs/sprints/SPRINT_04_VERIFICATION.md)).
+- Plan: [docs/sprints/SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md); agent prompts:
+  [docs/sprints/SPRINT_05_AGENT_PROMPTS.md](docs/sprints/SPRINT_05_AGENT_PROMPTS.md)
+- Goal: Cami gets a short email for each new registration; the failure email seen arriving
+- Start: the day of the go-ahead; End: three working days later
+- Deliverable: the notice live on the production backend (no site release); evidence in
+  `SPRINT_05_VERIFICATION.md`
+- Status: Proposed (approved on merge of the CMP-111 PR; then the owner's go-ahead)
 
 ## Agent allocation
 - Sprint 04 sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29

@@ -930,6 +930,48 @@ So that I know my place is reserved or what to fix
 **Jira**
 - Jira Key: TBD
 
+### US-026 — Cami is told about each new registration
+- Priority: Medium
+- Story Points: 2
+- Status: Ready (Sprint 05, CMP-112)
+- Related Spec: FEATURE_SPEC_events_registration (FFR-034); contract §9 v1.10
+- Related Requirements: FR-011
+
+**User Story**
+
+As Cami
+I want a short email each time someone registers to an event
+So that I know right away who signed up and whether their payment needs a look
+
+**Acceptance Criteria**
+
+1. Given `NOTIFY_REGISTRATION_TO` holds Cami's address
+   When a registration is stored (paid, ₡0, or flagged under FFR-024)
+   Then exactly one notice reaches that address, after the participant's email, with the event
+   and date, the participant's name, the amount, the payment check result, whether the row
+   needs review (and why, when flagged) and the reference.
+2. Given the same `submissionId` is sent again, or a request is refused (validation error,
+   duplicate email, ₡0 sold out, rate limit, honeypot)
+   When it is handled
+   Then no notice is sent.
+3. Given a notice
+   When it is read
+   Then it contains no participant email, WhatsApp number, coupon code, screenshot or link to it.
+4. Given `NOTIFY_REGISTRATION_TO` is empty or invalid, or sending fails
+   When a registration is stored
+   Then the registration, its response and the participant's email are unaffected, no address
+   is logged, and `needsReview` is not set because of the notice.
+5. Given Google's remaining daily email quota is below 20
+   When a registration is stored
+   Then the notice is skipped and logged without any address, and the registration is
+   unaffected.
+
+**Dependencies**
+- US-021, US-025.
+
+**Jira**
+- Jira Key: TBD
+
 ## Security
 
 Security acceptance criteria for the events stories, from the security baseline

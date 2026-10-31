@@ -5,7 +5,7 @@
   2026-10-26, Cami's review stands as the legal review of the privacy notice (FEATURE_SPEC
   BR-E11 and §20). The code applies these texts in CMP-059.
 - Related: [FEATURE_SPEC_events_registration.md](../specs/FEATURE_SPEC_events_registration.md)
-  (FFR-018, FFR-026), US-019, US-025.
+  (FFR-018, FFR-026, FFR-034), US-019, US-025, US-026.
 - Placeholders in `{braces}` are filled by the backend. Sender: Workspace alias if available,
   otherwise `camila@lifetoolscr.com`; reply-to always `camila@lifetoolscr.com`.
 
@@ -143,6 +143,37 @@ These need a look in the events system (above). Invalid rows of the Events and C
 ignored until fixed.
 
 Lifetools
+
+## 2c. Registration notice to Cami (internal, FFR-034)
+
+Sent to the address(es) in `NOTIFY_REGISTRATION_TO` (Cami's; empty → none; contract §9 v1.10,
+CMP-111), once per newly stored registration, after the participant's email. One message in
+both languages. Proposed text (coordinator, CMP-111; Cami sees it in the staging check and can
+ask for changes before production):
+
+**Asunto / Subject:** Nueva inscripción: {evento} / New registration: {event}
+
+Hola Cami,
+
+Nueva inscripción a **{evento}** ({fecha}):
+
+- Nombre: {nombre}
+- Monto: {monto} (o "Gratis")
+- Revisión del pago: {checkResult en palabras: pendiente, ok, no coincide, ilegible, no requerida}
+- Necesita revisión: {sí, con el motivo de FFR-024 si aplica / no}
+- Referencia: {referencia}
+
+Los demás datos (correo, WhatsApp, comprobante) están en la hoja de {evento}.
+
+Hi Cami,
+
+New registration for **{event}** ({date}), {name}: amount {amount}, payment check {checkResult},
+needs review {yes/no}, reference {reference}. The other details are in the {event} tab.
+
+Lifetools
+
+The notice never contains the participant's email, WhatsApp number, coupon code, screenshot or
+a link to it.
 
 ## Amount format
 Both languages show amounts with a comma, `₡15,000`, in the emails and on the site (Cami,

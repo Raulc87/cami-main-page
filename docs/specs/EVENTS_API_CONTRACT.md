@@ -6,7 +6,7 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.9 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.10 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
   on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
@@ -15,13 +15,14 @@ Change management: update this document first, bump the version, notify both own
   `MAIL_REPLY_TO` — CMP-070; v1.8: §8 a `coupon` check on an unpublished code, §9 the failed
   coupon check limit also applies to `register` with a coupon code — CMP-083; v1.9: §9 the time
   payment re-check's working hours and the time triggers' failure threshold, owner 2026-10-28
-  and 2026-10-29 — CMP-100)
+  and 2026-10-29 — CMP-100; v1.10: §9 `NOTIFY_REGISTRATION_TO`, the registration notice
+  to Cami, owner 2026-10-31 — CMP-111)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 on
-  merge of PR #61; v1.8 on merge of PR #77; v1.9 Approved on merge of the CMP-100 PR)
+  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 Approved on merge of the CMP-111 PR)
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
-  (FFR-001..FFR-033)
-- Related stories: US-017..US-025
+  (FFR-001..FFR-034)
+- Related stories: US-017..US-026
 - Related ADRs: ADR-008
 - Consumer (owner): frontend workstream (Sprint 02 plan)
 - Provider (owner): backend workstream (Sprint 02 plan)
@@ -229,6 +230,7 @@ shows the form for an event the last `events` response marked closed or sold out
 | `LIMIT_UPLOADS_PER_DAY` = 100 | Script property | Max stored screenshots per day (Costa Rica day, resets 00:00); over → `UPLOAD_CAP_REACHED` (₡0 registrations unaffected) |
 | `LIMIT_UPLOAD_MB_PER_DAY` = 300 | Script property | Max MB stored per day; over → `UPLOAD_CAP_REACHED` |
 | `ALERT_TO` | Script property | Comma-separated addresses that receive the daily alert email (FFR-029), for example the owner and camila@; empty → `MAIL_REPLY_TO`. Read only from script properties; an invalid address is skipped and logged without the address; if every address is invalid, the email goes to `MAIL_REPLY_TO` (v1.6; the all-invalid case v1.7) |
+| `NOTIFY_REGISTRATION_TO` | Script property | Comma-separated addresses that receive one registration notice per newly stored registration (FFR-034): Cami's address (owner, 2026-10-31: "Cami only"). Read only from script properties; empty → no notice; an invalid address is skipped and logged without the address; no fallback to `ALERT_TO` or `MAIL_REPLY_TO`. Not part of any response; the API's requests and responses do not change (v1.10) |
 | `ALERT_HONEYPOT_PER_DAY` = 10 | Script property | Alert email when the day's honeypot hits exceed it (FFR-029) |
 | `ALERT_THROTTLED_PER_DAY` = 20 | Script property | Alert email when the day's throttled requests exceed it |
 | `RETRY_CHECK_HOURS` = `06-22` | Script property | Working hours of the pending payment re-check trigger (`retryPendingChecks`) only, Costa Rica time, start hour inclusive to end hour exclusive. Outside them its run ends at once, doing nothing; it neither counts as a failure nor resets the failure count. `refreshEventsCache` runs around the clock, so the events list and its open/closed and sold-out flags stay current at night (owner, 2026-10-29). Empty or invalid → always on, logged without failing (v1.9) |
@@ -268,3 +270,8 @@ The checklist must cover:
 - `contactOptIn` (v1.5): ticked → `TRUE` in the row; unticked or missing → `FALSE`; a
   non-boolean value → `FALSE`, not refused; a registration in an event tab created before v1.5
   adds the `contactOptIn` header as the last column, and that tab's older rows stay blank.
+- Registration notice (v1.10): with `NOTIFY_REGISTRATION_TO` set, a stored paid registration and
+  a stored ₡0 registration each send exactly one notice to it, after the participant's email;
+  a retry with the same `submissionId`, a duplicate email and a validation error send none; with
+  it empty, no notice is sent; with an invalid address, the registration succeeds and the log
+  names no address; the notice carries no email, WhatsApp number, coupon code or screenshot.
