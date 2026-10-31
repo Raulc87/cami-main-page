@@ -21,11 +21,12 @@
 - Project spec: [docs/specs/PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md)
 - User stories: [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md)
 - Feature specs: [FEATURE_SPEC_events_registration.md](docs/specs/FEATURE_SPEC_events_registration.md)
-  (v1.13 — events and registration, US-017..US-025); new ones from the kit's
+  (v1.14 — events and registration, US-017..US-026); new ones from the kit's
   `FEATURE_SPEC_TEMPLATE.md` (at the kit ref above) as `docs/specs/FEATURE_SPEC_<topic>.md`
-- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.9,
+- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.10,
   locked) — site ↔ events backend
-- Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058):
+- Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058; §2c, the registration
+  notice, gets her OK in CMP-112):
   [EVENTS_EMAILS_AND_PRIVACY.md](docs/ux/EVENTS_EMAILS_AND_PRIVACY.md)
 - Architecture spec: [docs/specs/ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC.md)
   (includes the content model, §9)
@@ -36,11 +37,12 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_04_PLAN.md](docs/sprints/SPRINT_04_PLAN.md) (Active since the
-  owner's go-ahead, 2026-10-29); Sprints 01 to 03 are closed
+- Active sprint plan: [SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md) (Proposed; approved on
+  merge of the CMP-111 PR, then the owner's go-ahead); Sprints 01 to 04 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
-  [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md), kept for their reviews)
+  [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md),
+  [SPRINT_04_PLAN.md](docs/sprints/SPRINT_04_PLAN.md), kept for their reviews)
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
   ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
@@ -77,38 +79,27 @@ Former spec file names (before CMP-014) are mapped in
 they are not active paths.
 
 ## Current sprint
-- Sprint: 04 — site upload from GitHub (ADR-010), dependency checks (CMP-071), event-tab
-  format, PTES test preparation. Sprint 03 closed 2026-10-28 with the events live (v1.1.0;
-  review in its plan).
-- Goal: safer, lighter releases after the go-live; the PTES test ready to hand to a tester
-  before its deadline (2026-12-26)
-- Start: 2026-10-29
-- End: 2026-11-05
-- Agent prompts: [docs/sprints/SPRINT_04_AGENT_PROMPTS.md](docs/sprints/SPRINT_04_AGENT_PROMPTS.md)
-- Deliverable: release v1.1.1 live (PageSpeed 90+), uploaded by the site-upload workflow if ready
-  or by hand; the pre-release security agent's production scan; evidence in
-  `SPRINT_04_VERIFICATION.md`. v1.1.1 live 2026-10-29 (desktop 99, mobile 86–89); the mobile
-  target moves to v1.1.2 (CMP-108); the production scan did not run and is covered by the PTES
-  test (owner, 2026-10-29; plan Review Notes)
-- Status: Closed 2026-10-29 (owner: "merged 123, yes close sprint 04"); evidence in
-  [docs/sprints/SPRINT_04_VERIFICATION.md](docs/sprints/SPRINT_04_VERIFICATION.md). The next
-  sprint is planned with the owner; until then, open items are in the verification's §4
+- Sprint: 05 — registration notice to Cami (FFR-034, US-026) and the trigger failure email
+  check. Sprint 04 closed 2026-10-29 with v1.1.1 and v1.1.2 live (review in its plan, evidence in
+  [docs/sprints/SPRINT_04_VERIFICATION.md](docs/sprints/SPRINT_04_VERIFICATION.md)).
+- Plan: [docs/sprints/SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md); agent prompts:
+  [docs/sprints/SPRINT_05_AGENT_PROMPTS.md](docs/sprints/SPRINT_05_AGENT_PROMPTS.md)
+- Goal: Cami gets a short email for each new registration; the failure email seen arriving
+- Start: the day of the go-ahead; End: three working days later
+- Deliverable: the notice live on the production backend (no site release); evidence in
+  `SPRINT_05_VERIFICATION.md`
+- Status: Proposed (approved on merge of the CMP-111 PR; then the owner's go-ahead)
 
 ## Agent allocation
+- Sprint 05 (filled in at the go-ahead): Implementation Agent 1, events backend — CMP-112..CMP-115;
+  review-only agent: a fresh Opus session launched 2026-10-31 to review the plan; the
+  pre-release security agent keeps its Sprint 04 session (review before CMP-114, step-5
+  re-checks). Codex runs as the automated reviewer on every PR (ADR-006 → Kit disposition,
+  kept rule Reviewers)
 - Sprint 04 sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
-- Implementation Agent 1: events backend and deploys — CMP-094, CMP-101, CMP-093, CMP-096
-  (session launched 2026-10-29)
-- Implementation Agent 2: security — CMP-071, CMP-095 (session launched 2026-10-29)
-- Implementation Agent 3: site performance and release — CMP-102, CMP-103 (session launched
-  2026-10-29)
-- Pre-release security agent: CMP-098, CMP-104, own session (launched 2026-10-29, before the
-  go-ahead)
-- Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 04, launched
-  2026-10-29; Codex runs as
-  the automated reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-092, CMP-105
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-111
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
