@@ -25,6 +25,22 @@ function appendDetail_(details, extra) {
   return current ? current + '; ' + extra : extra;
 }
 
+// What the log may say about a Google API error: its HTTP status and reason code, for example
+// " 403 accessNotConfigured", so a failed check can be told apart in Executions. Never the message
+// text, which can carry file or account details. Empty when the error has neither.
+function googleErrorCode_(err) {
+  try {
+    var details = (err && err.details) || {};
+    var first = details.errors && details.errors[0];
+    var parts = [details.code, first && first.reason].filter(function (part) {
+      return /^[A-Za-z0-9_.-]{1,60}$/.test(String(part == null ? '' : part));
+    });
+    return parts.length ? ' ' + parts.join(' ') : '';
+  } catch (ignored) {
+    return ''; // logging detail must never stop the check from returning its result
+  }
+}
+
 // OCR of one stored file: { text } or { service: true } when Google refuses for a service reason
 // (per-user OCR rate limit, quota, backend trouble), { failed: true } when the file cannot be
 // imported, or { unknown: true } for any other error. The temporary Doc is always trashed.
@@ -36,8 +52,8 @@ function ocrFileText_(fileId, waits) {
     return { text: DocumentApp.openById(doc.id).getBody().getText() };
   } catch (err) {
     var message = String(err && err.message);
-    console.error('ocr failed: ' + (err && err.name));
-    if (/rate limit|quota|too many|backend|timed? ?out|try again|internal error|unavailable|service error|unexpected error/i.test(message)) return { service: true };
+    console.error('ocr failed: ' + (err && err.name) + googleErrorCode_(err));
+    if (/rate limit|daily limit|quota|too many|backend|timed? ?out|try again|internal error|unavailable|service error|unexpected error/i.test(message)) return { service: true };
     if (/invalid|unsupported|not supported|corrupt|cannot be (read|processed|converted)|could not be (read|processed|converted)|media|mime/i.test(message)) return { failed: true };
     return { unknown: true }; // not a known import problem: treated as a service problem, except for an original-format file
   } finally {

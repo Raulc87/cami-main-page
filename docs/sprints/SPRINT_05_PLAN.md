@@ -68,7 +68,7 @@ No site release: the website does not change.
 | CMP-111 | This plan, the agent prompts, FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, the notice text | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
 | CMP-112 | Registration notice to Cami (FFR-034, US-026) | Agent 1 | CMP-111 | `CMP-112-registration-notice` | todo |
 | CMP-113 | Trigger failure email seen in a real inbox (staging) | Agent 1 + owner | — | `CMP-113-failure-email-check` (docs only, if the runbook changes) | todo |
-| CMP-114 | Production backend deploy of CMP-112 and CMP-117 | Agent 1 + owner | CMP-112's staging check and Cami's OK of the notice text; CMP-117 and the OCR reason read on staging; the security agent's review; the owner's scan decision | — (no code; evidence in CMP-115) | todo |
+| CMP-114 | Production backend deploy of CMP-112 and CMP-117 | Agent 1 + owner | CMP-112's staging check and Cami's OK of the notice text; CMP-117 merged and a paid staging check passing after it (the owner accepted a passing re-check in place of a read OCR reason, 2026-10-31; Review Notes); the security agent's review; the owner's scan decision | — (no code; evidence in CMP-115) | todo |
 | CMP-117 | OCR failure reason in the log (Google's HTTP status and reason code, never the message); "daily limit" counted as a service problem (FFR-032) | Agent 1 | — | `CMP-117-ocr-failure-reason` | todo |
 | CMP-115 | Sprint 05 verification | Agent 1 | every ticket above | `CMP-115-sprint-05-verification` | todo |
 
@@ -122,8 +122,9 @@ Outside this sprint (next sprint, with the owner): the five open Dependabot PRs 
   adds Google's HTTP status and reason code (for example `403 accessNotConfigured`), never
   Google's message or any data; a "daily limit" error counts as a service problem (row stays
   `pending`, FFR-032); runbook §2.7 says how to read the line. After its staging deploy, the
-  owner retries a paid registration with a text screenshot and reads the logged reason before
-  CMP-114; the cause and what was done about it are recorded in CMP-115.
+  owner retries a paid registration with a text screenshot before CMP-114: a logged reason, or a
+  check that reads the image (the owner accepted the latter in place of a reason, 2026-10-31);
+  CMP-115 records the outcome.
 - **CMP-115:** `docs/sprints/SPRINT_05_VERIFICATION.md` with the evidence of every ticket and
   the staging cleanup list.
 
@@ -163,8 +164,8 @@ Each line names what the PR waits for.
 2. CMP-112 (registration notice) — CMP-111. CMP-113 (failure email check) — nothing; its docs
    PR, if any, after CMP-112's merge to keep the runbook edits in order. CMP-117 (OCR failure
    reason) — nothing (its runbook note sits in §2.7, apart from CMP-113's).
-3. CMP-114 (production deploy) — CMP-112's staging check; CMP-117 merged and the OCR reason read
-   on staging; the security agent's review (now reaching CMP-117 too); the owner's scan decision.
+3. CMP-114 (production deploy) — CMP-112's staging check; CMP-117 merged and a passing paid
+   staging check after it (owner, 2026-10-31); the security agent's review (now reaching CMP-117 too); the owner's scan decision.
 4. CMP-115 (verification) — every PR above.
 
 Cycle check: every arrow points to a PR earlier in this list.
@@ -249,3 +250,12 @@ The human reviewer is the final approver.
   Google's actual reason when the payment check fails, and treats Google's 'daily limit' as a
   temporary problem (the row stays pending). It would go to production together with Cami's
   notice. Do you approve adding it to Sprint 05?": **"Yes, add it (Recommended)"**.
+- CMP-117's staging retry (2026-10-31): the paid check read the image (`mismatch`, needs review),
+  with no `ocr failed` line, so the earlier failures' cause stays unknown (transient). Owner asked
+  "The plan said we'd read Google's reason for the two earlier payment-check failures before
+  production. But the retry simply worked, so there was no reason to read: the cause was
+  temporary and stays unknown. If it happens again, the new log line will show why. Is a passing
+  retry good enough to go to production?": **"Yes, the passing retry is enough (Recommended)"**.
+  Also asked "Production failure emails go to the Google account that created the production
+  triggers. Whose inbox should they reach?": **"Leave as is"**; and for CMP-114's scan, "… How
+  should we handle it?": **"Same as v1.1.1: tester (Recommended)"**.
