@@ -85,7 +85,8 @@ they are not active paths.
 - Plan: [docs/sprints/SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md); agent prompts:
   [docs/sprints/SPRINT_05_AGENT_PROMPTS.md](docs/sprints/SPRINT_05_AGENT_PROMPTS.md)
 - Goal: Cami gets a short email for each new registration; the failure email seen arriving
-- Start: 2026-10-31; End: 2026-11-04 (three working days, a one-off exception; plan Metadata)
+- Start: 2026-10-31 (Saturday); End: 2026-11-04 (Wednesday): three working days, a one-off
+  exception (plan Metadata)
 - Deliverable: the notice live on the production backend (no site release); evidence in
   `SPRINT_05_VERIFICATION.md`
 - Status: Active — owner's go-ahead 2026-10-31: "merged 125, go ahead with Sprint 05"

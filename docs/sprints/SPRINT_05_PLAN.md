@@ -4,9 +4,9 @@
 - Sprint: 05
 - Status: Active (plan approved on merge of PR #125, CMP-111; owner's go-ahead 2026-10-31, Entry
   Gate 4: "merged 125, go ahead with Sprint 05")
-- Start: 2026-10-31 (Friday), the day of the go-ahead
-- End: 2026-11-04 (Tuesday), three working days after the go-ahead (Saturdays and Sundays
-  excluded). A one-off exception to the 7-business-day cadence
+- Start: 2026-10-31 (Saturday), the day of the go-ahead; working days count from Monday
+  2026-11-02
+- End: 2026-11-04 (Wednesday), the third working day (Saturdays and Sundays excluded). A one-off exception to the 7-business-day cadence
   (AGENTS.md, PROJECT_SPEC §14, ADR-006), for this sprint only; the rule itself is unchanged
   (owner, 2026-10-31: "3 days, one-off exception"; Review Notes)
 - Final human reviewer: Raul Casanas
@@ -220,3 +220,14 @@ The human reviewer is the final approver.
   - "Our rules set every sprint at 7 business days. The plan said 3 days for this small sprint.
     Which do you prefer?" Owner: **"3 days, one-off exception"** (the other option: keep 7
     days, may end early). Recorded in Metadata; the rule is unchanged.
+- Go-ahead, 2026-10-31 (owner, verbatim): "merged 125, go ahead with Sprint 05". Sessions:
+  Implementation Agent 1 `session_01DVcaZxBZvRq8tBwr1wDFo4` (Sonnet, launched at the go-ahead);
+  review-only agent `session_01DVcaZzhjSRSDQbHi3cDcNx` (Opus, launched 2026-10-31 to review this
+  plan); the pre-release security agent keeps its Sprint 04 session
+  `session_01DVcaZw7gF9nG9af7Am5D6U`. Sprint 04 sessions archived at its closing (2026-10-29):
+  Agent 1 `session_01DVcaZvnBj2T3yLKjGx6HP6`, Agent 2 `session_01DVcaa1B5ypo6v1jPbeL1SX`, Agent 3
+  `session_01DVcaZzEni9vpxJadMkvcD9`, review-only agent `session_01DVcaZyq7AycK36TTJwaZjT`.
+- §2c copy fix (coordinator, CMP-116, found by Agent 1 on #127): the notice's last line pointed
+  to "the {event} tab", but event tabs are named by the event code (FFR-015); it now says "the
+  {code} tab of the sheet" / "la pestaña {código} de la hoja". Part of the text Cami reviews at
+  the staging check.
