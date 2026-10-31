@@ -4,7 +4,9 @@
 - Sprint: 05
 - Status: Proposed (approved on merge of the CMP-111 PR; the owner's go-ahead is Entry Gate 4)
 - Start: the day of the go-ahead
-- End: three working days after the go-ahead (a small backend sprint)
+- End: three working days after the go-ahead. A one-off exception to the 7-business-day cadence
+  (AGENTS.md, PROJECT_SPEC §14, ADR-006), for this sprint only; the rule itself is unchanged
+  (owner, 2026-10-31: "3 days, one-off exception"; Review Notes)
 - Final human reviewer: Raul Casanas
 - Plan from the kit's `SPRINT_PLAN_TEMPLATE.md` at the kit ref in
   [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md); agent prompts in
@@ -25,7 +27,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | Item | Result |
 |---|---|
 | 1. Paths, `AGENTS.md`/`CLAUDE.md`, project key, branch names **(blocking)** | Pass (unchanged since Sprint 04; branches in Selected tickets) |
-| 2. Docs agree on scope, names, behavior **(blocking)** | Pass: FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, EVENTS_EMAILS_AND_PRIVACY §2c, all in this PR |
+| 2. Docs agree on scope, names, behavior **(blocking)** | Pass: FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, EVENTS_EMAILS_AND_PRIVACY §2c, all in this PR; the sprint length is the owner's one-off exception (Metadata) |
 | 3. Testable acceptance criteria **(blocking)** | Pass: US-026 AC1–AC5 and the ticket checks below |
 | 4. Locked contracts for shared interfaces **(blocking)** | Pass (gate 3) |
 | 4. Credentials rule | Pass: TECH_STACK §11, ADR-009; the new property holds an address, not a credential, typed by the owner |
@@ -34,8 +36,8 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Stories touching an OWASP risk have verifying ACs **(blocking)** | Pass: US-026 AC3 (no sensitive data in the email), AC4 (no address in logs, the registration unaffected) |
 | 5. Secret and dependency scanning | Pass: secret scanning on; dependency checks run on every PR (CMP-071) |
 | 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26. This sprint changes the production backend before it (CMP-114) |
-| 5. Pre-release security agent **(blocking: production change)** | Its session stays open since Sprint 04 (step 5). Before CMP-114, it reviews the backend changes merged in this sprint (code at `5d52c59` → the deploy commit) |
-| 5. Written approval per agent scan **(blocking: production change)** | The owner decides before CMP-114, as for v1.1.1 and v1.1.2: a signed window, or leaving it to the PTES test |
+| 5. Pre-release security agent **(blocking: production change)** | Pass: its session stays open since Sprint 04 (step 5); its review of the backend changes merged in this sprint (`5d52c59` → the deploy commit) is planned before CMP-114 |
+| 5. Written approval per agent scan **(blocking: production change)** | Pending, not blocking the go-ahead: the owner decides before CMP-114, as for v1.1.1 and v1.1.2 (a signed window, or leaving it to the PTES test); CMP-114 waits for it |
 | 6. Hosting runtime, local development, developer guide | Pass: ADR-008, ADR-009, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) |
 | 6. Test, lint and CI checks; required on `main` | Pass: `apps-script-check`, `docs-link-check`, dependency audit |
 | 6. Branching ADR and deployment runbook **(deploying sprint)** | Pass: ADR-007, ADR-009, the events-backend runbook |
@@ -61,10 +63,10 @@ No site release: the website does not change.
 ## Selected tickets
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
-| CMP-111 | This plan, the agent prompts, FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, the notice text | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | todo |
+| CMP-111 | This plan, the agent prompts, FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, the notice text | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
 | CMP-112 | Registration notice to Cami (FFR-034, US-026) | Agent 1 | CMP-111 | `CMP-112-registration-notice` | todo |
 | CMP-113 | Trigger failure email seen in a real inbox (staging) | Agent 1 + owner | — | `CMP-113-failure-email-check` (docs only, if the runbook changes) | todo |
-| CMP-114 | Production backend deploy of CMP-112 | Agent 1 + owner | CMP-112's staging check; the security agent's review; the owner's scan decision | — (no code; evidence in CMP-115) | todo |
+| CMP-114 | Production backend deploy of CMP-112 | Agent 1 + owner | CMP-112's staging check and Cami's OK of the notice text; the security agent's review; the owner's scan decision | — (no code; evidence in CMP-115) | todo |
 | CMP-115 | Sprint 05 verification | Agent 1 | every ticket above | `CMP-115-sprint-05-verification` | todo |
 
 Outside this sprint (next sprint, with the owner): the five open Dependabot PRs (#104–#107,
@@ -75,23 +77,30 @@ Outside this sprint (next sprint, with the owner): the five open Dependabot PRs 
 - **CMP-111:** FFR-034, contract §9/§10 v1.10, US-026 and EVENTS_EMAILS_AND_PRIVACY §2c agree;
   the owner's three answers quoted (Review Notes).
 - **CMP-112:** US-026 AC1–AC5 and contract §10 (v1.10):
-  - one notice per newly stored registration (paid, ₡0, flagged under FFR-024), sent after the
-    participant's email, to `NOTIFY_REGISTRATION_TO` only; the text of §2c, both languages;
+  - one notice per newly stored registration (paid, ₡0, flagged under FFR-024), sent as the
+    request's last step (after the participant's email and, when paid, the in-request payment
+    check and its "not validated" email), to `NOTIFY_REGISTRATION_TO` only; the exact text and
+    values of §2c, both languages; `pending` only when the check was deferred, and no second
+    notice when the retry trigger finishes it;
   - none on a retry with the same `submissionId`, a duplicate email, a validation error, ₡0 sold
     out, a rate limit or a honeypot hit;
   - never the participant's email, WhatsApp number, coupon code, screenshot or a link to it;
   - empty property → no notice; invalid address → skipped, logged without the address; a send
-    failure or a quota below 20 → logged by error name only; the registration, its response,
-    the participant's email and `needsReview` are never affected; the request still answers
-    within the contract's time limit (the notice does not delay the response beyond what the
-    participant email already does);
+    failure or a quota below `NOTIFY_QUOTA_RESERVE` → logged by error name only; the
+    registration, its response, the participant's email and `needsReview` are never affected;
+  - time: on staging, the `register` response time of a ₡0 registration measured three times
+    with `NOTIFY_REGISTRATION_TO` set and three times with it empty; the PR reports both
+    medians. If the notice adds more than 2 seconds, Agent 1 reports it to the coordinator,
+    who changes the spec first (Change management); the agent does not move the notice on its
+    own;
   - runbook §2.4 lists `NOTIFY_REGISTRATION_TO` (empty on staging, Cami's address on
     production, typed by the owner);
   - staging check after the merge (staging deploys on merge, ADR-009), with
     `NOTIFY_REGISTRATION_TO` set to the owner's test inbox: a ₡0 registration and a paid one
     (each one notice, readable, no personal data beyond the name), a retry (no notice), a
-    duplicate email (no notice), the property emptied (no notice); then the cleanup. The row
-    stays `review` until then.
+    duplicate email (no notice), the property emptied (no notice); Cami reads one notice and
+    gives her OK of the text (or asks for changes: a coordinator docs PR, then a code PR,
+    before CMP-114); then the cleanup. The row stays `review` until then.
 - **CMP-113:** on staging, one time trigger with its "Failure notification settings" set to
   "Notify me immediately", `TRIGGER_FAIL_ALERT_AFTER` at 1, a deliberate failure (wrong
   `SPREADSHEET_ID`), and Google's failure email seen in the owner's inbox (sender and subject
@@ -99,7 +108,8 @@ Outside this sprint (next sprint, with the owner): the five open Dependabot PRs 
   owner may combine it with CMP-112's staging check. If the email does not arrive, the runbook
   says where Google sends it (the account that created the trigger) and the owner decides what
   to change in production.
-- **CMP-114:** the pre-release security agent's code review of the sprint's backend changes
+- **CMP-114:** Cami's OK of the notice text (CMP-112's staging check); the pre-release security
+  agent's code review of the sprint's backend changes
   (`5d52c59` → the deploy commit) with no open critical or high finding; the owner's scan
   decision recorded; the owner adds `NOTIFY_REGISTRATION_TO` (Cami's address) in the production
   script properties, then runs the approved production deploy (runbook §5.1); smoke request
@@ -172,9 +182,9 @@ The human reviewer is the final approver.
 ## Risks
 - Gmail's daily sending quota: each registration now sends two emails. At today's volumes this
   is far below the Workspace quota; FFR-034 skips the notice first when the quota runs low.
-- The notice adds a little time to `register`: it is sent after the participant's email, which
-  already runs before the response; if it adds noticeably, Agent 1 sends it after the response
-  (for example from the next trigger run) and says so in the PR.
+- The notice adds a little time to `register` (one more email after the payment check). CMP-112
+  measures it; more than 2 seconds goes back to the coordinator for a spec change, not an
+  agent's choice.
 - The failure email may go to the Google account that created the trigger, not the owner's
   usual inbox (CMP-113 finds out).
 - Production gets a backend change before the PTES test (due 2026-12-26): reviewed by the
@@ -200,3 +210,11 @@ The human reviewer is the final approver.
   2026-10-31: "the failure email did not arrived"); likely because the staging triggers were
   deleted in the cleanup before Google's daily summary. CMP-113 checks it with immediate
   notification.
+- Review of this plan (PR #125), owner's answers 2026-10-31, as asked:
+  - "When a paid registration arrives, the backend first saves it, emails the participant, then
+    checks the payment screenshot. When should Cami's notice go out?" Owner: **"After the
+    payment check (Recommended)"** (the other option: right after saving, always `pending` for
+    paid rows). FFR-034 → When.
+  - "Our rules set every sprint at 7 business days. The plan said 3 days for this small sprint.
+    Which do you prefer?" Owner: **"3 days, one-off exception"** (the other option: keep 7
+    days, may end early). Recorded in Metadata; the rule is unchanged.

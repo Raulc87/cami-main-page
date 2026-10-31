@@ -298,16 +298,21 @@ Abuse metrics
   (Recommended)", "Cami only"). For every newly stored registration, counting or flagged under
   FFR-024, the backend sends one short email to the address in the `NOTIFY_REGISTRATION_TO`
   script property (contract §9 v1.10):
-  - **When:** after the row is saved and after the participant's email (FFR-026), once per
-    stored row: a retry with the same submission ID (FFR-022) sends nothing; a refused request
-    (validation, duplicate email, `SOLD_OUT` for ₡0, rate limits, honeypot) sends nothing.
-  - **Content** (one message in Spanish and English, like the alert email, FFR-029; text in
-    [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §2c): the event name
+  - **When:** within the `register` request, as its last step: after the row is saved, after
+    the participant's email (FFR-026) and, for a paid registration, after the in-request payment
+    check (FFR-017) and its "payment not validated" email when there is one (owner, 2026-10-31,
+    asked when the notice should go: "After the payment check (Recommended)"). When the check is
+    deferred (FFR-032) the notice says `pending` and is not sent again when the retry trigger
+    later finishes the check. Once per stored row: a retry with the same submission ID
+    (FFR-022) sends nothing; a refused request (validation, duplicate email, `SOLD_OUT` for ₡0,
+    rate limits, honeypot) sends nothing.
+  - **Content** (one message in Spanish and English, like the alert email, FFR-029; exact text
+    in [EVENTS_EMAILS_AND_PRIVACY.md](../ux/EVENTS_EMAILS_AND_PRIVACY.md) §2c): the event name
     and date, the participant's name, the amount (₡0 shown as free), the payment check result
-    at the time of saving (`checkResult`), whether the row needs review (`needsReview`, with the
-    FFR-024 reason when flagged), and the registration reference. **Never** the participant's
-    email, WhatsApp number, coupon code, screenshot or a link to it: Cami reads those in the
-    spreadsheet.
+    when the notice is sent (`checkResult`), whether the row needs review (`needsReview`) and,
+    when it does, every reason FFR-030 gives for it, and the registration reference. **Never**
+    the participant's email, WhatsApp number, coupon code, screenshot or a link to it: Cami
+    reads those in the spreadsheet.
   - **Recipient:** only the addresses in `NOTIFY_REGISTRATION_TO` (Cami's; the owner types it,
     it is never in the repo). Empty → no notice is sent (the default on staging unless a test
     sets it); an invalid address is skipped and logged without the address. It does not fall
@@ -315,7 +320,8 @@ Abuse metrics
   - **Failure:** sending it never delays, fails or changes the registration, its response or
     the participant's email; a failure is logged by error name only and does not set
     `needsReview` (the row is still in the sheet). The participant emails come first: when
-    Google's remaining daily email quota is below a reserve of 20, the notice is skipped and
+    Google's remaining daily email quota is below the reserve `NOTIFY_QUOTA_RESERVE` (20,
+    contract §9), the notice is skipped and
     logged (error name only), and the registration is unaffected.
 
 ## 6. Business Rules

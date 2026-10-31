@@ -143,8 +143,12 @@ approval click.
 
 Order of work (checks in SPRINT_05_PLAN → Ticket checks):
 1. CMP-112-registration-notice — FFR-034, US-026, contract §9/§10 v1.10, text in
-   docs/ux/EVENTS_EMAILS_AND_PRIVACY.md §2c (both languages, as written). One notice per newly
-   stored registration to NOTIFY_REGISTRATION_TO only, after the participant's email; never the
+   docs/ux/EVENTS_EMAILS_AND_PRIVACY.md §2c (both languages, every value as in its tables; §2c
+   is approved by the owner on merge and gets Cami's OK at the staging check; if she asks for
+   changes, wait for the coordinator's docs PR before changing the text). One notice per newly
+   stored registration to NOTIFY_REGISTRATION_TO only, as the request's last step (after the
+   participant's email and, when paid, the in-request payment check); NOTIFY_QUOTA_RESERVE;
+   measure the response time as the plan says; never the
    participant's email, WhatsApp number, coupon code or screenshot; never affects the
    registration, its response, the participant's email or needsReview; logs name no address.
    Runbook §2.4 lists the property. After the merge, send the owner (through the coordinator)

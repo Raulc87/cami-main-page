@@ -21,11 +21,12 @@
 - Project spec: [docs/specs/PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md)
 - User stories: [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md)
 - Feature specs: [FEATURE_SPEC_events_registration.md](docs/specs/FEATURE_SPEC_events_registration.md)
-  (v1.13 — events and registration, US-017..US-025); new ones from the kit's
+  (v1.14 — events and registration, US-017..US-026); new ones from the kit's
   `FEATURE_SPEC_TEMPLATE.md` (at the kit ref above) as `docs/specs/FEATURE_SPEC_<topic>.md`
-- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.9,
+- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.10,
   locked) — site ↔ events backend
-- Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058):
+- Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058; §2c, the registration
+  notice, gets her OK in CMP-112):
   [EVENTS_EMAILS_AND_PRIVACY.md](docs/ux/EVENTS_EMAILS_AND_PRIVACY.md)
 - Architecture spec: [docs/specs/ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC.md)
   (includes the content model, §9)
@@ -36,11 +37,12 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_04_PLAN.md](docs/sprints/SPRINT_04_PLAN.md) (Active since the
-  owner's go-ahead, 2026-10-29); Sprints 01 to 03 are closed
+- Active sprint plan: [SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md) (Proposed; approved on
+  merge of the CMP-111 PR, then the owner's go-ahead); Sprints 01 to 04 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
-  [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md), kept for their reviews)
+  [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md),
+  [SPRINT_04_PLAN.md](docs/sprints/SPRINT_04_PLAN.md), kept for their reviews)
 - Work log and backlog source: [TICKETS.md](TICKETS.md) (tickets) +
   [USER_STORIES.md](docs/specs/USER_STORIES.md) (stories); no external tracker
   ([ADR-005](docs/decisions/ADR-005-in-repo-tracking.md))
@@ -89,20 +91,15 @@ they are not active paths.
 - Status: Proposed (approved on merge of the CMP-111 PR; then the owner's go-ahead)
 
 ## Agent allocation
+- Sprint 05 (filled in at the go-ahead): Implementation Agent 1, events backend — CMP-112..CMP-115;
+  review-only agent: a fresh Opus session launched 2026-10-31 to review the plan; the
+  pre-release security agent keeps its Sprint 04 session (review before CMP-114, step-5
+  re-checks). Codex runs as the automated reviewer on every PR (ADR-006 → Kit disposition,
+  kept rule Reviewers)
 - Sprint 04 sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
-- Implementation Agent 1: events backend and deploys — CMP-094, CMP-101, CMP-093, CMP-096
-  (session launched 2026-10-29)
-- Implementation Agent 2: security — CMP-071, CMP-095 (session launched 2026-10-29)
-- Implementation Agent 3: site performance and release — CMP-102, CMP-103 (session launched
-  2026-10-29)
-- Pre-release security agent: CMP-098, CMP-104, own session (launched 2026-10-29, before the
-  go-ahead)
-- Review-only Agent: a fresh Claude Code reviewer session (Opus) for Sprint 04, launched
-  2026-10-29; Codex runs as
-  the automated reviewer on every PR (ADR-006 → Kit disposition, kept rule Reviewers)
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-092, CMP-105
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-111
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

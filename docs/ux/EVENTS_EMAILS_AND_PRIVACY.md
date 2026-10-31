@@ -146,31 +146,71 @@ Lifetools
 
 ## 2c. Registration notice to Cami (internal, FFR-034)
 
-Sent to the address(es) in `NOTIFY_REGISTRATION_TO` (Cami's; empty → none; contract §9 v1.10,
-CMP-111), once per newly stored registration, after the participant's email. One message in
-both languages. Proposed text (coordinator, CMP-111; Cami sees it in the staging check and can
-ask for changes before production):
+Status: **proposed by the coordinator (CMP-111); approved by the owner on merge of the CMP-111
+PR; Cami reads it in the CMP-112 staging check and gives her OK before production (CMP-114).**
+If she asks for changes, the coordinator changes this section in a docs PR and Agent 1 applies
+it in a code PR, both before CMP-114. The rest of this document stays as Cami approved it on
+2026-10-26.
+
+Sent to the address(es) in `NOTIFY_REGISTRATION_TO` (Cami's; empty → none; contract §9 v1.10),
+once per newly stored registration, as the last step of the request (after the participant's
+email and, when paid, the payment check). One message in both languages. `{evento}` is the
+event's Spanish name; `{event}` its English name (`Translations` tab), or the Spanish name when
+there is none. `{fecha}`/`{date}` and `{monto}`/`{amount}` use the participant emails' formats
+(§1, Amount format).
 
 **Asunto / Subject:** Nueva inscripción: {evento} / New registration: {event}
 
 Hola Cami,
 
-Nueva inscripción a **{evento}** ({fecha}):
+Nueva inscripción a {evento} ({fecha}):
 
 - Nombre: {nombre}
-- Monto: {monto} (o "Gratis")
-- Revisión del pago: {checkResult en palabras: pendiente, ok, no coincide, ilegible, no requerida}
-- Necesita revisión: {sí, con el motivo de FFR-024 si aplica / no}
+- Monto: {monto}
+- Revisión del pago: {revisión}
+- Necesita revisión: {necesita}
 - Referencia: {referencia}
 
-Los demás datos (correo, WhatsApp, comprobante) están en la hoja de {evento}.
+Los demás datos (correo, WhatsApp, comprobante) están en la pestaña de {evento}.
 
 Hi Cami,
 
-New registration for **{event}** ({date}), {name}: amount {amount}, payment check {checkResult},
-needs review {yes/no}, reference {reference}. The other details are in the {event} tab.
+New registration for {event} ({date}):
+
+- Name: {name}
+- Amount: {amount}
+- Payment check: {check}
+- Needs review: {needs}
+- Reference: {reference}
+
+The other details (email, WhatsApp, receipt) are in the {event} tab.
 
 Lifetools
+
+Values:
+
+| Field | Value | ES | EN |
+|---|---|---|---|
+| `{monto}` / `{amount}` | amount due 0 | Gratis | Free |
+| `{revisión}` / `{check}` | `ok` | el pago coincide | payment matches |
+| | `mismatch` | el pago no coincide | payment does not match |
+| | `unreadable` | no se pudo leer el comprobante | the receipt could not be read |
+| | `pending` | pendiente (se revisa de nuevo más tarde) | pending (checked again later) |
+| | `not-required` | no requerida (gratis) | not needed (free) |
+| `{necesita}` / `{needs}` | `needsReview` FALSE | no | no |
+| | `needsReview` TRUE | sí: {motivos} | yes: {reasons} |
+
+Reasons (`{motivos}` / `{reasons}`, every one that applies, FFR-030, joined with ", "):
+
+| Reason | ES | EN |
+|---|---|---|
+| check `mismatch` | el pago no coincide | the payment does not match |
+| check `unreadable` | no se pudo leer el comprobante | the receipt could not be read |
+| `event closed at submit` | llegó con el evento cerrado | arrived after the event closed |
+| `sold out at submit` | llegó con el evento lleno | arrived when the event was full |
+| `coupon changed` | el cupón ya no estaba disponible | the coupon was no longer available |
+| `duplicate event code` | el código del evento está repetido en Events | the event code is repeated in Events |
+| `email failed` | no se pudo enviar el correo a la persona | the email to the participant could not be sent |
 
 The notice never contains the participant's email, WhatsApp number, coupon code, screenshot or
 a link to it.

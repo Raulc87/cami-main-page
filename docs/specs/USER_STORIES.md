@@ -947,9 +947,11 @@ So that I know right away who signed up and whether their payment needs a look
 
 1. Given `NOTIFY_REGISTRATION_TO` holds Cami's address
    When a registration is stored (paid, ₡0, or flagged under FFR-024)
-   Then exactly one notice reaches that address, after the participant's email, with the event
-   and date, the participant's name, the amount, the payment check result, whether the row
-   needs review (and why, when flagged) and the reference.
+   Then exactly one notice reaches that address, after the participant's email and (for a paid
+   registration) after the in-request payment check, with the event and date, the
+   participant's name, the amount, the payment check result (`pending` only when the check was
+   deferred), whether the row needs review with every FFR-030 reason, and the reference, in the
+   words of EVENTS_EMAILS_AND_PRIVACY §2c.
 2. Given the same `submissionId` is sent again, or a request is refused (validation error,
    duplicate email, ₡0 sold out, rate limit, honeypot)
    When it is handled
@@ -961,7 +963,7 @@ So that I know right away who signed up and whether their payment needs a look
    When a registration is stored
    Then the registration, its response and the participant's email are unaffected, no address
    is logged, and `needsReview` is not set because of the notice.
-5. Given Google's remaining daily email quota is below 20
+5. Given Google's remaining daily email quota is below `NOTIFY_QUOTA_RESERVE` (20)
    When a registration is stored
    Then the notice is skipped and logged without any address, and the registration is
    unaffected.
