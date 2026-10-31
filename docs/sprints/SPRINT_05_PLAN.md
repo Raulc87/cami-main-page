@@ -20,16 +20,16 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 
 | # | Gate | Status |
 |---|---|---|
-| 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on this PR's head |
+| 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on the head of PR #125 (CMP-111) |
 | 2 | Readiness checklist has no open blocking items | Pass |
-| 3 | Integration contracts locked | Pass on merge: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.10 (this PR) adds one script property; the API's requests and responses do not change |
+| 3 | Integration contracts locked | Pass on merge: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.10 (PR #125, CMP-111) adds two script properties; the API's requests and responses do not change |
 | 4 | Final go-ahead from the human owner | Pass: "merged 125, go ahead with Sprint 05" (owner, 2026-10-31) |
 
 ### Readiness checklist result (2026-10-31)
 | Item | Result |
 |---|---|
 | 1. Paths, `AGENTS.md`/`CLAUDE.md`, project key, branch names **(blocking)** | Pass (unchanged since Sprint 04; branches in Selected tickets) |
-| 2. Docs agree on scope, names, behavior **(blocking)** | Pass: FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, EVENTS_EMAILS_AND_PRIVACY §2c, all in this PR; the sprint length is the owner's one-off exception (Metadata) |
+| 2. Docs agree on scope, names, behavior **(blocking)** | Pass: FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, EVENTS_EMAILS_AND_PRIVACY §2c, all in PR #125 (CMP-111); the sprint length is the owner's one-off exception (Metadata) |
 | 3. Testable acceptance criteria **(blocking)** | Pass: US-026 AC1–AC5 and the ticket checks below |
 | 4. Locked contracts for shared interfaces **(blocking)** | Pass (gate 3) |
 | 4. Credentials rule | Pass: TECH_STACK §11, ADR-009; the new property holds an address, not a credential, typed by the owner |
@@ -68,7 +68,8 @@ No site release: the website does not change.
 | CMP-111 | This plan, the agent prompts, FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, the notice text | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
 | CMP-112 | Registration notice to Cami (FFR-034, US-026) | Agent 1 | CMP-111 | `CMP-112-registration-notice` | todo |
 | CMP-113 | Trigger failure email seen in a real inbox (staging) | Agent 1 + owner | — | `CMP-113-failure-email-check` (docs only, if the runbook changes) | todo |
-| CMP-114 | Production backend deploy of CMP-112 | Agent 1 + owner | CMP-112's staging check and Cami's OK of the notice text; the security agent's review; the owner's scan decision | — (no code; evidence in CMP-115) | todo |
+| CMP-114 | Production backend deploy of CMP-112 and CMP-117 | Agent 1 + owner | CMP-112's staging check and Cami's OK of the notice text; CMP-117 and the OCR reason read on staging; the security agent's review; the owner's scan decision | — (no code; evidence in CMP-115) | todo |
+| CMP-117 | OCR failure reason in the log (Google's HTTP status and reason code, never the message); "daily limit" counted as a service problem (FFR-032) | Agent 1 | — | `CMP-117-ocr-failure-reason` | todo |
 | CMP-115 | Sprint 05 verification | Agent 1 | every ticket above | `CMP-115-sprint-05-verification` | todo |
 
 Outside this sprint (next sprint, with the owner): the five open Dependabot PRs (#104–#107,
@@ -117,6 +118,12 @@ Outside this sprint (next sprint, with the owner): the five open Dependabot PRs 
   script properties, then runs the approved production deploy (runbook §5.1); smoke request
   green; both triggers present; the next real registration's notice confirmed by Cami (or the
   owner's own ₡0 test registration, deleted afterwards and marked as a test).
+- **CMP-117** (unplanned, owner's OK 2026-10-31; Review Notes)**:** an OCR failure's log line
+  adds Google's HTTP status and reason code (for example `403 accessNotConfigured`), never
+  Google's message or any data; a "daily limit" error counts as a service problem (row stays
+  `pending`, FFR-032); runbook §2.7 says how to read the line. After its staging deploy, the
+  owner retries a paid registration with a text screenshot and reads the logged reason before
+  CMP-114; the cause and what was done about it are recorded in CMP-115.
 - **CMP-115:** `docs/sprints/SPRINT_05_VERIFICATION.md` with the evidence of every ticket and
   the staging cleanup list.
 
@@ -131,7 +138,7 @@ Outside this sprint (next sprint, with the owner): the five open Dependabot PRs 
 Maximum implementation agents in parallel: 1.
 
 ## Foundation (before parallel work)
-CMP-111 (this PR): the spec and contract the code follows.
+CMP-111 (PR #125): the spec and contract the code follows.
 
 ## File Ownership Map
 Agents edit only files they own; changes elsewhere are requested from the owner of the file.
@@ -154,9 +161,10 @@ Each line names what the PR waits for.
 
 1. CMP-111 (this plan and the spec) — nothing.
 2. CMP-112 (registration notice) — CMP-111. CMP-113 (failure email check) — nothing; its docs
-   PR, if any, after CMP-112's merge to keep the runbook edits in order.
-3. CMP-114 (production deploy) — CMP-112's staging check; the security agent's review; the
-   owner's scan decision.
+   PR, if any, after CMP-112's merge to keep the runbook edits in order. CMP-117 (OCR failure
+   reason) — nothing (its runbook note sits in §2.7, apart from CMP-113's).
+3. CMP-114 (production deploy) — CMP-112's staging check; CMP-117 merged and the OCR reason read
+   on staging; the security agent's review (now reaching CMP-117 too); the owner's scan decision.
 4. CMP-115 (verification) — every PR above.
 
 Cycle check: every arrow points to a PR earlier in this list.
@@ -227,7 +235,17 @@ The human reviewer is the final approver.
   `session_01DVcaZw7gF9nG9af7Am5D6U`. Sprint 04 sessions archived at its closing (2026-10-29):
   Agent 1 `session_01DVcaZvnBj2T3yLKjGx6HP6`, Agent 2 `session_01DVcaa1B5ypo6v1jPbeL1SX`, Agent 3
   `session_01DVcaZzEni9vpxJadMkvcD9`, review-only agent `session_01DVcaZyq7AycK36TTJwaZjT`.
-- §2c copy fix (coordinator, CMP-116, found by Agent 1 on #127): the notice's last line pointed
+- §2c copy fix (coordinator, CMP-116, first raised by the review-only agent on #127, then by Agent 1): the notice's last line pointed
   to "the {event} tab", but event tabs are named by the event code (FFR-015); it now says "the
   {code} tab of the sheet" / "la pestaña {código} de la hoja". Part of the text Cami reviews at
   the staging check.
+- Staging check of CMP-112 (2026-10-31): two paid test registrations (an icon image, then a plain
+  text screenshot) left the payment check `pending` ("ocr failed: GoogleJsonResponseException"),
+  so the notice showed "pendiente" correctly but the check itself did not read the images. Not a
+  code change from this sprint (Agent 1); the web app still runs as the same account and the
+  Drive API v2 service is present (owner's checks). Production read a receipt on 2026-10-27.
+  Unplanned ticket CMP-117 makes the reason visible. Owner asked "Our rules need your OK for work
+  that wasn't in the sprint plan. Agent 1's small fix #128 (ticket CMP-117) makes the log show
+  Google's actual reason when the payment check fails, and treats Google's 'daily limit' as a
+  temporary problem (the row stays pending). It would go to production together with Cami's
+  notice. Do you approve adding it to Sprint 05?": **"Yes, add it (Recommended)"**.
