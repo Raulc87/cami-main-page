@@ -8,8 +8,8 @@ itself: the owner ran them, Cami read the notice, and the coordinator relayed th
 they were quoted to me). A Fail is not fixed in this PR: it is classified and a ticket is proposed.
 Story statuses are not changed here; the coordinator does that after the owner approves the evidence.
 
-**Status of this document: PENDING one item.** Every Sprint 05 PR is merged and production runs the
-registration notice; the one open check is Cami's confirmation of the first real notice (CMP-114, §2).
+**Status of this document: complete.** Every Sprint 05 PR is merged, production runs the registration
+notice, and Cami confirmed receiving it (2026-11-01, CMP-114 step 5). Open items are listed in §4.
 
 ## 1. Method
 
@@ -89,7 +89,7 @@ Staging check of 2026-10-31: [CMP-112-CMP-113-staging-check.md](evidence/sprint-
 | Step 2: production dry run: the project title says production | Pass | Owner: "green, title production" |
 | Step 3: approved production deploy | Pass | Owner: "green, deployed" |
 | Step 4: smoke request, both triggers present, a `refreshEventsCache` run Completed after the deploy | Pass | Owner: "PASS lines seen, triggers there, completed". The [`apps-script/`](../../apps-script/) folder deployed equals `31f1db3` |
-| Step 5: the next real registration's notice confirmed by Cami (the owner chose this over a test registration in production) | **Pending** | Waits for the next real registration; the coordinator relays Cami's confirmation |
+| Step 5 (5a, the owner's choice over a test registration in production): the production notice confirmed by Cami | Pass | Owner, 2026-11-01, verbatim: "Cami got the notice, it looked right" (relayed by the coordinator) |
 
 ## 3. Staging cleanup list
 
@@ -112,7 +112,6 @@ Production keeps its two triggers (the "daily" failure notification setting unch
 
 | Item | Owner | Note |
 |---|---|---|
-| Cami's confirmation of the first real production notice (CMP-114 step 5) | Coordinator / Cami | The only check pending in this sprint |
 | PTES test by 2026-12-26 (CMP-099); the tester check-in on 2026-11-13 | Owner / coordinator | Also covers what an agent scan of production would have |
 | Allowlist review of the accepted deploy-tool advisory by 2026-11-20 | Owner (next sprint's agent) | CMP-071 |
 | Exact subject line of Google's failure email | Owner | Optional; the sender and the arrival are recorded |
@@ -122,9 +121,9 @@ Production keeps its two triggers (the "daily" failure notification setting unch
 
 ## 5. Summary
 
-All Sprint 05 deliverables are met except the last confirmation: the registration notice to Cami works
+All Sprint 05 deliverables are met: the registration notice to Cami works
 on staging (one notice per stored registration, none on a retry, a duplicate email or an emptied
 property; about one second added to `register`; Cami approved the text unchanged), the trigger failure
 email was seen arriving and the runbook says where Google sends it, an OCR failure now logs Google's
 status and reason (CMP-117, unplanned, approved by the owner), and production runs all of it (CMP-114
-steps 1 to 4). The first real notice, confirmed by Cami, is the one pending item.
+steps 1 to 5: Cami received the production notice and said it looked right). No check is pending.
