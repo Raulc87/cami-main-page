@@ -265,8 +265,10 @@ The human reviewer is the final approver.
   is no production test row to delete.
 - Real-iPhone check (CMP-065, carried since Sprint 03), owner 2026-11-01, verbatim: "I already
   tested an IPHONE and it worked smoothly, it's a bit slow when we do the OCR"; details: "it was a
-  screenshot, checkResult ok, .jpg". Asked about receipts photographed with the camera (HEIC, which
-  the OCR cannot read, so they wait as `unreadable` for Cami): "What should we do about camera
+  screenshot, checkResult ok, .jpg". It was a real participant's sign-up (owner: "It was a real sign-up"), so there is
+  nothing to delete. Asked about receipts photographed with the camera (HEIC: converted to JPEG
+  when possible, otherwise stored as HEIC, which the OCR may not read, so they wait as
+  `unreadable` for Cami; FFR-014, FFR-017): "What should we do about camera
   photos?" Owner: **"Leave as is"** (other options: a form hint asking for a screenshot; HEIC→JPEG
   conversion in the browser). The HEIC follow-up from CMP-033 observation 6 is closed with no
   change.
