@@ -2,7 +2,8 @@
 
 ## Metadata
 - Sprint: 05
-- Status: Active (plan approved on merge of PR #125, CMP-111; owner's go-ahead 2026-10-31, Entry
+- Status: Closed 2026-11-01 (owner: "Yes, close it (Recommended)"); Active from the owner's
+  go-ahead 2026-10-31 (plan approved on merge of PR #125, CMP-111; Entry
   Gate 4: "merged 125, go ahead with Sprint 05")
 - Start: 2026-10-31 (Saturday), the day of the go-ahead; working days count from Monday
   2026-11-02
@@ -66,11 +67,11 @@ No site release: the website does not change.
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
 | CMP-111 | This plan, the agent prompts, FEATURE_SPEC v1.14 (FFR-034), contract v1.10, US-026, the notice text | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
-| CMP-112 | Registration notice to Cami (FFR-034, US-026) | Agent 1 | CMP-111 | `CMP-112-registration-notice` | todo |
-| CMP-113 | Trigger failure email seen in a real inbox (staging) | Agent 1 + owner | — | `CMP-113-failure-email-check` (docs only, if the runbook changes) | todo |
-| CMP-114 | Production backend deploy of CMP-112 and CMP-117 | Agent 1 + owner | CMP-112's staging check and Cami's OK of the notice text; CMP-117 merged and a paid staging check passing after it (the owner accepted a passing re-check in place of a read OCR reason, 2026-10-31; Review Notes); the security agent's review; the owner's scan decision | — (no code; evidence in CMP-115) | todo |
-| CMP-117 | OCR failure reason in the log (Google's HTTP status and reason code, never the message); "daily limit" counted as a service problem (FFR-032) | Agent 1 | — | `CMP-117-ocr-failure-reason` | todo |
-| CMP-115 | Sprint 05 verification | Agent 1 | every ticket above | `CMP-115-sprint-05-verification` | todo |
+| CMP-112 | Registration notice to Cami (FFR-034, US-026) | Agent 1 | CMP-111 | `CMP-112-registration-notice` | done |
+| CMP-113 | Trigger failure email seen in a real inbox (staging) | Agent 1 + owner | — | `CMP-113-failure-email-check` (docs only, if the runbook changes) | done |
+| CMP-114 | Production backend deploy of CMP-112 and CMP-117 | Agent 1 + owner | CMP-112's staging check and Cami's OK of the notice text; CMP-117 merged and a paid staging check passing after it (the owner accepted a passing re-check in place of a read OCR reason, 2026-10-31; Review Notes); the security agent's review; the owner's scan decision | — (no code; evidence in CMP-115) | done |
+| CMP-117 | OCR failure reason in the log (Google's HTTP status and reason code, never the message); "daily limit" counted as a service problem (FFR-032) | Agent 1 | — | `CMP-117-ocr-failure-reason` | done |
+| CMP-115 | Sprint 05 verification | Agent 1 | every ticket above | `CMP-115-sprint-05-verification` | done |
 
 Outside this sprint (next sprint, with the owner): the five open Dependabot PRs (#104–#107,
 #109), a first real rollback run of the site-upload workflow, the clasp audit exception expiring
@@ -259,3 +260,30 @@ The human reviewer is the final approver.
   Also asked "Production failure emails go to the Google account that created the production
   triggers. Whose inbox should they reach?": **"Leave as is"**; and for CMP-114's scan, "… How
   should we handle it?": **"Same as v1.1.1: tester (Recommended)"**.
+- CMP-114 step 5 (owner, 2026-11-01, verbatim): "Cami got the notice, it looked right". It came
+  from a real registration (the plan's option "wait for the next real registration"), so there
+  is no production test row to delete.
+- Real-iPhone check (CMP-065, carried since Sprint 03), owner 2026-11-01, verbatim: "I already
+  tested an IPHONE and it worked smoothly, it's a bit slow when we do the OCR"; details: "it was a
+  screenshot, checkResult ok, .jpg". It was a real participant's sign-up (owner: "It was a real sign-up"), so there is
+  nothing to delete. Asked about receipts photographed with the camera (HEIC: converted to JPEG
+  when possible, otherwise stored as HEIC, which the OCR may not read, so they wait as
+  `unreadable` for Cami; FFR-014, FFR-017): "What should we do about camera
+  photos?" Owner: **"Leave as is"** (other options: a form hint asking for a screenshot; HEIC→JPEG
+  conversion in the browser). The HEIC follow-up from CMP-033 observation 6 is closed with no
+  change.
+- Carried to the next sprint: the `register` time with a receipt (about 6–7 s, mostly the OCR);
+  options to choose then: a "checking your payment…" message on the site, or reading the receipt
+  after answering. Also the five Dependabot PRs (#104–#107, #109), the first real rollback run of
+  the site-upload workflow, the clasp audit exception expiring 2026-11-20, and the PTES tester
+  search (check-in 2026-11-13). The deploy login (`CLASP_CREDENTIALS`) expired again before
+  CMP-112's staging deploy and was renewed on 2026-10-31 in both environments; the Workspace
+  "Google Cloud session control" setting is still to be checked by the owner.
+- Sprint closed 2026-11-01, ahead of its 2026-11-04 end. Owner asked "Sprint 05 is complete:
+  Cami's notice is live and confirmed, the failure email works, and the report (#131) is merged.
+  Shall I close Sprint 05?": **"Yes, close it (Recommended)"**. Definition of Done: every selected
+  ticket `done` (CMP-111..CMP-118); the Required Deliverable shown and its evidence approved by
+  merging CMP-115 (#131, [`SPRINT_05_VERIFICATION.md`](SPRINT_05_VERIFICATION.md)). Sessions
+  archived at closing: Agent 1 `session_01DVcaZxBZvRq8tBwr1wDFo4` and the review-only agent
+  `session_01DVcaZzhjSRSDQbHi3cDcNx`, after this record merges; the pre-release security agent
+  stays for its step-5 re-checks after the PTES report.

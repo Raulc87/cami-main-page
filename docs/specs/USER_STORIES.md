@@ -933,7 +933,8 @@ So that I know my place is reserved or what to fix
 ### US-026 — Cami is told about each new registration
 - Priority: Medium
 - Story Points: 2
-- Status: Ready (Sprint 05, CMP-112)
+- Status: Done (Sprint 05: CMP-112 staging check, CMP-114 production; evidence approved by
+  merging PR #131, SPRINT_05_VERIFICATION)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-034); contract §9 v1.10
 - Related Requirements: FR-011
 

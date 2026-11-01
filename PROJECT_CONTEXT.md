@@ -37,8 +37,8 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md) (Active since the
-  owner's go-ahead, 2026-10-31); Sprints 01 to 04 are closed
+- Latest sprint plan: [SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md) (Closed 2026-11-01); no
+  active sprint until the next is planned; Sprints 01 to 04 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
   [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md),
@@ -89,10 +89,13 @@ they are not active paths.
   exception (plan Metadata)
 - Deliverable: the notice live on the production backend (no site release); evidence in
   `SPRINT_05_VERIFICATION.md`
-- Status: Active — owner's go-ahead 2026-10-31: "merged 125, go ahead with Sprint 05"
+- Status: Closed 2026-11-01 (owner: "Yes, close it (Recommended)"); evidence in
+  [docs/sprints/SPRINT_05_VERIFICATION.md](docs/sprints/SPRINT_05_VERIFICATION.md). The next
+  sprint is planned with the owner; carried items in the plan's Review Notes
 
 ## Agent allocation
-- Sprint 05: Implementation Agent 1, events backend — CMP-112..CMP-115 (Sonnet session
+- Sprint 05 (closed 2026-11-01; Agent 1 and the reviewer archived after the closing record):
+  Implementation Agent 1, events backend — CMP-112..CMP-115 (Sonnet session
   launched 2026-10-31 at the go-ahead); review-only agent: a fresh Opus session launched
   2026-10-31 (it reviewed the plan); the
   pre-release security agent keeps its Sprint 04 session (review before CMP-114, step-5
@@ -101,7 +104,7 @@ they are not active paths.
 - Sprint 04 sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-116
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-119
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
