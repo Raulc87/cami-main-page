@@ -4,7 +4,7 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.14 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+- Version: 1.15 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
@@ -21,10 +21,12 @@
   2026-10-27 — CMP-061; v1.12: FFR-033 the payment re-check works 06:00–22:00 Costa Rica time and
   the triggers report a failure only after 10 in a row, owner 2026-10-28/29 — CMP-100; v1.13:
   FFR-004 the room reserved while events load, owner 2026-10-29 — CMP-106; v1.14: FFR-034
-  registration notice to Cami, owner 2026-10-31 — CMP-111)
+  registration notice to Cami, owner 2026-10-31 — CMP-111; v1.15: FFR-035 the payment check
+  runs after the answer, from the retry trigger, and FFR-034's notice waits for it, owner
+  2026-11-01 — CMP-120)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
-  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 on merge of PR #52; v1.11 on merge of PR #57; v1.12 on merge of PR #93; v1.13 on merge of PR #101; v1.14 Approved on merge of the CMP-111 PR)
+  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 on merge of PR #52; v1.11 on merge of PR #57; v1.12 on merge of PR #93; v1.13 on merge of PR #101; v1.14 on merge of PR #125; v1.15 Approved on merge of the CMP-120 PR)
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -70,7 +72,7 @@ Full stories with acceptance criteria are in [USER_STORIES.md](USER_STORIES.md):
 | US-019 | Event registration form with SINPE Móvil payment proof | FFR-007..FFR-011, FFR-018, FFR-022, FFR-023, FFR-027 |
 | US-020 | Discount coupon at registration | FFR-012, FFR-013, FFR-021, FFR-024 (coupon changed), FFR-031, BR-E13 |
 | US-021 | Registrations stored in Google Drive and Sheets | FFR-014..FFR-016, FFR-024, FFR-025, FFR-030, BR-E13 |
-| US-022 | Automatic check of the payment screenshot | FFR-017, FFR-032 |
+| US-022 | Automatic check of the payment screenshot | FFR-017, FFR-032, FFR-035 |
 | US-023 | Cami manages events, capacity and coupons without a deploy | FFR-019, FFR-020, FFR-033 |
 | US-024 | Abuse metrics and alerts | FFR-029 |
 | US-025 | Participant emails (confirmation, payment not validated) | FFR-026 |
@@ -208,6 +210,19 @@ Payment screenshot check
   (not a service failure under FFR-032); it sets `needsReview` so Cami checks it by hand, and the
   participant gets **no** "payment not validated" email. Owner, 2026-10-20: "Cami checks by hand
   (Recommended)".
+- FFR-035: The payment check runs **after** the `register` answer, never inside the request
+  (owner, 2026-11-01: "I was thinking of doing the OCR asynchronously"; plan Sprint 06 Review
+  Notes). A stored paid row is saved with `checkResult` `pending`, the participant gets the
+  confirmation or "registration received" email (FFR-026) and the visitor gets the answer;
+  the time-driven trigger of FFR-032 (`retryPendingChecks`, every 10 minutes, only inside
+  `RETRY_CHECK_HOURS`, owner 2026-11-01: "Keep every 10 min, 06:00–22:00") then runs the check
+  of FFR-017 for each `pending` row, writes the result and sends the "payment not validated"
+  email when FFR-017 requires it. A paid sign-up made at night is therefore checked after 06:00.
+  The first trigger run that handles a row counts as its first attempt; a service failure keeps
+  it `pending` for the next run, and the 24-hour limit of FFR-032 still applies from the moment
+  the row was saved. The `register` request with a receipt answers about as fast as a ₡0 one
+  (measured in the Sprint 06 check). Rows still `pending` at the deploy of this change are
+  handled the same way.
 - FFR-032: If the OCR call fails for a service reason (e.g. Google's per-user OCR rate limit)
   after its in-execution retries, the row keeps check result `pending`. Only the "payment not
   validated" email waits for the check; the confirmation or "registration received" email is
@@ -298,12 +313,17 @@ Abuse metrics
   (Recommended)", "Cami only"). For every newly stored registration, counting or flagged under
   FFR-024, the backend sends one short email to the address in the `NOTIFY_REGISTRATION_TO`
   script property (contract §9 v1.10):
-  - **When:** within the `register` request, as its last step: after the row is saved, after
-    the participant's email (FFR-026) and, for a paid registration, after the in-request payment
-    check (FFR-017) and its "payment not validated" email when there is one (owner, 2026-10-31,
-    asked when the notice should go: "After the payment check (Recommended)"). When the check is
-    deferred (FFR-032) the notice says `pending` and is not sent again when the retry trigger
-    later finishes the check. Once per stored row: a retry with the same submission ID
+  - **When:** for a ₡0 registration (no check), within the `register` request, as its last
+    step, after the participant's email. For a paid registration, after the payment check
+    (owner, 2026-10-31: "After the payment check (Recommended)"; with the check after the answer,
+    FFR-035, owner 2026-11-01: "After the check finishes (Recommended)"): the trigger run that
+    writes the check's result (`ok`, `mismatch` or `unreadable`) sends the notice right after
+    the "payment not validated" email when there is one, so the notice always shows the real
+    result, up to about 10 minutes after the sign-up in the day and after 06:00 for a night
+    sign-up. A row still `pending` when FFR-032's 24-hour limit ends gets its notice then,
+    saying `pending`. Each row's notice is sent once, recorded in the row's `noticeSentAt`
+    (contract §6 v1.11); rows saved before this change are never notified again. Once per
+    stored row: a retry with the same submission ID
     (FFR-022) sends nothing; a refused request (validation, duplicate email, `SOLD_OUT` for ₡0,
     rate limits, honeypot) sends nothing.
   - **Content** (one message in Spanish and English, like the alert email, FFR-029; exact text
