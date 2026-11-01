@@ -21,9 +21,9 @@
 - Project spec: [docs/specs/PROJECT_SPEC.md](docs/specs/PROJECT_SPEC.md)
 - User stories: [docs/specs/USER_STORIES.md](docs/specs/USER_STORIES.md)
 - Feature specs: [FEATURE_SPEC_events_registration.md](docs/specs/FEATURE_SPEC_events_registration.md)
-  (v1.14 — events and registration, US-017..US-026); new ones from the kit's
+  (v1.15 — events and registration, US-017..US-026); new ones from the kit's
   `FEATURE_SPEC_TEMPLATE.md` (at the kit ref above) as `docs/specs/FEATURE_SPEC_<topic>.md`
-- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.10,
+- Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.11,
   locked) — site ↔ events backend
 - Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058; §2c, the registration
   notice, gets her OK in CMP-112):
@@ -37,8 +37,9 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Latest sprint plan: [SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md) (Closed 2026-11-01); no
-  active sprint until the next is planned; Sprints 01 to 04 are closed
+- Active sprint plan: [SPRINT_06_PLAN.md](docs/sprints/SPRINT_06_PLAN.md) (Proposed; approved on
+  merge of the CMP-120 PR, then the owner's go-ahead); Sprint 05 closed 2026-11-01
+  ([SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md)); Sprints 01 to 04 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
   [SPRINT_03_PLAN.md](docs/sprints/SPRINT_03_PLAN.md),
@@ -79,19 +80,16 @@ Former spec file names (before CMP-014) are mapped in
 they are not active paths.
 
 ## Current sprint
-- Sprint: 05 — registration notice to Cami (FFR-034, US-026) and the trigger failure email
-  check. Sprint 04 closed 2026-10-29 with v1.1.1 and v1.1.2 live (review in its plan, evidence in
-  [docs/sprints/SPRINT_04_VERIFICATION.md](docs/sprints/SPRINT_04_VERIFICATION.md)).
-- Plan: [docs/sprints/SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md); agent prompts:
-  [docs/sprints/SPRINT_05_AGENT_PROMPTS.md](docs/sprints/SPRINT_05_AGENT_PROMPTS.md)
-- Goal: Cami gets a short email for each new registration; the failure email seen arriving
-- Start: 2026-10-31 (Saturday); End: 2026-11-04 (Wednesday): three working days, a one-off
-  exception (plan Metadata)
-- Deliverable: the notice live on the production backend (no site release); evidence in
-  `SPRINT_05_VERIFICATION.md`
-- Status: Closed 2026-11-01 (owner: "Yes, close it (Recommended)"); evidence in
-  [docs/sprints/SPRINT_05_VERIFICATION.md](docs/sprints/SPRINT_05_VERIFICATION.md). The next
-  sprint is planned with the owner; carried items in the plan's Review Notes
+- Sprint: 06 — the payment check after the answer (FFR-035) and the site on React 19 / Vite 8
+  (release v1.2.0). Sprint 05 closed 2026-11-01 with the registration notice to Cami live
+  (evidence in [docs/sprints/SPRINT_05_VERIFICATION.md](docs/sprints/SPRINT_05_VERIFICATION.md)).
+- Plan: [docs/sprints/SPRINT_06_PLAN.md](docs/sprints/SPRINT_06_PLAN.md); agent prompts:
+  [docs/sprints/SPRINT_06_AGENT_PROMPTS.md](docs/sprints/SPRINT_06_AGENT_PROMPTS.md)
+- Goal: paid sign-ups answer as fast as free ones; the site on React 19 and Vite 8
+- Start: the day of the go-ahead; End: seven business days later
+- Deliverable: the check after the answer live on the production backend; release v1.2.0 live;
+  the clasp audit exception settled before 2026-11-20; evidence in `SPRINT_06_VERIFICATION.md`
+- Status: Proposed (approved on merge of the CMP-120 PR; then the owner's go-ahead)
 
 ## Agent allocation
 - Sprint 05 (closed 2026-11-01; Agent 1 and the reviewer archived after the closing record):
@@ -104,7 +102,7 @@ they are not active paths.
 - Sprint 04 sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-119
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-120
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 

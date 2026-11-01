@@ -755,8 +755,9 @@ So that I can manage participants and payments in one place
 - Story Points: 5
 - Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
   CMP-051; a raw iPhone HEIC photo is stored in its original format and checked by hand
-  (FFR-017), revisit after the real-iPhone check)
-- Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-032, FFR-030), BR-E06
+  (FFR-017); after the real-iPhone check the owner kept this, 2026-11-01: "Leave as is").
+  AC8 (FFR-035, the check after the answer) is new in Sprint 06 (CMP-121).
+- Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-032, FFR-030, FFR-035), BR-E06
 - Related Requirements: FR-011
 
 **User Story**
@@ -797,6 +798,12 @@ So that I spot wrong payments before confirming
    When it is checked
    Then the result is `unreadable` at once (no retries), `needsReview` is TRUE and **no**
    "payment not validated" email is sent; Cami checks it by hand (FFR-017, owner 2026-10-20).
+8. Given a paid registration (FFR-035, Sprint 06)
+   When it is submitted
+   Then the visitor's answer does not wait for the check: the row is saved `pending`, the
+   confirmation email goes out, and the next `retryPendingChecks` run inside
+   `RETRY_CHECK_HOURS` checks the screenshot, writes the result and sends the "payment not
+   validated" email when needed; the answer with a receipt takes about as long as a ₡0 one.
 
 **Dependencies**
 - US-021; Cami's samples (spike).
@@ -948,10 +955,11 @@ So that I know right away who signed up and whether their payment needs a look
 
 1. Given `NOTIFY_REGISTRATION_TO` holds Cami's address
    When a registration is stored (paid, ₡0, or flagged under FFR-024)
-   Then exactly one notice reaches that address, after the participant's email and (for a paid
-   registration) after the in-request payment check, with the event and date, the
-   participant's name, the amount, the payment check result (`pending` only when the check was
-   deferred), whether the row needs review with every FFR-030 reason, and the reference, in the
+   Then exactly one notice reaches that address: for ₡0, in the request after the participant's
+   email; for a paid registration, from the trigger run that writes the payment check's result
+   (FFR-035), after the "payment not validated" email when there is one; with the event and date, the
+   participant's name, the amount, the payment check result (`pending` only for a row still
+   pending at FFR-032's 24-hour limit), whether the row needs review with every FFR-030 reason, and the reference, in the
    words of EVENTS_EMAILS_AND_PRIVACY §2c.
 2. Given the same `submissionId` is sent again, or a request is refused (validation error,
    duplicate email, ₡0 sold out, rate limit, honeypot)

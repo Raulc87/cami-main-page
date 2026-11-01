@@ -6,7 +6,7 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.10 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.11 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
   on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
@@ -16,12 +16,13 @@ Change management: update this document first, bump the version, notify both own
   coupon check limit also applies to `register` with a coupon code — CMP-083; v1.9: §9 the time
   payment re-check's working hours and the time triggers' failure threshold, owner 2026-10-28
   and 2026-10-29 — CMP-100; v1.10: §9 `NOTIFY_REGISTRATION_TO` and `NOTIFY_QUOTA_RESERVE`, the registration notice
-  to Cami, owner 2026-10-31 — CMP-111)
+  to Cami, owner 2026-10-31 — CMP-111; v1.11: §6 `noticeSentAt`, §10 the check after the
+  answer (FFR-035), owner 2026-11-01 — CMP-120)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 on
-  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 Approved on merge of the CMP-111 PR)
+  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 on merge of PR #125; v1.11 Approved on merge of the CMP-120 PR)
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
-  (FFR-001..FFR-034)
+  (FFR-001..FFR-035)
 - Related stories: US-017..US-026
 - Related ADRs: ADR-008
 - Consumer (owner): frontend workstream (Sprint 02 plan)
@@ -131,7 +132,10 @@ Spreadsheet (Workspace `lifetoolscr.com`), tabs:
   `whatsapp`, `lang`, `couponCode`, `discountPercent`, `amountDueCrc`, `screenshotUrl`,
   `checkResult`, `checkDetails`, `needsReview`, `status`, `consentAt`, `notes`, `contactOptIn`
   (v1.5; added last so existing tabs keep their columns: the script adds the header to a tab
-  that lacks it, and older rows stay blank, read as `FALSE`).
+  that lacks it, and older rows stay blank, read as `FALSE`), `noticeSentAt` (v1.11; server-written
+  timestamp, Costa Rica time like `timestamp`, of the registration notice to Cami, FFR-034;
+  added last in the same way; blank until the notice is sent, and left blank for rows saved
+  before v1.11, which are never notified).
 - `Metrics`: one row per day — `date`, `accepted`, `honeypotHits`, `throttled`,
   `couponFailures`, `uploadedMb`, `spamMarked`.
 - `Translations` (created by the script, CMP-045): `hash`, `text` — the automatic English
@@ -280,3 +284,10 @@ The checklist must cover:
   response are unchanged and the log names no address; with the remaining quota below
   `NOTIFY_QUOTA_RESERVE`, the notice is skipped and logged; the notice carries no email,
   WhatsApp number, coupon code or screenshot.
+- Check after the answer (v1.11, FFR-035): a paid `register` answers without running the check
+  (row `pending`, confirmation email sent, no notice yet); the next `retryPendingChecks` run
+  inside `RETRY_CHECK_HOURS` writes the result, sends the "not validated" email when needed,
+  then the notice, and sets `noticeSentAt`; a second run sends nothing more; a ₡0 registration
+  still gets its notice in the request and its `noticeSentAt` set; an older tab gets the
+  `noticeSentAt` header and its older rows stay blank and are not notified; on staging, the
+  median `register` time of three paid registrations is within 1 s of three ₡0 ones.

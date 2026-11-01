@@ -153,8 +153,9 @@ it in a code PR, both before CMP-114. The rest of this document stays as Cami ap
 2026-10-26.
 
 Sent to the address(es) in `NOTIFY_REGISTRATION_TO` (Cami's; empty → none; contract §9 v1.10),
-once per newly stored registration, as the last step of the request (after the participant's
-email and, when paid, the payment check). One message in both languages. `{evento}` is the
+once per newly stored registration: for ₡0, at the end of the request; when paid, from the
+trigger run that writes the payment check's result (FFR-035), so up to about 10 minutes later in
+the day and after 06:00 for a night sign-up. Text unchanged. One message in both languages. `{evento}` is the
 event's Spanish name; `{event}` its English name (`Translations` tab), or the Spanish name when
 there is none. `{código}`/`{code}` is the event code, which names its tab (FFR-015).
 `{fecha}`/`{date}` and `{monto}`/`{amount}` use the participant emails' formats
