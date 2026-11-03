@@ -156,7 +156,7 @@ it can be migrated to Linear (it has a free tier) by importing these same rows.
 | CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | US-022, US-026 | todo | `CMP-121-check-after-answer` | 2026-11-01 | Sprint 06, Agent 1; staging check after merge. |
 | CMP-122 | clasp audit exception (zod) before its 2026-11-20 review | — | todo | `CMP-122-clasp-audit-exception` | 2026-11-01 | Sprint 06, Agent 1; a fixed clasp release, or the owner's written renewal. |
 | CMP-123 | Production backend deploy of CMP-121 | US-022, US-026 | todo | — | 2026-11-01 | Sprint 06, Agent 1 with the owner; after the staging check, the security agent's review and the owner's scan decision. |
-| CMP-124 | Site libraries: React 19, Vite 8, @vitejs/plugin-react 6 (replaces Dependabot #104–#107) | — | todo | `CMP-124-react19-vite8` | 2026-11-01 | Sprint 06, Agent 3. |
+| CMP-124 | Site libraries: React 19, Vite 8, @vitejs/plugin-react 6 (replaces Dependabot #104–#107) | — | review | `CMP-124-react19-vite8` | 2026-11-01 | Sprint 06, Agent 3. PR open; Lighthouse and checks in the PR body. |
 | CMP-125 | Release v1.2.0 | — | todo | `CMP-125-release-v1-2-0` | 2026-11-01 | Sprint 06, Agent 3 with the owner. |
 | CMP-126 | Sprint 06 verification | — | todo | `CMP-126-sprint-06-verification` | 2026-11-01 | Sprint 06, Agent 1. |
 | CMP-127 | TECH_STACK and docs for CMP-124 | — | dropped | coordinator's branch | 2026-11-01 | Folded into CMP-124 (AGENTS.md → Change management: stack change in the same PR as the code; review of #133). |
