@@ -704,7 +704,8 @@ So that I pay the discounted price
 - Priority: High
 - Story Points: 5
 - Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
-  CMP-051; the real-iPhone HEIC check is a release gate (release-checklist §3b))
+  CMP-051; the real-iPhone HEIC check is a release gate (release-checklist §3b)); AC1 changed in
+  Sprint 06: JPEG and PNG stored as received (FFR-014 v1.16, CMP-130)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-014..FFR-016, FFR-022, FFR-024, FFR-025,
   FFR-030), BR-E04, BR-E05, BR-E10, BR-E13; contract §6
 - Related Requirements: FR-011, NFR-003

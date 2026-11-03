@@ -92,7 +92,7 @@ they are not active paths.
 - Status: Active — owner's go-ahead 2026-11-03: "go ahead"
 
 ## Agent allocation
-- Sprint 06: Implementation Agent 1, events backend — CMP-121..CMP-123, CMP-126; Implementation
+- Sprint 06: Implementation Agent 1, events backend — CMP-121..CMP-123, CMP-126, CMP-130; Implementation
   Agent 3, site libraries and release — CMP-124, CMP-125 (Sonnet sessions launched 2026-11-03 at
   the go-ahead); review-only agent: a fresh Opus session (it reviewed the plan); the pre-release
   security agent keeps its Sprint 04 session (reviews before CMP-123 and CMP-125). Codex runs as the automated reviewer on every PR (ADR-006 → Kit disposition,

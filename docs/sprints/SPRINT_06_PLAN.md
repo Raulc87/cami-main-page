@@ -144,7 +144,7 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
 
 ## Parallel Workstreams
 ### Agent 1 — Events backend (fresh session)
-- CMP-121 and CMP-122 at the go-ahead; CMP-130 after CMP-129; CMP-123 after CMP-121's and CMP-130's staging checks; CMP-126 last.
+- CMP-121 and CMP-122 at the go-ahead; CMP-130 after CMP-129 (assigned by the coordinator's message, 2026-11-03; not in the agent prompts, which predate it); CMP-123 after CMP-121's and CMP-130's staging checks; CMP-126 last.
 
 ### Agent 3 — Site libraries and release (fresh session)
 - CMP-124 at the go-ahead; CMP-125 after CMP-124.
@@ -180,9 +180,12 @@ Each line names what the PR waits for.
 1. CMP-120 (this plan and the spec) — nothing.
 2. CMP-121 (check after the answer) — CMP-120. CMP-122 (clasp exception) — nothing; before
    2026-11-20. CMP-124 (site libraries) — nothing. Dependabot #109 — the reviewer's verdict.
-3. CMP-123 (production backend) — CMP-121's staging check; the security agent's review. CMP-125 (release v1.2.0) — CMP-124; the security agent's
+   CMP-129 (spec: PNG stored as received, timing goal) — nothing.
+3. CMP-130 (PNG stored as received) — CMP-129.
+4. CMP-123 (production backend) — CMP-121's and CMP-130's staging checks; the security agent's
+   review (including PNG metadata now kept as received, see Risks). CMP-125 (release v1.2.0) — CMP-124; the security agent's
    delta review.
-4. CMP-126 (verification) — every PR above.
+5. CMP-126 (verification) — every PR above.
 
 Cycle check: every arrow points to a PR earlier in this list.
 
@@ -209,6 +212,7 @@ The human reviewer is the final approver.
 
 ## Risks
 - Paid sign-ups get their check up to 10 minutes later (after 06:00 at night): the participant's
+- A PNG stored as received keeps its metadata chunks (for example `eXIf`, `tEXt`), as JPEGs already do; the conversion used to drop them. Low exposure (Cami's private Drive folder, type checked from the content, SAC-05); the security agent looks at it in its review before CMP-123 (#138 review).
   "not validated" email and Cami's notice move with it (owner's choice).
 - React 19 and Vite 8 are major versions: hidden behavior changes. Mitigated by the visual and
   functional checks and Lighthouse on a local build before the release, and by the release's
