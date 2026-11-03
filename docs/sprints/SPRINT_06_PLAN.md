@@ -2,10 +2,11 @@
 
 ## Metadata
 - Sprint: 06
-- Status: Proposed (approved on merge of PR #133, CMP-120; the owner's go-ahead is Entry Gate 4)
-- Start: the day of the go-ahead
-- End: seven business days after the go-ahead (the standard cadence; Saturdays and Sundays
-  excluded)
+- Status: Active (plan approved on merge of PR #133, CMP-120; owner's go-ahead 2026-11-03, Entry
+  Gate 4: "go ahead")
+- Start: 2026-11-03 (Tuesday), the day of the go-ahead
+- End: 2026-11-11 (Wednesday), the seventh business day counting the start day (the standard
+  cadence; Saturdays and Sundays excluded)
 - Final human reviewer: Raul Casanas
 - Plan from the kit's `SPRINT_PLAN_TEMPLATE.md` at the kit ref in
   [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md); agent prompts in
@@ -18,9 +19,9 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | # | Gate | Status |
 |---|---|---|
 | 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on the head of PR #133 (CMP-120) |
-| 2 | Readiness checklist has no open blocking items | Pass, except item 8 (the go-ahead), which is gate 4 |
+| 2 | Readiness checklist has no open blocking items | Pass |
 | 3 | Integration contracts locked | Pass on merge: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.11 (PR #133, CMP-120) adds the `noticeSentAt` column (§6) and the check-after-answer test (§10); the API's requests and responses do not change |
-| 4 | Final go-ahead from the human owner | Pending |
+| 4 | Final go-ahead from the human owner | Pass: "go ahead" (owner, 2026-11-03, after merging PR #133) |
 
 ### Readiness checklist result (2026-11-01)
 | Item | Result |
@@ -45,7 +46,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 7. Workstreams assigned, ≤ 3 agents **(blocking)** | Pass: Agent 1 (backend) and Agent 3 (site) |
 | 7. Ownership map, no dependency cycle **(blocking)** | Pass |
 | 7.1 Prompts: no merge or approve; reviewer independence; attribution **(blocking)** | Pass ([`SPRINT_06_AGENT_PROMPTS.md`](SPRINT_06_AGENT_PROMPTS.md)) |
-| 8. Go-ahead **(blocking)** | Pending (gate 4) |
+| 8. Go-ahead **(blocking)** | Pass (gate 4) |
 
 ## Sprint Goal
 Paid sign-ups answer as fast as free ones (the payment check runs after the answer, FFR-035),
@@ -232,3 +233,10 @@ The human reviewer is the final approver.
   recorded before the sprint starts, not later. As before, the security agent can't run a scan
   from its session. For both Sprint 06 production changes, how should we handle it?" Owner
   (2026-11-03): **"Same as before: tester (Recommended)"**.
+- Go-ahead, 2026-11-03 (owner, verbatim, after merging PR #133): "go ahead". Sessions:
+  Implementation Agent 1 `session_01DVcaZvgjJz7JVS7Uhyjjce` and Implementation Agent 3
+  `session_01DVcaZyRTd2SMJPZ32HXU3j` (Sonnet, launched at the go-ahead); review-only agent
+  `session_01DVcaZzgzHrLLTRjxSEcRgq` (Opus, launched to review this plan); the pre-release
+  security agent keeps its Sprint 04 session `session_01DVcaZw7gF9nG9af7Am5D6U`. Sprint 05
+  sessions archived after its closing: Agent 1 `session_01DVcaZxBZvRq8tBwr1wDFo4`, review-only
+  agent `session_01DVcaZzhjSRSDQbHi3cDcNx`.
