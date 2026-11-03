@@ -66,7 +66,7 @@ and the site moves to React 19 and Vite 8 in release v1.2.0.
 | CMP-120 | This plan, the agent prompts, FEATURE_SPEC v1.15 (FFR-035), contract v1.11, US-022 AC8, US-026 AC1 | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
 | CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | Agent 1 | CMP-120 | `CMP-121-check-after-answer` | todo |
 | CMP-129 | Spec: FFR-014 JPEG/PNG stored as received, FFR-035 timing goal 2 s, contract v1.12 (owner, 2026-11-03) | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
-| CMP-131 | Records: FFR-035 goal in server time, CMP-122 override, the clasp session-control exemption, CMP-124 Lighthouse acceptance | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
+| CMP-131 | Records: FFR-035 goal in server time, CMP-122 override, the deploy login's expiry, CMP-124 Lighthouse acceptance | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
 | CMP-130 | PNG screenshot stored as received (FFR-014 v1.16, contract §3.3 v1.12), timed on staging | Agent 1 | CMP-129 | `CMP-130-png-as-is` | todo |
 | CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | todo |
 | CMP-123 | Production backend deploy of CMP-121 and CMP-130 | Agent 1 + owner | CMP-121's and CMP-130's staging checks; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | todo |
@@ -223,8 +223,9 @@ The human reviewer is the final approver.
 - React 19 and Vite 8 are major versions: hidden behavior changes. Mitigated by the visual and
   functional checks and Lighthouse on a local build before the release, and by the release's
   kept build of v1.1.2 as the way back.
-- The deploy login (`CLASP_CREDENTIALS`) keeps expiring; the Workspace session-control setting
-  is still to be checked by the owner.
+- The deploy login (`CLASP_CREDENTIALS`): its expiry was settled 2026-11-03 by an owner decision
+  on a Workspace setting (ADR-009); the token now lasts until it is revoked or rotated, so its
+  care matters more.
 - Production changes before the PTES test (due 2026-12-26): reviewed by the pre-release security
   agent first.
 
@@ -301,15 +302,11 @@ The human reviewer is the final approver.
   (Recommended)" or now), the owner answered: "Merged, if staging deploy fails, revert it"
   (merged 2026-11-03). Its staging deploy first failed on the expired login (not on #137: the
   failing step refreshes the token directly, without clasp), then passed after the renewal.
-- The deploy login kept expiring (2026-10-26, 2026-11-02, 2026-11-03). Cause, seen in the Admin
-  console by the owner: "Google Cloud session control" required reauthentication every 16 hours
-  for apps with the Cloud Platform permission, which the clasp login has (ADR-009). Asked:
-  "That's the cause: Workspace makes any app with Google Cloud access sign in again every 16
-  hours, and the deploy tool's login has that access. So every deploy after 16 h fails. How
-  should we fix it?" Owner: **"Exempt clasp only (Recommended)"** (other options: never require
-  reauthentication; leave it and renew each time; our own login without the Cloud permission).
-  Done 2026-11-03: clasp marked Trusted in API controls, "exempt trusted apps" ticked, the 16-hour
-  rule kept for every other app; the login renewed in both environments (ADR-009 Consequences).
+- The deploy login kept expiring (2026-10-26, 2026-11-02, 2026-11-03). The owner found the cause
+  in a Workspace setting and chose a fix that applies to the deploy login only (2026-11-03; the
+  question, the options and the setting are kept with the owner, not in this public repository,
+  owner 2026-11-03: "Word it vaguely (Recommended)"). The login was renewed in both environments
+  (ADR-009 Consequences).
 - CMP-124 (PR #136), asked: "PR #136 upgrades the site to React 19 and Vite 8. The site looks
   identical, but React 19 is bigger, so the phone speed score drops from 96–97 to 91–94 (still
   above our 90 minimum; the page shows ~0.4 s later on a slow phone). What should we do?" Owner:
