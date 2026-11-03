@@ -26,7 +26,7 @@
 - Integration contracts: [EVENTS_API_CONTRACT.md](docs/specs/EVENTS_API_CONTRACT.md) (v1.11,
   locked) — site ↔ events backend
 - Events emails and privacy notice (approved by Cami 2026-10-26, CMP-058; §2c, the registration
-  notice, gets her OK in CMP-112):
+  notice, approved by Cami 2026-10-31):
   [EVENTS_EMAILS_AND_PRIVACY.md](docs/ux/EVENTS_EMAILS_AND_PRIVACY.md)
 - Architecture spec: [docs/specs/ARCHITECTURE_SPEC.md](docs/specs/ARCHITECTURE_SPEC.md)
   (includes the content model, §9)

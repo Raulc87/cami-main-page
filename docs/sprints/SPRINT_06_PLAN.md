@@ -2,7 +2,7 @@
 
 ## Metadata
 - Sprint: 06
-- Status: Proposed (approved on merge of the CMP-120 PR; the owner's go-ahead is Entry Gate 4)
+- Status: Proposed (approved on merge of PR #133, CMP-120; the owner's go-ahead is Entry Gate 4)
 - Start: the day of the go-ahead
 - End: seven business days after the go-ahead (the standard cadence; Saturdays and Sundays
   excluded)
@@ -17,16 +17,16 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 
 | # | Gate | Status |
 |---|---|---|
-| 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on the head of the CMP-120 PR |
+| 1 | [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md) paths resolve | Pass: docs link check on the head of PR #133 (CMP-120) |
 | 2 | Readiness checklist has no open blocking items | Pass, except item 8 (the go-ahead), which is gate 4 |
-| 3 | Integration contracts locked | Pass on merge: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.11 (CMP-120) adds the `noticeSentAt` column (§6) and the check-after-answer test (§10); the API's requests and responses do not change |
+| 3 | Integration contracts locked | Pass on merge: [`EVENTS_API_CONTRACT.md`](../specs/EVENTS_API_CONTRACT.md) v1.11 (PR #133, CMP-120) adds the `noticeSentAt` column (§6) and the check-after-answer test (§10); the API's requests and responses do not change |
 | 4 | Final go-ahead from the human owner | Pending |
 
 ### Readiness checklist result (2026-11-01)
 | Item | Result |
 |---|---|
 | 1. Paths, `AGENTS.md`/`CLAUDE.md`, project key, branch names **(blocking)** | Pass (unchanged; branches in Selected tickets) |
-| 2. Docs agree on scope, names, behavior **(blocking)** | Pass: FEATURE_SPEC v1.15 (FFR-035, FFR-034 timing), contract v1.11, US-022 AC8, US-026 AC1, EVENTS_EMAILS_AND_PRIVACY §2c timing, all in the CMP-120 PR |
+| 2. Docs agree on scope, names, behavior **(blocking)** | Pass: FEATURE_SPEC v1.15 (FFR-035, FFR-034 timing), contract v1.11, US-022 AC8, US-026 AC1, EVENTS_EMAILS_AND_PRIVACY §2c timing, all in PR #133 (CMP-120) |
 | 3. Testable acceptance criteria **(blocking)** | Pass: US-022 AC8, US-026 AC1 and the ticket checks below |
 | 4. Locked contracts for shared interfaces **(blocking)** | Pass (gate 3) |
 | 4. Credentials rule | Pass: unchanged (TECH_STACK §11, ADR-009, ADR-010) |
@@ -37,7 +37,8 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; this sprint releases v1.2.0 (CMP-125) and a backend change (CMP-123) before it |
 | 5. Pre-release security agent **(blocking: release sprint)** | Pass: its session stays open since Sprint 04; its review of the backend changes since `31f1db3` (the code deployed in CMP-114) is planned before CMP-123, and of the site changes since `5d52c59` (v1.1.2) before CMP-125's tag |
 | 5. Written approval per agent scan **(blocking: release sprint)** | Pending, not blocking the go-ahead: the owner decides before CMP-123/CMP-125, as before; those tickets wait for it |
-| 6. Hosting runtime, local development, developer guide | Pass: ADR-002, ADR-008, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) (CMP-124 updates it if commands change) |
+| 5.1 User interface | Pass: the visual identity is approved (UX_UI_DIRECTION); CMP-124 must not change it (checked at three widths); not a go-live sprint |
+| 6. Hosting runtime, local development, developer guide | Pass: ADR-002, ADR-008, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) (Agent 3 updates it in CMP-124 if commands change) |
 | 6. Test, lint and CI checks; required on `main` | Pass: build, `apps-script-check`, docs link check, dependency audit |
 | 6. Branching ADR and deployment/release runbooks **(deploying sprint)** | Pass: ADR-007, ADR-009, ADR-010, the events-backend runbook, the release checklist |
 | 6. Previews and tests use their own data | Pass: the staging backend and spreadsheet; the site upgrade is checked on a local build |
@@ -66,8 +67,8 @@ and the site moves to React 19 and Vite 8 in release v1.2.0.
 | CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | todo |
 | CMP-123 | Production backend deploy of CMP-121 | Agent 1 + owner | CMP-121's staging check; the security agent's review; the owner's scan decision | — (evidence in CMP-126) | todo |
 | CMP-124 | Site libraries: React 19, React DOM 19, Vite 8, `@vitejs/plugin-react` 6 (replaces Dependabot PRs #104–#107) | Agent 3 | — | `CMP-124-react19-vite8` | todo |
-| CMP-127 | TECH_STACK and docs for CMP-124 | Coordinator | CMP-124 (text from Agent 3) | coordinator's branch | todo |
-| CMP-125 | Release v1.2.0 | Agent 3 + owner | CMP-124, CMP-127; the security agent's review; the owner's scan decision | `CMP-125-release-v1-2-0` | todo |
+| CMP-127 | TECH_STACK and docs for CMP-124 | Coordinator | — | coordinator's branch | dropped (folded into CMP-124: Agent 3 changes TECH_STACK's two lines in the same PR, AGENTS.md → Change management; review notes) |
+| CMP-125 | Release v1.2.0 | Agent 3 + owner | CMP-124; the security agent's review; the owner's scan decision | `CMP-125-release-v1-2-0` | todo |
 | CMP-126 | Sprint 06 verification | Agent 1 | every ticket above | `CMP-126-sprint-06-verification` | todo |
 
 Dependabot PR #109 (GitHub Actions versions) keeps Dependabot's title and has no ticket
@@ -113,8 +114,8 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
   - no visible change, checked at 1280/900/375 px in both languages (events, form, gallery);
     no console errors; the events, coupon and register calls work against staging;
   - local Lighthouse not worse than v1.1.2's (mobile 90+, desktop 95+, CLS ≤ 0.1);
-  - the text for TECH_STACK (and CONTRIBUTING, if anything changes) sent to the coordinator.
-- **CMP-127:** TECH_STACK's framework and build-tool lines, merged with or right after CMP-124.
+  - TECH_STACK's framework and build-tool lines changed in the same PR (Agent 3 owns those two
+    lines for this ticket, AGENTS.md → Change management), and CONTRIBUTING if commands change.
 - **CMP-125:** release v1.2.0 as for v1.1.2: version bump PR, the security agent's delta review
   to the tagged commit, the owner's statement and scan decision, tag and Release, dry run, real
   upload, the release checklist's live checks, PageSpeed (three mobile runs).
@@ -126,7 +127,7 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
 - CMP-121 and CMP-122 at the go-ahead; CMP-123 after CMP-121's staging check; CMP-126 last.
 
 ### Agent 3 — Site libraries and release (fresh session)
-- CMP-124 at the go-ahead; CMP-125 after CMP-124 and CMP-127.
+- CMP-124 at the go-ahead; CMP-125 after CMP-124.
 
 ### Pre-release security agent (its Sprint 04 session)
 - Reviews the merged backend changes before CMP-123, and the release commit before CMP-125's
@@ -143,9 +144,9 @@ Agents edit only files they own; changes elsewhere are requested from the owner 
 | Path | Owner |
 |---|---|
 | `apps-script/**`, `.github/clasp/**` (except Dependabot's own pull requests), `.github/scripts/**` except `check_doc_links.py`, `.github/workflows/deploy-apps-script.yml`, `.github/workflows/apps-script-check.yml`, [`docs/process/events-backend-runbook.md`](../process/events-backend-runbook.md), [`docs/security/audit-allowlist.json`](../security/audit-allowlist.json) (CMP-122 only), `docs/sprints/SPRINT_06_VERIFICATION.md`, `docs/sprints/evidence/sprint-06/**` | Agent 1 |
-| `src/**`, `public/**`, `index.html`, `package.json` and `package-lock.json`, `vite.config.*`, `CONTRIBUTING.md`, [`README.md`](../../README.md) | Agent 3 |
+| `src/**`, `public/**`, `index.html`, `package.json` and `package-lock.json`, `vite.config.*`, `CONTRIBUTING.md`, [`README.md`](../../README.md), and TECH_STACK's framework and build-tool lines (CMP-124 only) | Agent 3 |
 | [`TICKETS.md`](../../TICKETS.md) | Shared: each agent updates only its own rows; the coordinator adds rows |
-| `docs/specs/**`, `docs/ux/**`, `docs/sprints/SPRINT_06_*.md` except the verification, the process docs except the events-backend runbook, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), [`TECH_STACK.md`](../../TECH_STACK.md), `docs/decisions/**` | Coordinator (docs PRs) |
+| `docs/specs/**`, `docs/ux/**`, `docs/sprints/SPRINT_06_*.md` except the verification, the process docs except the events-backend runbook, [`AGENTS.md`](../../AGENTS.md), [`PROJECT_CONTEXT.md`](../../PROJECT_CONTEXT.md), [`TECH_STACK.md`](../../TECH_STACK.md) (except those two lines), `docs/decisions/**` | Coordinator (docs PRs) |
 | `docs/security/**` except the allowlist | Pre-release security agent (only with the owner's OK per PR) |
 
 ## Integration Contracts
@@ -159,11 +160,10 @@ Each line names what the PR waits for.
 1. CMP-120 (this plan and the spec) — nothing.
 2. CMP-121 (check after the answer) — CMP-120. CMP-122 (clasp exception) — nothing; before
    2026-11-20. CMP-124 (site libraries) — nothing. Dependabot #109 — the reviewer's verdict.
-3. CMP-127 (TECH_STACK) — CMP-124's text; merged with or right after CMP-124.
-4. CMP-123 (production backend) — CMP-121's staging check; the security agent's review; the
-   owner's scan decision. CMP-125 (release v1.2.0) — CMP-124, CMP-127; the security agent's
+3. CMP-123 (production backend) — CMP-121's staging check; the security agent's review; the
+   owner's scan decision. CMP-125 (release v1.2.0) — CMP-124; the security agent's
    delta review; the owner's scan decision.
-5. CMP-126 (verification) — every PR above.
+4. CMP-126 (verification) — every PR above.
 
 Cycle check: every arrow points to a PR earlier in this list.
 
@@ -225,3 +225,6 @@ The human reviewer is the final approver.
   nuevo más tarde) / pending (checked again later)', which would then be wrong. What should it
   say?" Owner: **"pendiente: revísalo a mano (Recommended)"** (EN "pending: check it by hand";
   the other option: keep it). Cami sees it at CMP-121's staging check.
+- Also from the review of PR #133: CMP-127 (a separate TECH_STACK PR) is dropped. AGENTS.md →
+  Change management wants a stack change in the same PR as the code, so Agent 3 changes
+  TECH_STACK's framework and build-tool lines in CMP-124, and the reviewer checks them.

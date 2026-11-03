@@ -146,10 +146,9 @@ Lifetools
 
 ## 2c. Registration notice to Cami (internal, FFR-034)
 
-Status: **proposed by the coordinator (CMP-111); approved by the owner on merge of the CMP-111
-PR; Cami reads it in the CMP-112 staging check and gives her OK before production (CMP-114).**
-If she asks for changes, the coordinator changes this section in a docs PR and Agent 1 applies
-it in a code PR, both before CMP-114. The rest of this document stays as Cami approved it on
+Status: **approved by the owner on merge of PR #125 (CMP-111) and by Cami at the CMP-112
+staging check (2026-10-31: "Cami approved the text as it is"); the `pending` value changed in
+Sprint 06 (owner, 2026-11-01), which Cami reads at the CMP-121 staging check.** The rest of this document stays as Cami approved it on
 2026-10-26.
 
 Sent to the address(es) in `NOTIFY_REGISTRATION_TO` (Cami's; empty → none; contract §9 v1.10),

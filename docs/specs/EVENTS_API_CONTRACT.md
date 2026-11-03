@@ -137,8 +137,10 @@ Spreadsheet (Workspace `lifetoolscr.com`), tabs:
   still due (only rows saved since v1.11); a timestamp (Costa Rica time, like `timestamp`) =
   sent; `skipped` = not sent and never retried (`NOTIFY_REGISTRATION_TO` empty or all invalid,
   the quota below `NOTIFY_QUOTA_RESERVE`, or the send failed); `-` = a row saved before v1.11,
-  never notified (written into every existing row when the script adds the header). Only the
-  server writes it.
+  never notified (written into every existing row when the script adds the header, which it
+  does in every event tab at the first `register` or trigger run after the deploy, before
+  handling any row). Only the server writes it. A trigger run notifies only rows whose
+  `noticeSentAt` is blank.
 - `Metrics`: one row per day — `date`, `accepted`, `honeypotHits`, `throttled`,
   `couponFailures`, `uploadedMb`, `spamMarked`.
 - `Translations` (created by the script, CMP-045): `hash`, `text` — the automatic English
@@ -280,8 +282,8 @@ The checklist must cover:
   adds the `contactOptIn` header as the last column, and that tab's older rows stay blank.
 - Registration notice (v1.10): with `NOTIFY_REGISTRATION_TO` set, a stored paid registration, a
   stored ₡0 registration and a stored flagged one (FFR-024) each send exactly one notice to it,
-  after the participant's email and, when paid, after the in-request payment check, showing
-  that check's result; a retry with the same `submissionId`, a duplicate email, a validation
+  after the participant's email and, when paid, after the payment check, showing that check's
+  result (since v1.11 the paid check and its notice run in the trigger, see below); a retry with the same `submissionId`, a duplicate email, a validation
   error, a ₡0 `SOLD_OUT`, a `RATE_LIMITED` request and a honeypot hit send none; with it empty,
   no notice is sent; with an invalid address, or when sending fails, the registration and its
   response are unchanged and the log names no address; with the remaining quota below
@@ -293,5 +295,8 @@ The checklist must cover:
   then the notice, and sets `noticeSentAt` to the time; a second run sends nothing more; a ₡0
   registration still gets its notice in the request and its `noticeSentAt` set; with the
   property empty, `noticeSentAt` becomes `skipped` and nothing is retried; an older tab gets the
-  `noticeSentAt` header, its older rows get `-` and are not notified; on staging, the
+  `noticeSentAt` header at the first `register` or trigger run after the deploy, before any
+  row is handled, and its existing rows (including rows still `pending` then, which already
+  got a v1.10 notice) get `-` and are never notified; a `-` row still `pending` is checked as
+  usual but gets no notice; on staging, the
   median `register` time of three paid registrations is within 1 s of three ₡0 ones.

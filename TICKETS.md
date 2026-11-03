@@ -159,4 +159,4 @@ it can be migrated to Linear (it has a free tier) by importing these same rows.
 | CMP-124 | Site libraries: React 19, Vite 8, @vitejs/plugin-react 6 (replaces Dependabot #104–#107) | — | todo | `CMP-124-react19-vite8` | 2026-11-01 | Sprint 06, Agent 3. |
 | CMP-125 | Release v1.2.0 | — | todo | `CMP-125-release-v1-2-0` | 2026-11-01 | Sprint 06, Agent 3 with the owner. |
 | CMP-126 | Sprint 06 verification | — | todo | `CMP-126-sprint-06-verification` | 2026-11-01 | Sprint 06, Agent 1. |
-| CMP-127 | TECH_STACK and docs for CMP-124 | — | todo | coordinator's branch | 2026-11-01 | Sprint 06, coordinator; with or right after CMP-124. |
+| CMP-127 | TECH_STACK and docs for CMP-124 | — | dropped | coordinator's branch | 2026-11-01 | Folded into CMP-124 (AGENTS.md → Change management: stack change in the same PR as the code; review of #133). |

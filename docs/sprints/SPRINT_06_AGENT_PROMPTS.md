@@ -57,8 +57,6 @@ Codex reviews every PR automatically when it opens (no session prompt needed).
 
 ---
 
----
-
 ## Common rules (paste at the top of every implementation prompt)
 
 ```
@@ -166,7 +164,8 @@ Order of work (checks in SPRINT_06_PLAN → Ticket checks):
 [Common rules block]
 
 You are Implementation Agent 3: the site and its release. You own src/**, public/**,
-index.html, package.json and package-lock.json, vite.config.*, CONTRIBUTING.md and README.md.
+index.html, package.json and package-lock.json, vite.config.*, CONTRIBUTING.md, README.md, and
+TECH_STACK.md's framework and build-tool lines for CMP-124 only.
 
 Order of work (checks in SPRINT_06_PLAN → Ticket checks):
 1. CMP-124-react19-vite8 — React and React DOM 19, Vite 8, @vitejs/plugin-react 6, lockfile
@@ -174,9 +173,9 @@ Order of work (checks in SPRINT_06_PLAN → Ticket checks):
    1280/900/375 px in both languages; no console errors; events, coupon and register calls work
    against staging (through the dev server, as before); local Lighthouse before and after in
    the PR (mobile 90+, desktop 95+, CLS ≤ 0.1). Dependabot's #104–#107 are replaced by this PR:
-   say so in the PR body; the owner closes them. Send the coordinator the TECH_STACK text
-   (framework and build-tool lines) and any CONTRIBUTING change.
-2. CMP-125-release-v1-2-0 — after CMP-124 and the coordinator's TECH_STACK PR are merged: the
+   say so in the PR body; the owner closes them. In the same PR, update TECH_STACK's framework
+   and build-tool lines (yours for this ticket only) and CONTRIBUTING if commands change.
+2. CMP-125-release-v1-2-0 — after CMP-124 is merged: the
    release as for v1.1.2 (version bump PR with the gate table; the owner's statement and scan
    decision; the security agent's delta review to the commit that gets tagged; the owner
    creates the tag and Release; dry run, real upload, live checks, PageSpeed three mobile runs),

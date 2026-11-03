@@ -222,9 +222,10 @@ Payment screenshot check
   it `pending` for the next run, and the 24-hour limit of FFR-032 still applies from the moment
   the row was saved. The `register` request with a receipt answers about as fast as a ₡0 one
   (measured in the Sprint 06 check). Rows still `pending` at the deploy of this change are
-  handled the same way.
-- FFR-032: If the OCR call fails for a service reason (e.g. Google's per-user OCR rate limit)
-  after its in-execution retries, the row keeps check result `pending`. Only the "payment not
+  checked the same way but get no second notice (`noticeSentAt` `-`, contract §6 v1.11).
+- FFR-032: (Since FFR-035 the first check also runs in this trigger, not in the request.) If
+  the OCR call fails for a service reason (e.g. Google's per-user OCR rate limit) after its
+  in-execution retries, the row keeps check result `pending`. Only the "payment not
   validated" email waits for the check; the confirmation or "registration received" email is
   still sent when the row is saved (FFR-026). A time-driven trigger retries the `pending` rows
   every 10 minutes; when a retry gets `ok`, `mismatch` or `unreadable`, it writes the result and
@@ -281,7 +282,8 @@ Administration (Cami)
   still pending at night is retried after 06:00. A time trigger's failure is reported (Google's
   email) only after 10 failed runs in a row (`TRIGGER_FAIL_ALERT_AFTER`).
   A registration that changes an event's availability (e.g. sells it out) rebuilds the cache
-  after the lock is released (like OCR and emails, FFR-025) and before it answers, rather than
+  after the lock is released (like the emails, FFR-025; the OCR runs later, FFR-035) and before
+  it answers, rather than
   clearing it, so the next visitor never waits for a cold
   request; the rebuild adds a few seconds to that registration's own request. The
   clock-based fields (`registrationOpen`, 12 h before start, BR-E09; an event dropped once it
@@ -320,7 +322,8 @@ Abuse metrics
     writes the check's result (`ok`, `mismatch` or `unreadable`) sends the notice right after
     the "payment not validated" email when there is one, so the notice always shows the real
     result, up to about 10 minutes after the sign-up in the day and after 06:00 for a night
-    sign-up. A row still `pending` when FFR-032's 24-hour limit ends gets its notice then,
+    sign-up. A row still `pending` when FFR-032's 24-hour limit ends gets its notice at the first trigger
+    run after the limit (after 06:00 if the limit falls at night),
     saying `pending` (worded "pendiente: revísalo a mano", §2c). Each row's notice is sent at
     most once, recorded in the row's `noticeSentAt` (contract §6 v1.11: a timestamp, `skipped`
     when it was not sent, `-` for rows saved before this change, which are never notified). Once per
