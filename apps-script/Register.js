@@ -15,19 +15,29 @@ var NOTICE_NEVER = '-';
 // A tab created before a column was added lacks its header: add the missing trailing headers (older
 // rows stay blank in them, read as FALSE). Only when the existing header row is a prefix of ours.
 // Older rows get `-` in `noticeSentAt`, so they are never notified (contract §6 v1.11). The caller
-// holds the script lock, so no new row is appended while the older ones are marked.
+// holds the script lock, so no new row is appended while the older ones are marked. The marks are
+// written before the headers: if a Sheets call fails in between, the headers are still missing, so the
+// next run finishes the migration instead of finding a tab that looks complete with unmarked rows.
 function ensureRegistrationHeaders_(sheet) {
-  var have = sheet.getLastColumn();
+  var existing = existingRegistrationHeaders_(sheet);
+  var have = existing.length;
   if (have >= REGISTRATION_HEADERS.length || have < 1) return;
-  var existing = sheet.getRange(1, 1, 1, have).getValues()[0].map(function (h) { return String(h).trim(); });
   var isPrefix = existing.every(function (h, i) { return h === REGISTRATION_HEADERS[i]; });
   if (!isPrefix) { console.error('registration tab headers differ from the expected ones; missing headers not added'); return; }
   var missing = REGISTRATION_HEADERS.slice(have);
-  sheet.getRange(1, have + 1, 1, missing.length).setValues([missing]);
   if (missing.indexOf('noticeSentAt') !== -1) markOlderRowsNeverNotified_(sheet);
+  sheet.getRange(1, have + 1, 1, missing.length).setValues([missing]);
 }
 
-// Writes `-` in `noticeSentAt` of every row with content (blank rows stay blank).
+// The header cells from the first one up to the first blank cell, trimmed.
+function existingRegistrationHeaders_(sheet) {
+  var width = Math.min(Math.max(sheet.getLastColumn(), 1), REGISTRATION_HEADERS.length);
+  var cells = sheet.getRange(1, 1, 1, width).getValues()[0].map(function (h) { return String(h).trim(); });
+  var blank = cells.indexOf('');
+  return blank === -1 ? cells : cells.slice(0, blank);
+}
+
+// Writes `-` in `noticeSentAt` of every row with content (blank rows stay blank). Safe to repeat.
 function markOlderRowsNeverNotified_(sheet) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return;

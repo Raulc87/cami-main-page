@@ -236,12 +236,13 @@ function retryPendingChecksRun_() {
 
 // One stored row in a trigger run. A `pending` row is checked, its result written, the "not validated"
 // email sent when FFR-017 requires it, and only then the notice. A row whose result is already written
-// but whose notice is still due (a run stopped in between) gets its notice. ₡0 rows are noticed in their request.
+// but whose notice is still due (a run stopped in between) gets its notice, and so does a ₡0 row whose
+// request could not take the lock (its claim keeps a request still running from sending twice).
 function handleRegistrationInRetryRun_(eventCode, r, run) {
   var checkResult = str_(r.v.checkResult).trim();
   var submissionId = str_(r.v.submissionId);
   if (checkResult !== 'pending') {
-    if (checkResult !== 'not-required' && noticeIsDue_(r.v) && !runIsOutOfTime_(run)) {
+    if (noticeIsDue_(r.v) && !runIsOutOfTime_(run)) {
       sendRegistrationNoticeSafely_(eventCode, submissionId, { allowPending: false });
     }
     return;

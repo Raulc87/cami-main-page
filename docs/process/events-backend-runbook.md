@@ -228,15 +228,16 @@ What Cami sees and when:
 - **A paid sign-up:** its notice arrives after the check, up to about 10 minutes after the sign-up in
   the day (06:00 to 22:00, Costa Rica time). A sign-up made at night is checked, and noticed, at the
   first run after 06:00. The row shows `pending` (yellow) until then.
-- **A free (₡0) sign-up:** its notice is sent in the request, as before.
+- **A free (₡0) sign-up:** its notice is sent in the request, as before; if the request could not take
+  the lock, the next trigger run sends it.
 - **`noticeSentAt`** (last column): blank = the notice is still due; a date and time = sent;
   `skipped` = not sent and never retried (`NOTIFY_REGISTRATION_TO` empty or invalid, the email quota
   below `NOTIFY_QUOTA_RESERVE`, or the send failed); `-` = a row saved before this change, never
   notified. The script adds the column to an older event tab, with `-` in its existing rows, at the
   first registration in that tab or the first trigger run inside `RETRY_CHECK_HOURS` after the deploy
   (a tab with no registration yet and a run at night waits for 06:00; it has no due row meanwhile).
-  Do not edit it by hand unless you mean to: blank it to have the notice sent again, which works only
-  for a paid row, because the trigger never notices a free (₡0) one; type `skipped` to stop a notice.
+  Do not edit it by hand unless you mean to: blank it to have the notice sent again by the next trigger
+  run (inside `RETRY_CHECK_HOURS`), for a paid or a free row; type `skipped` to stop a notice.
 - **A run stays inside Apps Script's 6-minute limit:** it starts no new row after 3 minutes (about 10 to
   60 seconds per row, with a pause between rows), so a backlog is finished by the next runs.
 
