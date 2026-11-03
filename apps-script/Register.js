@@ -4,19 +4,54 @@
 var REGISTRATION_HEADERS = [
   'timestamp', 'submissionId', 'reference', 'eventCode', 'participantName', 'email', 'whatsapp', 'lang',
   'couponCode', 'discountPercent', 'amountDueCrc', 'screenshotUrl', 'checkResult', 'checkDetails',
-  'needsReview', 'status', 'consentAt', 'notes', 'contactOptIn'
+  'needsReview', 'status', 'consentAt', 'notes', 'contactOptIn', 'noticeSentAt'
 ];
+
+// `noticeSentAt` (contract §6 v1.11): blank = the registration notice is still due; a timestamp = sent;
+// `skipped` = not sent and never retried; `-` = a row saved before v1.11, never notified.
+var NOTICE_SKIPPED = 'skipped';
+var NOTICE_NEVER = '-';
 
 // A tab created before a column was added lacks its header: add the missing trailing headers (older
 // rows stay blank in them, read as FALSE). Only when the existing header row is a prefix of ours.
+// Older rows get `-` in `noticeSentAt`, so they are never notified (contract §6 v1.11). The caller
+// holds the script lock, so no new row is appended while the older ones are marked.
 function ensureRegistrationHeaders_(sheet) {
   var have = sheet.getLastColumn();
   if (have >= REGISTRATION_HEADERS.length || have < 1) return;
   var existing = sheet.getRange(1, 1, 1, have).getValues()[0].map(function (h) { return String(h).trim(); });
   var isPrefix = existing.every(function (h, i) { return h === REGISTRATION_HEADERS[i]; });
-  if (!isPrefix) { console.error('registration tab headers differ from the expected ones; contactOptIn header not added'); return; }
+  if (!isPrefix) { console.error('registration tab headers differ from the expected ones; missing headers not added'); return; }
   var missing = REGISTRATION_HEADERS.slice(have);
   sheet.getRange(1, have + 1, 1, missing.length).setValues([missing]);
+  if (missing.indexOf('noticeSentAt') !== -1) markOlderRowsNeverNotified_(sheet);
+}
+
+// Writes `-` in `noticeSentAt` of every row with content (blank rows stay blank).
+function markOlderRowsNeverNotified_(sheet) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+  var rows = sheet.getRange(2, 1, lastRow - 1, REGISTRATION_HEADERS.length - 1).getValues();
+  var marks = rows.map(function (row) {
+    var hasContent = row.some(function (cell) { return cell !== '' && cell !== null; });
+    return [hasContent ? NOTICE_NEVER : ''];
+  });
+  sheet.getRange(2, REGISTRATION_HEADERS.indexOf('noticeSentAt') + 1, marks.length, 1).setValues(marks);
+}
+
+// The trigger's turn at the same migration, so a tab with no `register` since the deploy is ready
+// before any row is handled (contract §6 v1.11). A busy lock only delays it to the next run.
+function ensureRegistrationHeadersInAllTabs_() {
+  var release = takeShortLock_(20000);
+  if (!release) {
+    console.error('registration headers check skipped: lock busy');
+    return;
+  }
+  try {
+    registrationSheetNames_().forEach(function (name) { ensureRegistrationHeaders_(getSpreadsheet().getSheetByName(name)); });
+  } finally {
+    release();
+  }
 }
 
 // Colors of `checkResult` values and the row highlight for `needsReview` (CMP-094). Looks only:
@@ -213,28 +248,25 @@ function handleRegister_(body) {
     }
   }
   if (!outcome.duplicateSubmission) {
-    afterStore_(v, found, amountDue, coupon, outcome);
-    sendRegistrationNoticeSafely_(v, found, amountDue, outcome); // last step: after the participant's email and the payment check (FFR-034)
+    afterStore_(v, found, outcome);
+    // A ₡0 registration has no check to wait for: its notice is the last step (FFR-034). A paid one
+    // is noticed by the trigger once the check has written its result (FFR-035).
+    if (!outcome.fileId) sendRegistrationNoticeSafely_(v.eventCode, v.submissionId, { allowPending: false });
   }
   return ok({ reference: outcome.reference, flagged: outcome.flagged, duplicateSubmission: outcome.duplicateSubmission });
 }
 
-// After the registration is stored and the lock is released: the participant email, then the
-// payment check and, if it fails, the "not validated" email (US-025, US-022). Nothing here may
-// fail the registration; problems are written to the row.
-function afterStore_(v, found, amountDue, coupon, outcome) {
+// After the registration is stored and the lock is released: the participant email (US-025). The
+// payment check is not run here: the row stays `pending` for the trigger (FFR-035). Nothing here
+// may fail the registration; problems are written to the row.
+function afterStore_(v, found, outcome) {
   try {
     var row = {
       participantName: v.participantName, email: v.email, lang: v.lang, reference: outcome.reference,
-      amountDueCrc: amountDue, couponCode: v.couponCode, submissionId: v.submissionId
+      amountDueCrc: outcome.amountDueCrc, couponCode: v.couponCode, submissionId: v.submissionId
     };
     var kind = outcome.flags.length ? 'received' : 'confirmation';
     sendParticipantMail_(kind, row, found.event, v.eventCode, { reasons: outcome.flags });
-    if (!outcome.fileId) return;
-    var result = runPaymentCheck_(outcome.fileId, amountDue, outcome.originalFormat, OCR_WAITS_REQUEST);
-    if (result.pending) return; // the trigger tries again (FFR-032)
-    if (!applyCheckResult_(v.eventCode, v.submissionId, result)) return;
-    if (result.email) sendParticipantMail_('notValidated', row, found.event, v.eventCode);
   } catch (err) {
     console.error('after-store steps failed: ' + (err && err.name));
   }
@@ -327,7 +359,7 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
       "'" + timestamp, v.submissionId, reference, "'" + v.eventCode, neutralize(v.participantName), neutralize(v.email),
       neutralize(v.whatsapp), v.lang, neutralize(v.couponCode), coupon ? coupon.discountPercent : '', amountDue, screenshotUrl,
       screenshot ? 'pending' : 'not-required', notes.join('; '), flags.length > 0, 'new',
-      "'" + timestamp, '', v.contactOptIn === true
+      "'" + timestamp, '', v.contactOptIn === true, ''
     ];
     var tabExisted = getSpreadsheet().getSheetByName(v.eventCode) !== null;
     var sheet = getOrCreateSheet(v.eventCode, REGISTRATION_HEADERS);
@@ -352,7 +384,7 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
     }
   }
   return {
-    reference: reference, flagged: flags.length > 0, duplicateSubmission: false, bytes: bytes,
+    reference: reference, flagged: flags.length > 0, duplicateSubmission: false, bytes: bytes, amountDueCrc: amountDue,
     flags: flags, fileId: createdFile ? createdFile.getId() : '',
     originalFormat: !!screenshot && screenshot.extension !== 'jpg',
     capReached: !!screenshot && uploadCapReached_(today, 0),

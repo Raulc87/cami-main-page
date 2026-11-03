@@ -8,9 +8,8 @@ var CHECK_REVIEW_FLAGS = ['event closed at submit', 'sold out at submit', 'coupo
 var PENDING_MAX_AGE_MS = 24 * 3600000;
 var PENDING_STUCK_KEY = 'PENDING_STUCK';
 var EMAIL_FAILED_KEY = 'EMAIL_FAILED_QUEUE';
-var OCR_WAITS_REQUEST = [];                    // in a visitor's request: no waiting, a refused call stays `pending`
 var OCR_WAITS_TRIGGER = [5000, 10000, 20000];
-var RETRY_RUN_MS = 4.5 * 60000;                // stay inside the 6-minute limit
+var RETRY_RUN_MS = 3 * 60000;                  // no new row is started after this: one row takes up to ~1 minute, the limit is 6
 
 // `needsReview` (FFR-030): TRUE for a `mismatch` or `unreadable` result or any flag in the details.
 function needsReviewFor_(checkResult, details) {
@@ -212,8 +211,10 @@ function fileIdFromUrl_(url) {
   return m ? m[1] : '';
 }
 
-// Time-driven trigger (every 10 minutes): runs the check again for rows still `pending`
-// (FFR-032). A row older than 24 hours is no longer retried; it is listed for the day's alert email.
+// Time-driven trigger (every 10 minutes): the payment check of every `pending` row (FFR-035; a service
+// failure keeps the row `pending` for the next run, FFR-032), then Cami's notice (FFR-034). A row older
+// than 24 hours is no longer checked; it is listed for the day's alert email and gets its notice, saying
+// `pending`.
 //
 // Works only inside `RETRY_CHECK_HOURS`; outside them the run ends at once, with no work, no error and
 // the failure count unchanged (contract §9).
@@ -224,27 +225,47 @@ function retryPendingChecks() {
 
 function retryPendingChecksRun_() {
   drainEmailFailedQueue_();
-  var started = Date.now();
-  var stuck = [];
-  var outOfTime = false;
-  var serviceBusy = false;
+  ensureRegistrationHeadersInAllTabs_(); // before any row is handled (contract §6 v1.11)
+  var run = { started: Date.now(), stuck: [], outOfTime: false, serviceBusy: false };
   registrationSheetNames_().forEach(function (name) {
-    readTable(name).forEach(function (r) {
-      if (str_(r.v.checkResult).trim() !== 'pending' || !str_(r.v.screenshotUrl)) return;
-      var savedMs = Date.parse(str_(r.v.timestamp).replace(/^'/, ''));
-      if (isFinite(savedMs) && started - savedMs > PENDING_MAX_AGE_MS) { stuck.push(str_(r.v.reference)); return; }
-      if (outOfTime || serviceBusy) return;
-      if (Date.now() - started > RETRY_RUN_MS) { outOfTime = true; return; }
-      var fileId = fileIdFromUrl_(r.v.screenshotUrl);
-      if (!fileId) return;
-      var original = str_(r.v.checkDetails).indexOf('stored as original format') !== -1;
-      var result = runPaymentCheck_(fileId, Number(r.v.amountDueCrc), original, OCR_WAITS_TRIGGER);
-      if (result.pending) { if (result.service) serviceBusy = true; return; } // a refusal hits every file: try again in 10 minutes
-      if (!applyCheckResult_(name, str_(r.v.submissionId), result)) return;
-      if (result.email) sendNotValidatedEmail_(name, r.v);
-      Utilities.sleep(3000);
-    });
+    readTable(name).forEach(function (r) { handleRegistrationInRetryRun_(name, r, run); });
   });
   // The alert lists the first 50; the rest is counted so none is dropped silently.
-  PropertiesService.getScriptProperties().setProperty(PENDING_STUCK_KEY, JSON.stringify({ refs: stuck.slice(0, 50), more: Math.max(0, stuck.length - 50) }));
+  PropertiesService.getScriptProperties().setProperty(PENDING_STUCK_KEY, JSON.stringify({ refs: run.stuck.slice(0, 50), more: Math.max(0, run.stuck.length - 50) }));
+}
+
+// One stored row in a trigger run. A `pending` row is checked, its result written, the "not validated"
+// email sent when FFR-017 requires it, and only then the notice. A row whose result is already written
+// but whose notice is still due (a run stopped in between) gets its notice. ₡0 rows are noticed in their request.
+function handleRegistrationInRetryRun_(eventCode, r, run) {
+  var checkResult = str_(r.v.checkResult).trim();
+  var submissionId = str_(r.v.submissionId);
+  if (checkResult !== 'pending') {
+    if (checkResult !== 'not-required' && noticeIsDue_(r.v) && !runIsOutOfTime_(run)) {
+      sendRegistrationNoticeSafely_(eventCode, submissionId, { allowPending: false });
+    }
+    return;
+  }
+  if (!str_(r.v.screenshotUrl)) return;
+  var savedMs = Date.parse(str_(r.v.timestamp).replace(/^'/, ''));
+  if (isFinite(savedMs) && run.started - savedMs > PENDING_MAX_AGE_MS) {
+    run.stuck.push(str_(r.v.reference));
+    if (noticeIsDue_(r.v) && !runIsOutOfTime_(run)) sendRegistrationNoticeSafely_(eventCode, submissionId, { allowPending: true });
+    return;
+  }
+  if (run.outOfTime || run.serviceBusy || runIsOutOfTime_(run)) return;
+  var fileId = fileIdFromUrl_(r.v.screenshotUrl);
+  if (!fileId) return;
+  var original = str_(r.v.checkDetails).indexOf('stored as original format') !== -1;
+  var result = runPaymentCheck_(fileId, Number(r.v.amountDueCrc), original, OCR_WAITS_TRIGGER);
+  if (result.pending) { if (result.service) run.serviceBusy = true; return; } // a refusal hits every file: try again in 10 minutes
+  if (!applyCheckResult_(eventCode, submissionId, result)) return;
+  if (result.email) sendNotValidatedEmail_(eventCode, r.v);
+  if (noticeIsDue_(r.v)) sendRegistrationNoticeSafely_(eventCode, submissionId, { allowPending: false });
+  Utilities.sleep(3000);
+}
+
+function runIsOutOfTime_(run) {
+  if (Date.now() - run.started > RETRY_RUN_MS) run.outOfTime = true;
+  return run.outOfTime;
 }
