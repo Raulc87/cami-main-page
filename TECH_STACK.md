@@ -41,8 +41,8 @@ updating this file and recording an ADR (see
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Framework | React 18.3 | `react`, `react-dom` |
-| Build tool | Vite 7 | `@vitejs/plugin-react` |
+| Framework | React 19 | `react`, `react-dom` |
+| Build tool | Vite 8 | `@vitejs/plugin-react` |
 | Language | JS/JSX | No TypeScript |
 | Routing | None | Single page; anchor-link navigation (`#contact`) |
 | State management | None (no library) | Local `useState`/`useEffect` (see [useReveal](src/hooks/useReveal.js)) + one native React Context for the global language (see [LanguageContext](src/context/LanguageContext.jsx), [ADR-004](docs/decisions/ADR-004-i18n-native-context.md)) |

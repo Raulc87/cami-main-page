@@ -24,7 +24,7 @@ npm run preview   # serve dist/ locally
 
 ## Stack
 
-React 18, Vite 7, plain JS/JSX (no TypeScript), plain CSS + inline styles, no router, no state
+React 19, Vite 8, plain JS/JSX (no TypeScript), plain CSS + inline styles, no router, no state
 library beyond a small React Context for the language toggle. No tests configured yet. Full
 detail in [TECH_STACK.md](TECH_STACK.md).
 

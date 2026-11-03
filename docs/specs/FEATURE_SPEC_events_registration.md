@@ -4,7 +4,7 @@
 - Feature ID: FS-001
 - Feature: Upcoming events, registration with SINPE Móvil payment proof, coupons, capacity,
   participant emails, events ticker
-- Version: 1.16 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
+- Version: 1.17 (refined with the owner's answers of 2026-10-19, CMP-021; Discovery draft 0.1 in
   CMP-019; v1.1: §20 #17 alias to test, owner 2026-10-20 — CMP-035; v1.2: FFR-031, §20 form
   decisions, form order in FFR-008 and §9 steps 4–6, 24-hour times in FFR-002, FFR-004 refresh
   rule, FFR-032 OCR retry, FFR-029 action alerts, §20 sender alias, owner 2026-10-20 —
@@ -24,10 +24,11 @@
   registration notice to Cami, owner 2026-10-31 — CMP-111; v1.15: FFR-035 the payment check
   runs after the answer, from the retry trigger, and FFR-034's notice waits for it, owner
   2026-11-01 — CMP-120; v1.16: FFR-014 JPEG and PNG stored as received (only WebP/HEIC
-  converted), FFR-035's timing goal, FFR-034 ₡0 notice recovery, owner 2026-11-03 — CMP-129)
+  converted), FFR-035's timing goal, FFR-034 ₡0 notice recovery, owner 2026-11-03 — CMP-129; v1.17: FFR-035's goal counts server time,
+  owner 2026-11-03 — CMP-131)
 - Status: Approved (v1.0 on merge of PR #21; v1.1 on merge of PR #26; v1.2 on merge of PR #30;
   v1.3 on merge of PR #32; v1.4 on merge of PR #34; v1.5 on merge of PR #35; v1.6 on merge of
-  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 on merge of PR #52; v1.11 on merge of PR #57; v1.12 on merge of PR #93; v1.13 on merge of PR #101; v1.14 on merge of PR #125; v1.15 Approved on merge of PR #133; v1.16 Approved on merge of the CMP-129 PR)
+  PR #37; v1.7 on merge of PR #40; v1.8 on merge of PR #41; v1.9 on merge of PR #45; v1.10 on merge of PR #52; v1.11 on merge of PR #57; v1.12 on merge of PR #93; v1.13 on merge of PR #101; v1.14 on merge of PR #125; v1.15 Approved on merge of PR #133; v1.16 Approved on merge of PR #138; v1.17 Approved on merge of the CMP-131 PR)
 - Parent PROJECT_SPEC: [PROJECT_SPEC.md](PROJECT_SPEC.md) (v1.1, FR-011)
 - Related project requirements: G-005; FR-009 (bilingual UI), FR-011; NFR-001 (hosting),
   NFR-002 (responsive), NFR-003 (free tier first), NFR-004 (minimal stack); BR-002
@@ -232,7 +233,14 @@ Payment screenshot check
   "Even with PNG kept as is, a paid sign-up will be about 2 s slower than a free one … What
   should the new goal say?" (other options: paid under 10 s; keep "within 1 s"): "Within 2 s
   of free (Recommended)"). Measured in the Sprint 06 check before this goal: ₡0 6.4 s, paid
-  JPEG 8.3 s, paid PNG converted to JPEG 13.3 s (server time). Rows still `pending` at the deploy of this change are
+  JPEG 8.3 s, paid PNG converted to JPEG 13.3 s (server time). The goal counts **server time**
+  (the `doPost` duration in the Apps Script Executions list), not the visitor's total wait,
+  which also includes uploading the image (owner, 2026-11-03, asked "Paid PNG sign-ups now take
+  8.2 s on the server vs 6.6 s for free ones: 1.6 s more, inside your 2 s goal. Timed from your
+  laptop (which adds sending the ~200 KB image) it's 10.3 s vs 7.5 s: 2.8 s more. No server
+  change can remove that upload time. Which number should the goal count?" (other option: the
+  visitor's total wait): "Server time (Recommended)"). Measured after CMP-130: ₡0 6.6 s, paid
+  PNG 8.2 s (+1.6 s); curl totals 7.5 s and 10.3 s, both recorded. Rows still `pending` at the deploy of this change are
   checked the same way but get no second notice (`noticeSentAt` `-`, contract §6 v1.11).
 - FFR-032: (Since FFR-035 the first check also runs in this trigger, not in the request.) If
   the OCR call fails for a service reason (e.g. Google's per-user OCR rate limit) after its

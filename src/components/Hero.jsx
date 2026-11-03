@@ -101,7 +101,7 @@ export default function Hero({ r }) {
                 alt="Cami Hernandez"
                 width={1200}
                 height={799}
-                fetchpriority="high"
+                fetchPriority="high"
                 onError={() => setHeroImgError(true)}
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
