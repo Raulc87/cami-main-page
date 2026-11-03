@@ -704,7 +704,8 @@ So that I pay the discounted price
 - Priority: High
 - Story Points: 5
 - Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
-  CMP-051; the real-iPhone HEIC check is a release gate (release-checklist §3b))
+  CMP-051; the real-iPhone HEIC check is a release gate (release-checklist §3b)); AC1 changed in
+  Sprint 06: JPEG and PNG stored as received (FFR-014 v1.16, CMP-130)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-014..FFR-016, FFR-022, FFR-024, FFR-025,
   FFR-030), BR-E04, BR-E05, BR-E10, BR-E13; contract §6
 - Related Requirements: FR-011, NFR-003
@@ -720,10 +721,12 @@ So that I can manage participants and payments in one place
 
 1. Given a valid paid registration
    When the backend receives it
-   Then the screenshot is stored as JPEG in `<root>/<eventCode>/` named
-   `<ParticipantName>_<YYYY-MM-DD>_<eventCode>.jpg` (registration date; the subfolder is created
-   if new; `_2` on collision). A ₡0 registration stores no file. If the image cannot be converted,
-   it is stored in its original format with that extension and a `checkDetails` note (FFR-014).
+   Then the screenshot is stored in `<root>/<eventCode>/` named
+   `<ParticipantName>_<YYYY-MM-DD>_<eventCode>.<ext>` (registration date; the subfolder is created
+   if new; `_2` on collision): a JPEG or PNG as received (`.jpg`, `.png`), a WebP or HEIC
+   converted to JPEG (`.jpg`; FFR-014 v1.16, owner 2026-11-03). A ₡0 registration stores no file.
+   If a WebP or HEIC cannot be converted, it is stored in its original format with that extension
+   and a `checkDetails` note (FFR-014).
 2. Given a valid registration
    When it is stored
    Then a row with the contract §6 columns is appended to the event's tab (created with headers

@@ -6,7 +6,7 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.11 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.12 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
   on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
@@ -17,10 +17,11 @@ Change management: update this document first, bump the version, notify both own
   payment re-check's working hours and the time triggers' failure threshold, owner 2026-10-28
   and 2026-10-29 — CMP-100; v1.10: §9 `NOTIFY_REGISTRATION_TO` and `NOTIFY_QUOTA_RESERVE`, the registration notice
   to Cami, owner 2026-10-31 — CMP-111; v1.11: §6 `noticeSentAt`, §10 the check after the
-  answer (FFR-035), owner 2026-11-01 — CMP-120)
+  answer (FFR-035), owner 2026-11-01 — CMP-120; v1.12: §3.3/§6 JPEG and PNG stored as received,
+  only WebP/HEIC converted, §10 the timing goal 2 s, owner 2026-11-03 — CMP-129)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 on
-  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 on merge of PR #125; v1.11 Approved on merge of the CMP-120 PR)
+  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 on merge of PR #125; v1.11 Approved on merge of PR #133; v1.12 Approved on merge of the CMP-129 PR)
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-035)
 - Related stories: US-017..US-026
@@ -93,7 +94,7 @@ email never appears in a URL (FNFR-001). Throttled globally.
 | `consent` | boolean | yes | must be `true` | — | `consentAt` (server time) |
 | `contactOptIn` | boolean | no | optional; only the JSON boolean `true` counts as opting in. Missing, `false` or any other value (a string, a number, `null`) is stored as `FALSE` and never refused (no error code): the box only widens contact, so the safe reading of anything unclear is "no" (the optional, unticked second checkbox, FFR-018) | — | `contactOptIn` (`TRUE` / `FALSE`) |
 | `website` | string | yes | honeypot: must be `""` | — | not stored |
-| `file` | object/null | when amount due > ₡0 | image, ≤ 5 MB decoded; types JPEG, PNG, WebP, HEIC/HEIF (detected from content, not name) | stored as JPEG (`.jpg`), converted with `Blob.getAs` (spike); if conversion fails, the original is stored with its own extension (`.png`, `.webp`, `.heic`) and `checkDetails` gets the note `stored as original format: <ext>` (a note, not a flag; if OCR then cannot read it, `checkResult` is `unreadable` with no retries and no "not validated" email, FFR-017; owner, 2026-10-20) | Drive file → `screenshotUrl` |
+| `file` | object/null | when amount due > ₡0 | image, ≤ 5 MB decoded; types JPEG, PNG, WebP, HEIC/HEIF (detected from content, not name) | JPEG and PNG stored as received, without conversion (`.jpg`, `.png`; v1.12, owner 2026-11-03); WebP and HEIC/HEIF converted to JPEG with `Blob.getAs` (spike) and stored as `.jpg`; if that conversion fails, the original is stored with its own extension (`.webp`, `.heic`) and `checkDetails` gets the note `stored as original format: <ext>` (a note, not a flag; if OCR then cannot read it, `checkResult` is `unreadable` with no retries and no "not validated" email, FFR-017; owner, 2026-10-20). The note is never written for JPEG or PNG: an unreadable JPEG or PNG is handled like any unreadable image (`unreadable`, `needsReview`, the "not validated" email) | Drive file → `screenshotUrl` |
 
 Unknown fields: ignored. A request with a non-empty `website` returns `ok: true` with a fake
 reference and stores nothing (do not tell bots they were caught); it is counted in `Metrics`.
@@ -173,8 +174,9 @@ validated or listed, except that a code shared with a published row is reported 
 Counting rule (capacity and coupon uses): rows with status `new` or `confirmed`, flagged or not,
 count; `refund/cancelled` and `spam` do not.
 
-Drive: `<root folder>/<eventCode>/<ParticipantName>_<YYYY-MM-DD>_<eventCode>.<ext>` (`ext` = `jpg`,
-or the original extension when conversion fails, §3.3; registration date; BR-E04
+Drive: `<root folder>/<eventCode>/<ParticipantName>_<YYYY-MM-DD>_<eventCode>.<ext>` (`ext` = `jpg`
+or `png` as received, `jpg` for a converted WebP/HEIC, or the original extension when that
+conversion fails, §3.3; registration date; BR-E04
 normalization; `_2`, `_3`… on collision).
 
 ## 7. Responses
@@ -295,8 +297,12 @@ The checklist must cover:
   then the notice, and sets `noticeSentAt` to the time; a second run sends nothing more; a ₡0
   registration still gets its notice in the request and its `noticeSentAt` set; with the
   property empty, `noticeSentAt` becomes `skipped` and nothing is retried; an older tab gets the
-  `noticeSentAt` header at the first `register` or trigger run after the deploy, before any
+  `noticeSentAt` header (under the script lock) at the first `register` or trigger run after the deploy, before any
   row is handled, and its existing rows (including rows still `pending` then, which already
   got a v1.10 notice) get `-` and are never notified; a `-` row still `pending` is checked as
   usual but gets no notice; on staging, the
-  median `register` time of three paid registrations is within 1 s of three ₡0 ones.
+  median `register` time of three paid registrations with a PNG screenshot is at most 2 s above
+  the median of three ₡0 ones (v1.12, owner 2026-11-03: "Within 2 s of free (Recommended)").
+- Stored as received (v1.12): a paid PNG is stored as `.png` with no original-format note, and
+  the trigger's check reads it (`ok` or `mismatch`, not `unreadable`); a JPEG is stored as
+  before; a WebP/HEIC is still converted.
