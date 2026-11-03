@@ -151,8 +151,8 @@ Order of work (checks in SPRINT_06_PLAN → Ticket checks):
    move .github/clasp to it (staging deploy proves it); otherwise prepare the allowlist renewal
    (reason, review date at most 30 days later) and ask the owner, through the coordinator, for
    the written acceptance on the PR.
-3. CMP-123 — after CMP-121's staging check, the security agent's review and the owner's scan
-   decision (the coordinator tells you): walk the owner through the approved production deploy,
+3. CMP-123 — after CMP-121's staging check and the security agent's review (no agent scan:
+   owner, 2026-11-03; the coordinator tells you): walk the owner through the approved production deploy,
    the smoke request, the triggers check and the first real paid notice (Cami confirms).
 4. CMP-126-sprint-06-verification — after every other Sprint 06 ticket:
    SPRINT_06_VERIFICATION.md with the evidence of each ticket and the staging cleanup list.
@@ -176,8 +176,8 @@ Order of work (checks in SPRINT_06_PLAN → Ticket checks):
    say so in the PR body; the owner closes them. In the same PR, update TECH_STACK's framework
    and build-tool lines (yours for this ticket only) and CONTRIBUTING if commands change.
 2. CMP-125-release-v1-2-0 — after CMP-124 is merged: the
-   release as for v1.1.2 (version bump PR with the gate table; the owner's statement and scan
-   decision; the security agent's delta review to the commit that gets tagged; the owner
+   release as for v1.1.2 (version bump PR with the gate table; the owner's statement; no agent
+   scan (owner, 2026-11-03); the security agent's delta review to the commit that gets tagged; the owner
    creates the tag and Release; dry run, real upload, live checks, PageSpeed three mobile runs),
    then the release records PR.
 ```

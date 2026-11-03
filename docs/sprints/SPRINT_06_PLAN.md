@@ -36,7 +36,7 @@ Run [`SPRINT_READINESS_CHECKLIST.md`](../checklists/SPRINT_READINESS_CHECKLIST.m
 | 5. Secret and dependency scanning | Pass: secret scanning on; dependency checks on every PR (CMP-071) |
 | 5. Pen test before a production release | Not yet due: the PTES deadline is 2026-12-26; this sprint releases v1.2.0 (CMP-125) and a backend change (CMP-123) before it |
 | 5. Pre-release security agent **(blocking: release sprint)** | Pass: its session stays open since Sprint 04; its review of the backend changes since `31f1db3` (the code deployed in CMP-114) is planned before CMP-123, and of the site changes since `5d52c59` (v1.1.2) before CMP-125's tag |
-| 5. Written approval per agent scan **(blocking: release sprint)** | Pending, not blocking the go-ahead: the owner decides before CMP-123/CMP-125, as before; those tickets wait for it |
+| 5. Written approval per agent scan **(blocking: release sprint)** | Pass: decided before the sprint for both production changes (CMP-123, CMP-125), owner 2026-11-03: "Same as before: tester (Recommended)": no agent scan, covered by the PTES test due by 2026-12-26 (Review Notes) |
 | 5.1 User interface | Pass: the visual identity is approved (UX_UI_DIRECTION); CMP-124 must not change it (checked at three widths); not a go-live sprint |
 | 6. Hosting runtime, local development, developer guide | Pass: ADR-002, ADR-008, [`CONTRIBUTING.md`](../../CONTRIBUTING.md) (Agent 3 updates it in CMP-124 if commands change) |
 | 6. Test, lint and CI checks; required on `main` | Pass: build, `apps-script-check`, docs link check, dependency audit |
@@ -65,10 +65,10 @@ and the site moves to React 19 and Vite 8 in release v1.2.0.
 | CMP-120 | This plan, the agent prompts, FEATURE_SPEC v1.15 (FFR-035), contract v1.11, US-022 AC8, US-026 AC1 | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
 | CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | Agent 1 | CMP-120 | `CMP-121-check-after-answer` | todo |
 | CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | todo |
-| CMP-123 | Production backend deploy of CMP-121 | Agent 1 + owner | CMP-121's staging check; the security agent's review; the owner's scan decision | — (evidence in CMP-126) | todo |
+| CMP-123 | Production backend deploy of CMP-121 | Agent 1 + owner | CMP-121's staging check; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | todo |
 | CMP-124 | Site libraries: React 19, React DOM 19, Vite 8, `@vitejs/plugin-react` 6 (replaces Dependabot PRs #104–#107) | Agent 3 | — | `CMP-124-react19-vite8` | todo |
 | CMP-127 | TECH_STACK and docs for CMP-124 | Coordinator | — | coordinator's branch | dropped (folded into CMP-124: Agent 3 changes TECH_STACK's two lines in the same PR, AGENTS.md → Change management; review notes) |
-| CMP-125 | Release v1.2.0 | Agent 3 + owner | CMP-124; the security agent's review; the owner's scan decision | `CMP-125-release-v1-2-0` | todo |
+| CMP-125 | Release v1.2.0 | Agent 3 + owner | CMP-124; the security agent's review (scan: decided, Review Notes) | `CMP-125-release-v1-2-0` | todo |
 | CMP-126 | Sprint 06 verification | Agent 1 | every ticket above | `CMP-126-sprint-06-verification` | todo |
 
 Dependabot PR #109 (GitHub Actions versions) keeps Dependabot's title and has no ticket
@@ -103,7 +103,7 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
   reason, and its new review date, at most 30 days later, with the owner's written acceptance
   on the PR. Either way the dependency audit is green after 2026-11-20.
 - **CMP-123:** the security agent's review of the backend changes since `31f1db3` with no open
-  critical or high finding; the owner's scan decision; the approved production deploy; smoke
+  critical or high finding; no agent scan (owner, 2026-11-03); the approved production deploy; smoke
   green; both triggers present; the next real paid sign-up's notice confirmed by Cami (it now
   arrives after the check).
 - **CMP-124:**
@@ -117,7 +117,7 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
   - TECH_STACK's framework and build-tool lines changed in the same PR (Agent 3 owns those two
     lines for this ticket, AGENTS.md → Change management), and CONTRIBUTING if commands change.
 - **CMP-125:** release v1.2.0 as for v1.1.2: version bump PR, the security agent's delta review
-  to the tagged commit, the owner's statement and scan decision, tag and Release, dry run, real
+  to the tagged commit, the owner's statement (no agent scan, owner 2026-11-03), tag and Release, dry run, real
   upload, the release checklist's live checks, PageSpeed (three mobile runs).
 - **CMP-126:** `docs/sprints/SPRINT_06_VERIFICATION.md` with the evidence of every ticket and the
   staging cleanup list.
@@ -160,9 +160,8 @@ Each line names what the PR waits for.
 1. CMP-120 (this plan and the spec) — nothing.
 2. CMP-121 (check after the answer) — CMP-120. CMP-122 (clasp exception) — nothing; before
    2026-11-20. CMP-124 (site libraries) — nothing. Dependabot #109 — the reviewer's verdict.
-3. CMP-123 (production backend) — CMP-121's staging check; the security agent's review; the
-   owner's scan decision. CMP-125 (release v1.2.0) — CMP-124; the security agent's
-   delta review; the owner's scan decision.
+3. CMP-123 (production backend) — CMP-121's staging check; the security agent's review. CMP-125 (release v1.2.0) — CMP-124; the security agent's
+   delta review.
 4. CMP-126 (verification) — every PR above.
 
 Cycle check: every arrow points to a PR earlier in this list.
@@ -228,3 +227,8 @@ The human reviewer is the final approver.
 - Also from the review of PR #133: CMP-127 (a separate TECH_STACK PR) is dropped. AGENTS.md →
   Change management wants a stack change in the same PR as the code, so Agent 3 changes
   TECH_STACK's framework and build-tool lines in CMP-124, and the reviewer checks them.
+- Scan decision for Sprint 06, before the go-ahead (readiness §5): "Sprint 06 changes production
+  twice (the backend change and site release v1.2.0). Our checklist wants the scan decision
+  recorded before the sprint starts, not later. As before, the security agent can't run a scan
+  from its session. For both Sprint 06 production changes, how should we handle it?" Owner
+  (2026-11-03): **"Same as before: tester (Recommended)"**.
