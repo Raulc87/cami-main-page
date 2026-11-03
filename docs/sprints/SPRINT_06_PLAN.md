@@ -212,8 +212,8 @@ The human reviewer is the final approver.
 
 ## Risks
 - Paid sign-ups get their check up to 10 minutes later (after 06:00 at night): the participant's
-- A PNG stored as received keeps its metadata chunks (for example `eXIf`, `tEXt`), as JPEGs already do; the conversion used to drop them. Low exposure (Cami's private Drive folder, type checked from the content, SAC-05); the security agent looks at it in its review before CMP-123 (#138 review).
   "not validated" email and Cami's notice move with it (owner's choice).
+- A PNG stored as received keeps its metadata chunks (for example `eXIf`, `tEXt`), as JPEGs already do; the conversion used to drop them. Low exposure (Cami's private Drive folder, type checked from the content, SAC-05); the security agent looks at it in its review before CMP-123 (#138 review).
 - React 19 and Vite 8 are major versions: hidden behavior changes. Mitigated by the visual and
   functional checks and Lighthouse on a local build before the release, and by the release's
   kept build of v1.1.2 as the way back.
