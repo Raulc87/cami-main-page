@@ -720,10 +720,12 @@ So that I can manage participants and payments in one place
 
 1. Given a valid paid registration
    When the backend receives it
-   Then the screenshot is stored as JPEG in `<root>/<eventCode>/` named
-   `<ParticipantName>_<YYYY-MM-DD>_<eventCode>.jpg` (registration date; the subfolder is created
-   if new; `_2` on collision). A ₡0 registration stores no file. If the image cannot be converted,
-   it is stored in its original format with that extension and a `checkDetails` note (FFR-014).
+   Then the screenshot is stored in `<root>/<eventCode>/` named
+   `<ParticipantName>_<YYYY-MM-DD>_<eventCode>.<ext>` (registration date; the subfolder is created
+   if new; `_2` on collision): a JPEG or PNG as received (`.jpg`, `.png`), a WebP or HEIC
+   converted to JPEG (`.jpg`; FFR-014 v1.16, owner 2026-11-03). A ₡0 registration stores no file.
+   If a WebP or HEIC cannot be converted, it is stored in its original format with that extension
+   and a `checkDetails` note (FFR-014).
 2. Given a valid registration
    When it is stored
    Then a row with the contract §6 columns is appended to the event's tab (created with headers

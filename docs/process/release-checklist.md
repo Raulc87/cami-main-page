@@ -71,7 +71,7 @@ upload; if one is not, do not release:
       during the window), register with a Camera photo (Photo Library), the same photo from
       Files, and a screenshot, each with a **different** test email (one registration per
       email per event, so a repeated email is refused as already registered before its file is
-      stored); confirm what is stored (`.jpg` or `.heic` + note) and the check
+      stored); confirm what is stored (`.jpg`, `.png`, or `.heic` + note) and the check
       result; then unpublish the site, restore the real SINPE values and delete the
       `STAGING_EVENTS_API_URL` secret.
       **v1.1.0 (events go-live): moved after the release by the owner (2026-10-27).** No

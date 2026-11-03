@@ -65,8 +65,10 @@ and the site moves to React 19 and Vite 8 in release v1.2.0.
 |---|---|---|---|---|---|
 | CMP-120 | This plan, the agent prompts, FEATURE_SPEC v1.15 (FFR-035), contract v1.11, US-022 AC8, US-026 AC1 | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
 | CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | Agent 1 | CMP-120 | `CMP-121-check-after-answer` | todo |
+| CMP-129 | Spec: FFR-014 JPEG/PNG stored as received, FFR-035 timing goal 2 s, contract v1.12 (owner, 2026-11-03) | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
+| CMP-130 | PNG screenshot stored as received (FFR-014 v1.16, contract §3.3 v1.12), timed on staging | Agent 1 | CMP-129 | `CMP-130-png-as-is` | todo |
 | CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | todo |
-| CMP-123 | Production backend deploy of CMP-121 | Agent 1 + owner | CMP-121's staging check; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | todo |
+| CMP-123 | Production backend deploy of CMP-121 and CMP-130 | Agent 1 + owner | CMP-121's and CMP-130's staging checks; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | todo |
 | CMP-124 | Site libraries: React 19, React DOM 19, Vite 8, `@vitejs/plugin-react` 6 (replaces Dependabot PRs #104–#107) | Agent 3 | — | `CMP-124-react19-vite8` | todo |
 | CMP-127 | TECH_STACK and docs for CMP-124 | Coordinator | — | coordinator's branch | dropped (folded into CMP-124: Agent 3 changes TECH_STACK's two lines in the same PR, AGENTS.md → Change management; review notes) |
 | CMP-125 | Release v1.2.0 | Agent 3 + owner | CMP-124; the security agent's review (scan: decided, Review Notes) | `CMP-125-release-v1-2-0` | todo |
@@ -87,7 +89,8 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
   - `retryPendingChecks` (every 10 minutes, inside `RETRY_CHECK_HOURS`) checks each `pending`
     row, writes the result, sends the "not validated" email when FFR-017 requires it, then the
     notice (FFR-034), and sets `noticeSentAt`; a row still `pending` at FFR-032's 24-hour limit
-    gets its notice then, saying `pending`; nothing is sent twice;
+    gets its notice at the first trigger run after the limit, saying `pending`; nothing is sent
+    twice;
   - a ₡0 registration still gets its notice in the request, and its `noticeSentAt` set;
   - `noticeSentAt` is added last to an older tab that lacks it (as `contactOptIn` was), with
     `-` in its older rows, which are never notified; `skipped` when a notice is not sent;
@@ -96,15 +99,31 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
     needed, said in the PR);
   - runbook updated (what Cami sees, the delay, night sign-ups after 06:00);
   - staging check after the merge: three paid and three ₡0 registrations timed (paid median
-    within 1 s of ₡0), a paid one checked by the next trigger run (result, "not validated"
+    within 1 s of ₡0; measured 2026-11-03: ₡0 6.4 s, paid PNG 13.3 s, paid JPEG 8.3 s server
+    time, the PNG conversion costing ~5 s; the timing moves to CMP-130 with the 2 s goal, owner
+    2026-11-03), a paid one checked by the next trigger run (result, "not validated"
     email, one notice), a second run sends nothing, a night-hours case simulated with
     `RETRY_CHECK_HOURS`; then the cleanup. The row stays `review` until then.
+- **CMP-129:** FFR-014, FFR-017, FFR-035, BR-E04, §8 outputs, contract §3.3/§6/§10 v1.12 agree;
+  the owner's answers quoted (Review Notes and FEATURE_SPEC §20).
+- **CMP-130:** FFR-014 v1.16 and contract §3.3/§10 v1.12:
+  - a JPEG or PNG is stored as received (`.jpg`, `.png`), no original-format note for them;
+    WebP/HEIC still converted, with the existing fallback;
+  - an unreadable PNG behaves like any unreadable image (`unreadable`, `needsReview`, the "not
+    validated" email);
+  - staging: a paid PNG is stored as `.png` and the trigger's check gives `ok` or `mismatch`
+    (Drive OCR reads PNG); three paid PNG and three ₡0 registrations timed in the same session,
+    paid median at most 2 s above ₡0 (server time from Executions and curl's total, both in the
+    PR); a JPEG unchanged;
+  - safe trims in the same function allowed (one base64 pass, no repeated reads), no other
+    behaviour change.
 - **CMP-122:** if a clasp release now pulls a fixed zod, `.github/clasp` moves to it (deploy
   checked on staging); otherwise the allowlist entry's renewal goes to the owner with the
   reason, and its new review date, at most 30 days later, with the owner's written acceptance
   on the PR. Either way the dependency audit is green after 2026-11-20.
-- **CMP-123:** the security agent's review of the backend changes since `31f1db3` with no open
-  critical or high finding; no agent scan (owner, 2026-11-03); the approved production deploy; smoke
+- **CMP-123:** the security agent's review of the backend changes since `31f1db3` (CMP-121 and
+  CMP-130) with no open critical or high finding; Cami's OK of the new `pending` wording (§2c),
+  read at CMP-121's staging check; no agent scan (owner, 2026-11-03); the approved production deploy; smoke
   green; both triggers present; the next real paid sign-up's notice confirmed by Cami (it now
   arrives after the check).
 - **CMP-124:**
@@ -125,7 +144,7 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
 
 ## Parallel Workstreams
 ### Agent 1 — Events backend (fresh session)
-- CMP-121 and CMP-122 at the go-ahead; CMP-123 after CMP-121's staging check; CMP-126 last.
+- CMP-121 and CMP-122 at the go-ahead; CMP-130 after CMP-129; CMP-123 after CMP-121's and CMP-130's staging checks; CMP-126 last.
 
 ### Agent 3 — Site libraries and release (fresh session)
 - CMP-124 at the go-ahead; CMP-125 after CMP-124.
@@ -240,3 +259,20 @@ The human reviewer is the final approver.
   security agent keeps its Sprint 04 session `session_01DVcaZw7gF9nG9af7Am5D6U`. Sprint 05
   sessions archived after its closing: Agent 1 `session_01DVcaZxBZvRq8tBwr1wDFo4`, review-only
   agent `session_01DVcaZzhjSRSDQbHi3cDcNx`.
+- CMP-121 staging check, 2026-11-03 (owner): ₡0 `register` 8.98/7.28/6.78 s (curl) and
+  8.0/6.4/5.9 s (server); paid with a 215 KB PNG 16.06/14.65/13.39 s (curl) and 14.1/13.3/11.1 s
+  (server), no notice yet as specified; the same screenshot as JPEG 9.54 s (curl), 8.26 s
+  (server). The ~5 s gap is the PNG → JPEG conversion (Agent 1's analysis; the OCR is no longer
+  reachable from `register`). Questions as asked and answers:
+  - "Paid sign-ups now skip the receipt check, but turning a PNG screenshot into a JPEG still
+    adds about 5 seconds (paid PNG ~13 s vs free ~6.4 s; paid JPEG ~8.3 s). Phone screenshots
+    are usually PNG. What should we do?" Owner: **"Keep PNG as is (Recommended)"** (other
+    options: convert later in the job; convert in the browser; accept as it is). → FFR-014
+    v1.16, contract v1.12, CMP-130.
+  - "Even with PNG kept as is, a paid sign-up will be about 2 s slower than a free one (it still
+    saves the image to Drive). The plan's goal says 'within 1 s of free', which we can't meet.
+    What should the new goal say?" Owner: **"Within 2 s of free (Recommended)"** (other
+    options: paid under 10 s; keep 'within 1 s'). → FFR-035, contract §10, CMP-130's check.
+- Also recorded by CMP-129 (reviews of #133 and #135): FFR-034's ₡0 notice recovery by the
+  trigger; the `noticeSentAt` set-up under the script lock (contract §10); the CMP-121 check
+  wording on the 24-hour notice; Cami's OK of the `pending` wording as a CMP-123 gate.
