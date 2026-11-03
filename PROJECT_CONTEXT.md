@@ -37,8 +37,8 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_06_PLAN.md](docs/sprints/SPRINT_06_PLAN.md) (Proposed; approved on
-  merge of the CMP-120 PR, then the owner's go-ahead); Sprint 05 closed 2026-11-01
+- Active sprint plan: [SPRINT_06_PLAN.md](docs/sprints/SPRINT_06_PLAN.md) (Active since the
+  owner's go-ahead, 2026-11-03); Sprint 05 closed 2026-11-01
   ([SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md)); Sprints 01 to 04 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
@@ -86,23 +86,22 @@ they are not active paths.
 - Plan: [docs/sprints/SPRINT_06_PLAN.md](docs/sprints/SPRINT_06_PLAN.md); agent prompts:
   [docs/sprints/SPRINT_06_AGENT_PROMPTS.md](docs/sprints/SPRINT_06_AGENT_PROMPTS.md)
 - Goal: paid sign-ups answer as fast as free ones; the site on React 19 and Vite 8
-- Start: the day of the go-ahead; End: seven business days later
+- Start: 2026-11-03 (Tuesday); End: 2026-11-11 (Wednesday), seven business days
 - Deliverable: the check after the answer live on the production backend; release v1.2.0 live;
   the clasp audit exception settled before 2026-11-20; evidence in `SPRINT_06_VERIFICATION.md`
-- Status: Proposed (approved on merge of the CMP-120 PR; then the owner's go-ahead)
+- Status: Active — owner's go-ahead 2026-11-03: "go ahead"
 
 ## Agent allocation
-- Sprint 05 (closed 2026-11-01; Agent 1 and the reviewer archived after the closing record):
-  Implementation Agent 1, events backend — CMP-112..CMP-115 (Sonnet session
-  launched 2026-10-31 at the go-ahead); review-only agent: a fresh Opus session launched
-  2026-10-31 (it reviewed the plan); the
-  pre-release security agent keeps its Sprint 04 session (review before CMP-114, step-5
-  re-checks). Codex runs as the automated reviewer on every PR (ADR-006 → Kit disposition,
+- Sprint 06: Implementation Agent 1, events backend — CMP-121..CMP-123, CMP-126; Implementation
+  Agent 3, site libraries and release — CMP-124, CMP-125 (Sonnet sessions launched 2026-11-03 at
+  the go-ahead); review-only agent: a fresh Opus session (it reviewed the plan); the pre-release
+  security agent keeps its Sprint 04 session (reviews before CMP-123 and CMP-125). Codex runs as the automated reviewer on every PR (ADR-006 → Kit disposition,
   kept rule Reviewers)
-- Sprint 04 sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
+- Sprint 05 sessions (Agent 1, review-only agent) archived after its closing record; Sprint 04
+  sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-120
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-128
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
