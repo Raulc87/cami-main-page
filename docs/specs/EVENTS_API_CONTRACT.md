@@ -6,7 +6,7 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.10 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.11 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
   on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
@@ -16,12 +16,13 @@ Change management: update this document first, bump the version, notify both own
   coupon check limit also applies to `register` with a coupon code — CMP-083; v1.9: §9 the time
   payment re-check's working hours and the time triggers' failure threshold, owner 2026-10-28
   and 2026-10-29 — CMP-100; v1.10: §9 `NOTIFY_REGISTRATION_TO` and `NOTIFY_QUOTA_RESERVE`, the registration notice
-  to Cami, owner 2026-10-31 — CMP-111)
+  to Cami, owner 2026-10-31 — CMP-111; v1.11: §6 `noticeSentAt`, §10 the check after the
+  answer (FFR-035), owner 2026-11-01 — CMP-120)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 on
-  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 Approved on merge of the CMP-111 PR)
+  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 on merge of PR #125; v1.11 Approved on merge of the CMP-120 PR)
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
-  (FFR-001..FFR-034)
+  (FFR-001..FFR-035)
 - Related stories: US-017..US-026
 - Related ADRs: ADR-008
 - Consumer (owner): frontend workstream (Sprint 02 plan)
@@ -131,7 +132,15 @@ Spreadsheet (Workspace `lifetoolscr.com`), tabs:
   `whatsapp`, `lang`, `couponCode`, `discountPercent`, `amountDueCrc`, `screenshotUrl`,
   `checkResult`, `checkDetails`, `needsReview`, `status`, `consentAt`, `notes`, `contactOptIn`
   (v1.5; added last so existing tabs keep their columns: the script adds the header to a tab
-  that lacks it, and older rows stay blank, read as `FALSE`).
+  that lacks it, and older rows stay blank, read as `FALSE`), `noticeSentAt` (v1.11; added last in the
+  same way; server-written state of the registration notice to Cami, FFR-034): blank = notice
+  still due (only rows saved since v1.11); a timestamp (Costa Rica time, like `timestamp`) =
+  sent; `skipped` = not sent and never retried (`NOTIFY_REGISTRATION_TO` empty or all invalid,
+  the quota below `NOTIFY_QUOTA_RESERVE`, or the send failed); `-` = a row saved before v1.11,
+  never notified (written into every existing row when the script adds the header, which it
+  does in every event tab at the first `register` or trigger run after the deploy, before
+  handling any row). Only the server writes it. A trigger run notifies only rows whose
+  `noticeSentAt` is blank.
 - `Metrics`: one row per day — `date`, `accepted`, `honeypotHits`, `throttled`,
   `couponFailures`, `uploadedMb`, `spamMarked`.
 - `Translations` (created by the script, CMP-045): `hash`, `text` — the automatic English
@@ -273,10 +282,21 @@ The checklist must cover:
   adds the `contactOptIn` header as the last column, and that tab's older rows stay blank.
 - Registration notice (v1.10): with `NOTIFY_REGISTRATION_TO` set, a stored paid registration, a
   stored ₡0 registration and a stored flagged one (FFR-024) each send exactly one notice to it,
-  after the participant's email and, when paid, after the in-request payment check, showing
-  that check's result; a retry with the same `submissionId`, a duplicate email, a validation
+  after the participant's email and, when paid, after the payment check, showing that check's
+  result (since v1.11 the paid check and its notice run in the trigger, see below); a retry with the same `submissionId`, a duplicate email, a validation
   error, a ₡0 `SOLD_OUT`, a `RATE_LIMITED` request and a honeypot hit send none; with it empty,
   no notice is sent; with an invalid address, or when sending fails, the registration and its
   response are unchanged and the log names no address; with the remaining quota below
   `NOTIFY_QUOTA_RESERVE`, the notice is skipped and logged; the notice carries no email,
   WhatsApp number, coupon code or screenshot.
+- Check after the answer (v1.11, FFR-035): a paid `register` answers without running the check
+  (row `pending`, confirmation email sent, no notice yet); the next `retryPendingChecks` run
+  inside `RETRY_CHECK_HOURS` writes the result, sends the "not validated" email when needed,
+  then the notice, and sets `noticeSentAt` to the time; a second run sends nothing more; a ₡0
+  registration still gets its notice in the request and its `noticeSentAt` set; with the
+  property empty, `noticeSentAt` becomes `skipped` and nothing is retried; an older tab gets the
+  `noticeSentAt` header at the first `register` or trigger run after the deploy, before any
+  row is handled, and its existing rows (including rows still `pending` then, which already
+  got a v1.10 notice) get `-` and are never notified; a `-` row still `pending` is checked as
+  usual but gets no notice; on staging, the
+  median `register` time of three paid registrations is within 1 s of three ₡0 ones.

@@ -146,15 +146,17 @@ Lifetools
 
 ## 2c. Registration notice to Cami (internal, FFR-034)
 
-Status: **proposed by the coordinator (CMP-111); approved by the owner on merge of the CMP-111
-PR; Cami reads it in the CMP-112 staging check and gives her OK before production (CMP-114).**
-If she asks for changes, the coordinator changes this section in a docs PR and Agent 1 applies
-it in a code PR, both before CMP-114. The rest of this document stays as Cami approved it on
+Status: **approved by the owner on merge of PR #125 (CMP-111) and by Cami at the CMP-112
+staging check (2026-10-31: "Cami approved the text as it is"); the `pending` value changed in
+Sprint 06 (owner, 2026-11-01), which Cami reads at the CMP-121 staging check.** The rest of this document stays as Cami approved it on
 2026-10-26.
 
 Sent to the address(es) in `NOTIFY_REGISTRATION_TO` (Cami's; empty → none; contract §9 v1.10),
-once per newly stored registration, as the last step of the request (after the participant's
-email and, when paid, the payment check). One message in both languages. `{evento}` is the
+once per newly stored registration: for ₡0, at the end of the request; when paid, from the
+trigger run that writes the payment check's result (FFR-035), so up to about 10 minutes later in
+the day and after 06:00 for a night sign-up. Text unchanged except the `pending` value, which
+now only appears when the check gave up after 24 hours (owner, 2026-11-01: "pendiente:
+revísalo a mano (Recommended)"; Cami sees it at the Sprint 06 staging check). One message in both languages. `{evento}` is the
 event's Spanish name; `{event}` its English name (`Translations` tab), or the Spanish name when
 there is none. `{código}`/`{code}` is the event code, which names its tab (FFR-015).
 `{fecha}`/`{date}` and `{monto}`/`{amount}` use the participant emails' formats
@@ -196,7 +198,7 @@ Values:
 | `{revisión}` / `{check}` | `ok` | el pago coincide | payment matches |
 | | `mismatch` | el pago no coincide | payment does not match |
 | | `unreadable` | no se pudo leer el comprobante | the receipt could not be read |
-| | `pending` | pendiente (se revisa de nuevo más tarde) | pending (checked again later) |
+| | `pending` | pendiente: revísalo a mano | pending: check it by hand |
 | | `not-required` | no requerida (gratis) | not needed (free) |
 | `{necesita}` / `{needs}` | `needsReview` FALSE | no | no |
 | | `needsReview` TRUE | sí: {motivos} | yes: {reasons} |
