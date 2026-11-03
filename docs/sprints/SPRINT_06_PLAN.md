@@ -66,6 +66,7 @@ and the site moves to React 19 and Vite 8 in release v1.2.0.
 | CMP-120 | This plan, the agent prompts, FEATURE_SPEC v1.15 (FFR-035), contract v1.11, US-022 AC8, US-026 AC1 | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
 | CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | Agent 1 | CMP-120 | `CMP-121-check-after-answer` | todo |
 | CMP-129 | Spec: FFR-014 JPEG/PNG stored as received, FFR-035 timing goal 2 s, contract v1.12 (owner, 2026-11-03) | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
+| CMP-131 | Records: FFR-035 goal in server time, CMP-122 override, the clasp session-control exemption, CMP-124 Lighthouse acceptance | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
 | CMP-130 | PNG screenshot stored as received (FFR-014 v1.16, contract §3.3 v1.12), timed on staging | Agent 1 | CMP-129 | `CMP-130-png-as-is` | todo |
 | CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | todo |
 | CMP-123 | Production backend deploy of CMP-121 and CMP-130 | Agent 1 + owner | CMP-121's and CMP-130's staging checks; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | todo |
@@ -120,7 +121,10 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
 - **CMP-122:** if a clasp release now pulls a fixed zod, `.github/clasp` moves to it (deploy
   checked on staging); otherwise the allowlist entry's renewal goes to the owner with the
   reason, and its new review date, at most 30 days later, with the owner's written acceptance
-  on the PR. Either way the dependency audit is green after 2026-11-20.
+  on the PR. Either way the dependency audit is green after 2026-11-20. Neither existed on
+  2026-11-03 (no fixed clasp; the audit check rejects a review date past 2026-11-21), so the
+  owner accepted a third path: an npm override installing zod 4.6.7 under clasp 3.4.1, the
+  allowlist entry removed, proven by the staging deploy (Review Notes).
 - **CMP-123:** the security agent's review of the backend changes since `31f1db3` (CMP-121 and
   CMP-130) with no open critical or high finding; Cami's OK of the new `pending` wording (§2c),
   read at CMP-121's staging check; no agent scan (owner, 2026-11-03); the approved production deploy; smoke
@@ -133,7 +137,9 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
   - build green; dependency audit green; no new runtime library;
   - no visible change, checked at 1280/900/375 px in both languages (events, form, gallery);
     no console errors; the events, coupon and register calls work against staging;
-  - local Lighthouse not worse than v1.1.2's (mobile 90+, desktop 95+, CLS ≤ 0.1);
+  - local Lighthouse mobile 90+, desktop 95+, CLS ≤ 0.1 (the plan also said "not worse than
+    v1.1.2's"; React 19's larger runtime costs mobile 96–97 → 91–94, accepted by the owner,
+    Review Notes);
   - TECH_STACK's framework and build-tool lines changed in the same PR (Agent 3 owns those two
     lines for this ticket, AGENTS.md → Change management), and CONTRIBUTING if commands change.
 - **CMP-125:** release v1.2.0 as for v1.1.2: version bump PR, the security agent's delta review
@@ -280,3 +286,32 @@ The human reviewer is the final approver.
 - Also recorded by CMP-129 (reviews of #133 and #135): FFR-034's ₡0 notice recovery by the
   trigger; the `noticeSentAt` set-up under the script lock (contract §10); the CMP-121 check
   wording on the 24-hour notice; Cami's OK of the `pending` wording as a CMP-123 gate.
+- After CMP-130's staging check (2026-11-03): server time ₡0 6.13/6.63/6.80 s, paid PNG
+  9.83/8.22/7.98 s (medians 6.63 and 8.22: +1.59 s); curl ₡0 7.04/7.53/7.70 s, paid PNG
+  11.86/9.58/10.34 s (+2.81 s, the image upload included); the PNG files stored as `.png`, the
+  check read them (`mismatch`). Asked: "Paid PNG sign-ups now take 8.2 s on the server vs 6.6 s
+  for free ones: 1.6 s more, inside your 2 s goal. Timed from your laptop (which adds sending
+  the ~200 KB image) it's 10.3 s vs 7.5 s: 2.8 s more. No server change can remove that upload
+  time. Which number should the goal count?" Owner: **"Server time (Recommended)"** (other
+  option: the visitor's total wait). → FFR-035 v1.17, contract §10 v1.13.
+- CMP-122 (PR #137), asked: "PR #137: the deploy tool (clasp) uses an old library (zod) with a
+  known warning. Our exception for it ends Nov 20, after which CI goes red. No fixed clasp
+  exists yet. How should we fix it?" Owner: **"Force newer zod (Recommended)"** (other options:
+  change the exception rule; older clasp 2.5). On timing ("after the production deploy
+  (Recommended)" or now), the owner answered: "Merged, if staging deploy fails, revert it"
+  (merged 2026-11-03). Its staging deploy first failed on the expired login (not on #137: the
+  failing step refreshes the token directly, without clasp), then passed after the renewal.
+- The deploy login kept expiring (2026-10-26, 2026-11-02, 2026-11-03). Cause, seen in the Admin
+  console by the owner: "Google Cloud session control" required reauthentication every 16 hours
+  for apps with the Cloud Platform permission, which the clasp login has (ADR-009). Asked:
+  "That's the cause: Workspace makes any app with Google Cloud access sign in again every 16
+  hours, and the deploy tool's login has that access. So every deploy after 16 h fails. How
+  should we fix it?" Owner: **"Exempt clasp only (Recommended)"** (other options: never require
+  reauthentication; leave it and renew each time; our own login without the Cloud permission).
+  Done 2026-11-03: clasp marked Trusted in API controls, "exempt trusted apps" ticked, the 16-hour
+  rule kept for every other app; the login renewed in both environments (ADR-009 Consequences).
+- CMP-124 (PR #136), asked: "PR #136 upgrades the site to React 19 and Vite 8. The site looks
+  identical, but React 19 is bigger, so the phone speed score drops from 96–97 to 91–94 (still
+  above our 90 minimum; the page shows ~0.4 s later on a slow phone). What should we do?" Owner:
+  **"Accept React 19 (Recommended)"** (other options: Vite 8 only, React 18 for now;
+  investigate first). CMP-125's live PageSpeed runs confirm the score.
