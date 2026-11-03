@@ -137,14 +137,16 @@ function lookupEventForRegister_(eventCode) {
   return best;
 }
 
-// Decodes and checks the screenshot, and converts it to JPEG when the platform can. A type that
-// cannot be converted is kept as it is with its own extension. Returns { error } or
-// { blob, extension }.
-function prepareScreenshot_(file) {
+// Decodes and checks the screenshot (`fileBase64`: the file's base64 text already normalized by
+// validateRegisterInput_). A JPEG or PNG is stored as received: converting a PNG costs about 5 s of
+// the visitor's wait (FFR-014 v1.16, contract §3.3 v1.12). A WebP or HEIC/HEIF is converted to JPEG;
+// when the platform cannot, it is kept as it is with its own extension and `keptOriginalFormat`
+// is set (FFR-017: that file gets no retries and no "not validated" email if OCR cannot read it).
+// Returns { error } or { blob, extension, byteLength, keptOriginalFormat }.
+function prepareScreenshot_(fileBase64) {
   var bytes;
   try {
-    // Tolerate a `data:image/...;base64,` prefix and line breaks from the client.
-    bytes = Utilities.base64Decode(normalizeBase64_(file.base64));
+    bytes = Utilities.base64Decode(fileBase64);
   } catch (err) {
     return { error: 'invalid_file_type' };
   }
@@ -153,14 +155,17 @@ function prepareScreenshot_(file) {
   if (!type) return { error: 'invalid_file_type' };
   var mime = { jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic' }[type];
   var blob = Utilities.newBlob(bytes, mime, 'screenshot');
-  if (type === 'jpeg') return { blob: blob, extension: 'jpg' };
+  if (type === 'jpeg') return { blob: blob, extension: 'jpg', byteLength: bytes.length, keptOriginalFormat: false };
+  if (type === 'png') return { blob: blob, extension: 'png', byteLength: bytes.length, keptOriginalFormat: false };
   try {
-    var jpeg = blob.getAs('image/jpeg');
-    if (jpeg.getBytes().length > 0) return { blob: jpeg, extension: 'jpg' };
+    var jpegBytes = blob.getAs('image/jpeg').getBytes();
+    if (jpegBytes.length > 0) {
+      return { blob: Utilities.newBlob(jpegBytes, 'image/jpeg', 'screenshot'), extension: 'jpg', byteLength: jpegBytes.length, keptOriginalFormat: false };
+    }
   } catch (err) {
     console.error('jpeg conversion failed for ' + type);
   }
-  return { blob: blob, extension: type };
+  return { blob: blob, extension: type, byteLength: bytes.length, keptOriginalFormat: true };
 }
 
 function eventFolder_(eventCode) {
@@ -219,7 +224,7 @@ function handleRegister_(body) {
   if (amountDue > 0) {
     if (!input.hasFile) return fail('VALIDATION_ERROR', { file: 'required' });
     if (uploadCapReached_(crDate_(Date.now()), 0)) return fail('UPLOAD_CAP_REACHED');
-    screenshot = prepareScreenshot_(body.file);
+    screenshot = prepareScreenshot_(input.fileBase64);
     if (screenshot.error) return fail('VALIDATION_ERROR', { file: screenshot.error });
   }
 
@@ -334,7 +339,7 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
   }
 
   // Daily upload caps, exact now that registrations are serialized (₡0 ones are unaffected).
-  if (screenshot && uploadCapReached_(today, screenshot.blob.getBytes().length)) {
+  if (screenshot && uploadCapReached_(today, screenshot.byteLength)) {
     addDaily_(DAILY_CAPHIT_PREFIX, today, 1); // the alert sees a refused upload even when the stored total is below the cap
     return { error: 'UPLOAD_CAP_REACHED' };
   }
@@ -357,13 +362,13 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
       var name = uniqueFileName_(v.participantName, today, v.eventCode, screenshot.extension, function (n) {
         return folder.getFilesByName(n).hasNext();
       });
-      bytes = screenshot.blob.getBytes().length;
+      bytes = screenshot.byteLength;
       createdFile = folder.createFile(screenshot.blob.setName(name));
       screenshotUrl = createdFile.getUrl();
     }
-    // A screenshot kept in its own format is noted for Cami; it is not a review flag (FFR-030).
+    // A WebP or HEIC kept in its own format is noted for Cami; it is not a review flag (FFR-030).
     var notes = flags.slice();
-    if (screenshot && screenshot.extension !== 'jpg') notes.push('stored as original format: ' + screenshot.extension);
+    if (screenshot && screenshot.keptOriginalFormat) notes.push('stored as original format: ' + screenshot.extension);
     var timestamp = crIso_(nowMs);
     var values = [
       "'" + timestamp, v.submissionId, reference, "'" + v.eventCode, neutralize(v.participantName), neutralize(v.email),
@@ -396,7 +401,6 @@ function storeRegistration_(v, found, coupon, amountDue, screenshot) {
   return {
     reference: reference, flagged: flags.length > 0, duplicateSubmission: false, bytes: bytes, amountDueCrc: amountDue,
     flags: flags, fileId: createdFile ? createdFile.getId() : '',
-    originalFormat: !!screenshot && screenshot.extension !== 'jpg',
     capReached: !!screenshot && uploadCapReached_(today, 0),
     // Only the registration that takes the last place changes what visitors see (FFR-033).
     soldOutNow: counting.length < ev.capacity && counting.length + 1 >= ev.capacity

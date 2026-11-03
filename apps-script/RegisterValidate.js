@@ -12,7 +12,7 @@ function str_(v) {
 }
 
 // Validates and normalizes the register body (without the file content).
-// Returns { fields: { name: code }, value: {...} | null, honeypot: bool, hasFile: bool }.
+// Returns { fields: { name: code }, value: {...} | null, honeypot: bool, hasFile: bool, fileBase64: normalized text }.
 // Field codes are the contract §8 ones; a field with no specific code (event code, name, id,
 // language) is reported as `required`.
 function validateRegisterInput_(body) {
@@ -49,14 +49,17 @@ function validateRegisterInput_(body) {
 
   var file = body.file;
   var hasFile = !!(file && typeof file === 'object' && str_(file.base64) !== '');
-  // Measured after removing a data-URL prefix and whitespace, as prepareScreenshot_ will decode it.
-  if (hasFile && normalizeBase64_(file.base64).length > MAX_BASE64_CHARS) fields.file = 'file_too_large';
+  // Measured after removing a data-URL prefix and whitespace, as prepareScreenshot_ will decode it
+  // (normalized once, here, and handed on as `fileBase64`).
+  var fileBase64 = hasFile ? normalizeBase64_(file.base64) : '';
+  if (hasFile && fileBase64.length > MAX_BASE64_CHARS) fields.file = 'file_too_large';
 
   var hasErrors = Object.keys(fields).length > 0;
   return {
     fields: fields,
     honeypot: honeypot,
     hasFile: hasFile,
+    fileBase64: fileBase64,
     value: hasErrors ? null : {
       submissionId: submissionId, eventCode: eventCode, participantName: participantName, email: email,
       whatsapp: whatsapp, couponCode: couponCode, lang: lang, contactOptIn: contactOptIn
