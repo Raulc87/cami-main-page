@@ -6,7 +6,7 @@ locked before the frontend and backend workstreams start in parallel. Changes fo
 Change management: update this document first, bump the version, notify both owners.
 
 ## Metadata
-- Version: 1.12 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
+- Version: 1.13 (v1.1: §6 validation applies to published `Events` rows only, owner 2026-10-20
   — CMP-038; v1.2: §3.3 original-format fallback for the screenshot, owner 2026-10-20, and §8
   scope of `required` — CMP-039; v1.3: §6 reserved event codes, codes stored as text, and ₡0
   on a duplicated code — CMP-040; v1.4: §6 `Translations` tab and reserved name — CMP-046; v1.5: §3.3/§6 optional
@@ -18,10 +18,11 @@ Change management: update this document first, bump the version, notify both own
   and 2026-10-29 — CMP-100; v1.10: §9 `NOTIFY_REGISTRATION_TO` and `NOTIFY_QUOTA_RESERVE`, the registration notice
   to Cami, owner 2026-10-31 — CMP-111; v1.11: §6 `noticeSentAt`, §10 the check after the
   answer (FFR-035), owner 2026-11-01 — CMP-120; v1.12: §3.3/§6 JPEG and PNG stored as received,
-  only WebP/HEIC converted, §10 the timing goal 2 s, owner 2026-11-03 — CMP-129)
+  only WebP/HEIC converted, §10 the timing goal 2 s, owner 2026-11-03 — CMP-129; v1.13: §10 the
+  goal counts server time (Executions), owner 2026-11-03 — CMP-131)
 - Status: Approved — LOCKED (v1.0 on merge of PR #21; v1.1 on merge of PR #34; v1.2 on merge of
   PR #35; v1.3 on merge of PR #37; v1.4 on merge of PR #45; v1.5 on merge of PR #52; v1.6 on merge of PR #57; v1.7 on
-  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 on merge of PR #125; v1.11 Approved on merge of PR #133; v1.12 Approved on merge of the CMP-129 PR)
+  merge of PR #61; v1.8 on merge of PR #77; v1.9 on merge of the CMP-100 PR; v1.10 on merge of PR #125; v1.11 Approved on merge of PR #133; v1.12 Approved on merge of PR #138; v1.13 Approved on merge of the CMP-131 PR)
 - Related spec / requirements: [FEATURE_SPEC_events_registration.md](FEATURE_SPEC_events_registration.md)
   (FFR-001..FFR-035)
 - Related stories: US-017..US-026
@@ -302,7 +303,9 @@ The checklist must cover:
   got a v1.10 notice) get `-` and are never notified; a `-` row still `pending` is checked as
   usual but gets no notice; on staging, the
   median `register` time of three paid registrations with a PNG screenshot is at most 2 s above
-  the median of three ₡0 ones (v1.12, owner 2026-11-03: "Within 2 s of free (Recommended)").
+  the median of three ₡0 ones (v1.12, owner 2026-11-03: "Within 2 s of free (Recommended)"),
+  counted in server time, the `doPost` duration in Executions (v1.13, owner 2026-11-03: "Server
+  time (Recommended)"); curl's total is recorded too.
 - Stored as received (v1.12): a paid PNG is stored as `.png` with no original-format note, and
   the trigger's check reads it (`ok` or `mismatch`, not `unreadable`); a JPEG is stored as
   before; a WebP/HEIC is still converted.

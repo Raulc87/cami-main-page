@@ -104,6 +104,10 @@ Negative / risks (accepted by the owner):
   in the step that runs `clasp` and deleted after; actions are pinned by commit SHA.
 - The token can expire (password change, long disuse): deploys then stop with a clear message
   before anything is pushed; the owner logs in again and replaces the secret.
+- The login kept expiring within a day (2026-11-02/03) because of a Workspace setting. The owner
+  changed that setting for the deploy login only (owner decision, 2026-11-03; the details stay with
+  the owner, not in this public repository). The token now lasts until it is revoked or rotated,
+  which makes its care (below and runbook §5.1) more important.
 - Hand edits in the online editor are overwritten by the next deploy; nobody edits there.
 - From the owner's computer, `clasp` is used only for the first upload into a new project
   (before its secrets exist) and in an emergency when the workflow cannot run (runbook); every
