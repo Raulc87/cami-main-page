@@ -214,16 +214,38 @@ Quota: about 290 runs a day of 5 to 10 s each, well inside the Workspace limits.
 
 ### 2.7 Pending payment checks trigger
 Do this once in **each** environment (staging, and production before release), after the Events cache
-trigger (2.6). The payment screenshot is read with Drive OCR right after a registration is saved. If
-Google refuses the call (for example its per-user OCR rate limit) the row keeps the check result
-`pending`; this trigger tries those rows again every 10 minutes and writes the result (and sends the
-"payment not validated" email when it applies). A row still `pending` 24 hours after it was saved is
-no longer retried and is listed in that day's alert email (at most one per day).
+trigger (2.6). Since Sprint 06 (FFR-035) this trigger **is** the payment check: a paid registration is
+saved with the check result `pending`, the participant gets the confirmation email and the visitor the
+answer at once, and the receipt is read by this trigger, every 10 minutes, only inside
+`RETRY_CHECK_HOURS` (2.4). For each `pending` row it writes the result, sends the "payment not
+validated" email when it applies, and then sends Cami's registration notice (FFR-034) and writes the
+time in the row's `noticeSentAt` column. If Google refuses the call (for example its per-user OCR rate
+limit) the row stays `pending` and the next run tries again. A row still `pending` 24 hours after it was
+saved is no longer retried: it is listed in that day's alert email (at most one per day) and Cami gets
+its notice then, saying "pendiente: revísalo a mano" / "pending: check it by hand".
+
+What Cami sees and when:
+- **A paid sign-up:** its notice arrives after the check, up to about 10 minutes after the sign-up in
+  the day (06:00 to 22:00, Costa Rica time). A sign-up made at night is checked, and noticed, at the
+  first run after 06:00. The row shows `pending` (yellow) until then.
+- **A free (₡0) sign-up:** its notice is sent in the request, as before; if the request could not take
+  the lock, the next trigger run sends it.
+- **`noticeSentAt`** (last column): blank = the notice is still due; a date and time = sent;
+  `skipped` = not sent and never retried (`NOTIFY_REGISTRATION_TO` empty or invalid, the email quota
+  below `NOTIFY_QUOTA_RESERVE`, or the send failed); `-` = a row saved before this change, never
+  notified. The script adds the column to an older event tab, with `-` in its existing rows, at the
+  first registration in that tab or the first trigger run inside `RETRY_CHECK_HOURS` after the deploy
+  (a tab with no registration yet and a run at night waits for 06:00; it has no due row meanwhile).
+  Do not edit it by hand unless you mean to: blank it to have the notice sent again by the next trigger
+  run (inside `RETRY_CHECK_HOURS`), for a paid or a free row; type `skipped` to stop a notice.
+- **A run stays inside Apps Script's 6-minute limit:** it starts no new row after 3 minutes (about 10 to
+  60 seconds per row, with a pause between rows), so a backlog is finished by the next runs.
+
 1. **Triggers** (clock icon) → **Add Trigger**.
 2. Function: `retryPendingChecks`. Deployment: **Head**. Event source: **Time-driven**. Type:
    **Minutes timer**. Interval: **Every 10 minutes**. **Save** (allow the permissions if asked).
 3. Check: after about 10 minutes **Executions** shows a `retryPendingChecks` run with status
-   **Completed** (it ends at once when no row is `pending`).
+   **Completed** (it ends at once when no row is `pending` and no notice is due).
    Outside `RETRY_CHECK_HOURS` (2.4) a run also ends at once and **Completed**, without checking anything.
 The check needs `SINPE_NUMBER` and/or `SINPE_ACCOUNT_NAME` in the script properties (2.4). While
 `SINPE_NUMBER` still holds the placeholder and no account name is set, no check runs and rows stay

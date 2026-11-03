@@ -1,6 +1,7 @@
 // Registration notice to Cami (FEATURE_SPEC FFR-034, US-026, EVENTS_API_CONTRACT §9 v1.10). One short
-// email per newly stored registration, sent as the last step of the `register` request to the
-// addresses in NOTIFY_REGISTRATION_TO. Text: docs/ux/EVENTS_EMAILS_AND_PRIVACY.md §2c.
+// email per newly stored registration to the addresses in NOTIFY_REGISTRATION_TO: the last step of the
+// `register` request for ₡0, and the trigger run that writes the payment check's result for a paid
+// one (FFR-035, contract §6 v1.11). Text: docs/ux/EVENTS_EMAILS_AND_PRIVACY.md §2c.
 // It carries the participant's name only: never their email, WhatsApp number, coupon code,
 // screenshot or a link to it. Nothing here may change the registration or its response, and no
 // log line names an address.
@@ -20,7 +21,7 @@ var NOTICE_CHECK_TEXT = {
   'ok': ['el pago coincide', 'payment matches'],
   'mismatch': ['el pago no coincide', 'payment does not match'],
   'unreadable': ['no se pudo leer el comprobante', 'the receipt could not be read'],
-  'pending': ['pendiente (se revisa de nuevo más tarde)', 'pending (checked again later)'],
+  'pending': ['pendiente: revísalo a mano', 'pending: check it by hand'], // only a row the check gave up on after 24 hours (FFR-032, §2c)
   'not-required': ['no requerida (gratis)', 'not needed (free)']
 };
 
@@ -74,26 +75,84 @@ function noticeQuotaAllows_() {
   }
 }
 
-// Sends the notice for a registration stored by this request. Never throws and never touches the
-// row: a problem is logged by error name only (FFR-034, US-026 AC4, AC5).
-function sendRegistrationNoticeSafely_(v, found, amountDue, outcome) {
+// The row's `noticeSentAt` is blank (the notice is due) and its tab has the column. A row with no column
+// (headers that differ from ours) or any other value is never noticed (contract §6 v1.11).
+function noticeIsDue_(storedRow) {
+  return storedRow.noticeSentAt !== undefined && str_(storedRow.noticeSentAt).trim() === '';
+}
+
+function writeNoticeSentAt_(sheet, rowNumber, value) {
+  sheet.getRange(rowNumber, REGISTRATION_HEADERS.indexOf('noticeSentAt') + 1).setValue(value);
+}
+
+// Decides and records, under the lock, what happens to a due notice, so two runs (the request and a
+// trigger run, or two trigger runs) never both send it: the first writes the time and sends, the other
+// finds it written. Returns { row } to send, or null when there is nothing to send (not due, a
+// `pending` row that is not yet at its limit, or `skipped` written: no valid address, quota below the
+// reserve). A crash between this write and the send loses the notice rather than sending it twice.
+function claimRegistrationNotice_(eventCode, submissionId, options) {
+  var release = takeShortLock_(20000);
+  if (!release) {
+    console.error('registration notice not claimed: lock busy'); // stays blank: a later trigger run takes it
+    return null;
+  }
   try {
+    var sheet = getSpreadsheet().getSheetByName(eventCode);
+    var stored = readTable(eventCode).filter(function (r) { return str_(r.v.submissionId) === submissionId; })[0];
+    if (!sheet || !stored || !noticeIsDue_(stored.v)) return null;
+    if (str_(stored.v.checkResult).trim() === 'pending' && !options.allowPending) return null;
     var list = parseAddressList_(getProp('NOTIFY_REGISTRATION_TO'));
     if (list.skipped) console.error('NOTIFY_REGISTRATION_TO: ' + list.skipped + ' invalid address(es) skipped');
-    if (!list.valid.length) return;
+    if (!list.valid.length) {
+      writeNoticeSentAt_(sheet, stored.row, NOTICE_SKIPPED);
+      return null;
+    }
     if (!noticeQuotaAllows_()) {
       console.error('registration notice skipped: remaining email quota below NOTIFY_QUOTA_RESERVE');
-      return;
+      writeNoticeSentAt_(sheet, stored.row, NOTICE_SKIPPED);
+      return null;
     }
-    // The row as the request left it: the payment check may have changed it since it was stored.
-    var stored = readTable(v.eventCode).filter(function (r) { return str_(r.v.submissionId) === v.submissionId; })[0];
-    if (!stored) return;
+    writeNoticeSentAt_(sheet, stored.row, "'" + crIso_(Date.now()));
+    return { row: stored.v, to: list.valid.join(',') };
+  } finally {
+    release();
+  }
+}
+
+function markNoticeSendFailed_(eventCode, submissionId) {
+  var release = takeShortLock_(20000);
+  if (!release) return;
+  try {
+    var sheet = getSpreadsheet().getSheetByName(eventCode);
+    var stored = readTable(eventCode).filter(function (r) { return str_(r.v.submissionId) === submissionId; })[0];
+    if (sheet && stored) writeNoticeSentAt_(sheet, stored.row, NOTICE_SKIPPED);
+  } finally {
+    release();
+  }
+}
+
+// Sends the notice of one stored registration if it is due, showing the row as it is now (the
+// payment check has written its result by then). `options.allowPending`: the trigger sets it only for
+// a row the check gave up on after 24 hours. Never throws and never touches the registration, its
+// response or `needsReview`: a problem is logged by error name only (FFR-034, US-026 AC4, AC5).
+function sendRegistrationNoticeSafely_(eventCode, submissionId, options) {
+  var claimed = null;
+  try {
+    claimed = claimRegistrationNotice_(eventCode, submissionId, options);
+    if (!claimed) return;
+    var found = lookupEventForRegister_(eventCode);
+    if (!found) throw new Error('event not found');
+    var row = claimed.row;
     var mail = buildRegistrationNotice_({
-      eventCode: v.eventCode, eventNameEs: found.event.name, eventNameEn: eventNameFor_(found.event, 'en'), startsAtMs: found.event.startsAtMs,
-      name: v.participantName, amountDueCrc: amountDue, reference: outcome.reference, state: noticeRowState_(stored.v)
+      eventCode: eventCode, eventNameEs: found.event.name, eventNameEn: eventNameFor_(found.event, 'en'), startsAtMs: found.event.startsAtMs,
+      name: str_(row.participantName).replace(/^'/, ''), amountDueCrc: Number(row.amountDueCrc) || 0, reference: str_(row.reference),
+      state: noticeRowState_(row)
     });
-    sendMail_(list.valid.join(','), mail.subject, mail.body);
+    sendMail_(claimed.to, mail.subject, mail.body);
   } catch (err) {
     console.error('registration notice failed: ' + (err && err.name));
+    if (claimed) {
+      try { markNoticeSendFailed_(eventCode, submissionId); } catch (markErr) { console.error('registration notice mark failed: ' + (markErr && markErr.name)); }
+    }
   }
 }
