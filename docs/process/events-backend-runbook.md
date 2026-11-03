@@ -233,8 +233,10 @@ What Cami sees and when:
   `skipped` = not sent and never retried (`NOTIFY_REGISTRATION_TO` empty or invalid, the email quota
   below `NOTIFY_QUOTA_RESERVE`, or the send failed); `-` = a row saved before this change, never
   notified. The script adds the column to an older event tab, with `-` in its existing rows, at the
-  first registration or trigger run after the deploy. Do not edit it by hand unless you mean to
-  resend (blank it) or to stop a notice (type `skipped`).
+  first registration in that tab or the first trigger run inside `RETRY_CHECK_HOURS` after the deploy
+  (a tab with no registration yet and a run at night waits for 06:00; it has no due row meanwhile).
+  Do not edit it by hand unless you mean to: blank it to have the notice sent again, which works only
+  for a paid row, because the trigger never notices a free (₡0) one; type `skipped` to stop a notice.
 - **A run stays inside Apps Script's 6-minute limit:** it starts no new row after 3 minutes (about 10 to
   60 seconds per row, with a pause between rows), so a backlog is finished by the next runs.
 
