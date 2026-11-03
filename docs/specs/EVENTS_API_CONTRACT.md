@@ -132,10 +132,13 @@ Spreadsheet (Workspace `lifetoolscr.com`), tabs:
   `whatsapp`, `lang`, `couponCode`, `discountPercent`, `amountDueCrc`, `screenshotUrl`,
   `checkResult`, `checkDetails`, `needsReview`, `status`, `consentAt`, `notes`, `contactOptIn`
   (v1.5; added last so existing tabs keep their columns: the script adds the header to a tab
-  that lacks it, and older rows stay blank, read as `FALSE`), `noticeSentAt` (v1.11; server-written
-  timestamp, Costa Rica time like `timestamp`, of the registration notice to Cami, FFR-034;
-  added last in the same way; blank until the notice is sent, and left blank for rows saved
-  before v1.11, which are never notified).
+  that lacks it, and older rows stay blank, read as `FALSE`), `noticeSentAt` (v1.11; added last in the
+  same way; server-written state of the registration notice to Cami, FFR-034): blank = notice
+  still due (only rows saved since v1.11); a timestamp (Costa Rica time, like `timestamp`) =
+  sent; `skipped` = not sent and never retried (`NOTIFY_REGISTRATION_TO` empty or all invalid,
+  the quota below `NOTIFY_QUOTA_RESERVE`, or the send failed); `-` = a row saved before v1.11,
+  never notified (written into every existing row when the script adds the header). Only the
+  server writes it.
 - `Metrics`: one row per day — `date`, `accepted`, `honeypotHits`, `throttled`,
   `couponFailures`, `uploadedMb`, `spamMarked`.
 - `Translations` (created by the script, CMP-045): `hash`, `text` — the automatic English
@@ -287,7 +290,8 @@ The checklist must cover:
 - Check after the answer (v1.11, FFR-035): a paid `register` answers without running the check
   (row `pending`, confirmation email sent, no notice yet); the next `retryPendingChecks` run
   inside `RETRY_CHECK_HOURS` writes the result, sends the "not validated" email when needed,
-  then the notice, and sets `noticeSentAt`; a second run sends nothing more; a ₡0 registration
-  still gets its notice in the request and its `noticeSentAt` set; an older tab gets the
-  `noticeSentAt` header and its older rows stay blank and are not notified; on staging, the
+  then the notice, and sets `noticeSentAt` to the time; a second run sends nothing more; a ₡0
+  registration still gets its notice in the request and its `noticeSentAt` set; with the
+  property empty, `noticeSentAt` becomes `skipped` and nothing is retried; an older tab gets the
+  `noticeSentAt` header, its older rows get `-` and are not notified; on staging, the
   median `register` time of three paid registrations is within 1 s of three ₡0 ones.

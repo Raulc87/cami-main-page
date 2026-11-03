@@ -87,8 +87,9 @@ Not in this sprint (owner, 2026-11-01): the rollback rehearsal of the site-uploa
     notice (FFR-034), and sets `noticeSentAt`; a row still `pending` at FFR-032's 24-hour limit
     gets its notice then, saying `pending`; nothing is sent twice;
   - a ₡0 registration still gets its notice in the request, and its `noticeSentAt` set;
-  - `noticeSentAt` is added last to an older tab that lacks it (as `contactOptIn` was); rows
-    saved before this change are never notified;
+  - `noticeSentAt` is added last to an older tab that lacks it (as `contactOptIn` was), with
+    `-` in its older rows, which are never notified; `skipped` when a notice is not sent;
+    §2c's new `pending` wording;
   - the trigger's run stays well inside Apps Script's 6-minute limit (a cap on rows per run if
     needed, said in the PR);
   - runbook updated (what Cami sees, the delay, night sign-ups after 06:00);
@@ -218,3 +219,9 @@ The human reviewer is the final approver.
     only the small Actions update now).
   - "Also include a rehearsal of the site's 'roll back' upload (put the previous version back,
     then forward again) right after the v1.2.0 release?" Owner: **"No, skip it"**.
+- Review of this plan (PR #133): "With the check moving after the answer, Cami's notice will only
+  say 'pending' in a rare case: Google couldn't read the receipt for 24 hours, so it stops
+  retrying and Cami must check it by hand. The approved wording says 'pendiente (se revisa de
+  nuevo más tarde) / pending (checked again later)', which would then be wrong. What should it
+  say?" Owner: **"pendiente: revísalo a mano (Recommended)"** (EN "pending: check it by hand";
+  the other option: keep it). Cami sees it at CMP-121's staging check.

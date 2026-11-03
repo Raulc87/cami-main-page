@@ -321,8 +321,9 @@ Abuse metrics
     the "payment not validated" email when there is one, so the notice always shows the real
     result, up to about 10 minutes after the sign-up in the day and after 06:00 for a night
     sign-up. A row still `pending` when FFR-032's 24-hour limit ends gets its notice then,
-    saying `pending`. Each row's notice is sent once, recorded in the row's `noticeSentAt`
-    (contract §6 v1.11); rows saved before this change are never notified again. Once per
+    saying `pending` (worded "pendiente: revísalo a mano", §2c). Each row's notice is sent at
+    most once, recorded in the row's `noticeSentAt` (contract §6 v1.11: a timestamp, `skipped`
+    when it was not sent, `-` for rows saved before this change, which are never notified). Once per
     stored row: a retry with the same submission ID
     (FFR-022) sends nothing; a refused request (validation, duplicate email, `SOLD_OUT` for ₡0,
     rate limits, honeypot) sends nothing.
