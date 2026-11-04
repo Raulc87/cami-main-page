@@ -2,7 +2,8 @@
 
 ## Metadata
 - Sprint: 06
-- Status: Active (plan approved on merge of PR #133, CMP-120; owner's go-ahead 2026-11-03, Entry
+- Status: Closed 2026-11-04 (owner: "Close now (Recommended)"); Active from the owner's go-ahead
+  2026-11-03 (plan approved on merge of PR #133, CMP-120; Entry
   Gate 4: "go ahead")
 - Start: 2026-11-03 (Tuesday), the day of the go-ahead
 - End: 2026-11-11 (Wednesday), the seventh business day counting the start day (the standard
@@ -64,17 +65,18 @@ and the site moves to React 19 and Vite 8 in release v1.2.0.
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
 | CMP-120 | This plan, the agent prompts, FEATURE_SPEC v1.15 (FFR-035), contract v1.11, US-022 AC8, US-026 AC1 | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
-| CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | Agent 1 | CMP-120 | `CMP-121-check-after-answer` | review (staging check passed 2026-11-02/03; in production v5 since 2026-11-03; Agent 1 sets its TICKETS row) |
+| CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | Agent 1 | CMP-120 | `CMP-121-check-after-answer` | done |
 | CMP-129 | Spec: FFR-014 JPEG/PNG stored as received, FFR-035 timing goal 2 s, contract v1.12 (owner, 2026-11-03) | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
+| CMP-135 | Close Sprint 06 | Coordinator | CMP-126 | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
 | CMP-131 | Records: FFR-035 goal in server time, CMP-122 override, the deploy login's expiry, CMP-124 Lighthouse acceptance | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
 | CMP-134 | Sprint 06 records: v1.2.0 live, production backend v5, plan statuses, environments' required reviewer | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
-| CMP-130 | PNG screenshot stored as received (FFR-014 v1.16, contract §3.3 v1.12), timed on staging | Agent 1 | CMP-129 | `CMP-130-png-as-is` | review (staging check passed 2026-11-03; in production v5; Agent 1 sets its TICKETS row) |
-| CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | review (PR #137 merged; staging deploy green after the login renewal; Agent 1 sets its TICKETS row) |
-| CMP-123 | Production backend deploy of CMP-121 and CMP-130 | Agent 1 + owner | CMP-121's and CMP-130's staging checks; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | todo in TICKETS (production v5 deployed 2026-11-03, steps 1–9 passed; the first real paid notice confirmed by Cami is pending; Agent 1 sets its TICKETS row) |
+| CMP-130 | PNG screenshot stored as received (FFR-014 v1.16, contract §3.3 v1.12), timed on staging | Agent 1 | CMP-129 | `CMP-130-png-as-is` | done |
+| CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | done |
+| CMP-123 | Production backend deploy of CMP-121 and CMP-130 | Agent 1 + owner | CMP-121's and CMP-130's staging checks; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | in-progress, carried (steps 1–9 passed; the first real paid notice confirmed by Cami is open) |
 | CMP-124 | Site libraries: React 19, React DOM 19, Vite 8, `@vitejs/plugin-react` 6 (replaces Dependabot PRs #104–#107) | Agent 3 | — | `CMP-124-react19-vite8` | done (PR #136) |
 | CMP-127 | TECH_STACK and docs for CMP-124 | Coordinator | — | coordinator's branch | dropped (folded into CMP-124: Agent 3 changes TECH_STACK's two lines in the same PR, AGENTS.md → Change management; review notes) |
 | CMP-125 | Release v1.2.0 | Agent 3 + owner | CMP-124; the security agent's review (scan: decided, Review Notes) | `CMP-125-release-v1-2-0` | done (v1.2.0 live 2026-11-03, PR #142, records PR #143) |
-| CMP-126 | Sprint 06 verification | Agent 1 | every ticket above | `CMP-126-sprint-06-verification` | todo |
+| CMP-126 | Sprint 06 verification | Agent 1 | every ticket above | `CMP-126-sprint-06-verification` | done |
 
 Dependabot PR #109 (GitHub Actions versions) keeps Dependabot's title and has no ticket
 (pr-workflow §2): the review-only agent reviews it, then the owner merges it.
@@ -327,3 +329,22 @@ The human reviewer is the final approver.
   The security agent read the run history (read-only): every deploy run since ADR-009 was started
   from `main` by the owner's account and matches a known deploy. The release checklist now checks
   the setting before each deploy (§4.1 step 0, §3b).
+- Carried to the next sprint: CMP-123 step 10, the first real paid sign-up's notice confirmed by
+  Cami (owner, 2026-11-04, asked "The production backend is live. Its last check needs a real
+  paid sign-up, so Cami can confirm her notice arrives after the payment check. That may not
+  happen before the sprint ends on Nov 11. If no paid sign-up comes by then, what should we do?":
+  **"Close with it open (Recommended)"**); CMP-133, the moderate advisories in the deploy tool's
+  tree (GitHub Dependabot alert, 90 days from 2026-11-03); Dependabot #109 (GitHub Actions
+  versions), still open; the first real rollback run of the site-upload workflow; the PTES tester
+  search (check-in 2026-11-13). A dated SECURITY_BASELINE line on the environments' required
+  reviewer is the security agent's CMP-136 (owner, 2026-11-04: "Yes (Recommended)").
+- Sprint closed 2026-11-04, ahead of its 2026-11-11 end. Owner asked "Everything in Sprint 06 is
+  done except Cami's confirmation on a real paid sign-up (carried over, as you decided). Close
+  Sprint 06 now, a week early?": **"Close now (Recommended)"** (other option: wait until Nov 10).
+  Definition of Done: every selected ticket `done` except CMP-123, carried with one step open by
+  the owner's decision; the Required Deliverable shown (the check after the answer live in
+  production v5, v1.2.0 live, the clasp exception settled) and its evidence approved by merging
+  CMP-126 (#145, [`SPRINT_06_VERIFICATION.md`](SPRINT_06_VERIFICATION.md)). Sessions archived
+  after this record merges: Agent 1 `session_01DVcaZvgjJz7JVS7Uhyjjce`, Agent 3
+  `session_01DVcaZyRTd2SMJPZ32HXU3j`, review-only agent `session_01DVcaZzgzHrLLTRjxSEcRgq`; the
+  pre-release security agent `session_01DVcaZw7gF9nG9af7Am5D6U` stays (CMP-136, PTES re-checks).

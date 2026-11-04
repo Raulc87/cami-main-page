@@ -759,7 +759,8 @@ So that I can manage participants and payments in one place
 - Status: Done (verified on staging in CMP-033; evidence approved by merging PR #48; recorded in
   CMP-051; a raw iPhone HEIC photo is stored in its original format and checked by hand
   (FFR-017); after the real-iPhone check the owner kept this, 2026-11-01: "Leave as is").
-  AC8 (FFR-035, the check after the answer) is new in Sprint 06 (CMP-121).
+  AC8 (FFR-035, the check after the answer) added in Sprint 06 and done: CMP-121/CMP-130 staging
+  checks, production v5 (CMP-123); evidence approved by merging PR #145, SPRINT_06_VERIFICATION.
 - Related Spec: FEATURE_SPEC_events_registration (FFR-017, FFR-032, FFR-030, FFR-035), BR-E06
 - Related Requirements: FR-011
 
@@ -944,7 +945,9 @@ So that I know my place is reserved or what to fix
 - Priority: Medium
 - Story Points: 2
 - Status: Done (Sprint 05: CMP-112 staging check, CMP-114 production; evidence approved by
-  merging PR #131, SPRINT_05_VERIFICATION)
+  merging PR #131, SPRINT_05_VERIFICATION); AC1's timing (notice after the check) checked on
+  staging in Sprint 06 (CMP-121, PR #145); the first real paid notice in production is carried
+  (CMP-123)
 - Related Spec: FEATURE_SPEC_events_registration (FFR-034); contract §9 v1.10
 - Related Requirements: FR-011
 
