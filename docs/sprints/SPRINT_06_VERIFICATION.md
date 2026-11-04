@@ -10,7 +10,7 @@ rows and records, not re-checked here. A Fail is not fixed in this PR: it is cla
 proposed. Story statuses are not changed here; the coordinator does that after the owner approves the
 evidence.
 
-**Status of this document: complete except one check.** Every Sprint 06 PR is merged and production runs
+**Status of this document: complete except one check, which the owner chose to carry over (§4).** Every Sprint 06 PR is merged and production runs
 the check after the answer (Version 5), but CMP-123's last step, Cami confirming the first real paid
 notice, waits for a real participant (§4). Release v1.2.0 is live.
 
@@ -112,7 +112,7 @@ Production keeps its two triggers (the "daily" failure notification setting unch
 
 | Item | Owner | Note |
 |---|---|---|
-| CMP-123 step 10: the first real paid sign-up after the deploy, Cami's notice and how long it took | Owner / Cami | Pending a real participant; no test registration in production (plan). The ticket row stays `in-progress` until then |
+| CMP-123 step 10: the first real paid sign-up after the deploy, Cami's notice and how long it took | Owner / Cami | Pending a real participant; no test registration in production (plan). Owner's decision, 2026-11-04, asked "The production backend is live. Its last check needs a real paid sign-up, so Cami can confirm her notice arrives after the payment check. That may not happen before the sprint ends on Nov 11. If no paid sign-up comes by then, what should we do?" (other option: keep the sprint open): **"Close with it open (Recommended)"**. So this one step is the open item carried to the next sprint: the CMP-123 row stays `in-progress` until Cami confirms a real notice, and a small records PR then closes it |
 | PTES test by 2026-12-26 (CMP-099) | Owner / coordinator | Covers what an agent scan of production would have |
 | Moderate advisories in the deploy tool's tree (CMP-133) | Owner | Backlog; baseline §4's 90 days |
 | GitHub's "Required reviewers" on `production` and `site-production` | Owner | Found off on 2026-11-03, turned on for both by the owner on 2026-11-04. Before that date the deploy "approvals" were the owner starting the runs (no environment gate existed) |
