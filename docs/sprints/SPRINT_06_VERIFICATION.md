@@ -103,7 +103,7 @@ State of the staging environment at the end of the sprint, from the owner's "cle
 |---|---|
 | Test events and tabs `ZTEST5` and `ZTEST6`, their registrations, Drive test files, leftover OCR Docs and test inbox messages | Deleted (CMP-121 step 13: "cleanup done"; the one "pendiente" notice was kept for Cami's reading of the wording, and the test screenshots on the owner's laptop were kept for the CMP-130 run; CMP-130 step D9: "cleanup done") |
 | Script properties `NOTIFY_REGISTRATION_TO`, `MAIL_REPLY_TO`, `RETRY_CHECK_HOURS` | Back to their staging values (`NOTIFY_REGISTRATION_TO` empty, `MAIL_REPLY_TO` the original, `RETRY_CHECK_HOURS` `06-22`) |
-| Staging triggers | `retryPendingChecks` absent (run by hand); a time-based `refreshEventsCache` run on Head was seen on staging (12.4 s) |
+| Staging triggers | `retryPendingChecks` absent (run by hand). A time-based `refreshEventsCache` run on Head (12.4 s) was seen during the CMP-130 check, so a trigger for it exists on staging; the Sprint 05 end state was no staging trigger. Whether it stays is the owner's call (§4) |
 
 Production keeps its two triggers (the "daily" failure notification setting unchanged), has
 `NOTIFY_REGISTRATION_TO` set to Cami's address and `RETRY_CHECK_HOURS` `06-22`, and serves Version 5.
@@ -116,6 +116,7 @@ Production keeps its two triggers (the "daily" failure notification setting unch
 | PTES test by 2026-12-26 (CMP-099) | Owner / coordinator | Covers what an agent scan of production would have |
 | Moderate advisories in the deploy tool's tree (CMP-133) | Owner | Backlog; baseline §4's 90 days |
 | GitHub's "Required reviewers" on `production` and `site-production` | Owner | Found off on 2026-11-03, turned on for both by the owner on 2026-11-04. Before that date the deploy "approvals" were the owner starting the runs (no environment gate existed) |
+| The staging `refreshEventsCache` trigger seen on 2026-11-03 | Owner | Not in the Sprint 05 end state (deleted then); say whether it stays or is deleted, so the staging list is unambiguous |
 | The deploy login (`CLASP_CREDENTIALS`) | Owner | It kept expiring within a day because of a Workspace setting; the owner changed it for the deploy login only (2026-11-03) and renewed the login in both environments. If deploys fail again with "Google rejected the login token", renew it and tell the owner (runbook §5.1, ADR-009) |
 | What a paid sign-up still costs over a free one (Drive folder lookups, the file create and the counters under the lock) | Owner | About 1.6 s of server time, within the goal; a possible trim later, not planned |
 
