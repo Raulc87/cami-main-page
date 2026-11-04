@@ -12,8 +12,9 @@
   setting public (only the owner changes it)
 - Kept project rules (instead of the kit's), with their reasons:
   [ADR-006 → Kit disposition](docs/decisions/ADR-006-adopt-sdd-starter-kit.md#kit-disposition)
-- Status: Live at `camihernandez.com` (v1.1.2 since 2026-10-29, PageSpeed mobile 90–97 and
-  desktop 99; v1.1.1 the same day was the first release uploaded by the site-upload workflow; the events feature live since 2026-10-27);
+- Status: Live at `camihernandez.com` (v1.2.0 since 2026-11-03, React 19 and Vite 8, PageSpeed
+  mobile 97; production backend v5 since 2026-11-03 with the payment check after the answer;
+  v1.1.2 since 2026-10-29, PageSpeed mobile 90–97 and desktop 99; v1.1.1 the same day was the first release uploaded by the site-upload workflow; the events feature live since 2026-10-27);
   documentation homologated to the SDD starter kit in CMP-014
 - Product owner / final reviewer: Raul Casanas
 
@@ -101,7 +102,7 @@ they are not active paths.
   sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-131
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-134
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
