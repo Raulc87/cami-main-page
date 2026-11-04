@@ -324,3 +324,6 @@ The human reviewer is the final approver.
 - Found 2026-11-03/04: the deploy workflows never asked for the owner's approval. The `production`
   and `site-production` GitHub environments had no required reviewer, which ADR-009 and ADR-010
   assume. The owner turned it on for both (2026-11-04), as the only reviewer.
+  The security agent read the run history (read-only): every deploy run since ADR-009 was started
+  from `main` by the owner's account and matches a known deploy. The release checklist now checks
+  the setting before each deploy (§4.1 step 0, §3b).
