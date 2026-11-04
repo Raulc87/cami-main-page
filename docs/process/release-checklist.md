@@ -81,7 +81,8 @@ upload; if one is not, do not release:
       afterwards; that day's Metrics counts include this test traffic), and any problem becomes
       a bug ticket. The test site still comes down before the upload (unpublish, real SINPE
       values on staging, secret deleted), recorded in the CMP-066 cleanup list.
-- [ ] Backend deploy to production through the approved deploy workflow (ADR-009), smoke
+- [ ] Backend deploy to production through the approved deploy workflow (ADR-009): the
+      `production` environment has Required reviewers on and GitHub asked for the approval; smoke
       request green; both time triggers installed once in production (runbook).
 - [ ] Lifetools logo in place for events without art (CMP-067).
 - [ ] Security baseline approved (`docs/security/SECURITY_BASELINE.md`, CMP-056) with the PTES
@@ -133,6 +134,9 @@ upload; if one is not, do not release:
 3. If a leak of the FTP password is suspected, change it in cPanel and in the GitHub secret.
 
 **Each release** (after the §3b gates, with the version commit on `main`):
+0. **Settings → Environments:** `site-production` (and `production` for a backend deploy) has
+   **Required reviewers** on, with the owner as reviewer. If GitHub does not ask for an approval
+   when a run starts, stop: the protection is off (found and fixed 2026-11-04, CMP-134).
 1. Create the **tag and its GitHub Release first** (§6): the workflow deploys a tag and keeps the
    build on that Release. The tag must be on `main`. Only v1.1.1 or later can be deployed (the
    bundle check refuses a build whose `.htaccess` does not deny `.deploy-site-manifest`).

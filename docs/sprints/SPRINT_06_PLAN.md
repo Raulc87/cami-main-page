@@ -64,15 +64,16 @@ and the site moves to React 19 and Vite 8 in release v1.2.0.
 | Ticket | Work | Agent | Waits for | Branch | Status |
 |---|---|---|---|---|---|
 | CMP-120 | This plan, the agent prompts, FEATURE_SPEC v1.15 (FFR-035), contract v1.11, US-022 AC8, US-026 AC1 | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` (coordinator's assigned branch) | done |
-| CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | Agent 1 | CMP-120 | `CMP-121-check-after-answer` | todo |
+| CMP-121 | Payment check after the answer; notice after the check (FFR-035, FFR-034) | Agent 1 | CMP-120 | `CMP-121-check-after-answer` | review (staging check passed 2026-11-02/03; in production v5 since 2026-11-03; Agent 1 sets its TICKETS row) |
 | CMP-129 | Spec: FFR-014 JPEG/PNG stored as received, FFR-035 timing goal 2 s, contract v1.12 (owner, 2026-11-03) | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
 | CMP-131 | Records: FFR-035 goal in server time, CMP-122 override, the deploy login's expiry, CMP-124 Lighthouse acceptance | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
-| CMP-130 | PNG screenshot stored as received (FFR-014 v1.16, contract §3.3 v1.12), timed on staging | Agent 1 | CMP-129 | `CMP-130-png-as-is` | todo |
-| CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | todo |
-| CMP-123 | Production backend deploy of CMP-121 and CMP-130 | Agent 1 + owner | CMP-121's and CMP-130's staging checks; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | todo |
-| CMP-124 | Site libraries: React 19, React DOM 19, Vite 8, `@vitejs/plugin-react` 6 (replaces Dependabot PRs #104–#107) | Agent 3 | — | `CMP-124-react19-vite8` | todo |
+| CMP-134 | Sprint 06 records: v1.2.0 live, production backend v5, plan statuses, environments' required reviewer | Coordinator | — | `cmp-014-sdd-starter-kit-homologation-rqviz9` | done |
+| CMP-130 | PNG screenshot stored as received (FFR-014 v1.16, contract §3.3 v1.12), timed on staging | Agent 1 | CMP-129 | `CMP-130-png-as-is` | review (staging check passed 2026-11-03; in production v5; Agent 1 sets its TICKETS row) |
+| CMP-122 | clasp audit exception (zod, GHSA-mrhx-c7xc-m3w5) before 2026-11-20: a fixed clasp release, or the owner's renewal | Agent 1 | — | `CMP-122-clasp-audit-exception` | review (PR #137 merged; staging deploy green after the login renewal; Agent 1 sets its TICKETS row) |
+| CMP-123 | Production backend deploy of CMP-121 and CMP-130 | Agent 1 + owner | CMP-121's and CMP-130's staging checks; the security agent's review (scan: decided, Review Notes) | — (evidence in CMP-126) | todo in TICKETS (production v5 deployed 2026-11-03, steps 1–9 passed; the first real paid notice confirmed by Cami is pending; Agent 1 sets its TICKETS row) |
+| CMP-124 | Site libraries: React 19, React DOM 19, Vite 8, `@vitejs/plugin-react` 6 (replaces Dependabot PRs #104–#107) | Agent 3 | — | `CMP-124-react19-vite8` | done (PR #136) |
 | CMP-127 | TECH_STACK and docs for CMP-124 | Coordinator | — | coordinator's branch | dropped (folded into CMP-124: Agent 3 changes TECH_STACK's two lines in the same PR, AGENTS.md → Change management; review notes) |
-| CMP-125 | Release v1.2.0 | Agent 3 + owner | CMP-124; the security agent's review (scan: decided, Review Notes) | `CMP-125-release-v1-2-0` | todo |
+| CMP-125 | Release v1.2.0 | Agent 3 + owner | CMP-124; the security agent's review (scan: decided, Review Notes) | `CMP-125-release-v1-2-0` | done (v1.2.0 live 2026-11-03, PR #142, records PR #143) |
 | CMP-126 | Sprint 06 verification | Agent 1 | every ticket above | `CMP-126-sprint-06-verification` | todo |
 
 Dependabot PR #109 (GitHub Actions versions) keeps Dependabot's title and has no ticket
@@ -312,3 +313,17 @@ The human reviewer is the final approver.
   above our 90 minimum; the page shows ~0.4 s later on a slow phone). What should we do?" Owner:
   **"Accept React 19 (Recommended)"** (other options: Vite 8 only, React 18 for now;
   investigate first). CMP-125's live PageSpeed runs confirm the score.
+- v1.2.0 released 2026-11-03 (CMP-125): tag on `7f8518e`, the security agent's delta review with no
+  new finding (comment on #142), the owner's statement on #142, dry run then upload, live checks
+  (records PR #143), PageSpeed mobile 97/97/97.
+- CMP-123, 2026-11-03: production properties and both triggers checked, version 4 noted as the way
+  back, no `pending` rows; the production deploy (dry run, then real) served version 5 with both
+  smoke checks passing; the first trigger runs after the push completed; the event tabs got
+  `noticeSentAt` with `-` in older rows; the site loads in both languages. Open: the first real
+  paid sign-up's notice, confirmed by Cami.
+- Found 2026-11-03/04: the deploy workflows never asked for the owner's approval. The `production`
+  and `site-production` GitHub environments had no required reviewer, which ADR-009 and ADR-010
+  assume. The owner turned it on for both (2026-11-04), as the only reviewer.
+  The security agent read the run history (read-only): every deploy run since ADR-009 was started
+  from `main` by the owner's account and matches a known deploy. The release checklist now checks
+  the setting before each deploy (§4.1 step 0, §3b).
