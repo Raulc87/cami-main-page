@@ -386,9 +386,11 @@ scripts under `.github/scripts/`, to `.github/clasp/` or to the workflow on `mai
    install scripts; prefer the repo route above for rotations.)
    **The login can expire.** The staging login stopped working after 4 days on 2026-10-26 and the
    owner renewed it (the deploy fails at the step that asks Google for the project's title, before
-   anything is pushed). If it happens again, first repeat this step and replace the
-   `CLASP_CREDENTIALS` secret of **both** environments; if it keeps expiring within days, ask the
-   Workspace admin to check the **Google Cloud session control** setting (Workspace Admin → Security).
+   anything is pushed). It kept expiring within a day (2026-11-02 and 2026-11-03) because of a
+   Workspace setting; the owner changed it for the deploy login only (2026-11-03), so the token now
+   lasts until it is revoked or rotated. If deploys start failing with "Google rejected the login
+   token" again, renew the login as in this step (both environments) and tell the owner, who knows
+   the setting.
 3. GitHub → repo **Settings → Environments**: create `staging` and `production`. For both, under
    *Deployment branches* choose **Selected branches → main**. For `production` also tick
    **Required reviewers** and add the owner.
