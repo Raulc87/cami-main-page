@@ -38,8 +38,8 @@
   (baseline + traceability);
   [IMPLEMENTATION_PLAN_events_registration.md](docs/plans/IMPLEMENTATION_PLAN_events_registration.md)
   (events, US-017..US-025)
-- Active sprint plan: [SPRINT_06_PLAN.md](docs/sprints/SPRINT_06_PLAN.md) (Active since the
-  owner's go-ahead, 2026-11-03); Sprint 05 closed 2026-11-01
+- Latest sprint plan: [SPRINT_06_PLAN.md](docs/sprints/SPRINT_06_PLAN.md) (Closed 2026-11-04); no
+  active sprint until the next is planned; Sprint 05 closed 2026-11-01
   ([SPRINT_05_PLAN.md](docs/sprints/SPRINT_05_PLAN.md)); Sprints 01 to 04 are closed
   ([SPRINT_01_PLAN.md](docs/sprints/SPRINT_01_PLAN.md),
   [SPRINT_02_PLAN.md](docs/sprints/SPRINT_02_PLAN.md),
@@ -90,10 +90,13 @@ they are not active paths.
 - Start: 2026-11-03 (Tuesday); End: 2026-11-11 (Wednesday), seven business days
 - Deliverable: the check after the answer live on the production backend; release v1.2.0 live;
   the clasp audit exception settled before 2026-11-20; evidence in `SPRINT_06_VERIFICATION.md`
-- Status: Active — owner's go-ahead 2026-11-03: "go ahead"
+- Status: Closed 2026-11-04 (owner: "Close now (Recommended)"); evidence in
+  [docs/sprints/SPRINT_06_VERIFICATION.md](docs/sprints/SPRINT_06_VERIFICATION.md). The next
+  sprint is planned with the owner; carried items in the plan's Review Notes
 
 ## Agent allocation
-- Sprint 06: Implementation Agent 1, events backend — CMP-121..CMP-123, CMP-126, CMP-130; Implementation
+- Sprint 06 (closed 2026-11-04; Agents 1 and 3 and the reviewer archived after the closing record):
+  Implementation Agent 1, events backend — CMP-121..CMP-123, CMP-126, CMP-130; Implementation
   Agent 3, site libraries and release — CMP-124, CMP-125 (Sonnet sessions launched 2026-11-03 at
   the go-ahead); review-only agent: a fresh Opus session (it reviewed the plan); the pre-release
   security agent keeps its Sprint 04 session (reviews before CMP-123 and CMP-125). Codex runs as the automated reviewer on every PR (ADR-006 → Kit disposition,
@@ -102,7 +105,7 @@ they are not active paths.
   sessions (Agents 1–3, review-only agent) archived at closing, 2026-10-29
 - Coordinator: Claude Code session started by the owner after CMP-015 merged; authors docs PRs
   itself and delegates any code to an implementation agent
-  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-134
+  ([AGENTS.md → Coordinator session](AGENTS.md#coordinator-session)). Current: CMP-135
 - Conflict resolution: the owner together with the agent that owns the conflicting file
   ([AGENTS.md → Parallel agent rules](AGENTS.md#parallel-agent-rules))
 
